@@ -1,0 +1,41 @@
+id: M7.4
+ato: A7
+nome: "Microfabricação e MEMS"
+horas: 200
+trilha: sensores
+ordem: 65
+requer: ["M6.2", "M7.3"]
+tags_chefe: []
+topicos:
+  - id: M7.4.T01
+    nome: "Microusinagem de volume e de superfície"
+    tipo: comum
+    peso: 1
+  - id: M7.4.T02
+    nome: "Acelerômetro MEMS"
+    tipo: comum
+    peso: 1
+  - id: M7.4.T03
+    nome: "Giroscópio MEMS"
+    tipo: comum
+    peso: 1
+  - id: M7.4.T04
+    nome: "Microfone e sensor de pressão MEMS"
+    tipo: comum
+    peso: 1
+  - id: M7.4.T05
+    nome: "Encapsulamento de MEMS"
+    tipo: comum
+    peso: 1
+  - id: M7.4.T06
+    nome: "Fotolitografia caseira"
+    tipo: elite
+    peso: 2
+  - id: M7.4.T07
+    nome: "Deposição amadora de filmes (sputtering/evaporação)"
+    tipo: elite
+    peso: 2
+  - id: M7.4.T08
+    nome: "Estrutura MEMS em macroescala"
+    tipo: elite
+    peso: 2

@@ -1,0 +1,45 @@
+id: M1.5
+ato: A1
+nome: "Protocolos de comunicação embarcada"
+horas: 160
+trilha: firmware
+ordem: 12
+requer: ["M1.2"]
+tags_chefe: []
+topicos:
+  - id: M1.5.T01
+    nome: "UART a fundo"
+    tipo: elite
+    peso: 2
+  - id: M1.5.T02
+    nome: "I2C"
+    tipo: elite
+    peso: 2
+  - id: M1.5.T03
+    nome: "SPI"
+    tipo: elite
+    peso: 2
+  - id: M1.5.T04
+    nome: "1-Wire"
+    tipo: comum
+    peso: 1
+  - id: M1.5.T05
+    nome: "CAN"
+    tipo: comum
+    peso: 1
+  - id: M1.5.T06
+    nome: "RS-485 e Modbus RTU"
+    tipo: comum
+    peso: 1
+  - id: M1.5.T07
+    nome: "USB (classes, enumeração)"
+    tipo: comum
+    peso: 1
+  - id: M1.5.T08
+    nome: "I2S e áudio digital"
+    tipo: comum
+    peso: 1
+  - id: M1.5.T09
+    nome: "Decodificar protocolos no analisador lógico"
+    tipo: elite
+    peso: 2

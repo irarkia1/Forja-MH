@@ -1,0 +1,45 @@
+id: M1.1
+ato: A1
+nome: "Eletrônica digital"
+horas: 150
+trilha: base
+ordem: 8
+requer: ["M0.2", "M0.4"]
+tags_chefe: []
+topicos:
+  - id: M1.1.T01
+    nome: "Portas lógicas e tabelas-verdade"
+    tipo: comum
+    peso: 1
+  - id: M1.1.T02
+    nome: "Circuitos combinacionais (mux, decodificador, somador)"
+    tipo: comum
+    peso: 1
+  - id: M1.1.T03
+    nome: "Mapas de Karnaugh"
+    tipo: comum
+    peso: 1
+  - id: M1.1.T04
+    nome: "Latches e flip-flops"
+    tipo: comum
+    peso: 1
+  - id: M1.1.T05
+    nome: "Contadores e registradores de deslocamento"
+    tipo: comum
+    peso: 1
+  - id: M1.1.T06
+    nome: "Máquinas de estado finito"
+    tipo: comum
+    peso: 1
+  - id: M1.1.T07
+    nome: "Famílias lógicas TTL e CMOS, níveis e fan-out"
+    tipo: comum
+    peso: 1
+  - id: M1.1.T08
+    nome: "Pull-up, pull-down, open-drain, tri-state"
+    tipo: comum
+    peso: 1
+  - id: M1.1.T09
+    nome: "Analisador lógico"
+    tipo: elite
+    peso: 2

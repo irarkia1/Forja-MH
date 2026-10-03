@@ -1,0 +1,45 @@
+id: M3.4
+ato: A3
+nome: "Projeto de RF"
+horas: 220
+trilha: hardware
+ordem: 34
+requer: ["M2.6", "M1.9"]
+tags_chefe: []
+topicos:
+  - id: M3.4.T01
+    nome: "Linhas de transmissão em RF"
+    tipo: comum
+    peso: 1
+  - id: M3.4.T02
+    nome: "Carta de Smith"
+    tipo: comum
+    peso: 1
+  - id: M3.4.T03
+    nome: "Casamento de impedância"
+    tipo: comum
+    peso: 1
+  - id: M3.4.T04
+    nome: "Antenas de PCB e chip"
+    tipo: comum
+    peso: 1
+  - id: M3.4.T05
+    nome: "Layout de RF"
+    tipo: comum
+    peso: 1
+  - id: M3.4.T06
+    nome: "VNA (NanoVNA)"
+    tipo: elite
+    peso: 2
+  - id: M3.4.T07
+    nome: "Medir potência e espectro de rádio"
+    tipo: comum
+    peso: 1
+  - id: M3.4.T08
+    nome: "Coexistência Wi-Fi/BLE"
+    tipo: comum
+    peso: 1
+  - id: M3.4.T09
+    nome: "Requisitos de certificação de rádio"
+    tipo: comum
+    peso: 1

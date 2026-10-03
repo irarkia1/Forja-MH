@@ -1,0 +1,29 @@
+id: M1.11
+ato: A1
+nome: "Energia e baixo consumo"
+horas: 70
+trilha: hardware
+ordem: 18
+requer: ["M1.6", "M0.4"]
+tags_chefe: []
+topicos:
+  - id: M1.11.T01
+    nome: "Química de baterias (Li-ion, LiFePO4, primárias)"
+    tipo: comum
+    peso: 1
+  - id: M1.11.T02
+    nome: "Orçamento de energia"
+    tipo: comum
+    peso: 1
+  - id: M1.11.T03
+    nome: "Modos de sleep e wake-up"
+    tipo: comum
+    peso: 1
+  - id: M1.11.T04
+    nome: "Medir corrente de µA a A"
+    tipo: elite
+    peso: 2
+  - id: M1.11.T05
+    nome: "Energy harvesting (solar, vibração)"
+    tipo: comum
+    peso: 1

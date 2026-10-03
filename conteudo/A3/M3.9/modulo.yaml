@@ -1,0 +1,37 @@
+id: M3.9
+ato: A3
+nome: "Testes e validação de hardware"
+horas: 140
+trilha: hardware
+ordem: 39
+requer: ["M2.7"]
+tags_chefe: []
+topicos:
+  - id: M3.9.T01
+    nome: "Plano de validação (EVT/DVT)"
+    tipo: comum
+    peso: 1
+  - id: M3.9.T02
+    nome: "Testes térmicos"
+    tipo: comum
+    peso: 1
+  - id: M3.9.T03
+    nome: "Testes ambientais (umidade, vibração, queda)"
+    tipo: comum
+    peso: 1
+  - id: M3.9.T04
+    nome: "ESD e surtos"
+    tipo: comum
+    peso: 1
+  - id: M3.9.T05
+    nome: "Vida acelerada (HALT/HASS)"
+    tipo: comum
+    peso: 1
+  - id: M3.9.T06
+    nome: "Confiabilidade (MTBF, curva da banheira)"
+    tipo: comum
+    peso: 1
+  - id: M3.9.T07
+    nome: "Relatório de validação"
+    tipo: elite
+    peso: 2

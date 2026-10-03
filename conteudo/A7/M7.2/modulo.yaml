@@ -1,0 +1,37 @@
+id: M7.2
+ato: A7
+nome: "Ciência dos materiais"
+horas: 150
+trilha: sensores
+ordem: 63
+requer: ["M0.3"]
+tags_chefe: []
+topicos:
+  - id: M7.2.T01
+    nome: "Estrutura cristalina e defeitos"
+    tipo: comum
+    peso: 1
+  - id: M7.2.T02
+    nome: "Cerâmicas e óxidos metálicos"
+    tipo: comum
+    peso: 1
+  - id: M7.2.T03
+    nome: "Polímeros funcionais"
+    tipo: comum
+    peso: 1
+  - id: M7.2.T04
+    nome: "Filmes finos"
+    tipo: comum
+    peso: 1
+  - id: M7.2.T05
+    nome: "Propriedades elétricas, mecânicas e térmicas"
+    tipo: comum
+    peso: 1
+  - id: M7.2.T06
+    nome: "Caracterização (SEM, XRD, perfilometria — conceitual)"
+    tipo: comum
+    peso: 1
+  - id: M7.2.T07
+    nome: "Segurança química no laboratório"
+    tipo: comum
+    peso: 1

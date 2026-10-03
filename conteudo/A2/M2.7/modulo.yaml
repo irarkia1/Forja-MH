@@ -1,0 +1,33 @@
+id: M2.7
+ato: A2
+nome: "EMC/EMI"
+horas: 120
+trilha: hardware
+ordem: 26
+requer: ["M2.5"]
+tags_chefe: []
+topicos:
+  - id: M2.7.T01
+    nome: "Fontes e caminhos de emissão"
+    tipo: comum
+    peso: 1
+  - id: M2.7.T02
+    nome: "Susceptibilidade e imunidade"
+    tipo: comum
+    peso: 1
+  - id: M2.7.T03
+    nome: "ESD"
+    tipo: comum
+    peso: 1
+  - id: M2.7.T04
+    nome: "Filtragem e blindagem"
+    tipo: comum
+    peso: 1
+  - id: M2.7.T05
+    nome: "Normas (CISPR, IEC 61000)"
+    tipo: comum
+    peso: 1
+  - id: M2.7.T06
+    nome: "Pré-compliance caseiro (sonda de campo próximo)"
+    tipo: elite
+    peso: 2

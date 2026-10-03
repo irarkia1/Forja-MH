@@ -1,0 +1,45 @@
+id: M2.3
+ato: A2
+nome: "Potência e fontes"
+horas: 200
+trilha: hardware
+ordem: 22
+requer: ["M2.1"]
+tags_chefe: []
+topicos:
+  - id: M2.3.T01
+    nome: "Reguladores lineares e LDO"
+    tipo: comum
+    peso: 1
+  - id: M2.3.T02
+    nome: "Buck"
+    tipo: elite
+    peso: 2
+  - id: M2.3.T03
+    nome: "Boost"
+    tipo: elite
+    peso: 2
+  - id: M2.3.T04
+    nome: "Buck-boost e SEPIC"
+    tipo: comum
+    peso: 1
+  - id: M2.3.T05
+    nome: "Layout de fonte chaveada"
+    tipo: comum
+    peso: 1
+  - id: M2.3.T06
+    nome: "Carregadores de bateria"
+    tipo: comum
+    peso: 1
+  - id: M2.3.T07
+    nome: "Proteções (reversão, TVS, polyfuse, eFuse)"
+    tipo: comum
+    peso: 1
+  - id: M2.3.T08
+    nome: "Térmica e dissipação"
+    tipo: comum
+    peso: 1
+  - id: M2.3.T09
+    nome: "Medir eficiência e ripple"
+    tipo: elite
+    peso: 2

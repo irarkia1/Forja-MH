@@ -1,0 +1,255 @@
+- id: Q-M0.1.T02-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    O que significa a sigla **PCBA**?
+  alternativas:
+    - "Placa de circuito impresso nua, sem componentes"
+    - "Placa de circuito impresso com os componentes já montados e soldados"
+    - "Lista de componentes de uma placa"
+    - "Processo de solda por onda de componentes com terminais"
+  resposta: 1
+  explicacao: |
+    PCBA = *Printed Circuit Board Assembly*: a placa montada, com componentes soldados. A placa nua (laminado com trilhas, sem componentes) é a PCB. A lista de componentes é a BOM.
+  fonte: "Scherz & Monk, Practical Electronics for Inventors, 4ª ed., capítulo prático de construção de circuitos"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.1.T02-002
+  objetivo: O1
+  tipo: unica
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Por que o ESP32 costuma ser chamado de **SoC**, e não apenas de microcontrolador?
+  alternativas:
+    - "Porque não tem memória RAM interna"
+    - "Porque precisa de um sistema operacional completo, como Linux"
+    - "Porque integra, no mesmo chip, processador, memória, periféricos e rádios Wi-Fi e Bluetooth"
+    - "Porque é montado em tecnologia THT"
+  resposta: 2
+  explicacao: |
+    SoC (*System on Chip*) indica que um sistema mais completo está integrado no chip — no ESP32, além de CPU e periféricos, os rádios Wi-Fi e Bluetooth. Ele roda normalmente FreeRTOS, não Linux; precisar de Linux não é o que define um SoC.
+  fonte: "Espressif, ESP32 Series Datasheet, visão geral do produto; documentação ESP-IDF (docs.espressif.com)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.1.T02-003
+  objetivo: O1
+  tipo: unica
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Qual conjunto de recursos caracteriza um **microcontrolador (MCU)**?
+  alternativas:
+    - "CPU, memória de programa, RAM e periféricos como GPIO, ADC e UART num único chip"
+    - "Apenas uma CPU, que depende de memória e periféricos em chips externos"
+    - "Uma placa com vários chips e conectores para expansão"
+    - "Um chip de rádio dedicado a Wi-Fi"
+  resposta: 0
+  explicacao: |
+    O MCU integra processador, memórias e periféricos num só chip, para controlar dispositivos com baixo custo e consumo. Uma CPU que depende de memória e periféricos externos é um microprocessador; uma placa com vários chips é uma placa de desenvolvimento ou computador de placa única.
+  fonte: "Elecia White, Making Embedded Systems, 2ª ed., cap. 1"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.1.T02-004
+  objetivo: O2
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Na montagem **THT**, como o componente é fixado na placa?
+  alternativas:
+    - "Colado sobre ilhas na superfície e soldado no forno de refusão"
+    - "Encaixado num soquete sem solda"
+    - "Impresso diretamente no cobre da placa"
+    - "Com terminais que atravessam furos da placa e são soldados do outro lado"
+  resposta: 3
+  explicacao: |
+    THT (*Through-Hole Technology*) usa terminais que passam por furos metalizados. Componente apoiado sobre ilhas e soldado no forno de refusão é a montagem SMT (superfície).
+  fonte: "Scherz & Monk, Practical Electronics for Inventors, 4ª ed., capítulo prático de construção de circuitos"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.1.T02-005
+  objetivo: O2
+  tipo: multipla
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Quais informações são essenciais numa linha de **BOM** para que o setor de compras consiga comprar o item certo? Marque todas as corretas.
+  alternativas:
+    - "Código do fabricante (MPN)"
+    - "Cor da máscara de solda da placa"
+    - "Quantidade por placa"
+    - "Encapsulamento (ex.: 0603, SOIC-8)"
+  resposta: [0, 2, 3]
+  explicacao: |
+    Uma BOM útil traz, por item, referência, quantidade, valor, encapsulamento e o MPN (código do fabricante). Sem MPN e encapsulamento, "resistor 10 k" pode ser comprado no tamanho errado. A cor da máscara de solda é especificação da PCB (vai na documentação de fabricação da placa), não de uma linha de componente.
+  fonte: "Alan Cohen, Prototype to Product, capítulo sobre BOM e custos"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.1.T02-006
+  objetivo: O2
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: componentes SMT podem ser montados nos dois lados da placa, e a montagem SMT é geralmente feita por máquinas pick-and-place.
+  resposta: true
+  explicacao: |
+    Como não precisam de furos que atravessem a placa, componentes SMT podem ocupar as duas faces, e a montagem em série é automatizada (pick-and-place e forno de refusão). Ainda é possível soldar SMT à mão em protótipos, mas não é o padrão de produção.
+  fonte: "Ray Prasad, Surface Mount Technology: Principles and Practice, capítulos iniciais"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.1.T02-007
+  objetivo: O2
+  tipo: unica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Numa placa quase toda SMT, o projetista escolheu um conector de alimentação **THT**. Qual é o motivo mais provável?
+  alternativas:
+    - "Componentes THT são sempre mais baratos de montar"
+    - "THT dispensa qualquer etapa de solda"
+    - "A fixação por terminais nos furos aguenta melhor o esforço mecânico de plugar e desplugar"
+    - "Conectores não existem em versão SMT"
+  resposta: 2
+  explicacao: |
+    Terminais atravessando a placa resistem melhor a esforço mecânico repetido, por isso conectores, transformadores e peças grandes ainda são THT. THT costuma deixar a montagem mais cara (etapa extra de solda por onda, seletiva ou manual), e existem conectores SMT — só que menos robustos para alguns usos.
+  fonte: "Scherz & Monk, Practical Electronics for Inventors, 4ª ed., capítulo prático de construção de circuitos"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.1.T02-008
+  objetivo: O3
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    O que é **firmware**?
+  alternativas:
+    - "O aplicativo de celular que conversa com o dispositivo"
+    - "O software gravado na memória não volátil do dispositivo, que controla diretamente o hardware"
+    - "O sistema de banco de dados na nuvem"
+    - "A camada de cobre da placa de circuito"
+  resposta: 1
+  explicacao: |
+    Firmware é o programa que roda no próprio dispositivo (geralmente na flash do MCU) e comanda seus periféricos. O aplicativo de celular também é software, mas roda em outro equipamento e fala com o dispositivo de fora.
+  fonte: "Elecia White, Making Embedded Systems, 2ª ed., cap. 1"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.1.T02-009
+  objetivo: O3
+  tipo: unica
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Em **RTOS** (*Real-Time Operating System*), o que "tempo real" quer dizer?
+  alternativas:
+    - "Que o sistema executa tudo instantaneamente"
+    - "Que o relógio do sistema é sincronizado pela internet"
+    - "Que o sistema roda apenas uma tarefa por vez"
+    - "Que o sistema garante tempos de resposta previsíveis, dentro de prazos conhecidos"
+  resposta: 3
+  explicacao: |
+    Tempo real é sobre determinismo: a tarefa certa responde dentro do prazo, sempre. Um sistema pode ser rápido na média e ainda assim não ser de tempo real se às vezes atrasar. O RTOS também não roda só uma tarefa: ele alterna várias por prioridade.
+  fonte: "Mastering the FreeRTOS Real Time Kernel (freertos.org), capítulo introdutório"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.1.T02-010
+  objetivo: O3
+  tipo: unica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Uma empresa tem 20 000 sensores instalados e descobriu um bug no firmware. Qual recurso permite corrigir todos sem visitar cada um?
+  alternativas:
+    - "Atualização OTA (Over-The-Air)"
+    - "Retrabalho da PCBA na fábrica"
+    - "Troca da BOM"
+    - "Reinicialização remota do broker MQTT"
+  resposta: 0
+  explicacao: |
+    OTA envia o novo firmware pela rede de comunicação do próprio dispositivo. Reiniciar o broker não muda o código que roda nos sensores; retrabalho e troca de BOM exigem recolher ou refazer o hardware.
+  fonte: "Documentação ESP-IDF (docs.espressif.com), seção Over The Air Updates (OTA)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.1.T02-011
+  objetivo: O3
+  tipo: vf
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Verdadeiro ou falso: um esquema de OTA bem feito mantém a versão anterior do firmware numa segunda partição, para poder voltar a ela se a nova versão falhar.
+  resposta: true
+  explicacao: |
+    Com duas partições (A/B), o dispositivo grava a nova versão sem apagar a que funciona; se a nova não iniciar corretamente, o bootloader volta para a anterior (*rollback*). Sem isso, uma atualização interrompida ou com defeito pode deixar o aparelho inutilizado em campo. O ESP-IDF implementa esse esquema com partições OTA.
+  fonte: "Documentação ESP-IDF (docs.espressif.com), seção Over The Air Updates (OTA) — partições e rollback"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.1.T02-012
+  objetivo: O4
+  tipo: unica
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    No MQTT, qual é o papel do **broker**?
+  alternativas:
+    - "Medir a grandeza física e publicar o valor"
+    - "Receber as mensagens publicadas e entregá-las aos clientes que assinaram o tópico"
+    - "Converter sinais de rádio LoRa em Wi-Fi"
+    - "Guardar o firmware para atualização OTA"
+  resposta: 1
+  explicacao: |
+    No modelo publicar/assinar, os clientes não se falam diretamente: publicam e assinam tópicos no broker, que faz a distribuição. Converter um rádio em outro é papel de um gateway, não do broker.
+  fonte: "HiveMQ, MQTT Essentials — publish/subscribe e client/broker; OASIS MQTT 3.1.1, introdução"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.1.T02-013
+  objetivo: O4
+  tipo: multipla
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um sensor publica no tópico `estufa/1/umidade`. Quais clientes recebem essa mensagem? Marque todos os corretos.
+  alternativas:
+    - "Um painel que assinou `estufa/1/umidade`"
+    - "Um controlador que assinou `estufa/2/umidade`"
+    - "Um registrador que assinou `estufa/#`"
+    - "Um app que não assinou nenhum tópico, mas está conectado ao mesmo broker"
+  resposta: [0, 2]
+  explicacao: |
+    O broker entrega a mensagem a quem assinou exatamente aquele tópico ou um filtro que o cubra. O curinga `#` (multinível) em `estufa/#` cobre `estufa/1/umidade`. A assinatura de `estufa/2/umidade` é de outro tópico, e estar conectado ao broker sem assinar não faz receber nada.
+  fonte: "HiveMQ, MQTT Essentials — topics and wildcards; OASIS MQTT 3.1.1, seção de filtros de tópico"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.1.T02-014
+  objetivo: O4
+  tipo: unica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Sensores BLE de uma fábrica não têm acesso à internet. Um equipamento no local recebe os dados por BLE e os publica num broker MQTT na nuvem via 4G. Como se chama esse equipamento e qual sua função principal?
+  alternativas:
+    - "Broker: distribui as mensagens entre os sensores"
+    - "Roteador Wi-Fi: dá acesso Wi-Fi aos sensores"
+    - "Gateway: faz a ponte entre a rede local BLE e a internet, traduzindo protocolos"
+    - "RTOS: escalona as tarefas dos sensores"
+  resposta: 2
+  explicacao: |
+    O gateway liga duas redes diferentes (BLE local e internet via 4G) e traduz entre protocolos (BLE → MQTT/TCP). Ele é cliente do broker, não o broker: o broker está na nuvem. Um roteador Wi-Fi não serve, porque os sensores falam BLE, não Wi-Fi.
+  fonte: "Perry Lea, IoT and Edge Computing for Architects, capítulos sobre gateways e edge; HiveMQ, MQTT Essentials"
+  origem: ia
+  revisao: rascunho

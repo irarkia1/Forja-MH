@@ -1,0 +1,45 @@
+id: M2.1
+ato: A2
+nome: "Componentes a fundo"
+horas: 120
+trilha: hardware
+ordem: 20
+requer: ["M0.5", "M1.1"]
+tags_chefe: []
+topicos:
+  - id: M2.1.T01
+    nome: "Resistores (tipos, tolerância, potência, ruído)"
+    tipo: comum
+    peso: 1
+  - id: M2.1.T02
+    nome: "Capacitores (cerâmico, eletrolítico, tântalo, ESR, DC bias)"
+    tipo: comum
+    peso: 1
+  - id: M2.1.T03
+    nome: "Indutores e ferrites"
+    tipo: comum
+    peso: 1
+  - id: M2.1.T04
+    nome: "Diodos, Zener, Schottky, TVS"
+    tipo: comum
+    peso: 1
+  - id: M2.1.T05
+    nome: "BJT"
+    tipo: comum
+    peso: 1
+  - id: M2.1.T06
+    nome: "MOSFET"
+    tipo: comum
+    peso: 1
+  - id: M2.1.T07
+    nome: "Cristais e osciladores"
+    tipo: comum
+    peso: 1
+  - id: M2.1.T08
+    nome: "Encapsulamentos THT e SMD"
+    tipo: comum
+    peso: 1
+  - id: M2.1.T09
+    nome: "Derating e confiabilidade"
+    tipo: comum
+    peso: 1

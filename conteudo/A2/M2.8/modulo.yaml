@@ -1,0 +1,37 @@
+id: M2.8
+ato: A2
+nome: "Fabricação de protótipos"
+horas: 130
+trilha: fabricacao
+ordem: 27
+requer: ["M2.5", "M0.7"]
+tags_chefe: []
+topicos:
+  - id: M2.8.T01
+    nome: "PCB caseira por transferência térmica ou fotossensível"
+    tipo: elite
+    peso: 2
+  - id: M2.8.T02
+    nome: "Fresagem CNC de PCB"
+    tipo: elite
+    peso: 2
+  - id: M2.8.T03
+    nome: "Pedido a fabricante (JLCPCB, PCBWay): opções e custos"
+    tipo: comum
+    peso: 1
+  - id: M2.8.T04
+    nome: "Solda SMD com ferro"
+    tipo: elite
+    peso: 2
+  - id: M2.8.T05
+    nome: "Ar quente e retrabalho"
+    tipo: elite
+    peso: 2
+  - id: M2.8.T06
+    nome: "Estêncil e chapa quente"
+    tipo: elite
+    peso: 2
+  - id: M2.8.T07
+    nome: "Inspeção visual e defeitos"
+    tipo: comum
+    peso: 1

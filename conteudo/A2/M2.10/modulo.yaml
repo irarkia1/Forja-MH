@@ -1,0 +1,37 @@
+id: M2.10
+ato: A2
+nome: "Placas com MCU"
+horas: 130
+trilha: hardware
+ordem: 29
+requer: ["M2.5", "M2.3", "M1.4"]
+tags_chefe: []
+topicos:
+  - id: M2.10.T01
+    nome: "Alimentação de MCU"
+    tipo: comum
+    peso: 1
+  - id: M2.10.T02
+    nome: "Cristal e capacitores de carga"
+    tipo: comum
+    peso: 1
+  - id: M2.10.T03
+    nome: "Reset, boot e pinos de configuração"
+    tipo: comum
+    peso: 1
+  - id: M2.10.T04
+    nome: "Interface de programação e depuração"
+    tipo: comum
+    peso: 1
+  - id: M2.10.T05
+    nome: "USB na placa"
+    tipo: comum
+    peso: 1
+  - id: M2.10.T06
+    nome: "Placa STM32 mínima do zero"
+    tipo: elite
+    peso: 2
+  - id: M2.10.T07
+    nome: "Bring-up: primeiro power-on"
+    tipo: elite
+    peso: 2

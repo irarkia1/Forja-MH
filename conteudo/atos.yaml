@@ -1,0 +1,48 @@
+- id: A0
+  nome: "Fundamentos"
+  regiao: "Vila da Forja"
+  lema: "Saber falar a língua, fazer as contas e não queimar nada."
+  horas: 900
+  ordem: 0
+- id: A1
+  nome: "Microcontroladores e firmware IoT"
+  regiao: "Floresta dos Microcontroladores"
+  lema: "Do LED piscando ao dispositivo conectado na nuvem."
+  horas: 1800
+  ordem: 1
+- id: A2
+  nome: "Hardware e projeto de PCB"
+  regiao: "Cordilheira das Placas"
+  lema: "Sair dos módulos prontos e desenhar a própria placa."
+  horas: 1700
+  ordem: 2
+- id: A3
+  nome: "SMT e a placa completa \"meu ESP32\""
+  regiao: "Cidade SMT"
+  lema: "Projetar, montar e validar uma placa de SoC nu, como a de um fabricante."
+  horas: 1600
+  ordem: 3
+- id: A4
+  nome: "Produto IoT profissional"
+  regiao: "Porto dos Produtos"
+  lema: "Da placa que funciona ao produto que dá para vender."
+  horas: 1000
+  ordem: 4
+- id: A5
+  nome: "Manufatura eletrônica"
+  regiao: "Fábrica Fumegante"
+  lema: "Como uma fábrica transforma o projeto em mil placas iguais."
+  horas: 600
+  ordem: 5
+- id: A6
+  nome: "Semicondutores e chips"
+  regiao: "Torres de Silício"
+  lema: "Como nascem os processadores — e fazer o seu."
+  horas: 1400
+  ordem: 6
+- id: A7
+  nome: "Sensores do zero absoluto"
+  regiao: "Abismo dos Sensores"
+  lema: "Não comprar o sensor: fabricar o elemento, condicionar, calibrar, entregar."
+  horas: 1000
+  ordem: 7

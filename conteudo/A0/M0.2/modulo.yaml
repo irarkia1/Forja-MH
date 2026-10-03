@@ -1,0 +1,57 @@
+id: M0.2
+ato: A0
+nome: "Matemática para engenharia"
+horas: 200
+trilha: base
+ordem: 2
+requer: ["M0.1"]
+tags_chefe: []
+topicos:
+  - id: M0.2.T01
+    nome: "Álgebra e manipulação de equações"
+    tipo: comum
+    peso: 1
+  - id: M0.2.T02
+    nome: "Funções, gráficos, exponencial e logaritmo"
+    tipo: comum
+    peso: 1
+  - id: M0.2.T03
+    nome: "Trigonometria e senoides"
+    tipo: comum
+    peso: 1
+  - id: M0.2.T04
+    nome: "Números complexos e forma polar"
+    tipo: comum
+    peso: 1
+  - id: M0.2.T05
+    nome: "Limites e derivadas"
+    tipo: comum
+    peso: 1
+  - id: M0.2.T06
+    nome: "Integrais e aplicações"
+    tipo: comum
+    peso: 1
+  - id: M0.2.T07
+    nome: "Equações diferenciais ordinárias de 1ª e 2ª ordem"
+    tipo: comum
+    peso: 1
+  - id: M0.2.T08
+    nome: "Álgebra linear: vetores, matrizes, sistemas"
+    tipo: comum
+    peso: 1
+  - id: M0.2.T09
+    nome: "Probabilidade e estatística descritiva"
+    tipo: comum
+    peso: 1
+  - id: M0.2.T10
+    nome: "Erro, incerteza e algarismos significativos"
+    tipo: comum
+    peso: 1
+  - id: M0.2.T11
+    nome: "Sistemas de numeração (binário, hexadecimal, complemento de 2)"
+    tipo: comum
+    peso: 1
+  - id: M0.2.T12
+    nome: "Lógica booleana e álgebra de Boole"
+    tipo: comum
+    peso: 1

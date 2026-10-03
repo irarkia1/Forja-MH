@@ -1,0 +1,45 @@
+id: M0.3
+ato: A0
+nome: "Física para eletrônica"
+horas: 140
+trilha: base
+ordem: 3
+requer: ["M0.2"]
+tags_chefe: []
+topicos:
+  - id: M0.3.T01
+    nome: "Carga, campo elétrico e potencial"
+    tipo: comum
+    peso: 1
+  - id: M0.3.T02
+    nome: "Corrente, resistência e resistividade"
+    tipo: comum
+    peso: 1
+  - id: M0.3.T03
+    nome: "Energia, potência e eficiência"
+    tipo: comum
+    peso: 1
+  - id: M0.3.T04
+    nome: "Capacitância e dielétricos"
+    tipo: comum
+    peso: 1
+  - id: M0.3.T05
+    nome: "Magnetismo, indução e indutância"
+    tipo: comum
+    peso: 1
+  - id: M0.3.T06
+    nome: "Ondas e espectro eletromagnético"
+    tipo: comum
+    peso: 1
+  - id: M0.3.T07
+    nome: "Calor, temperatura e transferência térmica"
+    tipo: comum
+    peso: 1
+  - id: M0.3.T08
+    nome: "Condutores, isolantes e semicondutores (introdução)"
+    tipo: comum
+    peso: 1
+  - id: M0.3.T09
+    nome: "Óptica básica (luz, LED, fotodetecção)"
+    tipo: comum
+    peso: 1

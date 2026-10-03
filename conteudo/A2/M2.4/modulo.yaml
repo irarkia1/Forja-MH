@@ -1,0 +1,37 @@
+id: M2.4
+ato: A2
+nome: "Projeto esquemático"
+horas: 120
+trilha: hardware
+ordem: 23
+requer: ["M2.1"]
+tags_chefe: []
+topicos:
+  - id: M2.4.T01
+    nome: "KiCad: projeto, bibliotecas, símbolos"
+    tipo: comum
+    peso: 1
+  - id: M2.4.T02
+    nome: "Hierarquia e reaproveitamento"
+    tipo: comum
+    peso: 1
+  - id: M2.4.T03
+    nome: "ERC e boas práticas de esquemático"
+    tipo: comum
+    peso: 1
+  - id: M2.4.T04
+    nome: "Escolha de componentes e disponibilidade"
+    tipo: comum
+    peso: 1
+  - id: M2.4.T05
+    nome: "Ciclo de vida e obsolescência"
+    tipo: comum
+    peso: 1
+  - id: M2.4.T06
+    nome: "Notas de aplicação e projetos de referência"
+    tipo: comum
+    peso: 1
+  - id: M2.4.T07
+    nome: "BOM gerenciável"
+    tipo: elite
+    peso: 2

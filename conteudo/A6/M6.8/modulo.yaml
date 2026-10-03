@@ -1,0 +1,29 @@
+id: M6.8
+ato: A6
+nome: "Projeto integrador 6: \"meu chip\""
+horas: 150
+trilha: integrador
+ordem: 61
+requer: ["M6.6", "M6.3"]
+tags_chefe: []
+topicos:
+  - id: M6.8.T01
+    nome: "Especificação do chip"
+    tipo: elite
+    peso: 2
+  - id: M6.8.T02
+    nome: "RTL e verificação"
+    tipo: elite
+    peso: 2
+  - id: M6.8.T03
+    nome: "Hardening e submissão ao shuttle"
+    tipo: elite
+    peso: 2
+  - id: M6.8.T04
+    nome: "Placa de teste para o chip"
+    tipo: elite
+    peso: 2
+  - id: M6.8.T05
+    nome: "Testar o chip recebido"
+    tipo: elite
+    peso: 2

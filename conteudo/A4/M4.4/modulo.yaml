@@ -1,0 +1,33 @@
+id: M4.4
+ato: A4
+nome: "Backend e gestão de frota"
+horas: 150
+trilha: firmware
+ordem: 44
+requer: ["M1.10"]
+tags_chefe: []
+topicos:
+  - id: M4.4.T01
+    nome: "Ingestão em escala"
+    tipo: comum
+    peso: 1
+  - id: M4.4.T02
+    nome: "Registro e identidade de dispositivos"
+    tipo: comum
+    peso: 1
+  - id: M4.4.T03
+    nome: "OTA em frota com estágios"
+    tipo: elite
+    peso: 2
+  - id: M4.4.T04
+    nome: "Monitoramento e alertas"
+    tipo: comum
+    peso: 1
+  - id: M4.4.T05
+    nome: "Armazenamento e retenção"
+    tipo: comum
+    peso: 1
+  - id: M4.4.T06
+    nome: "Custo por dispositivo na nuvem"
+    tipo: comum
+    peso: 1

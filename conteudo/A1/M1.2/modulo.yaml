@@ -1,0 +1,45 @@
+id: M1.2
+ato: A1
+nome: "Primeiro MCU (AVR/Arduino)"
+horas: 120
+trilha: firmware
+ordem: 9
+requer: ["M1.1", "M0.6"]
+tags_chefe: []
+topicos:
+  - id: M1.2.T01
+    nome: "Arquitetura do ATmega328"
+    tipo: comum
+    peso: 1
+  - id: M1.2.T02
+    nome: "GPIO e debounce"
+    tipo: elite
+    peso: 2
+  - id: M1.2.T03
+    nome: "PWM"
+    tipo: elite
+    peso: 2
+  - id: M1.2.T04
+    nome: "ADC"
+    tipo: elite
+    peso: 2
+  - id: M1.2.T05
+    nome: "Interrupções"
+    tipo: comum
+    peso: 1
+  - id: M1.2.T06
+    nome: "Timers"
+    tipo: comum
+    peso: 1
+  - id: M1.2.T07
+    nome: "UART serial"
+    tipo: comum
+    peso: 1
+  - id: M1.2.T08
+    nome: "Biblioteca × registrador"
+    tipo: comum
+    peso: 1
+  - id: M1.2.T09
+    nome: "ATmega328 sem Arduino (bare metal, avrdude)"
+    tipo: elite
+    peso: 2

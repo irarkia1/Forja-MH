@@ -1,0 +1,255 @@
+- id: Q-M0.1.T06-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Quem normalmente faz o esquema elétrico e o layout da PCB de um produto?
+  alternativas:
+    - "Engenharia de firmware"
+    - "Engenharia de hardware"
+    - "Engenharia regulatória"
+    - "Engenharia de manufatura"
+  resposta: 1
+  explicacao: |
+    Escolher componentes, desenhar o esquema e fazer o layout da placa é o núcleo do trabalho de hardware. A manufatura revisa o projeto para facilitar a produção (DFM), mas não é quem o desenha.
+  fonte: "Alan Cohen, Prototype to Product, capítulos sobre o processo de desenvolvimento e equipe"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.1.T06-002
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Escrever drivers de periféricos, o bootloader e a lógica de atualização OTA é atribuição de qual papel?
+  alternativas:
+    - "Teste"
+    - "RF"
+    - "Hardware"
+    - "Firmware"
+  resposta: 3
+  explicacao: |
+    Drivers, bootloader e OTA são software embarcado: firmware. O time de teste usa o firmware e escreve testes, mas não é responsável por esse código.
+  fonte: "Elecia White, Making Embedded Systems, 2ª ed., cap. 1"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.1.T06-003
+  objetivo: O1
+  tipo: unica
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Qual conjunto de tarefas é típico do papel **regulatório (compliance)**?
+  alternativas:
+    - "Identificar normas aplicáveis, organizar ensaios em laboratório acreditado e reunir a documentação para homologação"
+    - "Definir a espessura do estêncil e o perfil do forno de refusão"
+    - "Projetar a antena e ajustar o casamento de impedância"
+    - "Criar os jigs de teste da linha de produção"
+  resposta: 0
+  explicacao: |
+    O regulatório garante que o produto pode ser vendido: mapeia requisitos (Anatel, FCC, CE, segurança, EMC), coordena ensaios e documentação. Projetar a antena é do RF — mesmo que o resultado da antena afete os ensaios, quem a projeta é o RF.
+  fonte: "Alan Cohen, Prototype to Product, capítulo sobre certificação; Anatel (gov.br/anatel), página de certificação e homologação"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.1.T06-004
+  objetivo: O1
+  tipo: multipla
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Quais tarefas são típicas de um engenheiro de **RF**? Marque todas as corretas.
+  alternativas:
+    - "Ajustar o casamento de impedância da antena"
+    - "Calcular o link budget (orçamento de enlace) para estimar o alcance"
+    - "Definir o perfil de temperatura do forno de refusão"
+    - "Escrever as consultas ao banco de dados da nuvem"
+  resposta: [0, 1]
+  explicacao: |
+    Antena, casamento de impedância e link budget são o coração do trabalho de RF. O perfil do forno é engenharia de processo (manufatura); consultas ao banco de dados são trabalho de software de nuvem.
+  fonte: "Alan Cohen, Prototype to Product, capítulos sobre rádio e certificação"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.1.T06-005
+  objetivo: O1
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: em empresas pequenas é comum uma mesma pessoa acumular os papéis de hardware e RF.
+  resposta: true
+  explicacao: |
+    Os papéis descrevem conjuntos de responsabilidades, não cargos fixos. Em equipes pequenas o engenheiro de hardware muitas vezes cuida também da antena e do rádio (frequentemente usando módulos já certificados); em empresas grandes cada papel pode ser um time inteiro.
+  fonte: "Alan Cohen, Prototype to Product, capítulos sobre equipe de desenvolvimento"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.1.T06-006
+  objetivo: O2
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Depois que o produto ganhou uma caixa nova, de metal, o alcance do rádio caiu pela metade. Quem deve liderar a investigação?
+  alternativas:
+    - "Firmware"
+    - "Manufatura"
+    - "RF"
+    - "Regulatório"
+  resposta: 2
+  explicacao: |
+    Caixa nova perto da antena muda o desempenho do rádio (casamento, diagrama de radiação, blindagem): é um problema de RF. O firmware pode ajustar a potência de transmissão, mas não resolve a causa física. O regulatório talvez precise reensaiar depois, mas não lidera o diagnóstico.
+  fonte: "Alan Cohen, Prototype to Product, capítulos sobre rádio e caixa (enclosure)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.1.T06-007
+  objetivo: O2
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    A AOI aponta pontes de solda em 8% das placas, e a causa é excesso de pasta aplicada pelo estêncil. Quem lidera a correção?
+  alternativas:
+    - "Engenharia de manufatura (processo)"
+    - "Engenharia de firmware"
+    - "Engenharia regulatória"
+    - "Engenharia de RF"
+  resposta: 0
+  explicacao: |
+    Estêncil, volume de pasta e parâmetros de impressão são processo de montagem: engenharia de manufatura, junto da EMS. O hardware pode ser chamado se o footprint estiver errado, mas aqui a causa já identificada é de processo.
+  fonte: "Ray Prasad, Surface Mount Technology: Principles and Practice, capítulos sobre impressão de pasta e defeitos"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.1.T06-008
+  objetivo: O2
+  tipo: unica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Cada placa leva 4 minutos no teste de fim de linha, mas a produção precisa testar uma por minuto. Qual papel deve liderar a solução?
+  alternativas:
+    - "Hardware, trocando o microcontrolador"
+    - "Regulatório, revisando as normas"
+    - "RF, reduzindo a potência do rádio"
+    - "Teste, otimizando o jig e a sequência de teste automatizado"
+  resposta: 3
+  explicacao: |
+    Tempo de teste de produção é responsabilidade da engenharia de teste: paralelizar, automatizar, rever a sequência e o jig. O hardware pode ajudar (pontos de teste mais acessíveis), mas trocar o MCU não ataca o problema, que está no processo de teste.
+  fonte: "Alan Cohen, Prototype to Product, capítulo sobre teste de produção"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.1.T06-009
+  objetivo: O2
+  tipo: unica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Um dispositivo em campo trava depois de cerca de 3 dias ligado. A memória RAM livre, registrada no log, cai um pouco a cada hora até o travamento. Quem deve liderar a investigação?
+  alternativas:
+    - "Hardware, porque travamento é sempre problema de alimentação"
+    - "Firmware, porque o padrão indica vazamento de memória no software"
+    - "Manufatura, porque pode ser defeito de solda"
+    - "Regulatório, porque o produto pode estar fora da norma"
+  resposta: 1
+  explicacao: |
+    RAM livre caindo continuamente até travar é a assinatura clássica de vazamento de memória (memory leak) no firmware. Hardware e solda causam travamentos também, mas não explicam a queda gradual e regular da memória livre.
+  fonte: "Elecia White, Making Embedded Systems, 2ª ed., capítulos sobre depuração e memória"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.1.T06-010
+  objetivo: O2
+  tipo: unica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Um produto com Wi-Fi reinicia aleatoriamente. Com o osciloscópio, você vê que a linha de 3,3 V cai para 2,6 V exatamente quando o rádio transmite. Qual papel deve liderar a correção?
+  alternativas:
+    - "RF, porque o problema acontece durante a transmissão"
+    - "Firmware, aumentando o tempo entre transmissões"
+    - "Hardware, revisando a fonte de alimentação (regulador, capacitores, trilhas)"
+    - "Teste, adicionando um teste de reset na linha"
+  resposta: 2
+  explicacao: |
+    A medição mostra a causa: a alimentação não aguenta o pico de corrente da transmissão e a tensão cai abaixo do mínimo, provocando o reset (brownout). Isso é projeto de alimentação — hardware. O RF é a tentação porque o sintoma aparece na transmissão, mas o rádio só está consumindo o que precisa; e o firmware apenas contornaria o problema.
+  fonte: "Espressif, Hardware Design Guidelines do ESP32 (seção de alimentação); Elecia White, Making Embedded Systems, 2ª ed., capítulo sobre depuração"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.1.T06-011
+  objetivo: O3
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Em que momento o papel regulatório deve começar a participar do desenvolvimento de um produto com rádio?
+  alternativas:
+    - "Desde o início, na definição de requisitos e escolha de rádio e antena"
+    - "Só depois que o produto já está à venda"
+    - "Só quando aparecer um problema nos ensaios"
+    - "Apenas na hora de imprimir a etiqueta da caixa"
+  resposta: 0
+  explicacao: |
+    Requisitos de certificação influenciam a escolha do rádio, da antena, do layout e da caixa. Deixar o regulatório para o fim é a causa clássica de reprojetos e atrasos de meses, quando um ensaio reprova o produto já pronto.
+  fonte: "Alan Cohen, Prototype to Product, capítulo sobre certificação"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.1.T06-012
+  objetivo: O3
+  tipo: unica
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Quando os pontos de teste e o acesso aos pinos de gravação do firmware devem ser definidos?
+  alternativas:
+    - "Depois do primeiro lote de produção, conforme as falhas aparecerem"
+    - "Só quando o regulatório pedir"
+    - "Durante o projeto da placa, com a participação de teste e manufatura"
+    - "Na hora de embalar o produto"
+  resposta: 2
+  explicacao: |
+    Pontos de teste precisam estar no layout; se a placa for fabricada sem eles, testar e gravar em produção fica caro ou impossível sem reprojeto. Por isso teste e manufatura revisam o projeto cedo (DFT/DFM), e não só depois do primeiro lote.
+  fonte: "Alan Cohen, Prototype to Product, capítulos sobre projeto para teste e manufatura"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.1.T06-013
+  objetivo: O3
+  tipo: vf
+  dificuldade: 3
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: depois que o produto entra em produção, o trabalho de firmware termina.
+  resposta: false
+  explicacao: |
+    Com o produto em campo, o firmware continua: correções de bugs e de segurança, novas funções e entrega por OTA, além do apoio na análise de falhas reportadas. Em IoT, a fase de campo costuma ser a mais longa do ciclo de vida.
+  fonte: "Alan Cohen, Prototype to Product, capítulos finais (suporte e manutenção); documentação ESP-IDF, seção OTA"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.1.T06-014
+  objetivo: O3
+  tipo: multipla
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Quais atividades acontecem tipicamente na fase em que o produto **já está em campo**? Marque todas as corretas.
+  alternativas:
+    - "Correções de firmware entregues por OTA"
+    - "Análise de falhas de unidades devolvidas"
+    - "Escolha inicial do microcontrolador"
+    - "Desenho do primeiro esquema elétrico"
+  resposta: [0, 1]
+  explicacao: |
+    Em campo, firmware entrega correções por OTA e teste/manufatura analisam unidades devolvidas para achar a causa e corrigir o processo ou o projeto. Escolher o MCU e desenhar o primeiro esquema são atividades do começo do projeto.
+  fonte: "Alan Cohen, Prototype to Product, capítulos finais (suporte e manutenção)"
+  origem: ia
+  revisao: rascunho

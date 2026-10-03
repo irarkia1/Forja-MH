@@ -1,0 +1,53 @@
+id: M2.2
+ato: A2
+nome: "Eletrônica analógica"
+horas: 220
+trilha: hardware
+ordem: 21
+requer: ["M2.1"]
+tags_chefe: []
+topicos:
+  - id: M2.2.T01
+    nome: "Amp-op ideal × real"
+    tipo: comum
+    peso: 1
+  - id: M2.2.T02
+    nome: "Topologias (inversor, não inversor, somador, integrador)"
+    tipo: comum
+    peso: 1
+  - id: M2.2.T03
+    nome: "Filtros ativos"
+    tipo: comum
+    peso: 1
+  - id: M2.2.T04
+    nome: "Referências de tensão"
+    tipo: comum
+    peso: 1
+  - id: M2.2.T05
+    nome: "Amostragem e Nyquist"
+    tipo: comum
+    peso: 1
+  - id: M2.2.T06
+    nome: "ADC: arquiteturas, ENOB, INL/DNL"
+    tipo: comum
+    peso: 1
+  - id: M2.2.T07
+    nome: "DAC"
+    tipo: comum
+    peso: 1
+  - id: M2.2.T08
+    nome: "Ruído (térmico, 1/f, quantização)"
+    tipo: comum
+    peso: 1
+  - id: M2.2.T09
+    nome: "Amplificador de instrumentação"
+    tipo: comum
+    peso: 1
+  - id: M2.2.T10
+    nome: "Ponte de Wheatstone"
+    tipo: comum
+    peso: 1
+  - id: M2.2.T11
+    nome: "Cadeia de aquisição completa"
+    tipo: elite
+    peso: 2

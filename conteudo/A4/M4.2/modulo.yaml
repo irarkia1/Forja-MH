@@ -1,0 +1,37 @@
+id: M4.2
+ato: A4
+nome: "Firmware profissional"
+horas: 160
+trilha: firmware
+ordem: 42
+requer: ["M1.7"]
+tags_chefe: []
+topicos:
+  - id: M4.2.T01
+    nome: "Arquitetura em camadas e HAL própria"
+    tipo: comum
+    peso: 1
+  - id: M4.2.T02
+    nome: "Testes unitários em host"
+    tipo: elite
+    peso: 2
+  - id: M4.2.T03
+    nome: "Hardware-in-the-loop"
+    tipo: elite
+    peso: 2
+  - id: M4.2.T04
+    nome: "CI para firmware"
+    tipo: elite
+    peso: 2
+  - id: M4.2.T05
+    nome: "Logs, telemetria e crash dump"
+    tipo: comum
+    peso: 1
+  - id: M4.2.T06
+    nome: "Watchdog e recuperação"
+    tipo: comum
+    peso: 1
+  - id: M4.2.T07
+    nome: "Gestão de configuração e versões"
+    tipo: comum
+    peso: 1

@@ -1,0 +1,108 @@
+id: M0.1
+ato: A0
+nome: "Termos e mapa da área"
+missao: "Decifre as placas da Vila da Forja: aprenda a língua dos engenheiros antes de pegar no ferro de solda."
+horas: 40
+trilha: base
+ordem: 1
+requer: []
+tags_chefe: []
+# depois_de: tópicos do mesmo módulo que precisam estar derrotados antes.
+# Sem depois_de = depende do tópico anterior. Lista vazia = livre desde o início.
+topicos:
+  - id: M0.1.T01
+    nome: "O que é IoT: camadas (dispositivo, conectividade, borda, nuvem, aplicação)"
+    tipo: comum
+    peso: 1
+    depois_de: []
+    objetivos:
+      - id: O1
+        texto: "Nomear as cinco camadas de uma solução IoT (dispositivo, conectividade, borda, nuvem, aplicação) e o papel de cada uma"
+      - id: O2
+        texto: "Identificar em qual camada fica cada componente de um sistema IoT real (sensor, gateway, broker, painel)"
+      - id: O3
+        texto: "Distinguir processamento na borda de processamento na nuvem e indicar quando cada um compensa"
+      - id: O4
+        texto: "Explicar o caminho de um dado desde o sensor até a tela do usuário"
+  - id: M0.1.T02
+    nome: "Glossário essencial (MCU, SoC, PCB, PCBA, SMT, THT, BOM, firmware, RTOS, OTA, gateway, MQTT)"
+    tipo: comum
+    peso: 1
+    depois_de: [M0.1.T01]
+    objetivos:
+      - id: O1
+        texto: "Distinguir MCU de SoC e PCB de PCBA"
+      - id: O2
+        texto: "Distinguir montagem SMT de THT e explicar o que é e para que serve uma BOM"
+      - id: O3
+        texto: "Explicar o que são firmware, RTOS e atualização OTA"
+      - id: O4
+        texto: "Explicar o papel do gateway e o modelo publicar/assinar do MQTT (cliente, broker, tópico)"
+  - id: M0.1.T03
+    nome: "Unidades SI, prefixos, notação de engenharia"
+    tipo: comum
+    peso: 1
+    depois_de: [M0.1.T01]
+    objetivos:
+      - id: O1
+        texto: "Nomear as grandezas e unidades SI usadas em eletrônica (V, A, Ω, W, F, Hz, s) e escrever seus símbolos corretamente"
+      - id: O2
+        texto: "Converter valores entre os prefixos SI p, n, µ, m, k, M e G"
+      - id: O3
+        texto: "Escrever valores em notação de engenharia (expoente múltiplo de 3)"
+      - id: O4
+        texto: "Calcular potência, energia e autonomia de bateria com unidades e prefixos corretos (P = V·I, E = P·t, mAh)"
+  - id: M0.1.T04
+    nome: "Cadeia de valor da eletrônica: do wafer ao produto na prateleira"
+    tipo: comum
+    peso: 1
+    depois_de: [M0.1.T02]
+    objetivos:
+      - id: O1
+        texto: "Montar a sequência da cadeia de valor da eletrônica, do silício ao produto na prateleira"
+      - id: O2
+        texto: "Distinguir fabricação do wafer (front-end) de encapsulamento e teste (back-end)"
+      - id: O3
+        texto: "Identificar os papéis de fabless, IDM, foundry, OSAT, distribuidor e EMS"
+      - id: O4
+        texto: "Explicar as etapas de montagem de uma PCBA e o que ainda falta entre a placa pronta e a venda (teste, certificação, logística)"
+  - id: M0.1.T05
+    nome: "Como ler um datasheet (estrutura, valores absolutos × típicos)"
+    tipo: comum
+    peso: 1
+    depois_de: [M0.1.T03]
+    objetivos:
+      - id: O1
+        texto: "Identificar as seções típicas de um datasheet e onde encontrar cada informação"
+      - id: O2
+        texto: "Distinguir valores máximos absolutos de condições recomendadas de operação"
+      - id: O3
+        texto: "Interpretar as colunas mín/típ/máx e as condições de teste de uma característica elétrica"
+      - id: O4
+        texto: "Calcular uma dissipação de potência simples e verificar se ela respeita o limite do datasheet"
+  - id: M0.1.T06
+    nome: "Profissões e papéis (firmware, hardware, RF, teste, manufatura, regulatório)"
+    tipo: comum
+    peso: 1
+    depois_de: [M0.1.T02]
+    objetivos:
+      - id: O1
+        texto: "Distinguir as atribuições dos papéis de firmware, hardware, RF, teste, manufatura e regulatório"
+      - id: O2
+        texto: "Identificar qual papel resolve um problema concreto de um produto IoT"
+      - id: O3
+        texto: "Explicar como os papéis se encadeiam no ciclo de vida de um produto (projeto, certificação, produção, campo)"
+  - id: M0.1.T07
+    nome: "Montar o caderno de laboratório e o primeiro kit de bancada"
+    tipo: elite
+    peso: 2
+    depois_de: [M0.1.T05]
+    objetivos:
+      - id: O1
+        texto: "Montar um caderno de laboratório com índice, páginas numeradas, entradas datadas e registro de medições"
+      - id: O2
+        texto: "Montar um kit de bancada básico e explicar a função de cada item"
+      - id: O3
+        texto: "Escolher a função, a escala e a ligação do multímetro para medir tensão, corrente e resistência"
+      - id: O4
+        texto: "Aplicar regras básicas de segurança elétrica e de proteção contra ESD na bancada"

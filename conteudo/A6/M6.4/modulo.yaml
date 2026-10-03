@@ -1,0 +1,41 @@
+id: M6.4
+ato: A6
+nome: "Lógica digital avançada e HDL"
+horas: 200
+trilha: silicio
+ordem: 57
+requer: ["M1.1"]
+tags_chefe: []
+topicos:
+  - id: M6.4.T01
+    nome: "Verilog/SystemVerilog"
+    tipo: comum
+    peso: 1
+  - id: M6.4.T02
+    nome: "Simulação e testbench"
+    tipo: comum
+    peso: 1
+  - id: M6.4.T03
+    nome: "FPGA: arquitetura"
+    tipo: comum
+    peso: 1
+  - id: M6.4.T04
+    nome: "Primeiro projeto em FPGA"
+    tipo: elite
+    peso: 2
+  - id: M6.4.T05
+    nome: "Restrições de temporização"
+    tipo: comum
+    peso: 1
+  - id: M6.4.T06
+    nome: "Síntese"
+    tipo: comum
+    peso: 1
+  - id: M6.4.T07
+    nome: "Verificação (assertivas, cobertura)"
+    tipo: comum
+    peso: 1
+  - id: M6.4.T08
+    nome: "Periférico próprio (UART, SPI) em FPGA"
+    tipo: elite
+    peso: 2

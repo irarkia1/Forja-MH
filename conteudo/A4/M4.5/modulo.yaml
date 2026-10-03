@@ -1,0 +1,37 @@
+id: M4.5
+ato: A4
+nome: "Certificação e regulatório"
+horas: 130
+trilha: produto
+ordem: 45
+requer: ["M2.7", "M3.4"]
+tags_chefe: []
+topicos:
+  - id: M4.5.T01
+    nome: "Homologação ANATEL de produtos de radiocomunicação"
+    tipo: comum
+    peso: 1
+  - id: M4.5.T02
+    nome: "FCC"
+    tipo: comum
+    peso: 1
+  - id: M4.5.T03
+    nome: "CE e RED"
+    tipo: comum
+    peso: 1
+  - id: M4.5.T04
+    nome: "RoHS e REACH"
+    tipo: comum
+    peso: 1
+  - id: M4.5.T05
+    nome: "Segurança elétrica (IEC 62368-1)"
+    tipo: comum
+    peso: 1
+  - id: M4.5.T06
+    nome: "Ensaios, laboratórios e dossiê técnico"
+    tipo: comum
+    peso: 1
+  - id: M4.5.T07
+    nome: "Estratégia: módulo certificado × projeto próprio"
+    tipo: comum
+    peso: 1

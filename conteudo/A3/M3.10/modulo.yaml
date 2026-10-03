@@ -1,0 +1,37 @@
+id: M3.10
+ato: A3
+nome: "Projeto integrador 3: \"meu ESP32\""
+horas: 250
+trilha: integrador
+ordem: 40
+requer: ["M3.5", "M3.6", "M3.7", "M3.8", "M3.9"]
+tags_chefe: []
+topicos:
+  - id: M3.10.T01
+    nome: "Requisitos e arquitetura da placa"
+    tipo: elite
+    peso: 2
+  - id: M3.10.T02
+    nome: "Esquemático com SoC nu"
+    tipo: elite
+    peso: 2
+  - id: M3.10.T03
+    nome: "Layout de 4 camadas com RF"
+    tipo: elite
+    peso: 2
+  - id: M3.10.T04
+    nome: "Fabricação e montagem SMT própria"
+    tipo: elite
+    peso: 2
+  - id: M3.10.T05
+    nome: "Bring-up e firmware"
+    tipo: elite
+    peso: 2
+  - id: M3.10.T06
+    nome: "Medição de RF e consumo"
+    tipo: elite
+    peso: 2
+  - id: M3.10.T07
+    nome: "Documentação de produção (BOM, montagem, teste)"
+    tipo: elite
+    peso: 2

@@ -1,0 +1,45 @@
+id: M6.5
+ato: A6
+nome: "Arquitetura de processadores"
+horas: 200
+trilha: silicio
+ordem: 58
+requer: ["M6.4", "M1.3"]
+tags_chefe: []
+topicos:
+  - id: M6.5.T01
+    nome: "Pipeline e hazards"
+    tipo: comum
+    peso: 1
+  - id: M6.5.T02
+    nome: "Caches e hierarquia de memória"
+    tipo: comum
+    peso: 1
+  - id: M6.5.T03
+    nome: "Previsão de desvio"
+    tipo: comum
+    peso: 1
+  - id: M6.5.T04
+    nome: "Execução fora de ordem e superescalar"
+    tipo: comum
+    peso: 1
+  - id: M6.5.T05
+    nome: "Multicore e coerência"
+    tipo: comum
+    peso: 1
+  - id: M6.5.T06
+    nome: "GPU e modelo SIMT"
+    tipo: comum
+    peso: 1
+  - id: M6.5.T07
+    nome: "Aceleradores de IA"
+    tipo: comum
+    peso: 1
+  - id: M6.5.T08
+    nome: "Como Intel, AMD, NVIDIA e ARM diferem"
+    tipo: comum
+    peso: 1
+  - id: M6.5.T09
+    nome: "CPU RISC-V própria em FPGA"
+    tipo: elite
+    peso: 2

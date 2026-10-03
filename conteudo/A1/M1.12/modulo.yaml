@@ -1,0 +1,33 @@
+id: M1.12
+ato: A1
+nome: "Projeto integrador IoT 1"
+horas: 150
+trilha: integrador
+ordem: 19
+requer: ["M1.7", "M1.8", "M1.10", "M1.11"]
+tags_chefe: []
+topicos:
+  - id: M1.12.T01
+    nome: "Requisitos e arquitetura"
+    tipo: elite
+    peso: 2
+  - id: M1.12.T02
+    nome: "Sensor + MCU + RTOS"
+    tipo: elite
+    peso: 2
+  - id: M1.12.T03
+    nome: "Rádio e nuvem"
+    tipo: elite
+    peso: 2
+  - id: M1.12.T04
+    nome: "Dashboard e alertas"
+    tipo: elite
+    peso: 2
+  - id: M1.12.T05
+    nome: "Bateria e autonomia medida"
+    tipo: elite
+    peso: 2
+  - id: M1.12.T06
+    nome: "Documentação e vídeo de demonstração"
+    tipo: elite
+    peso: 2

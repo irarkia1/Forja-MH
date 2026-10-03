@@ -1,0 +1,45 @@
+id: M1.3
+ato: A1
+nome: "Arquitetura de computadores e MCUs"
+horas: 130
+trilha: firmware
+ordem: 10
+requer: ["M1.1"]
+tags_chefe: []
+topicos:
+  - id: M1.3.T01
+    nome: "CPU, ALU, registradores"
+    tipo: comum
+    peso: 1
+  - id: M1.3.T02
+    nome: "ISA, RISC × CISC"
+    tipo: comum
+    peso: 1
+  - id: M1.3.T03
+    nome: "Pipeline básico"
+    tipo: comum
+    peso: 1
+  - id: M1.3.T04
+    nome: "Memórias: Flash, SRAM, EEPROM, registradores de periférico"
+    tipo: comum
+    peso: 1
+  - id: M1.3.T05
+    nome: "Barramentos e mapa de memória"
+    tipo: comum
+    peso: 1
+  - id: M1.3.T06
+    nome: "ARM Cortex-M (modos, exceções)"
+    tipo: comum
+    peso: 1
+  - id: M1.3.T07
+    nome: "RISC-V (introdução)"
+    tipo: comum
+    peso: 1
+  - id: M1.3.T08
+    nome: "Assembly básico"
+    tipo: comum
+    peso: 1
+  - id: M1.3.T09
+    nome: "Startup, vetor de interrupções e linker script"
+    tipo: comum
+    peso: 1

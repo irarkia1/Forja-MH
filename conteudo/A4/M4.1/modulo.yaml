@@ -1,0 +1,41 @@
+id: M4.1
+ato: A4
+nome: "Segurança IoT"
+horas: 180
+trilha: firmware
+ordem: 41
+requer: ["M1.10"]
+tags_chefe: []
+topicos:
+  - id: M4.1.T01
+    nome: "Criptografia aplicada (simétrica, assimétrica, hash, MAC)"
+    tipo: comum
+    peso: 1
+  - id: M4.1.T02
+    nome: "TLS e mTLS"
+    tipo: comum
+    peso: 1
+  - id: M4.1.T03
+    nome: "PKI e certificados de dispositivo"
+    tipo: comum
+    peso: 1
+  - id: M4.1.T04
+    nome: "Secure element (ATECC608 ou similar)"
+    tipo: elite
+    peso: 2
+  - id: M4.1.T05
+    nome: "Ataques físicos (glitching, canal lateral)"
+    tipo: comum
+    peso: 1
+  - id: M4.1.T06
+    nome: "OWASP IoT Top 10"
+    tipo: comum
+    peso: 1
+  - id: M4.1.T07
+    nome: "Modelagem de ameaças"
+    tipo: comum
+    peso: 1
+  - id: M4.1.T08
+    nome: "Atualização segura e cadeia de confiança"
+    tipo: comum
+    peso: 1

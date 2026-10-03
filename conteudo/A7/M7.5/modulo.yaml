@@ -1,0 +1,33 @@
+id: M7.5
+ato: A7
+nome: "Metrologia e calibração"
+horas: 120
+trilha: sensores
+ordem: 66
+requer: ["M7.1"]
+tags_chefe: []
+topicos:
+  - id: M7.5.T01
+    nome: "Vocabulário de metrologia (VIM)"
+    tipo: comum
+    peso: 1
+  - id: M7.5.T02
+    nome: "Incerteza de medição (GUM)"
+    tipo: comum
+    peso: 1
+  - id: M7.5.T03
+    nome: "Rastreabilidade e padrões"
+    tipo: comum
+    peso: 1
+  - id: M7.5.T04
+    nome: "Calibração multiponto"
+    tipo: elite
+    peso: 2
+  - id: M7.5.T05
+    nome: "Compensação de temperatura"
+    tipo: comum
+    peso: 1
+  - id: M7.5.T06
+    nome: "Deriva, histerese e envelhecimento"
+    tipo: comum
+    peso: 1

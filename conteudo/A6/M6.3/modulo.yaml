@@ -1,0 +1,29 @@
+id: M6.3
+ato: A6
+nome: "Encapsulamento e teste de chips"
+horas: 100
+trilha: silicio
+ordem: 56
+requer: ["M6.2"]
+tags_chefe: []
+topicos:
+  - id: M6.3.T01
+    nome: "Wafer sort"
+    tipo: comum
+    peso: 1
+  - id: M6.3.T02
+    nome: "Wire bonding e flip-chip"
+    tipo: comum
+    peso: 1
+  - id: M6.3.T03
+    nome: "Chiplets, 2.5D e 3D"
+    tipo: comum
+    peso: 1
+  - id: M6.3.T04
+    nome: "ATE e teste final"
+    tipo: comum
+    peso: 1
+  - id: M6.3.T05
+    nome: "Confiabilidade de CI"
+    tipo: comum
+    peso: 1

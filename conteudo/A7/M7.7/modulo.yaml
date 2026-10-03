@@ -1,0 +1,33 @@
+id: M7.7
+ato: A7
+nome: "Projeto final: sensor do zero ao produto"
+horas: 130
+trilha: integrador
+ordem: 68
+requer: ["M7.3", "M7.5", "M7.6", "M3.10"]
+tags_chefe: []
+topicos:
+  - id: M7.7.T01
+    nome: "Escolha e especificação do sensor"
+    tipo: elite
+    peso: 2
+  - id: M7.7.T02
+    nome: "Fabricação do elemento sensor"
+    tipo: elite
+    peso: 2
+  - id: M7.7.T03
+    nome: "Condicionamento e calibração"
+    tipo: elite
+    peso: 2
+  - id: M7.7.T04
+    nome: "Integração no \"meu ESP32\""
+    tipo: elite
+    peso: 2
+  - id: M7.7.T05
+    nome: "Firmware, nuvem e painel"
+    tipo: elite
+    peso: 2
+  - id: M7.7.T06
+    nome: "Artigo técnico público"
+    tipo: elite
+    peso: 2

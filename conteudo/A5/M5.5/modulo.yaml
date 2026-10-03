@@ -1,0 +1,29 @@
+id: M5.5
+ato: A5
+nome: "Planejamento de produção e custos"
+horas: 60
+trilha: fabricacao
+ordem: 52
+requer: ["M5.1"]
+tags_chefe: []
+topicos:
+  - id: M5.5.T01
+    nome: "Capacidade, takt time e gargalo"
+    tipo: comum
+    peso: 1
+  - id: M5.5.T02
+    nome: "OEE"
+    tipo: comum
+    peso: 1
+  - id: M5.5.T03
+    nome: "Setup e troca de produto"
+    tipo: comum
+    peso: 1
+  - id: M5.5.T04
+    nome: "Custo por placa"
+    tipo: comum
+    peso: 1
+  - id: M5.5.T05
+    nome: "EMS terceirizada × produção própria"
+    tipo: comum
+    peso: 1

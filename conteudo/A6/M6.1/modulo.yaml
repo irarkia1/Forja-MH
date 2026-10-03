@@ -1,0 +1,41 @@
+id: M6.1
+ato: A6
+nome: "Física de semicondutores"
+horas: 200
+trilha: silicio
+ordem: 54
+requer: ["M0.2", "M0.3"]
+tags_chefe: []
+topicos:
+  - id: M6.1.T01
+    nome: "Mecânica quântica para engenheiros"
+    tipo: comum
+    peso: 1
+  - id: M6.1.T02
+    nome: "Bandas de energia"
+    tipo: comum
+    peso: 1
+  - id: M6.1.T03
+    nome: "Portadores e dopagem"
+    tipo: comum
+    peso: 1
+  - id: M6.1.T04
+    nome: "Deriva e difusão"
+    tipo: comum
+    peso: 1
+  - id: M6.1.T05
+    nome: "Junção PN"
+    tipo: comum
+    peso: 1
+  - id: M6.1.T06
+    nome: "MOSFET: física e modelos"
+    tipo: comum
+    peso: 1
+  - id: M6.1.T07
+    nome: "Efeitos de canal curto"
+    tipo: comum
+    peso: 1
+  - id: M6.1.T08
+    nome: "Outros materiais (GaN, SiC)"
+    tipo: comum
+    peso: 1

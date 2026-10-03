@@ -1,0 +1,41 @@
+id: M5.1
+ato: A5
+nome: "Linha SMT industrial"
+horas: 150
+trilha: fabricacao
+ordem: 48
+requer: ["M3.1"]
+tags_chefe: []
+topicos:
+  - id: M5.1.T01
+    nome: "Layout de uma linha SMT"
+    tipo: comum
+    peso: 1
+  - id: M5.1.T02
+    nome: "Impressora de pasta"
+    tipo: comum
+    peso: 1
+  - id: M5.1.T03
+    nome: "SPI (inspeção de pasta)"
+    tipo: comum
+    peso: 1
+  - id: M5.1.T04
+    nome: "Pick-and-place: cabeças, bicos, alimentadores, visão"
+    tipo: comum
+    peso: 1
+  - id: M5.1.T05
+    nome: "Forno de refusão de zonas e nitrogênio"
+    tipo: comum
+    peso: 1
+  - id: M5.1.T06
+    nome: "AOI"
+    tipo: comum
+    peso: 1
+  - id: M5.1.T07
+    nome: "Raio-X automático"
+    tipo: comum
+    peso: 1
+  - id: M5.1.T08
+    nome: "THT: onda e onda seletiva"
+    tipo: comum
+    peso: 1

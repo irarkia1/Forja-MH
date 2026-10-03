@@ -1,0 +1,29 @@
+id: M4.3
+ato: A4
+nome: "Edge, DSP e TinyML"
+horas: 130
+trilha: firmware
+ordem: 43
+requer: ["M2.2", "M0.2"]
+tags_chefe: []
+topicos:
+  - id: M4.3.T01
+    nome: "Sinais discretos e amostragem"
+    tipo: comum
+    peso: 1
+  - id: M4.3.T02
+    nome: "FFT"
+    tipo: comum
+    peso: 1
+  - id: M4.3.T03
+    nome: "Filtros digitais FIR/IIR"
+    tipo: comum
+    peso: 1
+  - id: M4.3.T04
+    nome: "TinyML (TFLite Micro / Edge Impulse)"
+    tipo: elite
+    peso: 2
+  - id: M4.3.T05
+    nome: "Linux embarcado (Buildroot, Yocto — introdução)"
+    tipo: comum
+    peso: 1

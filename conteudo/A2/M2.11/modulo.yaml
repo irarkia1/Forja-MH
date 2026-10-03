@@ -1,0 +1,33 @@
+id: M2.11
+ato: A2
+nome: "Projeto integrador 2"
+horas: 150
+trilha: integrador
+ordem: 30
+requer: ["M2.10", "M2.8", "M1.12"]
+tags_chefe: []
+topicos:
+  - id: M2.11.T01
+    nome: "Esquemático da placa IoT própria"
+    tipo: elite
+    peso: 2
+  - id: M2.11.T02
+    nome: "Layout"
+    tipo: elite
+    peso: 2
+  - id: M2.11.T03
+    nome: "Fabricação"
+    tipo: elite
+    peso: 2
+  - id: M2.11.T04
+    nome: "Montagem"
+    tipo: elite
+    peso: 2
+  - id: M2.11.T05
+    nome: "Firmware e testes"
+    tipo: elite
+    peso: 2
+  - id: M2.11.T06
+    nome: "Revisão B com lições aprendidas"
+    tipo: elite
+    peso: 2

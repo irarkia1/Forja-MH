@@ -1,0 +1,33 @@
+id: M4.6
+ato: A4
+nome: "Mecânica e invólucro"
+horas: 120
+trilha: produto
+ordem: 46
+requer: ["M0.7"]
+tags_chefe: []
+topicos:
+  - id: M4.6.T01
+    nome: "CAD 3D (FreeCAD/Fusion)"
+    tipo: elite
+    peso: 2
+  - id: M4.6.T02
+    nome: "Impressão 3D funcional"
+    tipo: elite
+    peso: 2
+  - id: M4.6.T03
+    nome: "Injeção plástica e moldes"
+    tipo: comum
+    peso: 1
+  - id: M4.6.T04
+    nome: "Grau de proteção IP (IEC 60529)"
+    tipo: comum
+    peso: 1
+  - id: M4.6.T05
+    nome: "Térmica no invólucro"
+    tipo: comum
+    peso: 1
+  - id: M4.6.T06
+    nome: "Conectores e vedação"
+    tipo: comum
+    peso: 1

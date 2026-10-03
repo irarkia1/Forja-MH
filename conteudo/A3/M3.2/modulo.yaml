@@ -1,0 +1,33 @@
+id: M3.2
+ato: A3
+nome: "Montagem SMT em bancada"
+horas: 150
+trilha: fabricacao
+ordem: 32
+requer: ["M3.1"]
+tags_chefe: []
+topicos:
+  - id: M3.2.T01
+    nome: "Aplicar pasta com estêncil"
+    tipo: elite
+    peso: 2
+  - id: M3.2.T02
+    nome: "Pick-and-place manual/hobby"
+    tipo: elite
+    peso: 2
+  - id: M3.2.T03
+    nome: "Forno de refusão com controlador de perfil"
+    tipo: elite
+    peso: 2
+  - id: M3.2.T04
+    nome: "Montar QFN"
+    tipo: elite
+    peso: 2
+  - id: M3.2.T05
+    nome: "BGA e reballing"
+    tipo: elite
+    peso: 2
+  - id: M3.2.T06
+    nome: "Inspeção (lupa, microscópio, raio-X conceitual)"
+    tipo: comum
+    peso: 1

@@ -1,0 +1,37 @@
+id: M7.1
+ato: A7
+nome: "Princípios de transdução"
+horas: 120
+trilha: sensores
+ordem: 62
+requer: ["M1.8", "M0.3"]
+tags_chefe: []
+topicos:
+  - id: M7.1.T01
+    nome: "Resistivo e piezorresistivo"
+    tipo: comum
+    peso: 1
+  - id: M7.1.T02
+    nome: "Capacitivo"
+    tipo: comum
+    peso: 1
+  - id: M7.1.T03
+    nome: "Indutivo e magnético (Hall, magnetorresistivo)"
+    tipo: comum
+    peso: 1
+  - id: M7.1.T04
+    nome: "Piezoelétrico"
+    tipo: comum
+    peso: 1
+  - id: M7.1.T05
+    nome: "Termoelétrico e piroelétrico"
+    tipo: comum
+    peso: 1
+  - id: M7.1.T06
+    nome: "Fotoelétrico"
+    tipo: comum
+    peso: 1
+  - id: M7.1.T07
+    nome: "Eletroquímico"
+    tipo: comum
+    peso: 1

@@ -1,0 +1,41 @@
+id: M6.6
+ato: A6
+nome: "Projeto de CI digital (fluxo ASIC)"
+horas: 200
+trilha: silicio
+ordem: 59
+requer: ["M6.4"]
+tags_chefe: []
+topicos:
+  - id: M6.6.T01
+    nome: "Fluxo RTL → GDSII"
+    tipo: comum
+    peso: 1
+  - id: M6.6.T02
+    nome: "Células padrão e PDK (SkyWater 130)"
+    tipo: comum
+    peso: 1
+  - id: M6.6.T03
+    nome: "Síntese lógica"
+    tipo: comum
+    peso: 1
+  - id: M6.6.T04
+    nome: "Floorplan e place & route (OpenLane)"
+    tipo: comum
+    peso: 1
+  - id: M6.6.T05
+    nome: "Árvore de clock"
+    tipo: comum
+    peso: 1
+  - id: M6.6.T06
+    nome: "STA"
+    tipo: comum
+    peso: 1
+  - id: M6.6.T07
+    nome: "DRC e LVS"
+    tipo: comum
+    peso: 1
+  - id: M6.6.T08
+    nome: "Bloco digital até o GDSII"
+    tipo: elite
+    peso: 2

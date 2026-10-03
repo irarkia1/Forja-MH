@@ -1,0 +1,37 @@
+id: M3.1
+ato: A3
+nome: "Tecnologia SMT"
+horas: 120
+trilha: fabricacao
+ordem: 31
+requer: ["M2.8"]
+tags_chefe: []
+topicos:
+  - id: M3.1.T01
+    nome: "Encapsulamentos finos (0402, QFN, BGA, WLCSP)"
+    tipo: comum
+    peso: 1
+  - id: M3.1.T02
+    nome: "Pasta de solda e ligas (SAC305, SnPb)"
+    tipo: comum
+    peso: 1
+  - id: M3.1.T03
+    nome: "Estêncil: espessura, abertura"
+    tipo: comum
+    peso: 1
+  - id: M3.1.T04
+    nome: "Perfil de refusão"
+    tipo: comum
+    peso: 1
+  - id: M3.1.T05
+    nome: "Defeitos (tombstone, ponte, voids, head-in-pillow)"
+    tipo: comum
+    peso: 1
+  - id: M3.1.T06
+    nome: "IPC-A-610 e J-STD-001"
+    tipo: comum
+    peso: 1
+  - id: M3.1.T07
+    nome: "MSL e umidade"
+    tipo: comum
+    peso: 1

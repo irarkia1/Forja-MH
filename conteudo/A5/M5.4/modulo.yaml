@@ -1,0 +1,37 @@
+id: M5.4
+ato: A5
+nome: "Qualidade e processos"
+horas: 130
+trilha: fabricacao
+ordem: 51
+requer: ["M0.2"]
+tags_chefe: []
+topicos:
+  - id: M5.4.T01
+    nome: "Lean e os 7 desperdícios"
+    tipo: comum
+    peso: 1
+  - id: M5.4.T02
+    nome: "Six Sigma e DMAIC"
+    tipo: comum
+    peso: 1
+  - id: M5.4.T03
+    nome: "CEP/SPC"
+    tipo: comum
+    peso: 1
+  - id: M5.4.T04
+    nome: "FMEA de processo"
+    tipo: comum
+    peso: 1
+  - id: M5.4.T05
+    nome: "8D e análise de causa raiz"
+    tipo: comum
+    peso: 1
+  - id: M5.4.T06
+    nome: "ISO 9001"
+    tipo: comum
+    peso: 1
+  - id: M5.4.T07
+    nome: "Programa de ESD (ANSI/ESD S20.20)"
+    tipo: comum
+    peso: 1

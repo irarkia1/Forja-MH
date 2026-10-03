@@ -1,0 +1,255 @@
+- id: Q-M0.1.T01-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    No modelo de cinco camadas usado neste módulo, qual é a ordem das camadas, do mundo físico até o usuário?
+  alternativas:
+    - "Dispositivo, borda, conectividade, aplicação, nuvem"
+    - "Dispositivo, conectividade, borda, nuvem, aplicação"
+    - "Conectividade, dispositivo, nuvem, borda, aplicação"
+    - "Aplicação, nuvem, borda, conectividade, dispositivo"
+  resposta: 1
+  explicacao: |
+    O dado nasce no dispositivo (sensor + MCU), sai pela conectividade (rádio ou cabo), pode ser tratado na borda (gateway), chega à nuvem (broker, armazenamento, regras) e é usado na aplicação (painel, alertas). A alternativa "Aplicação, nuvem, borda, conectividade, dispositivo" tem as camadas certas, mas na ordem inversa — do usuário para o mundo físico, não o contrário.
+  fonte: "ITU-T Y.2060 (modelo de referência); Perry Lea, IoT and Edge Computing for Architects, cap. 1"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.1.T01-002
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Qual camada de uma solução IoT é responsável por transformar uma grandeza física (temperatura, por exemplo) em um número que o sistema pode processar?
+  alternativas:
+    - "Nuvem"
+    - "Aplicação"
+    - "Conectividade"
+    - "Dispositivo"
+  resposta: 3
+  explicacao: |
+    É no dispositivo que o sensor gera um sinal e o microcontrolador o converte em número (por exemplo, com o ADC). A conectividade só transporta o dado, que já precisa existir; a nuvem e a aplicação recebem números prontos.
+  fonte: "Perry Lea, IoT and Edge Computing for Architects, cap. 1"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.1.T01-003
+  objetivo: O1
+  tipo: unica
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Um painel web mostra gráficos de consumo e envia alertas por e-mail quando um limite é ultrapassado. Qual é o papel principal dessa parte do sistema?
+  alternativas:
+    - "Entregar valor ao usuário final, apresentando dados e disparando ações"
+    - "Transportar os dados do dispositivo até a internet"
+    - "Agregar sensores locais e traduzir protocolos"
+    - "Converter grandezas físicas em sinais elétricos"
+  resposta: 0
+  explicacao: |
+    Painel e alertas são a camada de aplicação: é onde o dado vira informação útil para alguém. Agregar sensores e traduzir protocolos é papel da borda (gateway), e transportar é papel da conectividade.
+  fonte: "Perry Lea, IoT and Edge Computing for Architects, cap. 1"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.1.T01-004
+  objetivo: O2
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Um gateway que recebe dados de vários sensores LoRa e os encaminha pela internet pertence, no modelo de cinco camadas, a qual camada?
+  alternativas:
+    - "Dispositivo"
+    - "Aplicação"
+    - "Borda"
+    - "Nuvem"
+  resposta: 2
+  explicacao: |
+    O gateway fica perto dos dispositivos e faz a ponte entre a rede local de sensores e a internet, podendo filtrar e agregar dados: é a camada de borda. Ele não é um dispositivo final (não mede nada) nem está na nuvem (fica fisicamente no local).
+  fonte: "Perry Lea, IoT and Edge Computing for Architects, capítulo sobre edge computing"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.1.T01-005
+  objetivo: O2
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Num sistema de monitoramento de câmaras frias, onde normalmente roda o **broker MQTT** que recebe as mensagens de centenas de lojas diferentes?
+  alternativas:
+    - "No microcontrolador de cada sensor"
+    - "No rádio LoRa de cada sensor"
+    - "No aplicativo de celular do gerente"
+    - "Num servidor na nuvem"
+  resposta: 3
+  explicacao: |
+    Para receber mensagens de centenas de lojas, o broker precisa estar num ponto acessível a todas, tipicamente um servidor na nuvem. O distrator mais comum é confundir broker com gateway: um gateway pode até rodar um broker local, mas um broker central para várias lojas fica na nuvem.
+  fonte: "HiveMQ, MQTT Essentials (cliente, broker e conexão); documentação AWS IoT Core / Azure IoT Hub, visão geral"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.1.T01-006
+  objetivo: O2
+  tipo: multipla
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Quais dos itens abaixo pertencem à camada de **dispositivo**? Marque todos os corretos.
+  alternativas:
+    - "Termistor que mede a temperatura"
+    - "Banco de dados de séries temporais"
+    - "Relé que liga um compressor"
+    - "Painel web com gráficos"
+  resposta: [0, 2]
+  explicacao: |
+    Sensores (termistor) e atuadores (relé) estão no dispositivo, na fronteira com o mundo físico. O banco de séries temporais fica na nuvem e o painel na aplicação. Lembrar que atuador também é dispositivo é o ponto que mais escapa: IoT não só mede, também age.
+  fonte: "ITU-T Y.2060; Perry Lea, IoT and Edge Computing for Architects, cap. 1"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.1.T01-007
+  objetivo: O2
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: o roteador Wi-Fi da casa do cliente, por onde a lâmpada inteligente acessa a internet, faz parte da camada de conectividade.
+  resposta: true
+  explicacao: |
+    O roteador é infraestrutura de rede que transporta os dados da lâmpada até a internet — conectividade. Ele não processa os dados do produto (não é borda no sentido de agregação e decisão) e não é a lâmpada (dispositivo).
+  fonte: "Perry Lea, IoT and Edge Computing for Architects, capítulos sobre comunicação e redes"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.1.T01-008
+  objetivo: O3
+  tipo: unica
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Uma prensa industrial precisa ser parada em até 20 ms quando um sensor detecta a mão do operador na área de risco. Onde essa decisão deve ser tomada?
+  alternativas:
+    - "Na nuvem, porque tem mais poder de processamento"
+    - "Na aplicação, para que o supervisor aprove a parada"
+    - "No local (dispositivo ou borda), sem depender da internet"
+    - "Na nuvem, com conexão 5G para reduzir a latência"
+  resposta: 2
+  explicacao: |
+    Decisões de segurança com prazo curto precisam ser locais: ida e volta até a nuvem tem latência variável e a internet pode cair. Mais poder de processamento não ajuda se a resposta chega tarde ou não chega; nem um link rápido elimina o risco de a conexão falhar.
+  fonte: "Perry Lea, IoT and Edge Computing for Architects, capítulo sobre edge computing"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.1.T01-009
+  objetivo: O3
+  tipo: unica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Um sensor de vibração gera 10 000 amostras por segundo, mas o cliente só precisa saber, a cada minuto, se a máquina está normal ou anormal. A conexão é celular, paga por megabyte. Qual arquitetura faz mais sentido?
+  alternativas:
+    - "Enviar todas as amostras para a nuvem e calcular lá"
+    - "Calcular o indicador na borda e enviar só o resultado por minuto"
+    - "Guardar as amostras no sensor e nunca enviar nada"
+    - "Trocar o celular por Wi-Fi e manter o envio de todas as amostras"
+  resposta: 1
+  explicacao: |
+    Processar na borda reduz drasticamente o volume enviado (de milhares de amostras por segundo para um resultado por minuto), economizando dados e energia. Enviar tudo para a nuvem funciona, mas custa caro sem necessidade; e trocar para Wi-Fi pode nem existir no local, além de não resolver o desperdício.
+  fonte: "Perry Lea, IoT and Edge Computing for Architects, capítulo sobre edge computing"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.1.T01-010
+  objetivo: O3
+  tipo: multipla
+  dificuldade: 3
+  bloom: avaliar
+  enunciado: |
+    Quais tarefas são, em geral, mais adequadas à **nuvem** do que à borda? Marque todas as corretas.
+  alternativas:
+    - "Comparar o desempenho de 5 000 dispositivos espalhados pelo país"
+    - "Desligar um aquecedor imediatamente quando a temperatura passar de 90 °C"
+    - "Guardar o histórico de leituras dos últimos 3 anos"
+    - "Continuar controlando uma bomba d'água quando a internet cai"
+  resposta: [0, 2]
+  explicacao: |
+    Visão de frota (muitos dispositivos) e histórico longo exigem dados centralizados e armazenamento grande: nuvem. Desligamento imediato por segurança e operação sem internet precisam ser locais — se dependerem da nuvem, falham exatamente quando a conexão falha.
+  fonte: "Perry Lea, IoT and Edge Computing for Architects, capítulo sobre edge computing"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.1.T01-011
+  objetivo: O4
+  tipo: unica
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Num medidor de temperatura com ESP32 que publica por Wi-Fi, qual etapa acontece **logo depois** de o sensor gerar uma tensão proporcional à temperatura?
+  alternativas:
+    - "O roteador Wi-Fi envia a leitura para a nuvem"
+    - "O broker entrega a mensagem para o painel"
+    - "O ADC do microcontrolador converte a tensão em número"
+    - "O firmware publica a mensagem num tópico MQTT"
+  resposta: 2
+  explicacao: |
+    Antes de empacotar ou transmitir, o sinal analógico precisa virar número: é a conversão analógico-digital (ADC) no MCU. Publicar no tópico MQTT vem depois — o firmware só pode publicar um valor que já foi convertido.
+  fonte: "Perry Lea, IoT and Edge Computing for Architects, cap. 1 (fluxo de dados do sensor à nuvem)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.1.T01-012
+  objetivo: O4
+  tipo: unica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Um sensor LoRaWAN de nível de tanque envia uma leitura. Qual sequência descreve corretamente o caminho até o usuário?
+  alternativas:
+    - "Sensor → gateway LoRaWAN → servidor de rede na nuvem → aplicação"
+    - "Sensor → aplicação → gateway LoRaWAN → servidor de rede na nuvem"
+    - "Sensor → servidor de rede na nuvem → gateway LoRaWAN → aplicação"
+    - "Sensor → roteador Wi-Fi do cliente → gateway LoRaWAN → aplicação"
+  resposta: 0
+  explicacao: |
+    No LoRaWAN, o sensor transmite por rádio; um ou mais gateways recebem e encaminham pela internet ao servidor de rede (network server), que entrega os dados à aplicação. O sensor LoRaWAN não fala direto com a nuvem nem usa Wi-Fi — quem faz a ponte para a internet é o gateway.
+  fonte: "LoRa Alliance, LoRaWAN — visão geral da arquitetura de rede; Perry Lea, IoT and Edge Computing for Architects, capítulo sobre redes de longo alcance"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.1.T01-013
+  objetivo: O4
+  tipo: vf
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Verdadeiro ou falso: num sistema IoT, todo dado gerado pelo sensor precisa obrigatoriamente chegar à nuvem para ter utilidade.
+  resposta: false
+  explicacao: |
+    Muitos dados são usados e descartados na borda ou no próprio dispositivo (controle local, filtragem, agregação); só um resumo, um evento ou nada segue para a nuvem. Há produtos que funcionam quase o tempo todo sem nuvem. O erro comum é imaginar que IoT sempre significa "mandar tudo para a nuvem".
+  fonte: "Perry Lea, IoT and Edge Computing for Architects, capítulo sobre edge computing"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.1.T01-014
+  objetivo: O4
+  tipo: unica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Os clientes reclamam que o alerta de porta aberta chega ao celular 10 minutos depois do evento. O firmware lê a porta a cada 1 s, mas acumula leituras e transmite um pacote a cada 10 min para economizar bateria; a rede, a nuvem e o app entregam mensagens em menos de 5 s. Onde está a causa principal do atraso?
+  alternativas:
+    - "Na nuvem, que processa as mensagens devagar"
+    - "Na conectividade, que tem latência alta"
+    - "No aplicativo, que atualiza a tela devagar"
+    - "No dispositivo, pela política de transmissão do firmware"
+  resposta: 3
+  explicacao: |
+    Seguindo o caminho do dado: a leitura é rápida (1 s), mas o firmware segura o dado por até 10 min antes de transmitir — esse é o gargalo. Os demais elos somam menos de 5 s. Uma solução comum é transmitir imediatamente eventos (porta abriu) e manter o envio periódico só para dados de rotina.
+  fonte: "Perry Lea, IoT and Edge Computing for Architects, cap. 1; Elecia White, Making Embedded Systems, capítulo sobre consumo de energia"
+  origem: ia
+  revisao: rascunho

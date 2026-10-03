@@ -1,0 +1,29 @@
+id: M2.9
+ato: A2
+nome: "Simulação e instrumentação"
+horas: 110
+trilha: hardware
+ordem: 28
+requer: ["M2.2"]
+tags_chefe: []
+topicos:
+  - id: M2.9.T01
+    nome: "SPICE (LTspice/ngspice)"
+    tipo: elite
+    peso: 2
+  - id: M2.9.T02
+    nome: "Osciloscópio avançado (sondas, triggers, FFT)"
+    tipo: comum
+    peso: 1
+  - id: M2.9.T03
+    nome: "Analisador de espectro"
+    tipo: comum
+    peso: 1
+  - id: M2.9.T04
+    nome: "Automação de bancada com Python e SCPI"
+    tipo: elite
+    peso: 2
+  - id: M2.9.T05
+    nome: "Incerteza de instrumentos"
+    tipo: comum
+    peso: 1

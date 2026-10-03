@@ -1,0 +1,45 @@
+id: M1.6
+ato: A1
+nome: "ESP32 e ESP-IDF"
+horas: 180
+trilha: firmware
+ordem: 13
+requer: ["M1.2"]
+tags_chefe: []
+topicos:
+  - id: M1.6.T01
+    nome: "Família ESP32 (Xtensa, RISC-V, variantes C3/S3/C6)"
+    tipo: comum
+    peso: 1
+  - id: M1.6.T02
+    nome: "ESP-IDF, menuconfig, componentes"
+    tipo: comum
+    peso: 1
+  - id: M1.6.T03
+    nome: "Partições e NVS"
+    tipo: comum
+    peso: 1
+  - id: M1.6.T04
+    nome: "Wi-Fi (station, AP, provisionamento)"
+    tipo: elite
+    peso: 2
+  - id: M1.6.T05
+    nome: "BLE (GAP, GATT)"
+    tipo: elite
+    peso: 2
+  - id: M1.6.T06
+    nome: "Deep sleep e ULP"
+    tipo: elite
+    peso: 2
+  - id: M1.6.T07
+    nome: "Periféricos (RMT, LEDC, touch)"
+    tipo: comum
+    peso: 1
+  - id: M1.6.T08
+    nome: "Logs e monitor"
+    tipo: comum
+    peso: 1
+  - id: M1.6.T09
+    nome: "OTA básica"
+    tipo: elite
+    peso: 2

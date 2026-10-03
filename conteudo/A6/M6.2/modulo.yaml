@@ -1,0 +1,49 @@
+id: M6.2
+ato: A6
+nome: "Fabricação de semicondutores"
+horas: 200
+trilha: silicio
+ordem: 55
+requer: ["M6.1"]
+tags_chefe: []
+topicos:
+  - id: M6.2.T01
+    nome: "Do quartzo ao wafer (Czochralski)"
+    tipo: comum
+    peso: 1
+  - id: M6.2.T02
+    nome: "Oxidação"
+    tipo: comum
+    peso: 1
+  - id: M6.2.T03
+    nome: "Fotolitografia (DUV, imersão, EUV)"
+    tipo: comum
+    peso: 1
+  - id: M6.2.T04
+    nome: "Gravação seca e úmida"
+    tipo: comum
+    peso: 1
+  - id: M6.2.T05
+    nome: "Deposição (CVD, PVD, ALD)"
+    tipo: comum
+    peso: 1
+  - id: M6.2.T06
+    nome: "Implantação iônica e recozimento"
+    tipo: comum
+    peso: 1
+  - id: M6.2.T07
+    nome: "CMP e metalização (cobre damasceno)"
+    tipo: comum
+    peso: 1
+  - id: M6.2.T08
+    nome: "Sala limpa e controle de contaminação"
+    tipo: comum
+    peso: 1
+  - id: M6.2.T09
+    nome: "Nós de processo, FinFET e GAA"
+    tipo: comum
+    peso: 1
+  - id: M6.2.T10
+    nome: "Yield e economia de uma fab"
+    tipo: comum
+    peso: 1

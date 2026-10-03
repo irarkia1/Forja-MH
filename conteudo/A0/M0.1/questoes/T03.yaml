@@ -1,0 +1,225 @@
+- id: Q-M0.1.T03-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Qual é a unidade SI de **capacitância** e seu símbolo?
+  alternativas:
+    - "Henry (H)"
+    - "Coulomb (C)"
+    - "Farad (F)"
+    - "Ohm (Ω)"
+  resposta: 2
+  explicacao: |
+    Capacitância se mede em farad (F), que equivale a coulomb por volt (C/V). O coulomb (C) é a unidade de carga — o "C" de capacitor engana; o henry (H) é de indutância.
+  fonte: "BIPM, SI Brochure, 9ª ed., tabela de unidades derivadas com nome especial; Boylestad, Introdução à Análise de Circuitos, cap. 1"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.1.T03-002
+  objetivo: O1
+  tipo: vf
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Verdadeiro ou falso: o volt (V) é uma das sete unidades de base do SI.
+  resposta: false
+  explicacao: |
+    As sete unidades de base são metro, quilograma, segundo, ampere, kelvin, mol e candela. O volt é derivado (W/A, ou kg·m²·s⁻³·A⁻¹). Em eletricidade, a unidade de base é o **ampere**, não o volt.
+  fonte: "BIPM, SI Brochure, 9ª ed., seção sobre unidades de base; Inmetro, Sistema Internacional de Unidades – SI"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.1.T03-003
+  objetivo: O1
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: o símbolo correto de quilo-ohm é "KΩ", com K maiúsculo.
+  resposta: false
+  explicacao: |
+    O prefixo quilo é **k** minúsculo: kΩ. "K" maiúsculo é o símbolo do kelvin. Maiúsculas e minúsculas mudam o significado no SI (m = mili, M = mega), por isso a grafia importa.
+  fonte: "BIPM, SI Brochure, 9ª ed., tabela de prefixos e regras de escrita de símbolos"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.1.T03-004
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Converta 4700 Ω para quilo-ohms. Responda em kΩ.
+  resposta: {valor: 4.7, unidade: "kΩ", tolerancia: 0.01}
+  explicacao: |
+    1 kΩ = 1000 Ω, então 4700 Ω ÷ 1000 = 4,7 kΩ (escrito "4k7" em esquemas). O erro comum é multiplicar por 1000 em vez de dividir: ao ir para um prefixo maior, o número fica menor.
+  fonte: "Boylestad, Introdução à Análise de Circuitos, cap. 1 (conversão entre potências de dez)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.1.T03-005
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um capacitor tem 0,000047 F. Quanto é isso em microfarads? Responda em µF.
+  resposta: {valor: 47, unidade: "µF", tolerancia: 0.01}
+  explicacao: |
+    1 µF = 10⁻⁶ F. 0,000047 F = 47 × 10⁻⁶ F = 47 µF. Errar uma casa decimal (4,7 µF ou 470 µF) é o tropeço típico: conte as casas até o expoente −6.
+  fonte: "Boylestad, Introdução à Análise de Circuitos, cap. 1 (prefixos e conversões)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.1.T03-006
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Converta 2,2 nF para picofarads. Responda em pF.
+  resposta: {valor: 2200, unidade: "pF", tolerancia: 0.01}
+  explicacao: |
+    De nano (10⁻⁹) para pico (10⁻¹²) há um fator 1000: 2,2 nF × 1000 = 2200 pF. Ao ir para um prefixo menor, o número fica maior. Responder 22 pF ou 220 pF é usar fator 10 ou 100 entre prefixos vizinhos, o que está errado — entre p, n, µ, m o passo é sempre 1000.
+  fonte: "BIPM, SI Brochure, 9ª ed., tabela de prefixos"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.1.T03-007
+  objetivo: O2
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    O capacitor de desacoplamento mais comum em placas digitais é o de 100 nF. A quanto isso equivale?
+  alternativas:
+    - "1 µF"
+    - "0,01 µF"
+    - "100 µF"
+    - "0,1 µF"
+  resposta: 3
+  explicacao: |
+    100 nF = 100 × 10⁻⁹ F = 0,1 × 10⁻⁶ F = 0,1 µF. Muitos esquemas antigos escrevem "0,1 µF" e os mais novos "100n" — é o mesmo capacitor. 0,01 µF seria 10 nF.
+  fonte: "Boylestad, Introdução à Análise de Circuitos, cap. 1"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.1.T03-008
+  objetivo: O3
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Como se escreve 0,00047 A em **notação de engenharia** (expoente múltiplo de 3 e mantissa entre 1 e 1000)?
+  alternativas:
+    - "4,7 × 10⁻⁴ A"
+    - "470 × 10⁻⁶ A"
+    - "47 × 10⁻⁵ A"
+    - "0,47 × 10⁻³ A"
+  resposta: 1
+  explicacao: |
+    0,00047 = 470 × 10⁻⁶, e 10⁻⁶ corresponde ao prefixo micro: 470 µA. 4,7 × 10⁻⁴ A é a notação **científica** (expoente qualquer, mantissa entre 1 e 10). 0,47 × 10⁻³ tem expoente múltiplo de 3, mas a mantissa é menor que 1.
+  fonte: "Boylestad, Introdução à Análise de Circuitos, cap. 1 (notação científica e de engenharia)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.1.T03-009
+  objetivo: O3
+  tipo: multipla
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Quais valores estão escritos em **notação de engenharia** (expoente múltiplo de 3 e mantissa entre 1 e 1000)? Marque todos os corretos.
+  alternativas:
+    - "12 × 10⁶ Hz"
+    - "1,5 × 10⁻⁸ F"
+    - "33 × 10³ Ω"
+    - "4,7 × 10⁻⁴ A"
+  resposta: [0, 2]
+  explicacao: |
+    12 × 10⁶ Hz (12 MHz) e 33 × 10³ Ω (33 kΩ) têm expoentes 6 e 3. Já 10⁻⁸ e 10⁻⁴ não são múltiplos de 3: em engenharia ficariam 15 × 10⁻⁹ F (15 nF) e 470 × 10⁻⁶ A (470 µA). Esses dois estão em notação científica válida, o que torna o distrator tentador.
+  fonte: "Boylestad, Introdução à Análise de Circuitos, cap. 1 (notação de engenharia)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.1.T03-010
+  objetivo: O3
+  tipo: unica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    O Wi-Fi opera na faixa de 2,4 GHz. Como fica esse valor em hertz, em potência de dez?
+  alternativas:
+    - "2,4 × 10⁶ Hz"
+    - "2,4 × 10¹² Hz"
+    - "2,4 × 10⁹ Hz"
+    - "2,4 × 10³ Hz"
+  resposta: 2
+  explicacao: |
+    Giga = 10⁹, então 2,4 GHz = 2,4 × 10⁹ Hz = 2 400 000 000 Hz. 10⁶ é mega (2,4 MHz seria mil vezes menos) e 10¹² é tera.
+  fonte: "BIPM, SI Brochure, 9ª ed., tabela de prefixos"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.1.T03-011
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um módulo alimentado com 3,3 V consome 150 mA. Qual é a potência consumida? Responda em mW.
+  resposta: {valor: 495, unidade: "mW", tolerancia: 0.01}
+  explicacao: |
+    P = V × I = 3,3 V × 0,150 A = 0,495 W = 495 mW. Atalho: volts × miliampères dá miliwatts direto (3,3 × 150 = 495). O erro clássico é responder 495 W, esquecendo o "mili" da corrente.
+  fonte: "Scherz & Monk, Practical Electronics for Inventors, 4ª ed., cap. 2 (potência elétrica)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.1.T03-012
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um rastreador consome em média 25 mA e usa uma bateria de 2000 mAh. Desprezando perdas e envelhecimento, quanto tempo ele funciona? Responda em horas (h).
+  resposta: {valor: 80, unidade: "h", tolerancia: 0.01}
+  explicacao: |
+    Autonomia = capacidade ÷ corrente média = 2000 mAh ÷ 25 mA = 80 h. As unidades mA se cancelam e sobra h. Multiplicar (2000 × 25) em vez de dividir é o erro comum; outra armadilha é usar a corrente de pico em vez da média.
+  fonte: "Boylestad, Introdução à Análise de Circuitos, cap. 2 (tensão e corrente; capacidade de baterias em Ah)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.1.T03-013
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Uma bateria de íons de lítio tem 2000 mAh e tensão nominal de 3,7 V. Quanta energia ela armazena? Responda em Wh.
+  resposta: {valor: 7.4, unidade: "Wh", tolerancia: 0.01}
+  explicacao: |
+    mAh é carga; energia = carga × tensão. 2000 mAh = 2 Ah; 2 Ah × 3,7 V = 7,4 Wh (≈ 26 640 J, pois 1 Wh = 3600 J). Responder 2000 ou 2 confunde capacidade com energia.
+  fonte: "Boylestad, Introdução à Análise de Circuitos, cap. 2 (capacidade em Ah) e cap. 4 (potência e energia)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.1.T03-014
+  objetivo: O4
+  tipo: unica
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Você precisa escolher a bateria que armazena **mais energia**. Bateria A: 3000 mAh, 3,7 V. Bateria B: 2000 mAh, 7,4 V. Qual é a correta?
+  alternativas:
+    - "A, porque tem mais mAh"
+    - "São iguais, porque têm a mesma tecnologia"
+    - "A, porque tensão menor desperdiça menos energia"
+    - "B, porque armazena 14,8 Wh contra 11,1 Wh da A"
+  resposta: 3
+  explicacao: |
+    Para comparar baterias de tensões diferentes, converta para energia: A = 3 Ah × 3,7 V = 11,1 Wh; B = 2 Ah × 7,4 V = 14,8 Wh. Escolher pela maior capacidade em mAh só funciona quando a tensão é a mesma.
+  fonte: "Boylestad, Introdução à Análise de Circuitos, cap. 2 (capacidade em Ah) e cap. 4 (potência e energia)"
+  origem: ia
+  revisao: rascunho

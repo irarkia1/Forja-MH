@@ -1,0 +1,45 @@
+id: M1.9
+ato: A1
+nome: "Conectividade IoT"
+horas: 180
+trilha: firmware
+ordem: 16
+requer: ["M1.6"]
+tags_chefe: []
+topicos:
+  - id: M1.9.T01
+    nome: "Modelos OSI e TCP/IP"
+    tipo: comum
+    peso: 1
+  - id: M1.9.T02
+    nome: "IP, DHCP, DNS, NAT"
+    tipo: comum
+    peso: 1
+  - id: M1.9.T03
+    nome: "Wi-Fi a fundo"
+    tipo: comum
+    peso: 1
+  - id: M1.9.T04
+    nome: "BLE a fundo"
+    tipo: comum
+    peso: 1
+  - id: M1.9.T05
+    nome: "LoRa e LoRaWAN"
+    tipo: elite
+    peso: 2
+  - id: M1.9.T06
+    nome: "NB-IoT e LTE-M"
+    tipo: comum
+    peso: 1
+  - id: M1.9.T07
+    nome: "Zigbee, Thread e Matter"
+    tipo: comum
+    peso: 1
+  - id: M1.9.T08
+    nome: "Antenas e link budget (introdução)"
+    tipo: comum
+    peso: 1
+  - id: M1.9.T09
+    nome: "Escolher a rede certa para o produto"
+    tipo: comum
+    peso: 1

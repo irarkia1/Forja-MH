@@ -1,0 +1,41 @@
+id: M0.5
+ato: A0
+nome: "Circuitos AC"
+horas: 100
+trilha: base
+ordem: 5
+requer: ["M0.4", "M0.2"]
+tags_chefe: []
+topicos:
+  - id: M0.5.T01
+    nome: "Senoides, valor eficaz, fase"
+    tipo: comum
+    peso: 1
+  - id: M0.5.T02
+    nome: "Fasores e impedância"
+    tipo: comum
+    peso: 1
+  - id: M0.5.T03
+    nome: "Filtros passivos RC, RL, RLC"
+    tipo: comum
+    peso: 1
+  - id: M0.5.T04
+    nome: "Ressonância e fator Q"
+    tipo: comum
+    peso: 1
+  - id: M0.5.T05
+    nome: "Potência em AC e fator de potência"
+    tipo: comum
+    peso: 1
+  - id: M0.5.T06
+    nome: "Transformadores"
+    tipo: comum
+    peso: 1
+  - id: M0.5.T07
+    nome: "Decibéis e diagrama de Bode"
+    tipo: comum
+    peso: 1
+  - id: M0.5.T08
+    nome: "Osciloscópio e gerador de funções"
+    tipo: elite
+    peso: 2

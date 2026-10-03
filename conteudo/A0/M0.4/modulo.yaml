@@ -1,0 +1,45 @@
+id: M0.4
+ato: A0
+nome: "Circuitos DC"
+horas: 140
+trilha: base
+ordem: 4
+requer: ["M0.1"]
+tags_chefe: []
+topicos:
+  - id: M0.4.T01
+    nome: "Lei de Ohm e potência"
+    tipo: comum
+    peso: 1
+  - id: M0.4.T02
+    nome: "Leis de Kirchhoff"
+    tipo: comum
+    peso: 1
+  - id: M0.4.T03
+    nome: "Série, paralelo e divisores"
+    tipo: comum
+    peso: 1
+  - id: M0.4.T04
+    nome: "Análise nodal e de malhas"
+    tipo: comum
+    peso: 1
+  - id: M0.4.T05
+    nome: "Thévenin, Norton e superposição"
+    tipo: comum
+    peso: 1
+  - id: M0.4.T06
+    nome: "Capacitores e indutores em DC"
+    tipo: comum
+    peso: 1
+  - id: M0.4.T07
+    nome: "Transitórios RC e RL"
+    tipo: comum
+    peso: 1
+  - id: M0.4.T08
+    nome: "Multímetro, fonte de bancada e protoboard"
+    tipo: elite
+    peso: 2
+  - id: M0.4.T09
+    nome: "Segurança elétrica e ESD na bancada"
+    tipo: elite
+    peso: 2

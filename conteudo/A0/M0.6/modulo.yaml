@@ -1,0 +1,53 @@
+id: M0.6
+ato: A0
+nome: "Programação C/C++"
+horas: 180
+trilha: firmware
+ordem: 6
+requer: ["M0.1"]
+tags_chefe: []
+topicos:
+  - id: M0.6.T01
+    nome: "C: tipos, controle de fluxo, funções"
+    tipo: comum
+    peso: 1
+  - id: M0.6.T02
+    nome: "Ponteiros e arrays"
+    tipo: comum
+    peso: 1
+  - id: M0.6.T03
+    nome: "Memória: pilha, heap, estático, `volatile`, `const`"
+    tipo: comum
+    peso: 1
+  - id: M0.6.T04
+    nome: "Structs, unions, enums"
+    tipo: comum
+    peso: 1
+  - id: M0.6.T05
+    nome: "Operações bit a bit e máscaras"
+    tipo: comum
+    peso: 1
+  - id: M0.6.T06
+    nome: "Pré-processador, compilação e link"
+    tipo: comum
+    peso: 1
+  - id: M0.6.T07
+    nome: "Make e CMake"
+    tipo: comum
+    peso: 1
+  - id: M0.6.T08
+    nome: "C++ para embarcados (classes, RAII, templates leves, o que evitar)"
+    tipo: comum
+    peso: 1
+  - id: M0.6.T09
+    nome: "Depuração com GDB"
+    tipo: comum
+    peso: 1
+  - id: M0.6.T10
+    nome: "Testes unitários em C"
+    tipo: elite
+    peso: 2
+  - id: M0.6.T11
+    nome: "Estilo, MISRA C (visão geral)"
+    tipo: comum
+    peso: 1

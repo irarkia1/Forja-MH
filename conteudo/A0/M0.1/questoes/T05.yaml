@@ -1,0 +1,240 @@
+- id: Q-M0.1.T05-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Você quer saber qual pino de um chip é a entrada de reset. Em qual seção do datasheet procura primeiro?
+  alternativas:
+    - "Valores máximos absolutos"
+    - "Curvas típicas de desempenho"
+    - "Pinagem e descrição dos pinos"
+    - "Informação de pedido"
+  resposta: 2
+  explicacao: |
+    A seção de pinagem (*pin configuration and functions*) mostra o desenho dos pinos e uma tabela com o nome e a função de cada um. Valores máximos absolutos falam de limites de estresse, não de função de pino.
+  fonte: "SparkFun Learn, How to Read a Datasheet; datasheet LM1117 (Texas Instruments), seção Pin Configuration and Functions"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.1.T05-002
+  objetivo: O1
+  tipo: multipla
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Quais informações você espera encontrar na seção de **encapsulamento** (*package information* / *mechanical data*) de um datasheet? Marque todas as corretas.
+  alternativas:
+    - "Desenho mecânico com as dimensões do componente"
+    - "Footprint (ilhas) recomendado para a PCB"
+    - "Corrente de consumo em modo sleep"
+    - "Tensão máxima absoluta de alimentação"
+  resposta: [0, 1]
+  explicacao: |
+    A seção de encapsulamento traz o desenho com cotas e, em geral, o padrão de ilhas recomendado — é dela que sai o footprint da PCB. Consumo fica nas características elétricas e a tensão máxima, nos valores máximos absolutos.
+  fonte: "SparkFun Learn, How to Read a Datasheet; datasheet LM1117 (Texas Instruments), seção Mechanical, Packaging, and Orderable Information"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.1.T05-003
+  objetivo: O1
+  tipo: unica
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    O mesmo chip é vendido em versões com faixa de temperatura comercial e industrial e com encapsulamentos diferentes. Onde o datasheet mostra o código exato a pedir para cada versão?
+  alternativas:
+    - "Na informação de pedido (ordering information)"
+    - "Na descrição funcional"
+    - "No diagrama de blocos"
+    - "Nas curvas típicas"
+  resposta: 0
+  explicacao: |
+    A tabela de pedido relaciona cada código (com seus sufixos) ao encapsulamento, à faixa de temperatura e à embalagem (rolo, tubo). Comprar só pelo código-base, sem ler essa tabela, é como se acaba com a variante errada.
+  fonte: "SparkFun Learn, How to Read a Datasheet; datasheet LM1117 (Texas Instruments), seção de informação de pedido"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.1.T05-004
+  objetivo: O2
+  tipo: vf
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Verdadeiro ou falso: o fabricante garante o funcionamento do componente em qualquer condição até os valores máximos absolutos.
+  resposta: false
+  explicacao: |
+    Os máximos absolutos são limites de estresse: passar deles pode causar dano permanente, e os datasheets avisam que o funcionamento **não é garantido** nessas condições. A operação garantida vale apenas dentro das condições recomendadas de operação.
+  fonte: "Datasheet LM1117 (Texas Instruments), notas da seção Absolute Maximum Ratings; SparkFun Learn, How to Read a Datasheet"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.1.T05-005
+  objetivo: O2
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    O datasheet de um sensor traz: tensão de alimentação máxima absoluta = 4,0 V; condição recomendada = 2,7 V a 3,6 V. Um colega quer alimentá-lo com 3,9 V. Qual é a avaliação correta?
+  alternativas:
+    - "Pode, porque 3,9 V está abaixo do máximo absoluto"
+    - "Pode, desde que seja só durante os testes de bancada"
+    - "Não deve, porque está fora da faixa recomendada e o funcionamento não é garantido"
+    - "Não deve, porque o sensor queima imediatamente acima de 3,6 V"
+  resposta: 2
+  explicacao: |
+    Ficar abaixo do máximo absoluto só evita (provavelmente) o dano imediato; o funcionamento conforme especificado só é garantido entre 2,7 V e 3,6 V. Também não é verdade que ele queima logo acima de 3,6 V — o problema é a falta de garantia e o desgaste, não uma falha instantânea.
+  fonte: "Datasheet LM1117 (Texas Instruments), seções Absolute Maximum Ratings e Recommended Operating Conditions (como exemplo da estrutura)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.1.T05-006
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    O datasheet de um microcontrolador traz: corrente máxima absoluta por pino de saída = 40 mA; corrente máxima nas condições recomendadas de operação = 20 mA. Qual é a maior corrente por pino que você deve usar no projeto? Responda em mA.
+  resposta: {valor: 20, unidade: "mA", tolerancia: 0.01}
+  explicacao: |
+    Projeta-se dentro das condições recomendadas: 20 mA (e, de preferência, com margem abaixo disso). Os 40 mA são o limite de estresse — usá-los como valor de projeto arrisca dano e deixa os níveis lógicos fora da especificação.
+  fonte: "SparkFun Learn, How to Read a Datasheet (Absolute Maximum Ratings × Recommended Operating Conditions)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.1.T05-007
+  objetivo: O2
+  tipo: unica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Durante um teste, a tensão de um pino passou um pouco do máximo absoluto por alguns segundos, mas o chip continuou funcionando. O que se pode concluir?
+  alternativas:
+    - "O chip está comprovadamente bom, já que continuou funcionando"
+    - "O datasheet está errado, pois o máximo absoluto foi ultrapassado sem dano"
+    - "O chip pode ter sofrido dano permanente ou degradação que só apareça depois; não é confiável para uso em produto"
+    - "Exceder o máximo absoluto só importa se durar mais de uma hora"
+  resposta: 2
+  explicacao: |
+    Exceder o máximo absoluto pode causar dano imediato ou latente (degradação que aparece semanas depois). Continuar funcionando não prova que está bom, e o datasheet não promete que vai queimar na hora — promete apenas que, dentro dos limites, não há dano por estresse.
+  fonte: "Datasheet LM1117 (Texas Instruments), notas da seção Absolute Maximum Ratings"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.1.T05-008
+  objetivo: O3
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Na tabela de características elétricas, o que significa um valor na coluna **típ** (típico)?
+  alternativas:
+    - "O valor mais comum observado, sem garantia do fabricante"
+    - "O pior caso garantido pelo fabricante"
+    - "O valor máximo absoluto"
+    - "O valor medido em cada unidade na fábrica"
+  resposta: 0
+  explicacao: |
+    Típico é o valor representativo (mais comum) nas condições de teste, mas não é garantido. Os valores garantidos são os das colunas mín e máx. Usar o típico como se fosse pior caso é a armadilha clássica.
+  fonte: "SparkFun Learn, How to Read a Datasheet; Scherz & Monk, Practical Electronics for Inventors, 4ª ed., trechos de datasheet nos capítulos de semicondutores"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.1.T05-009
+  objetivo: O3
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: os limites mín e máx de uma característica elétrica valem para as condições de teste indicadas na própria tabela (tensão, temperatura, carga).
+  resposta: true
+  explicacao: |
+    Cada linha da tabela de características elétricas tem suas condições de teste. Se o seu circuito opera em outra condição (por exemplo, 70 °C quando a tabela diz 25 °C), aquele número pode não valer — é preciso procurar a especificação na faixa completa de temperatura ou nas curvas.
+  fonte: "Datasheet LM1117 (Texas Instruments), seção Electrical Characteristics (coluna de condições de teste)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.1.T05-010
+  objetivo: O3
+  tipo: unica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    O datasheet informa a corrente em modo sleep: típ = 10 µA, máx = 50 µA (a 25 °C). Para garantir a autonomia mínima da bateria do produto, qual valor você usa no cálculo?
+  alternativas:
+    - "10 µA, porque é o valor mais provável"
+    - "30 µA, a média entre típico e máximo"
+    - "0 µA, porque em sleep o consumo é desprezível"
+    - "50 µA, o pior caso garantido — e verificando se o produto opera em temperatura diferente de 25 °C"
+  resposta: 3
+  explicacao: |
+    Para uma garantia (autonomia mínima), use o pior caso garantido: 50 µA. O típico serve para estimar a média de um lote, não para prometer ao cliente. E como a condição é 25 °C, em temperatura maior a corrente de fuga pode subir — vale procurar a curva ou a especificação na faixa completa.
+  fonte: "SparkFun Learn, How to Read a Datasheet; Elecia White, Making Embedded Systems, 2ª ed., capítulo sobre consumo de energia"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.1.T05-011
+  objetivo: O3
+  tipo: multipla
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Ao comparar um valor da tabela de características elétricas com o seu circuito, quais condições você precisa conferir? Marque todas as corretas.
+  alternativas:
+    - "A temperatura em que o parâmetro foi especificado"
+    - "A tensão de alimentação usada no teste"
+    - "A cor do encapsulamento do componente"
+    - "A corrente de carga usada no teste"
+  resposta: [0, 1, 3]
+  explicacao: |
+    Temperatura, tensão de alimentação e carga mudam o valor dos parâmetros elétricos e aparecem na coluna de condições de teste. A cor do encapsulamento não tem relação com o desempenho elétrico.
+  fonte: "Datasheet LM1117 (Texas Instruments), seção Electrical Characteristics"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.1.T05-012
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um regulador linear recebe 5,0 V na entrada e fornece 3,3 V a uma carga de 200 mA. Desprezando a corrente de terra do regulador, quanta potência ele dissipa em calor? Responda em W.
+  resposta: {valor: 0.34, unidade: "W", tolerancia: 0.01}
+  explicacao: |
+    No regulador linear, a diferença de tensão cai sobre ele com a corrente da carga: P = (5,0 − 3,3) V × 0,200 A = 1,7 × 0,2 = 0,34 W. O erro comum é multiplicar a tensão de saída pela corrente (3,3 × 0,2 = 0,66 W), que é a potência entregue à carga, não a perdida no regulador.
+  fonte: "Scherz & Monk, Practical Electronics for Inventors, 4ª ed., capítulo sobre fontes e reguladores de tensão; datasheet LM1117 (Texas Instruments), seção de aplicação e informação térmica"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.1.T05-013
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    O mesmo regulador da questão anterior dissipa 0,34 W. O datasheet informa resistência térmica junção-ambiente θJA = 100 °C/W para o encapsulamento usado, e a temperatura máxima de junção é 125 °C. Com o ambiente a 40 °C, qual é a temperatura estimada da junção? Responda em °C.
+  resposta: {valor: 74, unidade: "°C", tolerancia: 0.01}
+  explicacao: |
+    Aumento de temperatura = P × θJA = 0,34 W × 100 °C/W = 34 °C. Junção = ambiente + aumento = 40 + 34 = 74 °C, abaixo do limite de 125 °C. Responder 34 °C esquece de somar a temperatura ambiente — o θJA dá o aumento, não a temperatura absoluta.
+  fonte: "Datasheet LM1117 (Texas Instruments), seção Thermal Information; Scherz & Monk, Practical Electronics for Inventors, 4ª ed., capítulo sobre reguladores (dissipação e dissipadores)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.1.T05-014
+  objetivo: O4
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um resistor de 1/4 W (0,25 W) tem 6 V sobre ele e é percorrido por 50 mA. O que você conclui?
+  alternativas:
+    - "Está adequado, porque 50 mA é uma corrente pequena"
+    - "Dissipa 0,3 W, acima dos 0,25 W nominais: é preciso um resistor de maior potência (por exemplo, 1/2 W)"
+    - "Dissipa 0,03 W, bem abaixo do limite"
+    - "Dissipa 300 W e vai pegar fogo"
+  resposta: 1
+  explicacao: |
+    P = V × I = 6 V × 0,050 A = 0,3 W, que passa de 0,25 W. Escolhe-se um resistor com potência nominal maior e margem (1/2 W). Errar a conversão de mA (0,03 W ou 300 W) é o tropeço comum; "corrente pequena" não diz nada sem multiplicar pela tensão.
+  fonte: "Scherz & Monk, Practical Electronics for Inventors, 4ª ed., cap. 2 (potência em resistores)"
+  origem: ia
+  revisao: rascunho

@@ -1,0 +1,29 @@
+id: M7.6
+ato: A7
+nome: "Front-end e smart sensor"
+horas: 100
+trilha: sensores
+ordem: 67
+requer: ["M2.2"]
+tags_chefe: []
+topicos:
+  - id: M7.6.T01
+    nome: "AFE dedicado"
+    tipo: comum
+    peso: 1
+  - id: M7.6.T02
+    nome: "ADC sigma-delta"
+    tipo: comum
+    peso: 1
+  - id: M7.6.T03
+    nome: "Linearização"
+    tipo: comum
+    peso: 1
+  - id: M7.6.T04
+    nome: "Autocalibração e autodiagnóstico"
+    tipo: comum
+    peso: 1
+  - id: M7.6.T05
+    nome: "Interfaces digitais de sensor (I2C, SPI, SENT)"
+    tipo: comum
+    peso: 1

@@ -1,0 +1,57 @@
+id: M2.5
+ato: A2
+nome: "Layout de PCB"
+horas: 250
+trilha: hardware
+ordem: 24
+requer: ["M2.4"]
+tags_chefe: []
+topicos:
+  - id: M2.5.T01
+    nome: "Stackup e camadas"
+    tipo: comum
+    peso: 1
+  - id: M2.5.T02
+    nome: "Footprints e IPC-7351"
+    tipo: comum
+    peso: 1
+  - id: M2.5.T03
+    nome: "Posicionamento"
+    tipo: comum
+    peso: 1
+  - id: M2.5.T04
+    nome: "Planos de terra e caminho de retorno"
+    tipo: comum
+    peso: 1
+  - id: M2.5.T05
+    nome: "Desacoplamento"
+    tipo: comum
+    peso: 1
+  - id: M2.5.T06
+    nome: "Largura de trilha e corrente (IPC-2152)"
+    tipo: comum
+    peso: 1
+  - id: M2.5.T07
+    nome: "Vias e transições"
+    tipo: comum
+    peso: 1
+  - id: M2.5.T08
+    nome: "DRC e regras do fabricante"
+    tipo: comum
+    peso: 1
+  - id: M2.5.T09
+    nome: "Gerber, drill, ODB++"
+    tipo: comum
+    peso: 1
+  - id: M2.5.T10
+    nome: "Painelização"
+    tipo: comum
+    peso: 1
+  - id: M2.5.T11
+    nome: "Primeira placa de 2 camadas"
+    tipo: elite
+    peso: 2
+  - id: M2.5.T12
+    nome: "Revisão de layout com checklist"
+    tipo: elite
+    peso: 2

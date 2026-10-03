@@ -1,0 +1,33 @@
+id: M5.3
+ato: A5
+nome: "Teste em produção"
+horas: 100
+trilha: fabricacao
+ordem: 50
+requer: ["M3.8"]
+tags_chefe: []
+topicos:
+  - id: M5.3.T01
+    nome: "ICT"
+    tipo: comum
+    peso: 1
+  - id: M5.3.T02
+    nome: "Flying probe"
+    tipo: comum
+    peso: 1
+  - id: M5.3.T03
+    nome: "Teste funcional (FCT)"
+    tipo: elite
+    peso: 2
+  - id: M5.3.T04
+    nome: "Boundary scan (JTAG)"
+    tipo: comum
+    peso: 1
+  - id: M5.3.T05
+    nome: "Burn-in"
+    tipo: comum
+    peso: 1
+  - id: M5.3.T06
+    nome: "Rastreabilidade e número de série"
+    tipo: comum
+    peso: 1

@@ -1,0 +1,49 @@
+id: M1.7
+ato: A1
+nome: "RTOS"
+horas: 150
+trilha: firmware
+ordem: 14
+requer: ["M1.4|M1.6"]
+tags_chefe: []
+topicos:
+  - id: M1.7.T01
+    nome: "Por que RTOS: superloop × escalonador"
+    tipo: comum
+    peso: 1
+  - id: M1.7.T02
+    nome: "Tarefas e estados"
+    tipo: comum
+    peso: 1
+  - id: M1.7.T03
+    nome: "Escalonamento preemptivo e prioridades"
+    tipo: comum
+    peso: 1
+  - id: M1.7.T04
+    nome: "Filas"
+    tipo: comum
+    peso: 1
+  - id: M1.7.T05
+    nome: "Semáforos e mutex"
+    tipo: comum
+    peso: 1
+  - id: M1.7.T06
+    nome: "Inversão de prioridade"
+    tipo: comum
+    peso: 1
+  - id: M1.7.T07
+    nome: "Timers de software e eventos"
+    tipo: comum
+    peso: 1
+  - id: M1.7.T08
+    nome: "Heap e stack por tarefa"
+    tipo: comum
+    peso: 1
+  - id: M1.7.T09
+    nome: "Projeto FreeRTOS com 4 tarefas"
+    tipo: elite
+    peso: 2
+  - id: M1.7.T10
+    nome: "Zephyr (introdução)"
+    tipo: comum
+    peso: 1

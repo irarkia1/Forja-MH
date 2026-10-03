@@ -1,0 +1,255 @@
+- id: Q-M0.1.T04-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    De onde vem o **wafer** usado para fabricar chips?
+  alternativas:
+    - "De fatias de um lingote de silício monocristalino, cortadas e polidas"
+    - "De placas de fibra de vidro FR-4 cobertas de cobre"
+    - "De areia comum prensada em discos"
+    - "De folhas de alumínio anodizado"
+  resposta: 0
+  explicacao: |
+    O silício é purificado, cresce como um lingote monocristalino (processo Czochralski) e é fatiado e polido em wafers. A areia é a matéria-prima de origem, mas precisa ser refinada até altíssima pureza e cristalizada — não é prensada. FR-4 é material de PCB, não de chip.
+  fonte: "Peter Van Zant, Microchip Fabrication, capítulos iniciais (crescimento de cristal e preparação de wafer)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.1.T04-002
+  objetivo: O1
+  tipo: unica
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Qual sequência está na ordem correta da cadeia de valor da eletrônica?
+  alternativas:
+    - "Encapsulamento do chip → fabricação do wafer → projeto do chip → montagem da PCBA → certificação"
+    - "Projeto do chip → montagem da PCBA → fabricação do wafer → encapsulamento → certificação"
+    - "Projeto do chip → fabricação do wafer → encapsulamento e teste → montagem da PCBA → certificação e venda"
+    - "Fabricação do wafer → projeto do chip → certificação → encapsulamento → montagem da PCBA"
+  resposta: 2
+  explicacao: |
+    Primeiro se projeta o chip; depois ele é fabricado no wafer (front-end), cortado, encapsulado e testado (back-end); só então pode ser soldado numa placa (PCBA), que vira produto, é certificado e vendido. Não dá para montar a placa antes de o chip existir encapsulado.
+  fonte: "Peter Van Zant, Microchip Fabrication, capítulos iniciais; Alan Cohen, Prototype to Product, capítulos sobre fabricação"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.1.T04-003
+  objetivo: O1
+  tipo: unica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um chip projetado por uma empresa fabless acaba soldado na placa de um produto IoT. Por quais tipos de empresa ele passa, na ordem?
+  alternativas:
+    - "Fabless → EMS → foundry → distribuidor → OSAT"
+    - "Fabless → foundry → OSAT → distribuidor → EMS"
+    - "Fabless → OSAT → foundry → EMS → distribuidor"
+    - "Fabless → distribuidor → foundry → OSAT → EMS"
+  resposta: 1
+  explicacao: |
+    A fabless projeta; a foundry fabrica os wafers; a OSAT corta, encapsula e testa; o distribuidor leva o componente a quem compra; a EMS solda o chip na placa do produto. Inverter foundry e OSAT é o erro mais comum: o encapsulamento só pode vir depois de o wafer existir.
+  fonte: "Chris Miller, Chip War, capítulos sobre o modelo fabless/foundry; Peter Van Zant, Microchip Fabrication, capítulos iniciais"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.1.T04-004
+  objetivo: O2
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    A **litografia**, que transfere o desenho do circuito para o wafer, pertence a qual fase da fabricação de semicondutores?
+  alternativas:
+    - "Back-end (encapsulamento e teste)"
+    - "Montagem da PCBA"
+    - "Distribuição"
+    - "Front-end (fabricação do wafer)"
+  resposta: 3
+  explicacao: |
+    Litografia, deposição, corrosão e dopagem são etapas do front-end, feitas sobre o wafer inteiro. O back-end começa depois, com o corte do wafer e o encapsulamento de cada die.
+  fonte: "Peter Van Zant, Microchip Fabrication, capítulos sobre fotolitografia"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.1.T04-005
+  objetivo: O2
+  tipo: unica
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    O que acontece no **wire bonding**?
+  alternativas:
+    - "Fios finíssimos ligam os pads do die aos terminais do encapsulamento"
+    - "As trilhas de cobre da PCB são desenhadas"
+    - "Os componentes THT são soldados por onda"
+    - "O wafer é dopado com impurezas"
+  resposta: 0
+  explicacao: |
+    No back-end, cada die é fixado no encapsulamento e ligado aos terminais por fios muito finos (ouro, cobre ou alumínio) — ou por esferas de solda, no flip-chip. Dopagem é etapa de front-end, feita no wafer inteiro, antes do corte.
+  fonte: "Peter Van Zant, Microchip Fabrication, capítulo sobre encapsulamento"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.1.T04-006
+  objetivo: O2
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: o *wafer sort* (teste dos dies com pontas de prova) é feito depois que os chips já foram encapsulados.
+  resposta: false
+  explicacao: |
+    O wafer sort (ou *probe*) acontece com o wafer ainda inteiro, ao final do front-end, para não gastar encapsulamento com dies defeituosos. Depois do encapsulamento há outro teste, o **teste final** — confundir os dois é o erro comum.
+  fonte: "Peter Van Zant, Microchip Fabrication, capítulos sobre teste de wafer e encapsulamento"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.1.T04-007
+  objetivo: O2
+  tipo: multipla
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Quais etapas pertencem ao **back-end** (encapsulamento e teste)? Marque todas as corretas.
+  alternativas:
+    - "Corte do wafer em dies (dicing)"
+    - "Ligação do die aos terminais (wire bonding)"
+    - "Implantação iônica (dopagem)"
+    - "Moldagem do encapsulamento plástico"
+  resposta: [0, 1, 3]
+  explicacao: |
+    Corte, ligação dos fios e moldagem transformam o die num componente soldável: back-end. A implantação iônica altera as propriedades elétricas do silício no wafer inteiro — é front-end.
+  fonte: "Peter Van Zant, Microchip Fabrication, capítulos sobre dopagem e encapsulamento"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.1.T04-008
+  objetivo: O3
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    O que caracteriza uma empresa **fabless**?
+  alternativas:
+    - "Fabrica wafers de chips para outras empresas"
+    - "Projeta e vende chips, mas terceiriza a fabricação"
+    - "Monta placas eletrônicas para outras empresas"
+    - "Distribui componentes de vários fabricantes"
+  resposta: 1
+  explicacao: |
+    *Fabless* = sem fábrica (*fab*): a empresa projeta os chips e contrata uma foundry para fabricá-los. Exemplos: Qualcomm, NVIDIA, Espressif. Quem fabrica wafers para terceiros é a foundry.
+  fonte: "Chris Miller, Chip War, capítulos sobre o modelo fabless/foundry"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.1.T04-009
+  objetivo: O3
+  tipo: unica
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Qual é o papel principal da **TSMC** na cadeia de semicondutores?
+  alternativas:
+    - "Projetar chips com marca própria para celulares"
+    - "Montar celulares e computadores para outras marcas"
+    - "Fabricar wafers de chips projetados por outras empresas (foundry)"
+    - "Vender ferramentas de EDA"
+  resposta: 2
+  explicacao: |
+    A TSMC é a maior foundry do mundo: fabrica chips projetados por clientes como Apple, NVIDIA e AMD. Montar aparelhos para outras marcas é o papel de uma EMS (ex.: Foxconn), outra parte da cadeia.
+  fonte: "Chris Miller, Chip War, capítulos sobre a TSMC"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.1.T04-010
+  objetivo: O3
+  tipo: multipla
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Quais destas empresas são **IDM** (projetam e fabricam os próprios chips em fábricas próprias)? Marque todas as corretas.
+  alternativas:
+    - "Texas Instruments"
+    - "Intel"
+    - "Espressif"
+    - "Qualcomm"
+  resposta: [0, 1]
+  explicacao: |
+    Texas Instruments e Intel têm fábricas de wafer próprias e fabricam seus chips — modelo IDM. Espressif e Qualcomm são fabless: projetam e contratam foundries (como a TSMC). Conhecer a marca não diz se ela tem fábrica; o modelo de negócio é que define.
+  fonte: "Chris Miller, Chip War, capítulos sobre o modelo fabless/foundry"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.1.T04-011
+  objetivo: O3
+  tipo: unica
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Uma startup de IoT projetou a placa do seu sensor e quer contratar alguém para comprar componentes, montar as placas, gravar o firmware e testar. Que tipo de empresa ela procura?
+  alternativas:
+    - "Uma OSAT"
+    - "Uma foundry"
+    - "Um distribuidor de componentes"
+    - "Uma EMS (Electronics Manufacturing Services)"
+  resposta: 3
+  explicacao: |
+    A EMS (também chamada de CM, *contract manufacturer*) monta placas e produtos para terceiros e pode cuidar de compras, gravação e teste. A OSAT encapsula e testa **chips**, não placas; a foundry fabrica wafers.
+  fonte: "Alan Cohen, Prototype to Product, capítulos sobre fabricação terceirizada; Andrew Huang, The Hardware Hacker, parte sobre fabricação"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.1.T04-012
+  objetivo: O4
+  tipo: unica
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Qual é a ordem correta das etapas principais numa linha de montagem SMT?
+  alternativas:
+    - "Pick-and-place → impressão de pasta → refusão → inspeção óptica (AOI)"
+    - "Impressão de pasta → pick-and-place → refusão → inspeção óptica (AOI)"
+    - "Impressão de pasta → refusão → pick-and-place → inspeção óptica (AOI)"
+    - "Inspeção óptica (AOI) → impressão de pasta → pick-and-place → refusão"
+  resposta: 1
+  explicacao: |
+    A pasta de solda é aplicada pelo estêncil, as máquinas colocam os componentes sobre a pasta, o forno funde a solda (refusão) e a AOI verifica o resultado. A refusão precisa vir depois da colocação: é ela que solda os componentes já posicionados.
+  fonte: "Ray Prasad, Surface Mount Technology: Principles and Practice, capítulos sobre o processo de montagem"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.1.T04-013
+  objetivo: O4
+  tipo: vf
+  dificuldade: 3
+  bloom: lembrar
+  enunciado: |
+    Verdadeiro ou falso: para vender legalmente no Brasil um produto IoT com Wi-Fi, é necessária a homologação da Anatel.
+  resposta: true
+  explicacao: |
+    Produtos de telecomunicações, inclusive os que têm transmissor de rádio como Wi-Fi, BLE ou LoRa, precisam ser certificados e homologados pela Anatel antes da comercialização no Brasil. Usar um módulo já homologado ajuda, mas não elimina as obrigações do produto final — ponto que costuma ser esquecido.
+  fonte: "Anatel (gov.br/anatel), página de certificação e homologação de produtos"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.1.T04-014
+  objetivo: O4
+  tipo: unica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Placas com um chip **BGA** passam na inspeção óptica (AOI), mas algumas falham no teste funcional por curto entre esferas de solda debaixo do chip. Qual inspeção é a indicada para encontrar esse defeito na linha?
+  alternativas:
+    - "Inspeção de pasta de solda (SPI), antes da colocação dos componentes"
+    - "Repetir a AOI com uma câmera de maior resolução"
+    - "Inspeção por raio-X (AXI), depois da refusão"
+    - "Inspeção visual com lupa feita pelo operador"
+  resposta: 2
+  explicacao: |
+    As juntas de um BGA ficam escondidas sob o encapsulamento; nenhuma câmera ou lupa as enxerga, por isso a AOI passou. O raio-X atravessa o componente e mostra pontes e vazios. A SPI ajuda a prevenir (pasta em excesso causa ponte), mas atua antes da refusão e não vê o defeito final.
+  fonte: "Ray Prasad, Surface Mount Technology: Principles and Practice, capítulos sobre inspeção e BGA"
+  origem: ia
+  revisao: rascunho

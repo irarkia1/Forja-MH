@@ -1,0 +1,37 @@
+id: M7.3
+ato: A7
+nome: "Fabricação caseira de sensores"
+horas: 180
+trilha: sensores
+ordem: 64
+requer: ["M7.1", "M7.2"]
+tags_chefe: []
+topicos:
+  - id: M7.3.T01
+    nome: "Termistor/RTD de filme"
+    tipo: elite
+    peso: 2
+  - id: M7.3.T02
+    nome: "Strain gauge e célula de carga"
+    tipo: elite
+    peso: 2
+  - id: M7.3.T03
+    nome: "Sensor capacitivo de umidade"
+    tipo: elite
+    peso: 2
+  - id: M7.3.T04
+    nome: "Sensor piezoelétrico"
+    tipo: elite
+    peso: 2
+  - id: M7.3.T05
+    nome: "Fotodetector"
+    tipo: elite
+    peso: 2
+  - id: M7.3.T06
+    nome: "Sensor de gás por óxido metálico"
+    tipo: elite
+    peso: 2
+  - id: M7.3.T07
+    nome: "Eletrodo de pH"
+    tipo: elite
+    peso: 2

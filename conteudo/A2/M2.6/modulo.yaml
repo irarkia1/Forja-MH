@@ -1,0 +1,37 @@
+id: M2.6
+ato: A2
+nome: "Integridade de sinal e de potência"
+horas: 150
+trilha: hardware
+ordem: 25
+requer: ["M2.5"]
+tags_chefe: []
+topicos:
+  - id: M2.6.T01
+    nome: "Linhas de transmissão"
+    tipo: comum
+    peso: 1
+  - id: M2.6.T02
+    nome: "Impedância controlada"
+    tipo: comum
+    peso: 1
+  - id: M2.6.T03
+    nome: "Reflexões e terminação"
+    tipo: comum
+    peso: 1
+  - id: M2.6.T04
+    nome: "Crosstalk"
+    tipo: comum
+    peso: 1
+  - id: M2.6.T05
+    nome: "Pares diferenciais"
+    tipo: comum
+    peso: 1
+  - id: M2.6.T06
+    nome: "PDN e impedância alvo"
+    tipo: comum
+    peso: 1
+  - id: M2.6.T07
+    nome: "Simulação de SI/PI"
+    tipo: comum
+    peso: 1

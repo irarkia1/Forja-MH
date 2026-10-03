@@ -1,0 +1,53 @@
+id: M1.4
+ato: A1
+nome: "STM32 e ARM bare metal"
+horas: 200
+trilha: firmware
+ordem: 11
+requer: ["M1.2", "M1.3"]
+tags_chefe: []
+topicos:
+  - id: M1.4.T01
+    nome: "Ecossistema STM32 e CMSIS"
+    tipo: comum
+    peso: 1
+  - id: M1.4.T02
+    nome: "Árvore de clock"
+    tipo: comum
+    peso: 1
+  - id: M1.4.T03
+    nome: "GPIO por registrador"
+    tipo: elite
+    peso: 2
+  - id: M1.4.T04
+    nome: "NVIC e prioridades"
+    tipo: comum
+    peso: 1
+  - id: M1.4.T05
+    nome: "Timers avançados (captura, PWM complementar)"
+    tipo: elite
+    peso: 2
+  - id: M1.4.T06
+    nome: "DMA"
+    tipo: elite
+    peso: 2
+  - id: M1.4.T07
+    nome: "ADC e DAC"
+    tipo: elite
+    peso: 2
+  - id: M1.4.T08
+    nome: "HAL × LL × registrador"
+    tipo: comum
+    peso: 1
+  - id: M1.4.T09
+    nome: "Depuração SWD/JTAG e breakpoints"
+    tipo: elite
+    peso: 2
+  - id: M1.4.T10
+    nome: "Escrever um driver do zero"
+    tipo: comum
+    peso: 1
+  - id: M1.4.T11
+    nome: "Gerenciamento de falhas (HardFault)"
+    tipo: comum
+    peso: 1

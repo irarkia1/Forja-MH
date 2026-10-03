@@ -1,0 +1,37 @@
+id: M0.7
+ato: A0
+nome: "Ferramentas do engenheiro"
+horas: 100
+trilha: base
+ordem: 7
+requer: ["M0.1"]
+tags_chefe: []
+topicos:
+  - id: M0.7.T01
+    nome: "Linux e terminal"
+    tipo: comum
+    peso: 1
+  - id: M0.7.T02
+    nome: "Git e GitHub"
+    tipo: comum
+    peso: 1
+  - id: M0.7.T03
+    nome: "Python para automação e análise de dados"
+    tipo: comum
+    peso: 1
+  - id: M0.7.T04
+    nome: "Documentação técnica e Markdown"
+    tipo: comum
+    peso: 1
+  - id: M0.7.T05
+    nome: "Inglês técnico (leitura de datasheet e norma)"
+    tipo: comum
+    peso: 1
+  - id: M0.7.T06
+    nome: "Solda THT: ferro, estanho, fluxo, inspeção"
+    tipo: elite
+    peso: 2
+  - id: M0.7.T07
+    nome: "Primeiro kit montado e documentado"
+    tipo: elite
+    peso: 2

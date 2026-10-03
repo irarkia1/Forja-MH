@@ -1,0 +1,45 @@
+id: M1.10
+ato: A1
+nome: "Protocolos de aplicação e nuvem"
+horas: 160
+trilha: firmware
+ordem: 17
+requer: ["M1.9"]
+tags_chefe: []
+topicos:
+  - id: M1.10.T01
+    nome: "HTTP e REST"
+    tipo: comum
+    peso: 1
+  - id: M1.10.T02
+    nome: "MQTT (QoS, retain, LWT)"
+    tipo: elite
+    peso: 2
+  - id: M1.10.T03
+    nome: "CoAP"
+    tipo: comum
+    peso: 1
+  - id: M1.10.T04
+    nome: "WebSocket"
+    tipo: comum
+    peso: 1
+  - id: M1.10.T05
+    nome: "JSON, CBOR, Protobuf"
+    tipo: comum
+    peso: 1
+  - id: M1.10.T06
+    nome: "Broker próprio (Mosquitto/EMQX)"
+    tipo: elite
+    peso: 2
+  - id: M1.10.T07
+    nome: "Plataformas (AWS IoT, ThingsBoard)"
+    tipo: comum
+    peso: 1
+  - id: M1.10.T08
+    nome: "Banco de séries temporais"
+    tipo: comum
+    peso: 1
+  - id: M1.10.T09
+    nome: "Dashboard"
+    tipo: elite
+    peso: 2

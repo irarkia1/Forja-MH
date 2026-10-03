@@ -1,0 +1,34 @@
+# Integrações
+
+## Caddy no VPS (publicação)
+Mesmo padrão do `planejamento` (`implantacao/Caddyfile.plataforma`):
+
+```caddy
+redir /estudos /estudos/
+handle_path /estudos/* {
+    reverse_proxy 127.0.0.1:8090
+}
+```
+O front é gerado com `base: './'` no Vite para funcionar no subcaminho, e o
+cabeçalho `Cache-Control: no-cache` em `*.html *.js *.css` evita o problema de
+cópia velha na Cloudflare já resolvido no outro projeto.
+
+## Claude API (opcional, F6)
+| Uso | Como | Limite |
+|---|---|---|
+| Rascunho de questões | `ferramentas/gerar-questoes.ts` recebe tópico + roteiro + trechos das fontes e gera N questões no schema YAML | Sempre `origem: ia`, `revisao: rascunho`; **não entram no jogo sem revisão humana** |
+| Segunda opinião em dissertativa | Rubrica + resposta → nota sugerida e comentário | Autoavaliação continua sendo a nota oficial (P7) |
+| Explicar um erro | Após errar, botão "me explica de outro jeito" | Só depois de responder; nunca durante |
+
+Modelo configurável por variável de ambiente (`CLAUDE_MODELO`). Sem chave, o
+sistema funciona igual — só some o botão.
+
+## Fontes de estudo
+Links para livros, documentação de fabricantes (Espressif, ST, TI) e cursos
+ficam no roteiro de cada tópico. Nenhuma integração automática: o sistema
+aponta, você estuda.
+
+## Futuro (não agora)
+- Exportar flashcards para Anki.
+- Calendário (bloco de estudo agendado).
+- Notificação de fantasmas do dia (e-mail ou push).

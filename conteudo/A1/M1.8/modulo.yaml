@@ -1,0 +1,45 @@
+id: M1.8
+ato: A1
+nome: "Sensores e atuadores"
+horas: 150
+trilha: sensores
+ordem: 15
+requer: ["M1.2", "M0.5"]
+tags_chefe: []
+topicos:
+  - id: M1.8.T01
+    nome: "Classes de sensores e especificações (faixa, resolução, exatidão, deriva)"
+    tipo: comum
+    peso: 1
+  - id: M1.8.T02
+    nome: "Temperatura e umidade"
+    tipo: elite
+    peso: 2
+  - id: M1.8.T03
+    nome: "Pressão e IMU"
+    tipo: elite
+    peso: 2
+  - id: M1.8.T04
+    nome: "Luz, distância, corrente"
+    tipo: comum
+    peso: 1
+  - id: M1.8.T05
+    nome: "Amp-op básico e condicionamento de sinal"
+    tipo: comum
+    peso: 1
+  - id: M1.8.T06
+    nome: "Calibração de dois pontos"
+    tipo: elite
+    peso: 2
+  - id: M1.8.T07
+    nome: "Motores DC, servo, passo"
+    tipo: comum
+    peso: 1
+  - id: M1.8.T08
+    nome: "MOSFET como chave e drivers"
+    tipo: elite
+    peso: 2
+  - id: M1.8.T09
+    nome: "Relés e isolação"
+    tipo: comum
+    peso: 1

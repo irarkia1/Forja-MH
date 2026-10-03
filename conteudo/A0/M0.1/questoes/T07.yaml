@@ -1,0 +1,250 @@
+- id: Q-M0.1.T07-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Você anotou um valor errado no caderno de laboratório. Qual é a forma correta de corrigir?
+  alternativas:
+    - "Apagar com corretivo e escrever o valor certo por cima"
+    - "Arrancar a página e refazer a entrada"
+    - "Riscar com um único traço, mantendo legível, e escrever o valor correto ao lado"
+    - "Escrever o valor certo a lápis por cima do errado"
+  resposta: 2
+  explicacao: |
+    O caderno é um registro: tudo que foi escrito deve continuar legível, inclusive os erros, para que se saiba o que mudou. Um traço só, valor correto ao lado (de preferência com data ou rubrica). Corretivo e páginas arrancadas destroem o histórico.
+  fonte: "Howard M. Kanare, Writing the Laboratory Notebook (ACS), capítulos iniciais"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.1.T07-002
+  objetivo: O1
+  tipo: unica
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Por que reservar as primeiras páginas do caderno para um índice e numerar todas as páginas?
+  alternativas:
+    - "Para deixar o caderno com aparência mais profissional"
+    - "Para localizar rapidamente cada experimento pelo título, data e número da página"
+    - "Porque a norma de ESD exige"
+    - "Para poder arrancar páginas sem perceber"
+  resposta: 1
+  explicacao: |
+    Índice com título, data e página transforma o caderno numa referência consultável: meses depois você acha a medição em segundos. Numerar as páginas também mostra se alguma foi removida — o oposto de facilitar arrancar páginas.
+  fonte: "Howard M. Kanare, Writing the Laboratory Notebook (ACS), capítulos iniciais"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.1.T07-003
+  objetivo: O1
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: é boa prática anotar as medições num rascunho e passar a limpo no caderno de laboratório depois.
+  resposta: false
+  explicacao: |
+    O caderno deve ser escrito na hora, durante o experimento. Passar a limpo introduz erros de cópia, perde observações que pareciam sem importância e tira o valor de registro original. Caderno bonito vale menos que caderno fiel.
+  fonte: "Howard M. Kanare, Writing the Laboratory Notebook (ACS), capítulos iniciais"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.1.T07-004
+  objetivo: O1
+  tipo: multipla
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Quais itens devem constar numa entrada do caderno para que outra pessoa consiga repetir o experimento? Marque todos os corretos.
+  alternativas:
+    - "Data da entrada"
+    - "Unidade de cada valor medido"
+    - "Somente os resultados que deram certo"
+    - "Equipamentos usados, com modelo"
+  resposta: [0, 1, 3]
+  explicacao: |
+    Data, unidades e equipamentos (com modelo) permitem reproduzir e comparar o experimento. Registrar só o que deu certo esconde informação importante: resultados inesperados e falhas são justamente o que mais ensina e o que outra pessoa precisa saber para não repetir o erro.
+  fonte: "Howard M. Kanare, Writing the Laboratory Notebook (ACS), capítulos sobre conteúdo das entradas"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.1.T07-005
+  objetivo: O2
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Para que serve a **protoboard** no kit de bancada?
+  alternativas:
+    - "Montar e alterar circuitos de teste sem precisar soldar"
+    - "Medir tensão e corrente"
+    - "Proteger os componentes contra descarga eletrostática"
+    - "Fornecer alimentação de 5 V aos circuitos"
+  resposta: 0
+  explicacao: |
+    A protoboard tem furos ligados internamente em trilhas, onde se encaixam componentes e jumpers; assim o circuito é montado e modificado rapidamente. Ela não fornece energia: a alimentação vem de pilhas ou fonte ligadas às trilhas laterais.
+  fonte: "Charles Platt, Make: Electronics, cap. 1 e 2 (uso da protoboard)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.1.T07-006
+  objetivo: O2
+  tipo: unica
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Kits de resistores costumam seguir a **série E12**. O que isso significa?
+  alternativas:
+    - "Todos os resistores têm 12 Ω"
+    - "O kit tem exatamente 12 resistores"
+    - "Há 12 valores nominais por década (10, 12, 15, 18, 22, 27, 33, 39, 47, 56, 68, 82 e seus múltiplos de 10)"
+    - "Os resistores aguentam até 12 W"
+  resposta: 2
+  explicacao: |
+    As séries E (E6, E12, E24...) definem valores padronizados por década, espaçados de forma aproximadamente geométrica. A E12 tem 12 valores por década e é associada historicamente à tolerância de 10%. Por isso você encontra 4,7 kΩ e 10 kΩ, mas não 5 kΩ, nesse kit.
+  fonte: "Scherz & Monk, Practical Electronics for Inventors, 4ª ed., capítulo sobre resistores (valores padronizados)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.1.T07-007
+  objetivo: O4
+  tipo: multipla
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Quais itens da bancada ajudam a proteger componentes contra **ESD** (descarga eletrostática)? Marque todos os corretos.
+  alternativas:
+    - "Pulseira antiestática ligada ao terra através de um resistor de 1 MΩ"
+    - "Saco antiestático blindado para guardar chips"
+    - "Saco plástico comum de supermercado"
+    - "Alicate de corte com cabo isolado"
+  resposta: [0, 1]
+  explicacao: |
+    A pulseira escoa a carga do corpo de forma controlada e o saco blindado protege o componente guardado. O saco plástico comum faz o contrário: acumula carga por atrito. Cabo isolado de alicate protege a pessoa contra choque, não o componente contra ESD.
+  fonte: "ANSI/ESD S20.20 (conceitos de aterramento pessoal e embalagem); Scherz & Monk, Practical Electronics for Inventors, 4ª ed., seções sobre manuseio de componentes sensíveis"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.1.T07-008
+  objetivo: O3
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Como se liga o multímetro para medir a **tensão** sobre um resistor num circuito ligado?
+  alternativas:
+    - "Em série, abrindo o circuito"
+    - "Em paralelo, com uma ponta em cada terminal do resistor"
+    - "Com o circuito desligado, em série"
+    - "Com as duas pontas no mesmo terminal do resistor"
+  resposta: 1
+  explicacao: |
+    Tensão é diferença de potencial entre dois pontos: as pontas vão nos dois terminais, em paralelo, sem abrir nada. Ligar em série é o modo de medir corrente.
+  fonte: "Charles Platt, Make: Electronics, cap. 1 (experimentos com multímetro); Fluke, ABCs of Multimeter Safety"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.1.T07-009
+  objetivo: O3
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Você quer medir a corrente de um LED (algo em torno de 10 mA). Qual é o procedimento correto?
+  alternativas:
+    - "Encostar as pontas nos terminais do LED com o seletor em mA"
+    - "Medir a resistência do LED e calcular a corrente"
+    - "Desligar o circuito, abri-lo, colocar o multímetro em série com a ponta vermelha no borne mA e o seletor em mA DC, e religar"
+    - "Ligar o multímetro em paralelo com a pilha, no borne 10 A"
+  resposta: 2
+  explicacao: |
+    O amperímetro precisa que a corrente passe por ele: abre-se o circuito e o medidor entra em série, no borne de corrente adequado. Encostar as pontas em paralelo com o LED, no borne de corrente, cria um caminho de resistência quase nula: o LED fica em curto, a leitura não é a corrente dele e, num ponto sem resistor limitando a corrente, o fusível pode queimar.
+  fonte: "Charles Platt, Make: Electronics, cap. 1 (medição de corrente); manual do multímetro"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.1.T07-010
+  objetivo: O3
+  tipo: unica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Você quer conferir o valor de um resistor que está soldado numa placa. Qual é a forma correta?
+  alternativas:
+    - "Medir com a placa ligada, para o resistor estar em uso"
+    - "Medir com a placa ligada, mas na escala mais alta de Ω"
+    - "Medir com a placa desligada, em qualquer situação; o valor lido é sempre o do resistor"
+    - "Desligar a placa e, se possível, soltar um terminal do resistor antes de medir"
+  resposta: 3
+  explicacao: |
+    O ohmímetro injeta uma pequena corrente própria; com o circuito energizado a leitura é falsa e o aparelho pode ser danificado. Mesmo desligado, outros componentes em paralelo alteram a leitura — por isso o ideal é soltar um terminal. Medir desligado é necessário, mas não garante que a leitura seja só do resistor.
+  fonte: "Charles Platt, Make: Electronics, cap. 1 (medição de resistência); Fluke, ABCs of Multimeter Safety"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.1.T07-011
+  objetivo: O3
+  tipo: unica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Depois de medir corrente, você esqueceu a ponta vermelha no borne **10 A**, girou o seletor para V DC e encostou as pontas nos terminais de uma bateria de 9 V. O que acontece?
+  alternativas:
+    - "O multímetro mede 9 V normalmente, porque o seletor está em V"
+    - "Forma-se praticamente um curto-circuito pela resistência baixíssima do borne de corrente, com corrente alta na bateria e nas pontas"
+    - "O multímetro mostra 0 V, sem nenhum risco"
+    - "O multímetro mede a resistência interna da bateria"
+  resposta: 1
+  explicacao: |
+    O borne de corrente liga a ponta ao COM por um shunt de resistência muito baixa, qualquer que seja a posição do seletor. Encostar em uma fonte de tensão nessa condição é um curto: corrente alta, aquecimento e, nos bornes protegidos, fusível queimado. Por isso a regra é voltar a ponta para V/Ω logo após medir corrente.
+  fonte: "Fluke, ABCs of Multimeter Safety; manual do multímetro (bornes e fusíveis)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.1.T07-012
+  objetivo: O3
+  tipo: unica
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Seu multímetro tem escala manual com faixas de corrente de 200 µA, 2 mA, 20 mA e 200 mA. Você **espera** cerca de 15 mA, mas não tem certeza do circuito. Qual é o procedimento mais adequado?
+  alternativas:
+    - "Começar em 200 mA e, se a leitura for menor que 20 mA, passar para a faixa de 20 mA para ter mais resolução"
+    - "Começar em 200 µA, que tem a maior resolução"
+    - "Usar 2 mA, porque 15 mA é um valor pequeno"
+    - "Usar 20 mA direto, porque o valor esperado cabe nela"
+  resposta: 0
+  explicacao: |
+    Quando o valor é incerto, começa-se na maior faixa para não sobrecarregar o aparelho ou queimar o fusível; depois desce-se para a faixa que ainda comporta a leitura e dá mais resolução (20 mA para 15 mA). Ir direto para 20 mA funciona se a estimativa estiver certa — o problema é justamente que você não tem certeza.
+  fonte: "Charles Platt, Make: Electronics, cap. 1 (escalas do multímetro); Fluke, ABCs of Multimeter Safety"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.1.T07-013
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    A pulseira antiestática tem um resistor de 1 MΩ em série com o cabo de aterramento. Se você encostar por acidente num ponto a 220 V, qual é a corrente máxima que esse resistor deixa passar pelo caminho da pulseira (desprezando a resistência do corpo)? Responda em mA.
+  resposta: {valor: 0.22, unidade: "mA", tolerancia: 0.01}
+  explicacao: |
+    Pela lei de Ohm, I = V / R = 220 V / 1 000 000 Ω = 0,00022 A = 0,22 mA (220 µA). É por isso que a pulseira tem esse resistor: escoa a carga estática devagar e limita a corrente pelo corpo caso haja contato com tensão. Uma pulseira ligada direto ao terra, sem resistor, não teria esse limite. Isso não torna seguro trabalhar com a rede: o resistor protege só o caminho da pulseira, não outros caminhos pelo corpo.
+  fonte: "ANSI/ESD S20.20 (aterramento pessoal); Scherz & Monk, Practical Electronics for Inventors, 4ª ed., cap. 2 (lei de Ohm)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.1.T07-014
+  objetivo: O4
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: um chip pode ser danificado por uma descarga eletrostática fraca demais para você sentir.
+  resposta: true
+  explicacao: |
+    Uma pessoa só percebe descargas a partir de alguns milhares de volts (por volta de 3 kV), mas muitos componentes podem ser danificados com tensões bem menores. O dano pode ser latente: o chip funciona hoje e falha semanas depois. Não sentir o choque não significa que o componente está a salvo.
+  fonte: "ANSI/ESD S20.20 (conceitos); Scherz & Monk, Practical Electronics for Inventors, 4ª ed., seções sobre manuseio de componentes sensíveis a ESD"
+  origem: ia
+  revisao: rascunho

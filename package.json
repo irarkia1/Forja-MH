@@ -1,0 +1,40 @@
+{
+  "name": "forja-mh",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "engines": {
+    "node": ">=22.13"
+  },
+  "scripts": {
+    "dev": "node ferramentas/dev.mjs",
+    "dev:api": "NODE_OPTIONS=--disable-warning=ExperimentalWarning tsx watch --clear-screen=false apps/api/src/main.ts",
+    "dev:web": "vite --config apps/web/vite.config.ts",
+    "build": "vite build --config apps/web/vite.config.ts",
+    "start": "NODE_ENV=production NODE_OPTIONS=--disable-warning=ExperimentalWarning tsx apps/api/src/main.ts",
+    "test": "NODE_OPTIONS=--disable-warning=ExperimentalWarning vitest run",
+    "tipos": "tsc -p tsconfig.json --noEmit",
+    "validar-conteudo": "NODE_OPTIONS=--disable-warning=ExperimentalWarning tsx ferramentas/validar-conteudo.ts",
+    "importar-conteudo": "NODE_OPTIONS=--disable-warning=ExperimentalWarning tsx ferramentas/importar-conteudo.ts",
+    "criar-usuario": "NODE_OPTIONS=--disable-warning=ExperimentalWarning tsx ferramentas/criar-usuario.ts",
+    "verificar": "npm run tipos && npm test && npm run validar-conteudo"
+  },
+  "dependencies": {
+    "@fastify/cookie": "^11.1.2",
+    "@fastify/static": "^10.1.5",
+    "fastify": "^5.12.5",
+    "marked": "^18.0.14",
+    "yaml": "^2.9.1",
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.4",
+    "tsx": "^4.23.15",
+    "typescript": "~5.9.3",
+    "vite": "^8.3.2",
+    "vitest": "^5.0.3"
+  }
+}

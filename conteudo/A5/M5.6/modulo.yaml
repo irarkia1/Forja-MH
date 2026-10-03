@@ -1,0 +1,21 @@
+id: M5.6
+ato: A5
+nome: "Projeto integrador 5"
+horas: 60
+trilha: integrador
+ordem: 53
+requer: ["M5.1", "M5.2", "M5.3", "M5.4", "M5.5", "M3.10"]
+tags_chefe: []
+topicos:
+  - id: M5.6.T01
+    nome: "Plano de produção de 1.000 unidades do \"meu ESP32\""
+    tipo: elite
+    peso: 2
+  - id: M5.6.T02
+    nome: "Jigs e plano de teste"
+    tipo: elite
+    peso: 2
+  - id: M5.6.T03
+    nome: "Visita técnica a uma EMS com relatório"
+    tipo: elite
+    peso: 2
