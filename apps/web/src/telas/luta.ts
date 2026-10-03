@@ -2,6 +2,7 @@ import { api, ErroApi, type Fim, type Luta, type QuestaoTela, type Retorno } fro
 import { recarregarEu } from '../estado';
 import { CORES_TRILHA, FANTASMA, HEROI, desenhar, guardiao, slime, slimeElite, tamanho } from '../jogo/sprites';
 import { barra, estrelas, h, markdown, modal, num, pct, preencher, toast } from '../ui';
+import { botaoAdmin, ehAdmin } from './admin';
 
 const LETRAS = ['A', 'B', 'C', 'D', 'E', 'F'];
 
@@ -163,7 +164,17 @@ export function telaLuta(l: Luta, aoTerminarBruto: (fim: Fim | null, luta: Luta)
         ),
         h('div.enunciado', { html: markdown(q.enunciado) }),
         corpo,
-        h('div.rodape-luta', {}, h('span.mudo', { style: 'font-size:13px' }, q.tipo === 'vf' ? 'Teclas: V / F' : q.tipo === 'numerica' ? 'Use vírgula ou ponto' : 'Teclas: 1–4 ou A–D'), confirmar),
+        h('div.rodape-luta', {},
+          h('span.mudo', { style: 'font-size:13px' }, q.tipo === 'vf' ? 'Teclas: V / F' : q.tipo === 'numerica' ? 'Use vírgula ou ponto' : 'Teclas: 1–4 ou A–D'),
+          ehAdmin() ? botaoAdmin('Mostrar resposta', async () => {
+            try {
+              const g = await api.get<{ tipo: string; resposta: unknown }>('admin/gabarito');
+              const r = g.resposta;
+              const texto = g.tipo === 'unica' ? LETRAS[r as number] : g.tipo === 'multipla' ? (r as number[]).map((i) => LETRAS[i]).join(', ') : g.tipo === 'vf' ? (r ? 'Verdadeiro' : 'Falso') : `${(r as { valor: number }).valor} ${(r as { unidade: string }).unidade}`;
+              toast(`🔧 Resposta: ${texto}`, 'ok', 6000);
+            } catch { toast('Falha ao buscar a resposta.', 'erro'); }
+          }) : null,
+          confirmar),
       ),
     );
     teclas = (e: KeyboardEvent) => {

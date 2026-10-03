@@ -2,6 +2,7 @@ import { api, ErroApi, type Fantasmas, type Fase, type Luta, type Mapa, type Mod
 import { Cena, type No } from '../jogo/cena';
 import { eu, recarregarEu } from '../estado';
 import { barra, estrelas, h, num, pct, preencher, tempo, toast } from '../ui';
+import { botaoAdmin, ehAdmin, ferramenta } from './admin';
 
 export interface Navegar {
   ir: (hash: string) => void;
@@ -197,7 +198,11 @@ export async function telaFase(moduloId: string, nav: Navegar) {
         h('h3', {}, f.modulo.nome),
         f.modulo.missao ? h('p', {}, h('em', {}, f.modulo.missao)) : null,
         h('dl.ficha', {}, h('dt', {}, 'Horas'), h('dd', {}, `${f.modulo.horas} h`), h('dt', {}, 'Inimigos'), h('dd', {}, String(f.topicos.length))),
-        h('div.acoes', {}, h('button.btn', { onclick: () => nav.ir(`#/mundo/${f.modulo.ato}`) }, 'Voltar ao mapa do ato ', h('span.tecla', {}, 'Enter'))),
+        h('div.acoes', {},
+          h('button.btn', { onclick: () => nav.ir(`#/mundo/${f.modulo.ato}`) }, 'Voltar ao mapa do ato ', h('span.tecla', {}, 'Enter')),
+          ehAdmin() ? botaoAdmin('Vencer todos os inimigos (libera o chefe)', () => ferramenta('vencer-modulo', { modulo_id: f.modulo.id, chefe: false }, 'inimigos vencidos')) : null,
+          ehAdmin() ? botaoAdmin('Vencer a fase inteira', () => ferramenta('vencer-modulo', { modulo_id: f.modulo.id, chefe: true }, 'fase vencida')) : null,
+        ),
       );
       return;
     }
@@ -262,6 +267,9 @@ function painelInimigo(painel: HTMLElement, t: TopicoFase, emPreparo: boolean, a
       !derrotado ? h('button.btn', { class: t.estado === 'pronto' ? 'principal' : '', disabled: t.estado !== 'pronto', onclick: acoes.atacar }, '⚔ Atacar', t.estado === 'pronto' ? h('span.tecla', {}, 'Enter') : null) : null,
       derrotado ? h('button.btn', { class: t.fantasma ? '' : 'principal', onclick: acoes.atacar }, '↺ Revanche (25% do XP, 1 por dia)') : null,
       derrotado ? h('button.btn', { onclick: acoes.estudar }, '📖 Rever o roteiro') : null,
+      ehAdmin() && !derrotado && falta > 0 ? botaoAdmin(`Completar estudo (+${tempo(falta)})`, () => ferramenta('estudo', { topico_id: t.id, horas: falta / 3600 }, 'estudo completo')) : null,
+      ehAdmin() && !derrotado ? botaoAdmin('Vencer este inimigo', () => ferramenta('vencer-topico', { topico_id: t.id }, 'inimigo vencido')) : null,
+      ehAdmin() ? botaoAdmin('Adaptação ★★★', () => ferramenta('adaptacao', { alvo_id: t.id, nivel: 3 }, 'adaptação 3')) : null,
     ),
   );
 }

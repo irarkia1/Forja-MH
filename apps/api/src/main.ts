@@ -15,9 +15,14 @@ console.log(`[conteúdo] ${r.modulos} módulos, ${r.topicos} tópicos, ${r.quest
 
 const { app, ctx } = await criarApp({ db, config, log: config.producao });
 
-if (!config.producao && !um(db, 'SELECT id FROM usuario LIMIT 1')) {
+if (!config.producao && !um(db, "SELECT id FROM usuario WHERE login = 'matheus'")) {
   await criarUsuario(ctx, 'matheus', 'forja1234');
   console.log('[dev] usuário criado: matheus / forja1234  (troque com npm run criar-usuario)');
+}
+// Conta de teste com o modo admin: o progresso dela não se mistura com o seu.
+if (!config.producao && !um(db, "SELECT id FROM usuario WHERE login = 'teste'")) {
+  await criarUsuario(ctx, 'teste', 'teste1234', 'admin');
+  console.log('[dev] conta admin de teste criada: teste / teste1234');
 }
 if (config.fatorTempo > 1) console.log(`[dev] FATOR DE TEMPO ×${config.fatorTempo}: cada segundo estudado conta ${config.fatorTempo}`);
 

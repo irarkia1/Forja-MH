@@ -96,7 +96,7 @@ export interface Retorno {
   golpe: { dado: number; dano: number; vidaAntes: number; vida: number } | null;
   vida: number; vidaMax: number; acertos: number; fim: Fim | null; proxima: QuestaoTela | null;
 }
-export interface Eu { personagem: Personagem; luta: Luta | null; sessao: string | null; fantasmasHoje: number; dev?: { fatorTempo: number } }
+export interface Eu { personagem: Personagem; luta: Luta | null; sessao: string | null; fantasmasHoje: number; papel: 'jogador' | 'admin'; dev?: { fatorTempo: number } }
 export interface Fantasmas {
   hoje: { topicoId: string; nome: string; moduloId: string; tipo: 'agenda' | 'ferida'; etapa: number; atrasoDias: number }[];
   proximos: { topicoId: string; nome: string; etapa: number; venceEm: string }[];

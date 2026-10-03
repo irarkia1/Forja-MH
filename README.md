@@ -26,6 +26,15 @@ Para mexer no front com recarga automática, rode também `npm run dev:web` e
 abra http://127.0.0.1:5173 (o Vite repassa `/api` para a porta 8090).
 `npm run dev` sobe os dois juntos.
 
+### Modo admin (para testar)
+Fora de produção também existe a conta **teste / teste1234**, com papel
+`admin`. Ela tem o botão **🔧 Admin** e botões 🔧 nos painéis e na luta:
+somar horas, vencer inimigo ou fase, adiantar dias (fantasmas e descanso do
+chefe), dar XP, definir adaptação, mostrar a resposta e zerar o progresso.
+As ferramentas só mexem na própria conta, então o progresso real (`matheus`)
+fica limpo. Para dar o papel admin a outra conta:
+`npm run criar-usuario -- <login> --admin`.
+
 ### Testar sem esperar horas
 `FORJA_FATOR_TEMPO=600 npm run dev:api` faz cada segundo de estudo contar 600
 (um pulso de 30 s = 5 h). Só funciona fora de produção, e a tela mostra o selo

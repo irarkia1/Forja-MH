@@ -25,10 +25,10 @@ export async function conferirSenha(senha: string, guardado: string): Promise<bo
 
 const hashToken = (t: string) => createHash('sha256').update(t).digest('hex');
 
-export async function criarUsuario(ctx: Contexto, login: string, senha: string): Promise<number> {
+export async function criarUsuario(ctx: Contexto, login: string, senha: string, papel: 'jogador' | 'admin' = 'jogador'): Promise<number> {
   if (senha.length < 8) throw new ErroApp(400, 'senha_curta', 'A senha precisa ter pelo menos 8 caracteres.');
-  const r = exec(ctx.db, 'INSERT INTO usuario (login, senha_hash, criado_em) VALUES (:login, :hash, :em)', {
-    login, hash: await hashSenha(senha), em: ctx.agora().toISOString(),
+  const r = exec(ctx.db, 'INSERT INTO usuario (login, senha_hash, criado_em, papel) VALUES (:login, :hash, :em, :papel)', {
+    login, hash: await hashSenha(senha), em: ctx.agora().toISOString(), papel,
   });
   exec(ctx.db, 'INSERT INTO personagem (usuario_id) VALUES (:id)', { id: r.lastInsertRowid });
   return r.lastInsertRowid;

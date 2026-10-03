@@ -25,6 +25,7 @@ export function hud(): { el: HTMLElement; destruir: () => void } {
         h('span.mudo', {}, p.proximoMarco ? `${num(p.horasTotais)} / ${p.proximoMarco.toLocaleString('pt-BR')} h` : `${num(p.horasTotais)} h`),
       ),
       h('div.espaco'),
+      eu()?.papel === 'admin' ? h('a.btn', { href: '#/admin', style: 'border-style:dashed;border-color:var(--energia);color:var(--energia);text-decoration:none' }, '🔧 Admin') : null,
       fatorTempo > 1 ? h('span.selo.dev', { title: 'Modo de desenvolvimento: cada segundo conta mais' }, `DEV ×${fatorTempo}`) : null,
       h('button.btn.fantasma', {
         title: 'Tema claro/escuro',

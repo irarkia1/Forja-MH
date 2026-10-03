@@ -2,6 +2,10 @@
 
 Formato: data · o que mudou · onde.
 
+## 2026-10-03 — Modo admin
+- Conta `teste` com 🔧 Admin: horas, vencer, viagem no tempo, XP, adaptação,
+  mostrar resposta, zerar (D019). 39 testes.
+
 ## 2026-10-03 — Conteúdo do M0.4
 - M0.4 Circuitos DC: 9 roteiros com exemplos resolvidos e gabarito, 126 questões
   (67 numéricas conferidas por script). Ordem didática D018.

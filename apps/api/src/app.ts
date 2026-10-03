@@ -10,10 +10,12 @@ import type { Contexto } from './contexto';
 import type { Db } from './db';
 import { ErroApp } from './erros';
 import { entrar, sair, usuarioDoToken } from './servicos/auth';
+import * as admin from './servicos/admin';
 import * as estudo from './servicos/estudo';
 import * as fantasmas from './servicos/fantasmas';
 import { fase, mapa } from './servicos/mapa';
 import { resumo, salvarPosicao } from './servicos/personagem';
+import { um } from './db';
 import * as provas from './servicos/provas';
 
 const COOKIE = 'forja_sessao';
@@ -89,6 +91,7 @@ export async function criarApp(o: OpcoesApp): Promise<{ app: FastifyInstance; ct
       luta: provas.emCurso(ctx, req.usuarioId),
       sessao: estudo.sessaoAberta(ctx, req.usuarioId)?.topico_id ?? null,
       fantasmasHoje: fantasmas.contarPendentes(ctx, req.usuarioId),
+      papel: um<{ papel: string }>(ctx.db, 'SELECT papel FROM usuario WHERE id = :uid', { uid: req.usuarioId })?.papel ?? 'jogador',
       dev: o.config.producao ? undefined : { fatorTempo: o.config.fatorTempo },
     }));
     r.put('/api/posicao', async (req) => {
@@ -126,6 +129,29 @@ export async function criarApp(o: OpcoesApp): Promise<{ app: FastifyInstance; ct
         .parse(req.body);
       return provas.responder(ctx, req.usuarioId, IdNum.parse(req.params).id, b.ordem, b.resposta);
     });
+    // ---- admin (ferramentas de teste; só mexem na própria conta)
+    await r.register(async (a) => {
+      a.addHook('preHandler', async (req: FastifyRequest) => admin.exigirAdmin(ctx, req.usuarioId));
+      const Topico = z.object({ topico_id: z.string().max(20) });
+      a.post('/api/admin/estudo', async (req) => {
+        const b = Topico.extend({ horas: z.number().positive().max(10_000) }).parse(req.body);
+        return admin.adicionarEstudo(ctx, req.usuarioId, b.topico_id, b.horas);
+      });
+      a.post('/api/admin/vencer-topico', async (req) => admin.vencerTopico(ctx, req.usuarioId, Topico.parse(req.body).topico_id));
+      a.post('/api/admin/vencer-modulo', async (req) => {
+        const b = z.object({ modulo_id: z.string().max(12), chefe: z.boolean().default(true) }).parse(req.body);
+        return admin.vencerModulo(ctx, req.usuarioId, b.modulo_id, b.chefe);
+      });
+      a.post('/api/admin/adiantar', async (req) => admin.adiantarDias(ctx, req.usuarioId, z.object({ dias: z.number().positive().max(400) }).parse(req.body).dias));
+      a.post('/api/admin/xp', async (req) => admin.ganharXp(ctx, req.usuarioId, z.object({ xp: z.number().int().positive().max(10_000_000) }).parse(req.body).xp));
+      a.post('/api/admin/adaptacao', async (req) => {
+        const b = z.object({ alvo_id: z.string().max(20), nivel: z.number().int().min(0).max(5) }).parse(req.body);
+        return admin.definirAdaptacao(ctx, req.usuarioId, b.alvo_id, b.nivel);
+      });
+      a.get('/api/admin/gabarito', async (req) => admin.gabaritoAtual(ctx, req.usuarioId));
+      a.post('/api/admin/zerar', async (req) => admin.zerarProgresso(ctx, req.usuarioId));
+    });
+
     r.post('/api/tentativas/:id/desistir', async (req) => provas.desistir(ctx, req.usuarioId, IdNum.parse(req.params).id));
   });
 

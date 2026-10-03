@@ -215,3 +215,14 @@ No M0.4 a ordem de estudo é **T09 Segurança e ESD → T01 Ohm → T08 Multíme
 fonte e protoboard → T02 … T07**. Os exercícios "na bancada" dos tópicos de
 teoria já usam fonte com limite de corrente e amperímetro em série, então os
 instrumentos vêm cedo. Os IDs não mudam; só a ordem no `modulo.yaml`.
+
+## D019 — Modo admin numa conta de teste
+**Data:** 2026-10-03 · **Status:** aceita (pedido do Matheus)
+
+**Decisão.** Papel `admin` por usuário (migração 003). Rotas `/api/admin/*`
+recusam quem não é admin (403) e só alteram a própria conta: somar horas,
+vencer tópico/fase, "viagem no tempo" (recuar as datas de fantasmas,
+descanso do chefe e revanches), XP, adaptação, ver a resposta da questão
+atual e zerar. Fora de produção nasce a conta `teste` (admin).
+**Consequências.** O D004 (gabarito nunca sai antes da resposta) continua
+valendo para jogadores; a exceção é só para admin, que existe para testar.

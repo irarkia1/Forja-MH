@@ -297,3 +297,42 @@ describe('fantasmas', () => {
     expect((await chamar('POST', '/api/tentativas', { tipo: 'chefe', alvo_id: 'M0.1' })).status).toBe(200);
   });
 });
+
+describe('modo admin', () => {
+  async function entrarComoAdmin() {
+    await criarUsuario({ db, config: lerConfig({}), agora: () => agora, rng: Math.random, dado: () => 0 }, 'teste', 'senha-teste', 'admin');
+    const r = await app.inject({ method: 'POST', url: '/api/login', payload: { login: 'teste', senha: 'senha-teste' } });
+    cookie = String(r.headers['set-cookie']).split(';')[0]!;
+  }
+
+  it('conta comum não usa as ferramentas', async () => {
+    const r = await chamar('POST', '/api/admin/xp', { xp: 100 });
+    expect(r.status).toBe(403);
+  });
+
+  it('horas, Marco, vencer fase, adiantar dias, gabarito e zerar', async () => {
+    await entrarComoAdmin();
+    expect((await chamar('GET', '/api/eu')).json.papel).toBe('admin');
+    const g = (await chamar('POST', '/api/admin/estudo', { topico_id: 'M0.1.T01', horas: 2001 })).json;
+    expect(g.marcos).toBe(1);
+    expect((await chamar('GET', '/api/eu')).json.personagem.faixa).toBe(2);
+
+    await chamar('POST', '/api/admin/vencer-modulo', { modulo_id: 'M0.1', chefe: true });
+    const m = (await chamar('GET', '/api/mapa')).json;
+    expect(m.modulos.find((x: any) => x.id === 'M0.1').estado).toBe('vencido');
+
+    expect((await chamar('GET', '/api/fantasmas')).json.hoje).toHaveLength(0);
+    await chamar('POST', '/api/admin/adiantar', { dias: 2 });
+    expect((await chamar('GET', '/api/fantasmas')).json.hoje.length).toBe(2);
+
+    const ini = (await chamar('POST', '/api/tentativas', { tipo: 'fantasma', alvo_id: 'M0.1.T01' })).json;
+    const gab = (await chamar('GET', '/api/admin/gabarito')).json;
+    expect(gab.resposta).toBe(certaNaTela(ini.tentativaId, 0));
+
+    await chamar('POST', `/api/tentativas/${ini.tentativaId}/desistir`);
+    await chamar('POST', '/api/admin/zerar');
+    const eu = (await chamar('GET', '/api/eu')).json;
+    expect(eu.personagem).toMatchObject({ nivel: 1, horasTotais: 0 });
+    expect((await chamar('GET', '/api/mapa')).json.modulos.find((x: any) => x.id === 'M0.1').estado).toBe('disponivel');
+  });
+});
