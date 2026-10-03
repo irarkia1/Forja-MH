@@ -34,7 +34,7 @@ mesma prova.
 ## Derrota
 Vida zerou, ou terminou abaixo do piso.
 - **Adaptação +1** no chefe do módulo (máx. 5).
-- **Cooldown** de 48 h (skill Recuperação reduz até 24 h).
+- **Descanso** de 48 h só a partir da 2ª derrota seguida, ★★ (D020); a skill Recuperação reduz até 24 h.
 - **Feridas**: tópicos das questões erradas ganham fantasma imediato.
 - A próxima tentativa **sorteia nova variante** (exceto as 3 últimas) e novas
   questões.

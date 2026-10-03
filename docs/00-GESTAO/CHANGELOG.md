@@ -2,6 +2,13 @@
 
 Formato: data · o que mudou · onde.
 
+## 2026-10-03 — Skills e ajustes do teste
+- Botão ✨ Skills no topo e árvore: Guerreiro, Estudioso, Corte e Escudo (D021).
+- Energia ⚡ no topo; Sorte, Esquiva, Regeneração e Escudo aparecem na luta.
+- Estudar dá 1 XP por minuto (Foco Profundo dá bônus em sessões de 50 min+).
+- Barra do inimigo só cai quando você acerta.
+- Chefe descansa só a partir da 2ª derrota seguida (D020). 42 testes.
+
 ## 2026-10-03 — Modo admin
 - Conta `teste` com 🔧 Admin: horas, vencer, viagem no tempo, XP, adaptação,
   mostrar resposta, zerar (D019). 39 testes.

@@ -27,10 +27,12 @@ Dois trilhos andando juntos. O do **sistema** é curto e vem primeiro; o do
 - [ ] Cooldown e "feridas" após derrota
 - [ ] Fraqueza por tópico/objetivo e adaptação 0–5 (D015)
 
-### F3 — Personagem
-- [ ] XP com curva por faixas e Marcos (D014), títulos, vida por nível, revanches
-- [ ] Árvore de skills, energia e registro de ajudas
-- [ ] Inimigos de elite com evidência de laboratório
+### F3 — Personagem (parcial, 2026-10-03)
+- [x] XP com curva por faixas e Marcos (D014), vida por nível, revanches
+- [x] XP de 1 por minuto de estudo
+- [x] Árvore de skills: Guerreiro, Estudioso, Corte e Escudo; energia; registro de ajudas (D021)
+- [x] Inimigos de elite com evidência de laboratório
+- [ ] Lupa, Segunda Chance, Rascunho; ramo Explorador; títulos
 
 ### F4 — Revisão espaçada ✔ (2026-10-03)
 - [x] Fantasmas no mapa nas datas 1/3/7/21/60 (sem dano, sem skills, miram o ponto fraco)
