@@ -11,6 +11,7 @@ import type { Db } from './db';
 import { ErroApp } from './erros';
 import { entrar, sair, usuarioDoToken } from './servicos/auth';
 import * as estudo from './servicos/estudo';
+import * as fantasmas from './servicos/fantasmas';
 import { fase, mapa } from './servicos/mapa';
 import { resumo, salvarPosicao } from './servicos/personagem';
 import * as provas from './servicos/provas';
@@ -87,6 +88,7 @@ export async function criarApp(o: OpcoesApp): Promise<{ app: FastifyInstance; ct
       personagem: resumo(ctx, req.usuarioId),
       luta: provas.emCurso(ctx, req.usuarioId),
       sessao: estudo.sessaoAberta(ctx, req.usuarioId)?.topico_id ?? null,
+      fantasmasHoje: fantasmas.contarPendentes(ctx, req.usuarioId),
       dev: o.config.producao ? undefined : { fatorTempo: o.config.fatorTempo },
     }));
     r.put('/api/posicao', async (req) => {
@@ -113,9 +115,10 @@ export async function criarApp(o: OpcoesApp): Promise<{ app: FastifyInstance; ct
     r.post('/api/sessoes/:id/encerrar', async (req) => estudo.encerrar(ctx, req.usuarioId, IdNum.parse(req.params).id));
 
     r.post('/api/tentativas', async (req) => {
-      const b = z.object({ tipo: z.enum(['combate', 'chefe']), alvo_id: z.string().max(20) }).parse(req.body);
+      const b = z.object({ tipo: z.enum(['combate', 'chefe', 'fantasma']), alvo_id: z.string().max(20) }).parse(req.body);
       return provas.iniciar(ctx, req.usuarioId, b.tipo, b.alvo_id);
     });
+    r.get('/api/fantasmas', async (req) => fantasmas.listar(ctx, req.usuarioId));
     r.get('/api/tentativas/aberta', async (req) => ({ luta: provas.emCurso(ctx, req.usuarioId) }));
     r.post('/api/tentativas/:id/respostas', async (req) => {
       const b = z

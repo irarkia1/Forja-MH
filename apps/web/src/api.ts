@@ -57,7 +57,7 @@ export type EstadoTopico = 'bloqueado' | 'disponivel' | 'em_estudo' | 'pronto' |
 export interface TopicoFase {
   id: string; nome: string; tipo: 'comum' | 'elite'; estado: EstadoTopico; depoisDe: string[]; horas: number;
   minimoSeg: number; exigidoSeg: number; estudadoSeg: number; adaptacao: number; poder: number; perfuracao: number;
-  vitorias: number; derrotas: number;
+  vitorias: number; derrotas: number; fantasma: boolean;
 }
 export interface Fase {
   modulo: { id: string; ato: string; nome: string; missao: string | null; horas: number; trilha: string; estado: EstadoModulo };
@@ -81,17 +81,23 @@ export interface QuestaoTela {
 }
 export interface Ganho { xp: number; niveisGanhos: number; marcos: number; nivel: number }
 export interface Luta {
-  tentativaId: number; tipo: 'combate' | 'chefe'; alvoNome: string; moduloId: string; alvoId?: string; total: number; trilha: string; elite: boolean;
+  tentativaId: number; tipo: 'combate' | 'chefe' | 'fantasma'; alvoNome: string; moduloId: string; alvoId?: string; total: number; trilha: string; elite: boolean;
   poder: number; vidaMax: number; defesa: number; perfuracao: number; adaptacao: number; revanche: boolean; piso: number;
   variante: { id: string; nome: string; regra: string } | null; vida: number; acertos?: number; questao: QuestaoTela;
+  fantasma: { etapa: number; ferida: boolean; minAcertos: number } | null;
 }
 export interface Fim {
   resultado: 'vitoria' | 'derrota'; motivo: 'vida' | 'piso' | 'fuga' | null; critico: boolean; acertos: number;
   respondidas: number; total: number; revanche: boolean; ganho: Ganho; adaptacaoNova: number;
+  revisao: { passou: boolean; proximaEm: string | null; concluido: boolean; consolidado: boolean } | null;
 }
 export interface Retorno {
   correta: boolean; gabarito: unknown; explicacao: string; fonte: string;
   golpe: { dado: number; dano: number; vidaAntes: number; vida: number } | null;
   vida: number; vidaMax: number; acertos: number; fim: Fim | null; proxima: QuestaoTela | null;
 }
-export interface Eu { personagem: Personagem; luta: Luta | null; sessao: string | null; dev?: { fatorTempo: number } }
+export interface Eu { personagem: Personagem; luta: Luta | null; sessao: string | null; fantasmasHoje: number; dev?: { fatorTempo: number } }
+export interface Fantasmas {
+  hoje: { topicoId: string; nome: string; moduloId: string; tipo: 'agenda' | 'ferida'; etapa: number; atrasoDias: number }[];
+  proximos: { topicoId: string; nome: string; etapa: number; venceEm: string }[];
+}

@@ -77,12 +77,18 @@ export async function telaEstudo(topicoId: string, nav: Navegar) {
       )
     : null;
 
-  function atualizarAtaque(): void {
-    const falta = Math.max(0, t.exigidoSeg - estudado);
+  // A guarda acompanha o mostrador (servidor + estimativa entre pulsos).
+  function pintarGuarda(seg: number): void {
+    const falta = Math.max(0, t.exigidoSeg - seg);
     guarda.replaceChildren(
       h('div.mudo', { style: 'font-size:13px;margin-bottom:4px' }, falta ? `Guarda do inimigo: faltam ${tempo(falta)}` : 'Guarda quebrada!'),
       barra('guarda', falta / Math.max(1, t.exigidoSeg), 'Guarda'),
     );
+  }
+
+  function atualizarAtaque(): void {
+    const falta = Math.max(0, t.exigidoSeg - estudado);
+    pintarGuarda(estudado);
     const motivos: string[] = [];
     if (falta > 0) motivos.push(`estudar mais ${tempo(falta)}`);
     if (!notaSalva) motivos.push('salvar a nota pessoal');
@@ -167,6 +173,7 @@ export async function telaEstudo(topicoId: string, nav: Navegar) {
     const visivel = document.visibilityState === 'visible' && sessao && !encerrado;
     const extra = visivel ? ((performance.now() - ultimaBase) / 1000) * fatorTempo : 0;
     relogioEl.textContent = relogio(estudado + Math.min(extra, 90 * fatorTempo));
+    pintarGuarda(estudado + Math.min(extra, 90 * fatorTempo));
     relogioEl.classList.toggle('pausado', !visivel);
     sessaoEl.textContent = `Nesta sessão: ${tempo(sessaoSeg + Math.min(extra, 90 * fatorTempo))} · exigido ${tempo(t.exigidoSeg)}`;
   }, 1000);
@@ -181,6 +188,9 @@ export async function telaEstudo(topicoId: string, nav: Navegar) {
     h('div.estudo', {},
       h('article.roteiro', { html: t.roteiro ? markdown(t.roteiro) : '<p class="mudo">Roteiro deste tópico ainda em preparo.</p>' }),
       h('aside.lateral', {},
+        fatorTempo > 1
+          ? h('div.aviso.erro', {}, h('b', {}, `Modo de teste: tempo ×${fatorTempo}.`), ` Cada segundo conta ${fatorTempo}. Para estudar de verdade, suba o servidor sem FORJA_FATOR_TEMPO.`)
+          : null,
         h('section.cartao', {}, h('h4', {}, '⏱ TEMPO VÁLIDO NO TÓPICO'), relogioEl, sessaoEl, statusEl, h('div', { style: 'height:10px' }), guarda),
         objetivos,
         h('section.cartao', {}, h('h4', {}, '✍ NOTA PESSOAL'), nota, h('div', { style: 'display:flex;justify-content:space-between;align-items:center;margin-top:8px;gap:8px' }, contagem, salvarNota)),

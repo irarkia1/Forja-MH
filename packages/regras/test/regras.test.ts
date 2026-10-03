@@ -190,3 +190,22 @@ describe('progresso', () => {
     expect(topicoDisponivel('T2', deps, new Set())).toBe(false);
   });
 });
+
+import { etapaEfetiva, proximaRevisao, regraDaEtapa } from '../src';
+
+describe('fantasmas', () => {
+  it('agenda 1/3/7/21/60 e volta à etapa 1 quando erra', () => {
+    expect(proximaRevisao(1, true)).toEqual({ etapa: 2, dias: 3 });
+    expect(proximaRevisao(3, true)).toEqual({ etapa: 4, dias: 21 });
+    expect(proximaRevisao(5, true)).toEqual({ concluido: true });
+    expect(proximaRevisao(4, false)).toEqual({ etapa: 1, dias: 1 });
+  });
+
+  it('regras por etapa e rebaixamento por atraso', () => {
+    expect(regraDaEtapa(1)).toEqual({ questoes: 2, minimo: 2 });
+    expect(regraDaEtapa(5)).toEqual({ questoes: 3, minimo: 3 });
+    const vence = new Date('2026-10-01');
+    expect(etapaEfetiva(3, vence, new Date('2026-10-05'))).toBe(3);
+    expect(etapaEfetiva(3, vence, new Date('2026-10-12'))).toBe(2);
+  });
+});

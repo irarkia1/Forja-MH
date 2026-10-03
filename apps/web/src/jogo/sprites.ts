@@ -163,6 +163,22 @@ export const CAVEIRA: Sprite = {
   linhas: ['.WWWWWW.', 'WWWWWWWW', 'WKKWWKKW', 'WKKWWKKW', 'WWWKKWWW', '.WWWWWW.', '..W.W.W.', '..WWWWW.'],
 };
 
+export const FANTASMA: Sprite = {
+  paleta: { W: '#dff6ff', B: '#9fd8f0', K: '#1b2a3a' },
+  linhas: [
+    '...WWWW...',
+    '..WWWWWW..',
+    '.WWWWWWWW.',
+    '.WKKWWKKW.',
+    '.WKKWWKKW.',
+    '.WWWWWWWW.',
+    '.WWWKKWWW.',
+    '.WWWWWWWW.',
+    '.WBWWBWWB.',
+    '.B.BB.BB..',
+  ],
+};
+
 export const TROFEU: Sprite = {
   paleta: { Y: '#f5c542', W: '#8a6d1d' },
   linhas: ['YYYYYYYYYY', 'Y.YYYYYY.Y', 'Y.YYYYYY.Y', '.YYYYYYYY.', '..YYYYYY..', '....YY....', '....YY....', '...YYYY...', '..WWWWWW..'],

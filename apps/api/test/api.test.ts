@@ -75,7 +75,7 @@ function certaNaTela(tentativaId: number, ordem: number): number {
   return JSON.parse(t.plano).questoes[ordem].perm.indexOf(0);
 }
 
-async function lutar(tipo: 'combate' | 'chefe', alvo: string, acertar: (i: number) => boolean) {
+async function lutar(tipo: 'combate' | 'chefe' | 'fantasma', alvo: string, acertar: (i: number) => boolean) {
   const ini = await chamar('POST', '/api/tentativas', { tipo, alvo_id: alvo });
   expect(ini.status, JSON.stringify(ini.json)).toBe(200);
   expect(ini.raw).not.toContain('gabarito');
@@ -242,5 +242,58 @@ describe('chefe', () => {
     const aberta = (await chamar('GET', '/api/tentativas/aberta')).json.luta;
     expect(aberta.questao.ordem).toBe(1);
     expect(aberta.acertos).toBe(1);
+  });
+});
+
+describe('fantasmas', () => {
+  async function vencerT01() {
+    await prepararParaAtacar('M0.1.T01');
+    await lutar('combate', 'M0.1.T01', () => true);
+  }
+
+  it('vitória agenda o fantasma para amanhã; passar avança a agenda', async () => {
+    await vencerT01();
+    expect((await chamar('POST', '/api/tentativas', { tipo: 'fantasma', alvo_id: 'M0.1.T01' })).json.erro).toBe('sem_fantasma');
+    andar(26 * 3600);
+    const lista = (await chamar('GET', '/api/fantasmas')).json;
+    expect(lista.hoje).toHaveLength(1);
+    expect((await chamar('GET', '/api/modulos/M0.1')).json.topicos[0].fantasma).toBe(true);
+    dado = 6;
+    const { ini, ultima } = await lutar('fantasma', 'M0.1.T01', () => true);
+    expect(ini.total).toBe(2);
+    expect(ultima.golpe).toBeNull();
+    expect(ultima.fim).toMatchObject({ resultado: 'vitoria', revisao: { passou: true, concluido: false } });
+    expect(ultima.fim.ganho.xp).toBe(20);
+    const prox = new Date(ultima.fim.revisao.proximaEm).getTime();
+    expect(Math.round((prox - agora.getTime()) / 86_400_000)).toBeGreaterThanOrEqual(2);
+  });
+
+  it('errar o fantasma não dá dano e volta para a etapa 1 amanhã', async () => {
+    await vencerT01();
+    andar(26 * 3600);
+    dado = 6;
+    const { ultima } = await lutar('fantasma', 'M0.1.T01', () => false);
+    expect(ultima.golpe).toBeNull();
+    expect(ultima.fim).toMatchObject({ resultado: 'derrota', revisao: { passou: false } });
+    const t = (await chamar('GET', '/api/modulos/M0.1')).json.topicos[0];
+    expect(t.estado).toBe('derrotado');
+  });
+
+  it('derrota no chefe abre feridas; chefe só volta depois de curar', async () => {
+    await vencerT01();
+    await prepararParaAtacar('M0.1.T02');
+    await chamar('POST', '/api/topicos/M0.1.T02/evidencias', { descricao: 'Montei o kit e fotografei a bancada organizada com tudo etiquetado.' });
+    await lutar('combate', 'M0.1.T02', () => true);
+    dado = 0;
+    await lutar('chefe', 'M0.1', (i) => i < 5);
+    expect((await chamar('GET', '/api/fantasmas')).json.hoje.length).toBeGreaterThanOrEqual(1);
+    andar(48 * 3600 + 1);
+    expect((await chamar('POST', '/api/tentativas', { tipo: 'chefe', alvo_id: 'M0.1' })).json.erro).toBe('feridas_abertas');
+    for (const f of (await chamar('GET', '/api/fantasmas')).json.hoje) {
+      while ((await chamar('GET', '/api/fantasmas')).json.hoje.some((x: any) => x.topicoId === f.topicoId)) {
+        await lutar('fantasma', f.topicoId, () => true);
+      }
+    }
+    expect((await chamar('POST', '/api/tentativas', { tipo: 'chefe', alvo_id: 'M0.1' })).status).toBe(200);
   });
 });

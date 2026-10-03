@@ -42,8 +42,9 @@ function abrirLuta(luta: Luta): void {
   const t = telaLuta(luta, (fim: Fim | null) => {
     lutando = false;
     const venceu = fim?.resultado === 'vitoria';
-    if (!venceu && fim && !fim.revanche) toast(luta.tipo === 'chefe' ? 'O chefe venceu desta vez.' : 'Você foi expulso da fase.', 'erro');
-    nav.ir(venceu || fim?.revanche ? `#/fase/${luta.moduloId}` : `#/mundo/${luta.moduloId.startsWith('M') ? `A${luta.moduloId[1]}` : ''}`);
+    const fica = venceu || fim?.revanche || luta.tipo === 'fantasma';
+    if (!fica) toast(luta.tipo === 'chefe' ? 'O chefe venceu desta vez.' : 'Você foi expulso da fase.', 'erro');
+    nav.ir(fica ? `#/fase/${luta.moduloId}` : `#/mundo/A${luta.moduloId[1]}`);
   });
   trocar(t.el, t);
 }

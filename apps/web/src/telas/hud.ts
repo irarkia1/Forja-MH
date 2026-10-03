@@ -6,6 +6,7 @@ const ROMANO = ['I', 'II', 'III', 'IV', 'V'];
 
 export function hud(): { el: HTMLElement; destruir: () => void } {
   const el = h('header.hud');
+  let fantasmas = 0;
   const pintar = (p: Personagem) => {
     preencher(el, 
       h('a.logo', { href: '#/mundo', title: 'Mapa' }, 'FORJA M&H'),
@@ -15,6 +16,7 @@ export function hud(): { el: HTMLElement; destruir: () => void } {
         h('span.mudo', {}, `${p.xpFaixa.toLocaleString('pt-BR')}/${p.xpProximo.toLocaleString('pt-BR')}`),
       ),
       h('div.grupo', { title: 'Vida máxima (6 + nível − 1)' }, '❤', h('b', {}, String(p.vida))),
+      fantasmas ? h('a.grupo', { href: '#/mundo', title: 'Fantasmas (revisões) para hoje', style: 'color:var(--energia);text-decoration:none' }, '👻', h('b', {}, String(fantasmas)), h('span.mudo', {}, 'revisões hoje')) : null,
       h('div.grupo', { title: 'Horas válidas nos últimos 7 dias' },
         '⏱', h('b', {}, `${num(p.horasSemana)}h`), h('span.mudo', {}, `/ ${p.metaSemana}h na semana`),
       ),
@@ -36,7 +38,13 @@ export function hud(): { el: HTMLElement; destruir: () => void } {
     );
   };
   const e = eu();
-  if (e) pintar(e.personagem);
-  const parar = aoMudarEu((x) => pintar(x.personagem));
+  if (e) {
+    fantasmas = e.fantasmasHoje;
+    pintar(e.personagem);
+  }
+  const parar = aoMudarEu((x) => {
+    fantasmas = x.fantasmasHoje;
+    pintar(x.personagem);
+  });
   return { el, destruir: parar };
 }

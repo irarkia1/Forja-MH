@@ -71,4 +71,6 @@ no VPS, em `meh-eng.com/estudos`.
 - [x] Skills do Guerreiro (D013), curva por faixas (D014), inimigos que aprendem (D015)
 - [x] F1 — MVP jogável (ver README da raiz para rodar)
 - [x] Conteúdo do M0.1: 7 roteiros, 98 questões em **rascunho** (revisar)
-- [ ] F2 — as 20 variantes de chefe; conteúdo do M0.2 e M0.4
+- [x] F4 — fantasmas (revisão espaçada) e feridas
+- [ ] Conteúdo na ordem M0.4 → M0.7 → M0.6 → M0.2 (D017)
+- [ ] F2 — as 20 variantes de chefe

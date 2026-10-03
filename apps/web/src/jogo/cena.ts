@@ -1,5 +1,5 @@
 import {
-  BANDEIRA, CADEADO, CAVEIRA, CORES_TRILHA, HEROI, REGIOES, TENDA, TROFEU,
+  BANDEIRA, CADEADO, CAVEIRA, CORES_TRILHA, FANTASMA, HEROI, REGIOES, TENDA, TROFEU,
   desenhar, guardiao, slime, slimeElite, tamanho, torre, type Regiao, type Sprite,
 } from './sprites';
 
@@ -16,6 +16,7 @@ export interface No {
   trilha: string;
   pais: string[];
   adaptacao?: number;
+  fantasma?: boolean;
 }
 
 interface NoPos extends No {
@@ -387,7 +388,8 @@ export class Cena {
     // Selos
     const topo = n.y + 24 - tam.h - 6;
     if (bloqueado) desenhar(g, CADEADO, n.x + tam.w / 2 - 8, topo, 2);
-    if (derrotado) desenhar(g, CAVEIRA, n.x - 8, n.y - 6, 2);
+    if (derrotado && !n.fantasma) desenhar(g, CAVEIRA, n.x - 8, n.y - 6, 2);
+    if (n.fantasma) desenhar(g, FANTASMA, n.x - 15, n.y - 40 + Math.round(Math.sin(t / 300 + n.x) * 4), 3, 0.65 + 0.25 * Math.sin(t / 250));
     if (n.estado === 'vencido') desenhar(g, TROFEU, n.x + tam.w / 2 - 6, topo, 2);
     if (n.estado === 'em_andamento' || n.estado === 'em_estudo' || n.estado === 'pronto') desenhar(g, BANDEIRA, n.x + tam.w / 2 - 4, topo, 2);
     if (n.estado === 'em_preparo') {

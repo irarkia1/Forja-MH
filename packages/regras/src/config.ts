@@ -45,6 +45,8 @@ export const CONFIG = {
     revancheChefe: 0.5,
     revancheInimigoPorDia: 1,
     revancheChefeDias: 7,
+    fantasmaNoDia: 20,
+    fantasmaAtrasado: 10,
   },
   curva: {
     faixaHoras: 2000,

@@ -38,3 +38,7 @@ quando registrados como evidência:
 | Rádio SDR e medições de RF | M3.4 |
 | Tiny Tapeout | M6.6, M6.8 |
 | Transistor feito em casa (microfabricação de garagem) | M6.2, M7.4 |
+| **Da mina ao componente**: de onde vêm cobre, estanho, silício, tântalo e terras raras; mineração, refino e purificação (estudo de caso + relatório) | M0.1.T04, M6.2, M7.2 |
+| **Componentes passivos feitos à mão**: resistor de filme de carbono, capacitor de placas, indutor enrolado; medir e comparar com os comerciais | M2.1, M7.3 |
+| **Visita às máquinas**: assistir/registrar uma linha SMT real (impressora de pasta, pick-and-place, forno, AOI) e explicar cada máquina | M5.1, M5.6 |
+| **Placa-mãe por dentro**: desmontar e mapear uma placa-mãe de PC (VRM, chipset, DDR, PCIe) e relacionar com A2–A3 | M2.10, M3.3, M3.6 |

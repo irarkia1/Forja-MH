@@ -1,6 +1,9 @@
 import {
   CONFIG,
   danoDoGolpe,
+  etapaEfetiva,
+  proximaRevisao,
+  regraDaEtapa,
   defesaDePreparo,
   defesaTotal,
   embaralhar,
@@ -24,10 +27,12 @@ import { exec, todos, transacao, um } from '../db';
 import type { Contexto } from '../contexto';
 import { ErroApp, naoEncontrado } from '../erros';
 import { encerrarAberta } from './estudo';
+import { abrirFerida, agendar, demaisPendentes, feridasAbertas, fusoDo, proximaPendente } from './fantasmas';
+import { DIA_MS, inicioDoDia } from '../tempo';
 import { adaptacaoDe, fase, revisoesJogaveis, topicoDaFase, type LinhaModulo } from './mapa';
 import { darXp, evento, nivelAtual, type Ganho } from './personagem';
 
-type Tipo = 'combate' | 'chefe';
+type Tipo = 'combate' | 'chefe' | 'fantasma';
 
 interface ItemPlano {
   id: string;
@@ -50,6 +55,10 @@ interface Plano {
   horasTopico?: number;
   elite?: boolean;
   trilha: string;
+  revisaoId?: number;
+  etapa?: number;
+  ferida?: boolean;
+  minAcertos?: number;
 }
 
 interface Estado {
@@ -88,18 +97,6 @@ interface LinhaQuestao {
 
 // ---------------------------------------------------------------------------
 // Utilidades
-
-function inicioDoDia(agora: Date, fuso: string): Date {
-  const partes = new Intl.DateTimeFormat('en-CA', { timeZone: fuso, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23' })
-    .formatToParts(agora)
-    .reduce<Record<string, string>>((o, p) => ((o[p.type] = p.value), o), {});
-  const decorrido = (Number(partes.hour) * 3600 + Number(partes.minute) * 60 + Number(partes.second)) * 1000;
-  return new Date(agora.getTime() - decorrido - agora.getMilliseconds());
-}
-
-function fusoDo(ctx: Contexto, uid: number): string {
-  return um<{ fuso: string }>(ctx.db, 'SELECT fuso FROM usuario WHERE id = :uid', { uid })?.fuso ?? 'America/Sao_Paulo';
-}
 
 function pool(ctx: Contexto, topicoIds: string[]): QuestaoPool[] {
   return todos<{ id: string; topico_id: string; objetivo_id: string; dificuldade: number }>(
@@ -213,7 +210,8 @@ export function iniciar(ctx: Contexto, uid: number, tipo: Tipo, alvoId: string) 
   const emCurso = um<{ id: number }>(ctx.db, "SELECT id FROM tentativa WHERE usuario_id = :uid AND resultado = 'em_curso'", { uid });
   if (emCurso) throw new ErroApp(409, 'prova_em_curso', 'Você já tem uma luta em andamento.', { tentativaId: emCurso.id });
   encerrarAberta(ctx, uid); // estudo encerra ao atacar
-  const plano = tipo === 'combate' ? planejarCombate(ctx, uid, alvoId) : planejarChefe(ctx, uid, alvoId);
+  const plano =
+    tipo === 'combate' ? planejarCombate(ctx, uid, alvoId) : tipo === 'chefe' ? planejarChefe(ctx, uid, alvoId) : planejarFantasma(ctx, uid, alvoId);
   return transacao(ctx.db, () => {
     const estado: Estado = { vida: plano.vidaMax, proxima: 0, acertos: 0 };
     const r = exec(ctx.db, `INSERT INTO tentativa (usuario_id, tipo, alvo_id, revanche, variante_id, plano, estado, inicio, total)
@@ -229,6 +227,7 @@ function publicoDoPlano(p: Plano) {
   return {
     tipo: p.tipo, alvoNome: p.alvoNome, moduloId: p.moduloId, trilha: p.trilha, elite: Boolean(p.elite), total: p.questoes.length, poder: p.poder, vidaMax: p.vidaMax,
     defesa: p.defesa, perfuracao: p.perfuracao, adaptacao: p.adaptacao, revanche: p.revanche, piso: p.piso,
+    fantasma: p.tipo === 'fantasma' ? { etapa: p.etapa ?? 0, ferida: Boolean(p.ferida), minAcertos: p.minAcertos ?? 0 } : null,
     variante: p.tipo === 'chefe' ? { id: 'guardiao', nome: 'O Guardião', regra: 'Prova direta. Chegue vivo ao fim com pelo menos 60% de acerto.' } : null,
   };
 }
@@ -238,6 +237,7 @@ function planejarCombate(ctx: Contexto, uid: number, topicoId: string): Plano {
   const revanche = resumo.estado === 'derrotado';
   if (resumo.estado === 'bloqueado') throw new ErroApp(409, 'topico_bloqueado', 'Esse inimigo ainda está bloqueado.');
   if (!revanche) {
+    if (demaisPendentes(ctx, uid)) throw new ErroApp(409, 'fantasmas_demais', 'Fantasmas demais esperando: faça as revisões antes de enfrentar inimigos novos.');
     if (resumo.estudadoSeg < resumo.exigidoSeg) throw new ErroApp(409, 'estudo_insuficiente', 'O inimigo ainda está em guarda: termine o tempo de estudo.');
     const p = um<{ nota: string | null }>(ctx.db, 'SELECT nota FROM progresso_topico WHERE usuario_id = :uid AND topico_id = :t', { uid, t: topicoId });
     if (!p?.nota) throw new ErroApp(409, 'sem_nota', 'Escreva a nota pessoal antes de atacar.');
@@ -286,6 +286,9 @@ function planejarChefe(ctx: Contexto, uid: number, moduloId: string): Plano {
   if (f.chefe.estado === 'bloqueado') throw new ErroApp(409, 'chefe_bloqueado', 'Derrote todos os inimigos da fase para enfrentar o chefe.');
   if (f.chefe.cooldownAte) throw new ErroApp(409, 'chefe_cooldown', 'O chefe está se recuperando da última luta.', { ate: f.chefe.cooldownAte });
   const revanche = f.chefe.estado === 'vencido';
+  if (!revanche && feridasAbertas(ctx, uid, moduloId)) {
+    throw new ErroApp(409, 'feridas_abertas', 'Cure as feridas da última luta (fantasmas dos temas que você errou) antes de voltar ao chefe.');
+  }
   if (revanche) {
     const ultima = um<{ inicio: string }>(ctx.db, `SELECT inicio FROM tentativa WHERE usuario_id = :uid AND alvo_id = :m AND tipo = 'chefe'
       AND revanche = 1 ORDER BY id DESC LIMIT 1`, { uid, m: moduloId });
@@ -324,6 +327,33 @@ function planejarChefe(ctx: Contexto, uid: number, moduloId: string): Plano {
   };
 }
 
+function planejarFantasma(ctx: Contexto, uid: number, topicoId: string): Plano {
+  const rev = proximaPendente(ctx, uid, topicoId);
+  if (!rev) throw new ErroApp(409, 'sem_fantasma', 'Nenhum fantasma deste inimigo para hoje.');
+  const { linha, fase: f } = topicoDaFase(ctx, uid, topicoId);
+  const ferida = rev.tipo === 'ferida';
+  const etapa = ferida ? 0 : etapaEfetiva(rev.etapa, new Date(rev.vence_em), ctx.agora());
+  const regra = regraDaEtapa(etapa);
+  const obj = desempenhos(ctx, uid, 'objetivo', `${topicoId}.`);
+  const comErro = new Set([...obj].filter(([, d]) => d.errosPond > 0.05).map(([k]) => k));
+  // Fantasma mira o objetivo mais fraco, sem dano e sem adaptação.
+  const qs = sortearCombate({
+    pool: pool(ctx, [topicoId]),
+    vistasRecentes: vistasRecentes(ctx, uid, topicoId),
+    fraquezaObjetivo: new Map([...obj].map(([k, d]) => [k, fraqueza(d)])),
+    objetivosComErro: comErro,
+    adaptacao: comErro.size ? 1 : 0,
+    rng: ctx.rng,
+    quantidade: regra.questoes,
+  });
+  if (qs.length < regra.questoes) throw new ErroApp(409, 'sem_questoes', 'Este tópico não tem questões suficientes.');
+  return {
+    tipo: 'fantasma', alvoNome: linha.nome, moduloId: f.modulo.id, questoes: qs.map((q) => montarItem(ctx, q)),
+    poder: 0, vidaMax: 1, defesa: 0, perfuracao: 0, adaptacao: 0, revanche: false, piso: regra.minimo / regra.questoes,
+    trilha: f.modulo.trilha, revisaoId: rev.id, etapa, ferida, minAcertos: regra.minimo, horasTopico: linha.horas,
+  };
+}
+
 // ---------------------------------------------------------------------------
 // Responder
 
@@ -351,7 +381,7 @@ export function responder(ctx: Contexto, uid: number, id: number, ordem: number,
 
     let golpe: { dado: number; dano: number; vidaAntes: number; vida: number } | null = null;
     if (correta) estado.acertos += 1;
-    else {
+    else if (plano.tipo !== 'fantasma') {
       const dado = ctx.dado();
       const dano = danoDoGolpe({ dado, poder: plano.poder, defesa: plano.defesa, perfuracao: plano.perfuracao });
       const vidaAntes = estado.vida;
@@ -385,13 +415,42 @@ function finalizar(ctx: Contexto, uid: number, t: LinhaTentativa, plano: Plano, 
   const respondidas = estado.proxima;
   const r = desistiu
     ? { resultado: 'derrota' as const, motivo: 'fuga' as const }
-    : resultadoFinal({ tipo: plano.tipo, acertos: estado.acertos, total: plano.questoes.length, vida: estado.vida });
+    : plano.tipo === 'fantasma'
+      ? estado.acertos >= (plano.minAcertos ?? 0) ? { resultado: 'vitoria' as const } : { resultado: 'derrota' as const, motivo: 'piso' as const }
+      : resultadoFinal({ tipo: plano.tipo, acertos: estado.acertos, total: plano.questoes.length, vida: estado.vida });
   const vitoria = r.resultado === 'vitoria';
   const agora = ctx.agora();
   let xp = 0;
   let critico = false;
+  let revisao: { passou: boolean; proximaEm: string | null; concluido: boolean; consolidado: boolean } | null = null;
 
-  if (plano.tipo === 'combate') {
+  if (plano.tipo === 'fantasma') {
+    const rev = um<{ vence_em: string; tipo: string }>(ctx.db, 'SELECT vence_em, tipo FROM revisao WHERE id = :id', { id: plano.revisaoId! })!;
+    exec(ctx.db, 'UPDATE revisao SET feita_em = :em, resultado = :r, tentativa_id = :t WHERE id = :id', {
+      em: agora.toISOString(), r: r.resultado, t: t.id, id: plano.revisaoId!,
+    });
+    let proximaEm: string | null = null;
+    let concluido = false;
+    let consolidado = false;
+    if (plano.ferida) {
+      if (!vitoria) abrirFerida(ctx, uid, t.alvo_id); // ferida só fecha curando
+    } else {
+      const prox = proximaRevisao(plano.etapa ?? 1, vitoria);
+      if ('concluido' in prox) {
+        concluido = true;
+        exec(ctx.db, 'UPDATE progresso_topico SET dominado_em = COALESCE(dominado_em, :em) WHERE usuario_id = :uid AND topico_id = :t', { em: agora.toISOString(), uid, t: t.alvo_id });
+      } else proximaEm = agendar(ctx, uid, t.alvo_id, prox.etapa, prox.dias);
+      if (vitoria && plano.etapa === 4) {
+        consolidado = true;
+        exec(ctx.db, 'UPDATE progresso_topico SET consolidado_em = COALESCE(consolidado_em, :em) WHERE usuario_id = :uid AND topico_id = :t', { em: agora.toISOString(), uid, t: t.alvo_id });
+      }
+    }
+    if (vitoria) {
+      const noPrazo = agora.getTime() < new Date(rev.vence_em).getTime() + DIA_MS;
+      xp = noPrazo ? CONFIG.xp.fantasmaNoDia : CONFIG.xp.fantasmaAtrasado;
+    }
+    revisao = { passou: vitoria, proximaEm, concluido, consolidado };
+  } else if (plano.tipo === 'combate') {
     critico = vitoria && estado.acertos === plano.questoes.length;
     if (vitoria) {
       xp = xpVitoriaInimigo(plano.horasTopico ?? 0, critico) * (plano.revanche ? CONFIG.xp.revancheInimigo : 1);
@@ -400,6 +459,7 @@ function finalizar(ctx: Contexto, uid: number, t: LinhaTentativa, plano: Plano, 
           em: agora.toISOString(), uid, t: t.alvo_id,
         });
         mudarAdaptacao(ctx, uid, t.alvo_id, 0);
+        agendar(ctx, uid, t.alvo_id, 1, 1); // primeiro fantasma: amanhã
       }
     } else if (!plano.revanche) {
       // Derrota: expulso da fase; precisa estudar +20% do mínimo; inimigo aprende (D007, D015).
@@ -424,6 +484,9 @@ function finalizar(ctx: Contexto, uid: number, t: LinhaTentativa, plano: Plano, 
       exec(ctx.db, 'UPDATE progresso_modulo SET cooldown_ate = :ate WHERE usuario_id = :uid AND modulo_id = :m', {
         ate: new Date(agora.getTime() + CONFIG.chefe.cooldownHoras * 3_600_000).toISOString(), uid, m: t.alvo_id,
       });
+      // Feridas: cada tema errado vira fantasma imediato.
+      for (const { topico_id } of todos<{ topico_id: string }>(ctx.db, `SELECT DISTINCT q.topico_id FROM resposta r JOIN questao q ON q.id = r.questao_id
+        WHERE r.tentativa_id = :t AND r.correta = 0`, { t: t.id })) abrirFerida(ctx, uid, topico_id);
       mudarAdaptacao(ctx, uid, t.alvo_id, plano.adaptacao + 1);
     }
   }
@@ -442,7 +505,8 @@ function finalizar(ctx: Contexto, uid: number, t: LinhaTentativa, plano: Plano, 
     total: plano.questoes.length,
     revanche: plano.revanche,
     ganho,
-    adaptacaoNova: !vitoria && !plano.revanche ? limitarAdaptacao(plano.adaptacao + 1) : vitoria && !plano.revanche ? 0 : plano.adaptacao,
+    revisao,
+    adaptacaoNova: plano.tipo === 'fantasma' ? 0 : !vitoria && !plano.revanche ? limitarAdaptacao(plano.adaptacao + 1) : vitoria && !plano.revanche ? 0 : plano.adaptacao,
   };
 }
 

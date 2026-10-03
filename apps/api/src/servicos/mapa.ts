@@ -9,6 +9,7 @@ import {
 import { todos, um } from '../db';
 import type { Contexto } from '../contexto';
 import { naoEncontrado } from '../erros';
+import { topicosComFantasma } from './fantasmas';
 
 export interface LinhaModulo {
   id: string;
@@ -149,6 +150,7 @@ export function fase(ctx: Contexto, uid: number, moduloId: string) {
     { uid, m: moduloId },
   );
   const adaptChefe = adaptacaoDe(ctx, uid, moduloId);
+  const assombrados = topicosComFantasma(ctx, uid);
 
   return {
     modulo: { id: m.id, ato: m.ato_id, nome: m.nome, missao: m.missao, horas: m.horas, trilha: m.trilha, estado: estadoModulo },
@@ -176,6 +178,7 @@ export function fase(ctx: Contexto, uid: number, moduloId: string) {
         perfuracao: perfuracao(adapt),
         vitorias: p.vitorias,
         derrotas: p.derrotas,
+        fantasma: assombrados.has(t.id),
       };
     }),
     chefe: {

@@ -32,9 +32,11 @@ Dois trilhos andando juntos. O do **sistema** é curto e vem primeiro; o do
 - [ ] Árvore de skills, energia e registro de ajudas
 - [ ] Inimigos de elite com evidência de laboratório
 
-### F4 — Revisão espaçada
-- [ ] Fantasmas no mapa nas datas 1/3/7/21/60
-- [ ] Estados de domínio (Derrotado → Consolidado → Dominado)
+### F4 — Revisão espaçada ✔ (2026-10-03)
+- [x] Fantasmas no mapa nas datas 1/3/7/21/60 (sem dano, sem skills, miram o ponto fraco)
+- [x] Estados de domínio (Derrotado → Consolidado → Dominado)
+- [x] Feridas do chefe: fantasma imediato; chefe só volta depois de curar
+- [x] Mais de 30 fantasmas pendentes bloqueia inimigos novos
 
 ### F5 — Acompanhamento e publicação
 - [ ] Painel: horas, ritmo, previsão de término, taxa de acerto e de ajuda

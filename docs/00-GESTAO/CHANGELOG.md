@@ -2,6 +2,13 @@
 
 Formato: data · o que mudou · onde.
 
+## 2026-10-03 — F4 entregue
+- Fantasmas (revisão espaçada 1/3/7/21/60) no mapa, no acampamento e no topo.
+- Feridas do chefe; consolidado e dominado; bloqueio com mais de 30 pendentes.
+- Cronômetro: guarda acompanha o relógio; aviso claro no modo de teste.
+- D017: ordem M0.4 → M0.7 → M0.6 → M0.2; missões secundárias "da mina ao componente".
+- 37 testes.
+
 ## 2026-10-01 — F1 entregue
 - Jogo jogável: login, mapa dos 8 atos, linha da fase com bifurcações,
   estudo com cronômetro (pulso, check-in), nota pessoal, evidência de elite,

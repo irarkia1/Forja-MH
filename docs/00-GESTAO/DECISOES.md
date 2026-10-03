@@ -197,3 +197,13 @@ senhas. Mesma API síncrona, mesmo SQLite, zero dependência nativa.
 **Consequências.** O Node avisa que `node:sqlite` é experimental (o aviso é
 silenciado nos scripts). O acesso continua isolado em `apps/api/src/db.ts`;
 trocar de driver é mexer em um arquivo só.
+
+## D017 — Ordem preferida no A0 e conteúdo nessa ordem
+**Data:** 2026-10-03 · **Status:** aceita (definido pelo Matheus)
+
+Depois do M0.1: **M0.4 Circuitos DC → M0.7 Ferramentas → M0.6 C/C++ →
+M0.2 Matemática**. O mapa continua permitindo qualquer ordem; o conteúdo
+just-in-time é produzido nessa sequência. Meta final reforçada: entender e
+ser capaz de produzir uma placa completa e um processador próprio, e
+conhecer as máquinas da linha de produção — já coberto por A3, A5 e A6;
+"da mina ao componente" entra como missão secundária (TRILHAS.md).

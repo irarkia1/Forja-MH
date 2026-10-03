@@ -1,4 +1,4 @@
-import { api, ErroApi, type Fase, type Luta, type Mapa, type ModuloMapa, type TopicoFase } from '../api';
+import { api, ErroApi, type Fantasmas, type Fase, type Luta, type Mapa, type ModuloMapa, type TopicoFase } from '../api';
 import { Cena, type No } from '../jogo/cena';
 import { eu, recarregarEu } from '../estado';
 import { barra, estrelas, h, num, pct, preencher, tempo, toast } from '../ui';
@@ -24,6 +24,19 @@ const TRILHA: Record<string, string> = {
   base: 'Base', firmware: 'Firmware', hardware: 'Hardware', fabricacao: 'Fabricação',
   silicio: 'Silício', sensores: 'Sensores', produto: 'Produto', integrador: 'Integrador',
 };
+
+async function iniciarLuta(nav: Navegar, tipo: 'combate' | 'chefe' | 'fantasma', alvo: string): Promise<void> {
+  try {
+    nav.lutar(await api.post<Luta>('tentativas', { tipo, alvo_id: alvo }));
+  } catch (e) {
+    if (e instanceof ErroApi && e.codigo === 'prova_em_curso') {
+      await recarregarEu();
+      const l = eu()?.luta;
+      if (l) return nav.lutar(l);
+    }
+    toast(e instanceof ErroApi ? e.message : 'Falha ao iniciar a luta.', 'erro');
+  }
+}
 
 function salvarPosicao(ato: string, modulo: string | null, no: string | null): void {
   api.put('posicao', { ato, modulo, no }).catch(() => undefined);
@@ -68,7 +81,7 @@ export async function telaMundo(atoPedido: string | undefined, nav: Navegar) {
   ];
 
   const mostrar = (no: No) => {
-    if (no.id === 'acampamento') return painelAcampamento(painel, ato.nome, ato.lema, mapa);
+    if (no.id === 'acampamento') return void painelAcampamento(painel, ato.nome, ato.lema, mapa, nav);
     const m = porId.get(no.id)!;
     painelModulo(painel, m, porId, () => nav.ir(`#/fase/${m.id}`));
   };
@@ -92,8 +105,9 @@ export async function telaMundo(atoPedido: string | undefined, nav: Navegar) {
   return { el: palco.el, destruir: () => cena.destruir() };
 }
 
-function painelAcampamento(painel: HTMLElement, nomeAto: string, lema: string, mapa: Mapa) {
+async function painelAcampamento(painel: HTMLElement, nomeAto: string, lema: string, mapa: Mapa, nav: Navegar) {
   const p = mapa.personagem;
+  const fantasmasEl = h('div');
   const vencidos = mapa.modulos.filter((m) => m.estado === 'vencido').length;
   preencher(painel, 
     h('h2', {}, '⛺ ACAMPAMENTO'),
@@ -109,6 +123,22 @@ function painelAcampamento(painel: HTMLElement, nomeAto: string, lema: string, m
     ),
     barra('xp', p.horasTotais / 10_000, 'Jornada'),
     h('p.mudo', { style: 'font-size:13px' }, `Jornada: ${pct(p.horasTotais / 10_000)} das 10 mil horas.`),
+    fantasmasEl,
+  );
+  const f = await api.get<Fantasmas>('fantasmas').catch(() => null);
+  if (!f) return;
+  preencher(fantasmasEl,
+    h('h2', { style: 'margin-top:18px' }, `👻 FANTASMAS DE HOJE (${f.hoje.length})`),
+    f.hoje.length
+      ? h('div.acoes', { style: 'margin-top:6px' }, f.hoje.map((x) =>
+          h('button.btn', { class: x.tipo === 'ferida' ? 'perigo' : '', style: 'justify-content:flex-start;text-align:left', onclick: () => iniciarLuta(nav, 'fantasma', x.topicoId) },
+            x.tipo === 'ferida' ? '🩸 ' : '👻 ', `${x.nome}`, h('span.mudo', { style: 'font-size:12px;margin-left:auto' }, x.tipo === 'ferida' ? 'ferida' : `etapa ${x.etapa}${x.atrasoDias ? ` · ${x.atrasoDias}d atraso` : ''}`)),
+        ))
+      : h('p.mudo', { style: 'font-size:14px' }, 'Nenhuma revisão hoje.'),
+    f.proximos.length
+      ? h('div', { style: 'font-size:13px;margin-top:10px' }, h('div.mudo', {}, 'Próximas:'), h('ul', { style: 'margin:4px 0;padding-left:18px' },
+          f.proximos.slice(0, 5).map((x) => h('li', {}, `${new Date(x.venceEm).toLocaleDateString('pt-BR')} — ${x.nome}`))))
+      : null,
   );
 }
 
@@ -148,7 +178,7 @@ export async function telaFase(moduloId: string, nav: Navegar) {
     { id: 'acampamento', rotulo: 'Voltar ao mapa', tipo: 'acampamento', estado: 'disponivel', trilha: 'base', pais: [] },
     ...f.topicos.map((t) => ({
       id: t.id, rotulo: t.nome, tipo: t.tipo === 'elite' ? ('elite' as const) : ('inimigo' as const), estado: t.estado,
-      trilha: f.modulo.trilha, pais: t.depoisDe.length ? t.depoisDe : ['acampamento'], adaptacao: t.adaptacao,
+      trilha: f.modulo.trilha, pais: t.depoisDe.length ? t.depoisDe : ['acampamento'], adaptacao: t.adaptacao, fantasma: t.fantasma,
     })),
     {
       id: 'chefe', rotulo: 'CHEFE — prova do módulo', tipo: 'chefe', estado: f.chefe.estado === 'bloqueado' ? 'bloqueado' : f.chefe.estado,
@@ -158,18 +188,7 @@ export async function telaFase(moduloId: string, nav: Navegar) {
   const pos = eu()?.personagem.posicao;
   const inicial = pos?.modulo === moduloId && pos.no ? pos.no : (f.topicos.find((t) => ['pronto', 'em_estudo', 'disponivel'].includes(t.estado))?.id ?? 'acampamento');
 
-  const atacar = async (tipo: 'combate' | 'chefe', alvo: string) => {
-    try {
-      nav.lutar(await api.post<Luta>('tentativas', { tipo, alvo_id: alvo }));
-    } catch (e) {
-      if (e instanceof ErroApi && e.codigo === 'prova_em_curso') {
-        await recarregarEu();
-        const l = eu()?.luta;
-        if (l) return nav.lutar(l);
-      }
-      toast(e instanceof ErroApi ? e.message : 'Falha ao iniciar a luta.', 'erro');
-    }
-  };
+  const atacar = (tipo: 'combate' | 'chefe' | 'fantasma', alvo: string) => iniciarLuta(nav, tipo, alvo);
 
   const mostrar = (no: No) => {
     if (no.id === 'acampamento') {
@@ -187,6 +206,7 @@ export async function telaFase(moduloId: string, nav: Navegar) {
     painelInimigo(painel, t, f.modulo.estado === 'em_preparo', {
       estudar: () => nav.ir(`#/estudo/${t.id}`),
       atacar: () => atacar('combate', t.id),
+      fantasma: () => atacar('fantasma', t.id),
     });
   };
 
@@ -206,6 +226,7 @@ export async function telaFase(moduloId: string, nav: Navegar) {
       }
       const t = f.topicos.find((x) => x.id === no.id)!;
       if (t.estado === 'bloqueado') return toast('Inimigo bloqueado: vença os anteriores.', 'erro');
+      if (t.fantasma) return void atacar('fantasma', t.id);
       if (t.estado === 'pronto' || t.estado === 'derrotado') return void atacar('combate', t.id);
       nav.ir(`#/estudo/${t.id}`);
     },
@@ -214,7 +235,7 @@ export async function telaFase(moduloId: string, nav: Navegar) {
   return { el: palco.el, destruir: () => cena.destruir() };
 }
 
-function painelInimigo(painel: HTMLElement, t: TopicoFase, emPreparo: boolean, acoes: { estudar: () => void; atacar: () => void }) {
+function painelInimigo(painel: HTMLElement, t: TopicoFase, emPreparo: boolean, acoes: { estudar: () => void; atacar: () => void; fantasma: () => void }) {
   const falta = Math.max(0, t.exigidoSeg - t.estudadoSeg);
   const derrotado = t.estado === 'derrotado';
   const bloqueado = t.estado === 'bloqueado';
@@ -234,10 +255,12 @@ function painelInimigo(painel: HTMLElement, t: TopicoFase, emPreparo: boolean, a
     derrotado ? null : h('div', {}, h('div.mudo', { style: 'font-size:13px;margin-bottom:4px' }, falta ? `Guarda: faltam ${tempo(falta)} de estudo` : 'Guarda quebrada: pode atacar'), barra('guarda', falta / Math.max(1, t.exigidoSeg), 'Guarda do inimigo')),
     t.tipo === 'elite' && !derrotado ? h('div.aviso', {}, 'Elite: antes de atacar, anexe a evidência do laboratório na tela de estudo.') : null,
     emPreparo ? h('div.aviso', {}, 'Conteúdo deste tópico em preparo.') : null,
+    t.fantasma ? h('div.aviso', { style: 'border-left-color:var(--energia)' }, '👻 O fantasma deste inimigo voltou: é dia de revisão. 2 ou 3 questões, sem dano e sem skills.') : null,
     h('div.acoes', {},
+      t.fantasma ? h('button.btn.principal', { onclick: acoes.fantasma }, '👻 Enfrentar o fantasma ', h('span.tecla', {}, 'Enter')) : null,
       !derrotado ? h('button.btn', { class: t.estado === 'pronto' ? '' : 'principal', disabled: bloqueado || emPreparo, onclick: acoes.estudar }, '📖 Estudar', t.estado === 'pronto' ? null : h('span.tecla', {}, 'Enter')) : null,
       !derrotado ? h('button.btn', { class: t.estado === 'pronto' ? 'principal' : '', disabled: t.estado !== 'pronto', onclick: acoes.atacar }, '⚔ Atacar', t.estado === 'pronto' ? h('span.tecla', {}, 'Enter') : null) : null,
-      derrotado ? h('button.btn.principal', { onclick: acoes.atacar }, '↺ Revanche (25% do XP, 1 por dia)') : null,
+      derrotado ? h('button.btn', { class: t.fantasma ? '' : 'principal', onclick: acoes.atacar }, '↺ Revanche (25% do XP, 1 por dia)') : null,
       derrotado ? h('button.btn', { onclick: acoes.estudar }, '📖 Rever o roteiro') : null,
     ),
   );

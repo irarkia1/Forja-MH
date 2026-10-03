@@ -1,6 +1,6 @@
 import { api, ErroApi, type Fim, type Luta, type QuestaoTela, type Retorno } from '../api';
 import { recarregarEu } from '../estado';
-import { CORES_TRILHA, HEROI, desenhar, guardiao, slime, slimeElite, tamanho } from '../jogo/sprites';
+import { CORES_TRILHA, FANTASMA, HEROI, desenhar, guardiao, slime, slimeElite, tamanho } from '../jogo/sprites';
 import { barra, estrelas, h, markdown, modal, num, pct, preencher, toast } from '../ui';
 
 const LETRAS = ['A', 'B', 'C', 'D', 'E', 'F'];
@@ -27,6 +27,7 @@ export function telaLuta(l: Luta, aoTerminarBruto: (fim: Fim | null, luta: Luta)
     aoTerminarBruto(fim, luta);
   };
   const chefe = l.tipo === 'chefe';
+  const fantasma = l.tipo === 'fantasma';
   let vida = l.vida;
   let questao: QuestaoTela | null = l.questao;
   let acertos = l.acertos ?? 0;
@@ -40,20 +41,26 @@ export function telaLuta(l: Luta, aoTerminarBruto: (fim: Fim | null, luta: Luta)
     progressoInimigo.replaceChildren(barra('', 1 - respondidas / l.total, 'Questões restantes'), h('div', { style: 'font:600 13px var(--fonte-mono)' }, `${l.total - respondidas} questões · ✔ ${acertos}`));
   pintarInimigo(questao.ordem);
 
-  const heroi = h('div.lutador', {}, retrato(HEROI[0]!, 5), h('div.nome', {}, 'VOCÊ'), vidaBarra, h('div.mudo', { style: 'font-size:12px' }, `🛡 defesa ${pct(l.defesa)}${l.perfuracao ? ` (perfurada ${pct(l.perfuracao)})` : ''}`));
-  const spriteInimigo = chefe ? guardiao(cor, escura) : l.elite ? slimeElite(cor, escura) : slime(cor, escura);
+  const heroi = h('div.lutador', {}, retrato(HEROI[0]!, 5), h('div.nome', {}, 'VOCÊ'),
+    fantasma
+      ? h('div.mudo', { style: 'font-size:13px;max-width:260px' }, `Revisão: sem dano e sem skills. Precisa acertar ${l.fantasma?.minAcertos} de ${l.total}.`)
+      : [vidaBarra, h('div.mudo', { style: 'font-size:12px' }, `🛡 defesa ${pct(l.defesa)}${l.perfuracao ? ` (perfurada ${pct(l.perfuracao)})` : ''}`)],
+  );
+  const spriteInimigo = chefe ? guardiao(cor, escura) : fantasma ? FANTASMA : l.elite ? slimeElite(cor, escura) : slime(cor, escura);
   const inimigo = h('div.lutador.inimigo', {},
     retrato(spriteInimigo, chefe ? 6 : 7, true),
     h('div.nome', {}, l.alvoNome),
     l.adaptacao ? h('span.estrelas', { title: 'Adaptação' }, estrelas(l.adaptacao)) : null,
     progressoInimigo,
-    h('div.mudo', { style: 'font-size:12px' }, `poder ${num(l.poder, 2)}${l.revanche ? ' · revanche' : ''}`),
+    fantasma
+      ? h('div.mudo', { style: 'font-size:12px' }, l.fantasma?.ferida ? 'ferida do chefe' : `revisão · etapa ${l.fantasma?.etapa} de 5`)
+      : h('div.mudo', { style: 'font-size:12px' }, `poder ${num(l.poder, 2)}${l.revanche ? ' · revanche' : ''}`),
   );
-  const dado = h('div.dado', { 'aria-live': 'polite', title: 'Dado do inimigo (0 a 6)' }, '?');
+  const dado = h('div.dado', { 'aria-live': 'polite', title: fantasma ? 'Fantasma não ataca' : 'Dado do inimigo (0 a 6)' }, fantasma ? '👻' : '?');
   const quadro = h('div.quadro');
   const el = h('section.tela', {},
     h('div.tela-topo', {},
-      h('h1', {}, `${chefe ? '💀 CHEFE' : '⚔ COMBATE'} — ${l.alvoNome}`),
+      h('h1', {}, `${chefe ? '💀 CHEFE' : fantasma ? '👻 FANTASMA' : '⚔ COMBATE'} — ${l.alvoNome}`),
       h('button.btn.perigo', {
         onclick: async () => {
           const r = await modal('FUGIR?', 'Fugir no meio da luta conta como derrota.', [
@@ -208,7 +215,7 @@ export function telaLuta(l: Luta, aoTerminarBruto: (fim: Fim | null, luta: Luta)
     pintarInimigo(q.ordem + 1);
 
     const retorno = h('div.retorno', { class: r.correta ? '' : 'errou' },
-      h('div.titulo', {}, r.correta ? '✔ ACERTOU — golpe no inimigo!' : '✘ ERROU — o inimigo contra-ataca'),
+      h('div.titulo', {}, r.correta ? '✔ ACERTOU — golpe no inimigo!' : fantasma ? '✘ ERROU — o fantasma resiste' : '✘ ERROU — o inimigo contra-ataca'),
       q.tipo === 'numerica' && !r.correta ? h('div.conta', {}, `Resposta: ${num((r.gabarito as { valor: number }).valor, 4)} ${(r.gabarito as { unidade: string }).unidade}`) : null,
     );
     quadro.querySelector('.questao')!.append(retorno);
@@ -255,10 +262,17 @@ export function telaLuta(l: Luta, aoTerminarBruto: (fim: Fim | null, luta: Luta)
     const vitoria = fim.resultado === 'vitoria';
     const motivo =
       fim.motivo === 'vida' ? 'Sua vida chegou a zero.' :
+      fim.motivo === 'piso' && fantasma ? `Precisava de ${l.fantasma?.minAcertos} acertos.` :
       fim.motivo === 'piso' ? (chefe ? 'Você chegou vivo, mas abaixo do piso de 60% de acerto.' : 'Nenhum acerto: o piso de conhecimento não deixa passar.') :
       fim.motivo === 'fuga' ? 'Você fugiu da luta.' : '';
     const linhas: (HTMLElement | null)[] = [];
-    if (!vitoria && !fim.revanche) {
+    if (fim.revisao) {
+      const rv = fim.revisao;
+      if (rv.concluido) linhas.push(h('div.aviso.ok', {}, '⭐ Tema DOMINADO: passou pela revisão de 60 dias.'));
+      else if (rv.consolidado) linhas.push(h('div.aviso.ok', {}, '🥈 Tema CONSOLIDADO: venceu as revisões de 1, 3, 7 e 21 dias.'));
+      if (rv.proximaEm) linhas.push(h('p', {}, `${rv.passou ? 'Próxima revisão' : 'Errou: a agenda recomeça. Volta'} em ${new Date(rv.proximaEm).toLocaleDateString('pt-BR')}.`));
+      if (!rv.passou && l.fantasma?.ferida) linhas.push(h('p', {}, 'A ferida continua aberta: estude o tema e tente de novo.'));
+    } else if (!vitoria && !fim.revanche) {
       linhas.push(h('p', {}, chefe ? 'O chefe se recupera por 48 h. Revise os temas em que errou.' : 'Você foi expulso da fase. Para lutar de novo contra este inimigo, estude mais 20% do tempo mínimo. Os inimigos que você já venceu continuam vencidos.'));
       linhas.push(h('div.aviso.erro', { style: 'text-align:left' }, h('span.estrelas', {}, estrelas(fim.adaptacaoNova)), ` Ele aprendeu com você: agora tem adaptação ${fim.adaptacaoNova} e vai mirar seus pontos fracos.`));
     }
@@ -266,7 +280,7 @@ export function telaLuta(l: Luta, aoTerminarBruto: (fim: Fim | null, luta: Luta)
     if (fim.ganho.niveisGanhos > 0) linhas.push(h('div.aviso.ok', {}, `⬆ Subiu para o nível ${fim.ganho.nivel}! +${fim.ganho.niveisGanhos} de vida.`));
     preencher(quadro, 
       h('div.questao.resultado', { class: vitoria ? 'vitoria' : 'derrota' },
-        h('h2', {}, vitoria ? (fim.critico ? 'GOLPE CRÍTICO!' : 'VITÓRIA!') : 'DERROTA'),
+        h('h2', {}, fantasma ? (vitoria ? 'FANTASMA DISSIPADO!' : 'O FANTASMA FICOU') : vitoria ? (fim.critico ? 'GOLPE CRÍTICO!' : 'VITÓRIA!') : 'DERROTA'),
         motivo ? h('p', {}, motivo) : null,
         h('div.numeros', {},
           h('div', {}, 'Acertos', h('b', {}, `${fim.acertos}/${fim.total}`)),

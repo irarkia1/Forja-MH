@@ -4,3 +4,4 @@ export * from './combate';
 export * from './fraqueza';
 export * from './sorteio';
 export * from './progresso';
+export * from './revisao';
