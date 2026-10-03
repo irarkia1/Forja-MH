@@ -1,0 +1,11 @@
+[Unit]
+Description=Backup diário do banco da Forja M&H
+
+[Service]
+Type=oneshot
+User=forja
+Group=forja
+WorkingDirectory=/opt/forja/app
+Environment=FORJA_DB=/opt/forja/data/estudos.db
+Environment=NODE_OPTIONS=--disable-warning=ExperimentalWarning
+ExecStart=/opt/node22/bin/node --import tsx ferramentas/backup.ts /opt/forja/data/copias

@@ -1,0 +1,41 @@
+# systemd: mantém a Forja M&H no ar e levanta de novo se cair ou se a máquina
+# reiniciar.  Instalado em /etc/systemd/system/forja.service por instalar.sh.
+[Unit]
+Description=Forja M&H (RPG de estudo)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=forja
+Group=forja
+WorkingDirectory=/opt/forja/app
+Environment=NODE_ENV=production
+# Só o Caddy, na mesma máquina, alcança a porta: o HTTPS não tem como ser furado.
+Environment=HOST=127.0.0.1
+Environment=PORT=8090
+Environment=FORJA_DB=/opt/forja/data/estudos.db
+# Enquanto as questões não forem revisadas, elas jogam com o selo RASCUNHO.
+# Quando o banco estiver revisado, troque para 0 e reinicie.
+Environment=FORJA_ACEITAR_RASCUNHO=1
+Environment=NODE_OPTIONS=--disable-warning=ExperimentalWarning
+ExecStart=/opt/node22/bin/node --import tsx apps/api/src/main.ts
+
+Restart=always
+RestartSec=3
+
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/forja/data
+ProtectKernelTunables=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+LockPersonality=true
+
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

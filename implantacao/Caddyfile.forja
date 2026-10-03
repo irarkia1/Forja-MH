@@ -1,0 +1,21 @@
+
+# Forja M&H — RPG de estudo (instalado por forja/implantacao/instalar.sh)
+forja.meh-eng.com {
+    encode gzip
+    reverse_proxy 127.0.0.1:8090
+
+    # Cloudflare na frente: obriga a revalidar html/js/css a cada publicação.
+    @app path *.html *.js *.css
+    header @app Cache-Control "no-cache"
+
+    header {
+        Strict-Transport-Security "max-age=31536000; includeSubDomains"
+        X-Frame-Options "DENY"
+        -Server
+    }
+
+    log {
+        output file /var/log/caddy/forja.log
+        format console
+    }
+}

@@ -32,3 +32,11 @@ aponta, você estuda.
 - Exportar flashcards para Anki.
 - Calendário (bloco de estudo agendado).
 - Notificação de fantasmas do dia (e-mail ou push).
+
+## Publicação atual (2026-10-03)
+Enquanto o domínio próprio não chega, a Forja roda em **forja.meh-eng.com**
+(registro A na Cloudflare, nuvem laranja → VPS `143.95.166.153`), com bloco
+próprio no Caddy, ao lado do `planejamento.meh-eng.com`. Ver `implantacao/`:
+`instalar.sh` (uma vez), `atualizar.sh` (cada publicação), serviço systemd
+`forja` (usuário de sistema, só `127.0.0.1:8090`), backup diário às 04:30
+(30 diárias + 12 mensais) e Node 22 oficial em `/opt/node22`.
