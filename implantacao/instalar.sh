@@ -47,7 +47,8 @@ else
   ssh_ 'cp /etc/caddy/Caddyfile /etc/caddy/Caddyfile.antes-da-forja'
   ssh_ 'cat >> /etc/caddy/Caddyfile' < "$RAIZ/implantacao/Caddyfile.forja"
   if ssh_ 'caddy validate --config /etc/caddy/Caddyfile --adapter caddyfile >/dev/null 2>&1'; then
-    ssh_ 'systemctl reload caddy && echo "  Caddy recarregado"'
+    # O validate roda como root e pode criar o log com dono root: devolve ao caddy.
+    ssh_ 'touch /var/log/caddy/forja.log && chown caddy:caddy /var/log/caddy/forja.log && systemctl reload caddy && echo "  Caddy recarregado"'
   else
     ssh_ 'cp /etc/caddy/Caddyfile.antes-da-forja /etc/caddy/Caddyfile'
     echo "  ERRO: Caddyfile inválido; restaurado o anterior. Nada mudou no Caddy."; exit 1
