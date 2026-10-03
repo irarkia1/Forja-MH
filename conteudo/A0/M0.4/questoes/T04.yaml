@@ -1,0 +1,225 @@
+- id: Q-M0.4.T04-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Um circuito tem 4 nós, contando o terra, e só fontes de corrente (nenhuma fonte de tensão). Quantas equações a análise nodal exige?
+  alternativas:
+    - "4"
+    - "3"
+    - "2"
+    - "1"
+  resposta: 1
+  explicacao: |
+    A análise nodal escreve uma LKC para cada nó, exceto o de referência: n − 1 = 4 − 1 = 3 equações, com incógnitas V_A, V_B e V_C. O terra já vale 0 V por definição, então não precisa de equação. Só fontes de tensão ligadas a um nó conhecido reduziriam esse número.
+  fonte: "Boylestad, Introdução à Análise de Circuitos, capítulo Métodos de análise e tópicos selecionados (CC), seção Análise nodal"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T04-002
+  objetivo: O1
+  tipo: multipla
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Nós: G (terra), A e B. Fonte de 9 V com + em A e − em G. R1 = 1 kΩ entre A e B. R2 = 2 kΩ entre B e G. Uma fonte de corrente de 3 mA injeta corrente no nó B (vinda de G). Com tensões em V, resistências em kΩ e correntes em mA, quais equações estão corretas para o nó B? Marque todas as corretas.
+  alternativas:
+    - "(V_B − 9)/1 + V_B/2 = 3"
+    - "1,5·V_B = 12"
+    - "(V_B − 9)/1 + V_B/2 + 3 = 0"
+    - "(9 − V_B)/1 + V_B/2 = 3"
+  resposta: [0, 1]
+  explicacao: |
+    Correntes que saem de B pelos resistores = corrente injetada: (V_B − 9)/1 + V_B/2 = 3. Agrupando: V_B + 0,5·V_B = 3 + 9 → 1,5·V_B = 12, a mesma equação. Somar os 3 mA do lado das correntes que saem trata a fonte como se tirasse corrente do nó; escrever (9 − V_B)/1 mistura corrente entrando com correntes saindo no mesmo lado.
+  fonte: "Boylestad, Introdução à Análise de Circuitos, capítulo Métodos de análise e tópicos selecionados (CC), seção Análise nodal; MIT OCW 6.002, aula sobre o método dos nós"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T04-003
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Nós: G (terra), A e B. Fonte de 9 V com + em A e − em G. R1 = 1 kΩ entre A e B. R2 = 2 kΩ entre B e G. Uma fonte de corrente de 3 mA injeta corrente no nó B (vinda de G). Qual é a tensão do nó B em relação ao terra? Responda em V.
+  resposta: {valor: 8, unidade: "V", tolerancia: 0.01}
+  explicacao: |
+    LKC em B: (V_B − 9)/1 + V_B/2 = 3 → 1,5·V_B = 12 → V_B = 8 V. Confira: por R2 descem 8/2 = 4 mA; por R1 chegam (9 − 8)/1 = 1 mA; a fonte injeta 3 mA; 1 + 3 = 4 ✔. Sem a fonte de corrente, V_B seria 6 V (divisor simples).
+  fonte: "Boylestad, Introdução à Análise de Circuitos, capítulo Métodos de análise e tópicos selecionados (CC), seção Análise nodal"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T04-004
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Nós: G (terra), A e B. Uma fonte de tensão de 5 V está entre A e B, com + em B e − em A. R1 = 1 kΩ entre A e G. R2 = 1 kΩ entre B e G. Uma fonte de corrente de 10 mA injeta corrente no nó A (vinda de G). Qual é a tensão do nó B em relação ao terra? Responda em V.
+  resposta: {valor: 7.5, unidade: "V", tolerancia: 0.01}
+  explicacao: |
+    A fonte de 5 V liga dois nós que não são o terra: use um supernó (A + B). LKC no supernó: V_A/1 + V_B/1 = 10; restrição da fonte: V_B = V_A + 5. Então 2·V_A + 5 = 10 → V_A = 2,5 V e V_B = 7,5 V. Tentar escrever LKC só em A trava, porque a corrente na fonte de tensão é desconhecida.
+  fonte: "Boylestad, Introdução à Análise de Circuitos, capítulo Métodos de análise e tópicos selecionados (CC), seção Análise nodal (supernó)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T04-005
+  objetivo: O2
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Na análise de malhas, com as correntes I1 e I2 das duas malhas arbitradas no sentido horário, um resistor compartilhado pelas duas malhas aparece na equação da malha 1 com qual corrente?
+  alternativas:
+    - "I1"
+    - "I1 + I2"
+    - "I1 − I2"
+    - "I2"
+  resposta: 2
+  explicacao: |
+    Com ambas no sentido horário, no ramo compartilhado as duas correntes de malha passam em sentidos opostos; percorrendo a malha 1, a corrente real nesse resistor é I1 − I2 (na equação da malha 2, é I2 − I1). Usar só I1 é o erro mais comum do método.
+  fonte: "All About Circuits, Volume I: DC, cap. 10 (DC Network Analysis), seção Mesh Current Method"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T04-006
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Nós: G (terra), A, B e C. Fonte V1 = 12 V com + em A e − em G. R1 = 1 kΩ entre A e B. R2 = 2 kΩ entre B e G. R3 = 1 kΩ entre B e C. Fonte V2 = 3 V com + em C e − em G. A malha 1 contém V1, R1 e R2; a malha 2 contém R2, R3 e V2; as duas correntes de malha são horárias, com a malha 1 à esquerda. Qual é o valor de I1? Responda em mA.
+  resposta: {valor: 6, unidade: "mA", tolerancia: 0.01}
+  explicacao: |
+    Malha 1: 12 = 1·I1 + 2·(I1 − I2) → 3·I1 − 2·I2 = 12. Malha 2: −3 = 1·I2 + 2·(I2 − I1) → −2·I1 + 3·I2 = −3. Cramer: det = 9 − 4 = 5; I1 = (12·3 − (−2)(−3))/5 = 30/5 = 6 mA (e I2 = 3 mA). Confira por nós: V_B = 2 × (6 − 3) = 6 V e (12 − 6)/1 = 6 mA ✔.
+  fonte: "Boylestad, Introdução à Análise de Circuitos, capítulo Métodos de análise e tópicos selecionados (CC), seção Análise de malhas"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T04-007
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    No circuito — nós G (terra), A, B e C; fonte V1 = 12 V com + em A e − em G; R1 = 1 kΩ entre A e B; R2 = 2 kΩ entre B e G; R3 = 1 kΩ entre B e C; fonte V2 = 3 V com + em C e − em G — a fonte V2 recebe corrente pelo seu terminal +. Qual potência V2 **absorve**? Responda em mW.
+  resposta: {valor: 9, unidade: "mW", tolerancia: 0.01}
+  explicacao: |
+    Resolvendo (por malhas ou nós): V_B = 6 V. A corrente em R3 vai de B para C: (6 − 3)/1 kΩ = 3 mA, e entra pelo + de V2. Potência absorvida = 3 V × 3 mA = 9 mW (V2 se comporta como bateria sendo carregada). Balanço: V1 entrega 12 × 6 = 72 mW = R1 (36) + R2 (18) + R3 (9) + V2 (9) ✔.
+  fonte: "Boylestad, Introdução à Análise de Circuitos, capítulo Métodos de análise e tópicos selecionados (CC); capítulo Lei de Ohm, potência e energia"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T04-008
+  objetivo: O2
+  tipo: multipla
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Nós: G (terra), A, B e C. Fonte V1 = 12 V com + em A e − em G. R1 = 1 kΩ entre A e B. R2 = 2 kΩ entre B e G. R3 = 1 kΩ entre B e C. Fonte V2 = 3 V com + em C e − em G. A malha 2 é a janela da direita (R2, R3 e V2), com corrente I2 horária; a malha 1 (V1, R1, R2) tem corrente I1 horária. Com V, kΩ e mA, quais equações estão corretas para a malha 2? Marque todas as corretas.
+  alternativas:
+    - "−3 = 1·I2 + 2·(I2 − I1)"
+    - "−2·I1 + 3·I2 = −3"
+    - "3 = 1·I2 + 2·(I2 − I1)"
+    - "−3 = 1·I2 + 2·I2"
+  resposta: [0, 1]
+  explicacao: |
+    Percorrendo a malha 2 no sentido horário (de B para C por R3, descendo por V2, voltando por R2), entra-se pelo + de V2: é uma queda, e por isso o termo da fonte fica −3. R2 é compartilhado e leva (I2 − I1). Agrupando: −2·I1 + 3·I2 = −3. Escrever +3 erra o sinal da fonte; escrever 2·I2 esquece que R2 também é percorrido por I1.
+  fonte: "All About Circuits, Volume I: DC, cap. 10 (DC Network Analysis), seção Mesh Current Method"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T04-009
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Uma análise de malhas (tensões em V, resistências em kΩ, correntes em mA) resultou no sistema 4·I1 − I2 = 7 e −I1 + 2·I2 = 0. Qual é o valor de I1? Responda em mA.
+  resposta: {valor: 2, unidade: "mA", tolerancia: 0.01}
+  explicacao: |
+    Pela regra de Cramer: det = 4·2 − (−1)(−1) = 7; I1 = (7·2 − (−1)·0)/7 = 14/7 = 2 mA (e I2 = (4·0 − (−1)·7)/7 = 1 mA). Por substituição: da segunda, I1 = 2·I2; 8·I2 − I2 = 7 → I2 = 1 mA, I1 = 2 mA. Sistemas 2×2 assim aparecem em toda análise com dois nós ou duas malhas.
+  fonte: "Boylestad, Introdução à Análise de Circuitos, capítulo Métodos de análise e tópicos selecionados (CC), seção sobre determinantes"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T04-010
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Nós: G (terra), A, B e C. Fonte de 10 V com + em A e − em G. R1 = 2 kΩ entre A e B. R2 = 4 kΩ entre B e G. R3 = 1 kΩ entre B e C. R4 = 3 kΩ entre C e G. Qual é a tensão do nó C em relação ao terra? Responda em V, arredondando para 2 casas decimais.
+  resposta: {valor: 3.75, unidade: "V", tolerancia: 0.01}
+  explicacao: |
+    R3 + R4 = 4 kΩ estão em paralelo com R2 = 4 kΩ: 2 kΩ. V_B = 10 × 2 ÷ (2 + 2) = 5 V. Depois, divisor R3/R4: V_C = 5 × 3 ÷ 4 = 3,75 V. Por nós: (V_B − 10)/2 + V_B/4 + (V_B − V_C)/1 = 0 e (V_C − V_B)/1 + V_C/3 = 0 dão o mesmo resultado. Calcular V_C = 10 × 3/10 ignora que R2 também puxa corrente do nó B.
+  fonte: "Boylestad, Introdução à Análise de Circuitos, capítulo Métodos de análise e tópicos selecionados (CC), seção Análise nodal"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T04-011
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Ponte desequilibrada. Nós: G (terra), A, B e C. Fonte de 12 V com + em A e − em G. R1 = 2 kΩ entre A e B. R2 = 2 kΩ entre B e G. R3 = 1 kΩ entre A e C. R4 = 3 kΩ entre C e G. R5 = 2 kΩ entre B e C. Qual é o módulo da corrente em R5? Responda em mA, arredondando para 2 casas decimais.
+  resposta: {valor: 0.8, unidade: "mA", tolerancia: 0.01}
+  explicacao: |
+    R5 não está nem em série nem em paralelo com nada: use análise nodal. Nó B: (V_B − 12)/2 + V_B/2 + (V_B − V_C)/2 = 0 → 3·V_B − V_C = 12. Nó C: (V_C − 12)/1 + V_C/3 + (V_C − V_B)/2 = 0 → −0,5·V_B + 1,8333·V_C = 12. Solução: V_B = 6,8 V e V_C = 8,4 V. I_R5 = (8,4 − 6,8)/2 = 0,80 mA, de C para B. Sem R5 seriam 6 V e 9 V — a ponte só tem corrente zero em R5 quando R1/R2 = R3/R4.
+  fonte: "Boylestad, Introdução à Análise de Circuitos, capítulo Métodos de análise e tópicos selecionados (CC), seções Análise nodal e Circuitos em ponte"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T04-012
+  objetivo: O4
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um circuito planar tem 6 nós (contando o terra), apenas 2 janelas (malhas) e nenhuma fonte de corrente; a única fonte é de tensão, ligada entre um nó e o terra. Qual método leva a menos equações?
+  alternativas:
+    - "Análise de malhas, com 2 equações"
+    - "Análise nodal, com 4 equações"
+    - "Análise nodal, com 2 equações"
+    - "Os dois métodos dão o mesmo número de equações"
+  resposta: 0
+  explicacao: |
+    Malhas: uma equação por janela = 2. Nodal: n − 1 = 5 nós desconhecidos, menos 1 cuja tensão a fonte fixa = 4 equações. A contagem nodal de 4 está certa, mas é o dobro das malhas. Muitos nós e poucas janelas (vários resistores em série em cada ramo) favorecem as malhas.
+  fonte: "Boylestad, Introdução à Análise de Circuitos, capítulo Métodos de análise e tópicos selecionados (CC)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T04-013
+  objetivo: O4
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: na análise nodal, uma fonte de tensão ligada entre um nó e o terra reduz em uma o número de equações, porque a tensão desse nó já é conhecida.
+  resposta: true
+  explicacao: |
+    Se a fonte liga o nó diretamente ao terra, a tensão do nó é a da fonte — uma incógnita a menos e nenhuma LKC a escrever nele. Uma fonte de tensão entre dois nós que não são o terra não reduz o número de incógnitas: exige um supernó.
+  fonte: "Boylestad, Introdução à Análise de Circuitos, capítulo Métodos de análise e tópicos selecionados (CC), seção Análise nodal"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T04-014
+  objetivo: O4
+  tipo: unica
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Um circuito planar tem 5 nós (contando o terra) e 4 janelas. Há duas fontes de tensão, cada uma ligada entre um nó diferente e o terra, e nenhuma fonte de corrente. Qual método você escolhe e com quantas equações?
+  alternativas:
+    - "Malhas, com 4 equações"
+    - "Nodal, com 4 equações"
+    - "Nodal, com 2 equações"
+    - "Malhas, com 2 equações"
+  resposta: 2
+  explicacao: |
+    Nodal: 5 − 1 = 4 nós desconhecidos, mas 2 deles têm a tensão fixada pelas fontes ligadas ao terra → 2 equações. Malhas: uma equação por janela = 4 (fontes de tensão não reduzem o número de malhas; só fontes de corrente em ramos externos fariam isso). Esquecer de descontar as fontes leva a "nodal com 4" e a um empate falso.
+  fonte: "Boylestad, Introdução à Análise de Circuitos, capítulo Métodos de análise e tópicos selecionados (CC); MIT OCW 6.002, aula sobre o método dos nós"
+  origem: ia
+  revisao: rascunho

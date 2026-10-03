@@ -1,0 +1,230 @@
+- id: Q-M0.4.T08-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Seu multímetro de 6000 contagens tem faixas manuais de V DC de 600 mV, 6 V, 60 V e 600 V. Você vai medir a saída de um regulador de 5 V. Qual faixa dá a melhor resolução sem estourar a escala?
+  alternativas:
+    - "600 mV"
+    - "6 V"
+    - "60 V"
+    - "600 V"
+  resposta: 1
+  explicacao: |
+    Escolha a menor faixa que ainda comporta o valor. Na de 6 V (até 5,999 V) a resolução é 1 mV. Na de 60 V, só 10 mV; na de 600 mV o display indica sobrecarga (OL). Se não souber a ordem de grandeza, comece pela maior e desça.
+  fonte: "Manual do multímetro (faixas e resolução); Scherz & Monk, Practical Electronics for Inventors, 4ª ed., capítulo Hands-On Electronics (multímetros)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T08-002
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Na faixa de 6 V (resolução 0,001 V), a especificação do multímetro é ±(0,5 % da leitura + 2 dígitos). A leitura é 5,000 V. Qual é a incerteza máxima dessa leitura, para mais ou para menos? Responda em mV.
+  resposta: {valor: 27, unidade: "mV", tolerancia: 0.01}
+  explicacao: |
+    0,5 % de 5,000 V = 0,025 V = 25 mV. Cada dígito vale uma unidade da resolução (1 mV), então 2 dígitos = 2 mV. Total: ±27 mV — o valor real está entre 4,973 V e 5,027 V. Esquecer os dígitos dá 25 mV; somar 2 % em vez de 2 dígitos é ler a especificação errado.
+  fonte: "Manual do multímetro (tabela de exatidão); Boylestad, Introdução à Análise de Circuitos, seções sobre medidores"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T08-003
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Uma fonte de 5,00 V (ideal) alimenta um resistor de 220 Ω. Para medir a corrente, você insere em série um multímetro na faixa de mA, cuja resistência interna total (shunt, fusível e cabos) é 10 Ω. Que corrente o multímetro indica? Responda em mA, arredondando para 2 casas decimais.
+  resposta: {valor: 21.74, unidade: "mA", tolerancia: 0.01}
+  explicacao: |
+    O amperímetro entra em série e soma sua resistência ao circuito: I = 5,00 ÷ (220 + 10) ≈ 21,74 mA, em vez dos 22,73 mA sem o medidor (≈ −4,3 %). A queda no medidor (≈ 0,22 V) é a tensão de carga (burden voltage). Em circuitos de baixa tensão e baixa resistência esse erro é grande; a faixa de A, com shunt menor, atrapalha menos (com menos resolução).
+  fonte: "All About Circuits, Volume I: DC, cap. 8 (DC Metering Circuits), seção sobre o impacto do amperímetro no circuito medido"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T08-004
+  objetivo: O1
+  tipo: vf
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: se o multímetro mostra a leitura com três casas decimais (por exemplo, 3,297 V), então as três casas estão garantidamente corretas.
+  resposta: false
+  explicacao: |
+    Resolução (o menor passo que o display mostra) não é exatidão (o quanto a leitura pode diferir do valor real). Com ±(0,5 % + 3) a leitura de 3,297 V pode estar errada em ≈ ±19 mV: a segunda casa já é incerta. A exatidão está na tabela de especificações do manual.
+  fonte: "Manual do multímetro (especificações de exatidão); All About Circuits, Volume I: DC, cap. 8 (DC Metering Circuits)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T08-005
+  objetivo: O1
+  tipo: multipla
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Você quer medir a corrente de sono (alguns µA) de um nó IoT a bateria, colocando o multímetro em série na faixa de µA. Quando o nó acorda para transmitir, puxa picos de 100 mA. Quais afirmações estão corretas? Marque todas as corretas.
+  alternativas:
+    - "A resistência interna na faixa de µA é relativamente alta, e a queda nela durante o pico pode derrubar a alimentação e reiniciar o nó"
+    - "O pico pode ultrapassar o limite da faixa de µA, o que pode acionar o fusível do borne ou distorcer a medição"
+    - "Na faixa de µA o multímetro não tem resistência interna, por isso é a ideal para qualquer corrente"
+    - "Para medir a corrente de sono, o multímetro deve ficar em paralelo com a bateria"
+  resposta: [0, 1]
+  explicacao: |
+    Quanto mais sensível a faixa, maior o shunt: 100 mA num shunt de dezenas ou centenas de ohms derrubaria vários volts — brownout. O pico também excede a faixa. Por isso se usa a faixa de mA para o ciclo completo ou um medidor próprio para perfil de consumo. Amperímetro sempre vai em série; em paralelo com a bateria ele seria um curto.
+  fonte: "All About Circuits, Volume I: DC, cap. 8 (DC Metering Circuits); manual do multímetro (tensão de carga dos bornes de corrente)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T08-006
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    A fonte de bancada está ajustada para 9 V com limite de corrente de 100 mA. Você liga um resistor de 47 Ω nos terminais de saída. Qual tensão a fonte vai mostrar? Responda em V.
+  resposta: {valor: 4.7, unidade: "V", tolerancia: 0.01}
+  explicacao: |
+    Em 9 V, 47 Ω pediria 9 ÷ 47 ≈ 191 mA, acima do limite. A fonte entra em modo CC: fixa 100 mA e a tensão cai para I × R = 0,1 × 47 = 4,7 V. O indicador CC acende. Responder 9 V é ignorar o limite de corrente.
+  fonte: "Agilent/Keysight, DC Power Supply Handbook (nota de aplicação 90B), seções sobre operação CV/CC; manual da fonte de bancada"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T08-007
+  objetivo: O2
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    A fonte de bancada está ajustada para 12 V com limite de 0,5 A. Você liga uma carga resistiva de 33 Ω. Em que modo a fonte opera e quais são a tensão e a corrente na carga?
+  alternativas:
+    - "CV: 12 V e ≈ 364 mA"
+    - "CC: 0,5 A e 16,5 V"
+    - "CC: 0,5 A e 12 V"
+    - "CV: 12 V e 0,5 A"
+  resposta: 0
+  explicacao: |
+    A carga pede 12 ÷ 33 ≈ 0,364 A, abaixo do limite de 0,5 A: a fonte fica em tensão constante (CV), 12 V, e entrega a corrente que a carga pede. O limite não é "a corrente que a fonte empurra"; ele só atua se a carga pedir mais. 16,5 V é impossível, pois a fonte nunca passa de V_set.
+  fonte: "Agilent/Keysight, DC Power Supply Handbook (nota de aplicação 90B), seções sobre operação CV/CC"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T08-008
+  objetivo: O2
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Você vai energizar pela primeira vez uma placa que deve consumir cerca de 40 mA em 5 V. Qual sequência é a mais segura?
+  alternativas:
+    - "Ligar a placa com a fonte no máximo de corrente e de tensão e ir baixando a tensão até 5 V"
+    - "Com a saída desligada, ajustar 5 V (conferindo com o multímetro) e um limite de corrente um pouco acima do esperado (ex.: 60 mA); ligar a placa; ligar a saída e observar o indicador CV/CC"
+    - "Ajustar o limite de corrente em 40 mA exatos e ligar a placa com a saída já ligada"
+    - "Ligar a placa direto num carregador USB, porque ele já tem proteção"
+  resposta: 1
+  explicacao: |
+    Ajustar com a saída desligada evita aplicar uma tensão errada; um limite um pouco acima do consumo esperado deixa o circuito funcionar mas limita o estrago num curto. Se o indicador mostrar CC, algo está consumindo demais. Limite exatamente no consumo esperado faz a fonte entrar em CC nos picos normais; começar no máximo de tensão pode queimar a placa antes de você baixar.
+  fonte: "Manual da fonte de bancada; Scherz & Monk, Practical Electronics for Inventors, 4ª ed., capítulo Hands-On Electronics"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T08-009
+  objetivo: O2
+  tipo: multipla
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Ao energizar uma placa nova (consumo esperado: 40 mA), a fonte ajustada em 5 V com limite de 100 mA acende o indicador CC e mostra 0,3 V na saída. Quais conclusões ou ações são razoáveis? Marque todas as corretas.
+  alternativas:
+    - "Provavelmente há um curto ou um componente invertido drenando mais de 100 mA"
+    - "O limite de corrente provavelmente evitou um dano maior; desligue a saída e procure o defeito"
+    - "Aumente o limite de corrente para o máximo até a placa ligar"
+    - "A fonte está com defeito, pois deveria manter 5 V com qualquer carga"
+  resposta: [0, 1]
+  explicacao: |
+    Em CC com tensão quase zero, a carga se comporta como uma resistência muito baixa (0,3 V ÷ 0,1 A = 3 Ω): curto, capacitor ou CI invertido, ponte de solda. O limite fez exatamente o seu papel. Aumentar a corrente só transfere mais energia para o defeito (componentes queimados, trilha aberta). Uma fonte com limite de corrente não deve manter V_set com qualquer carga.
+  fonte: "Agilent/Keysight, DC Power Supply Handbook (nota de aplicação 90B), seções sobre operação CV/CC; manual da fonte de bancada"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T08-010
+  objetivo: O3
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Numa protoboard comum de 830 pontos (colunas numeradas de 1 a 63, fileiras a–j e canal central entre e e f), quais dois furos estão ligados entre si internamente?
+  alternativas:
+    - "a12 e e12"
+    - "e12 e f12"
+    - "a12 e a13"
+    - "j12 e j13"
+  resposta: 0
+  explicacao: |
+    Em cada coluna, os cinco furos a–e formam um grupo ligado, e f–j outro. a12 e e12 estão no mesmo grupo. e12 e f12 ficam em lados opostos do canal central (separados); a12 e a13, ou j12 e j13, estão em colunas diferentes (separados).
+  fonte: "Charles Platt, Make: Electronics (apresentação da protoboard); Scherz & Monk, Practical Electronics for Inventors, 4ª ed., capítulo Hands-On Electronics"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T08-011
+  objetivo: O3
+  tipo: unica
+  dificuldade: 2
+  bloom: analisar
+  enunciado: |
+    Um resistor de 1 kΩ foi encaixado com um terminal em b12 e o outro em d12. O que isso significa para o circuito?
+  alternativas:
+    - "Nada muda; o resistor funciona normalmente"
+    - "O resistor fica em curto: os dois terminais estão no mesmo grupo ligado, e ele equivale a um fio"
+    - "O resistor fica em série com toda a coluna 12"
+    - "O resistor fica aberto e nenhuma corrente passa pelo circuito"
+  resposta: 1
+  explicacao: |
+    b12 e d12 pertencem ao grupo a–e da coluna 12, que já é um único nó. O resistor fica com os dois terminais no mesmo nó (tensão zero sobre ele): é como se não existisse, e o caminho é feito pela própria tira metálica. Um componente de dois terminais precisa ocupar duas colunas diferentes (ou atravessar o canal central).
+  fonte: "Charles Platt, Make: Electronics (montagem em protoboard)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T08-012
+  objetivo: O3
+  tipo: vf
+  dificuldade: 3
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: em todas as protoboards de 830 pontos, cada barramento de alimentação lateral é contínuo de uma ponta à outra.
+  resposta: false
+  explicacao: |
+    Em muitos modelos os barramentos são divididos no meio (às vezes indicado por uma interrupção na linha vermelha/azul impressa, às vezes não). Metade do circuito "sem alimentação" é um sintoma clássico. Confira com o teste de continuidade antes de montar, ou coloque um jumper ligando as duas metades.
+  fonte: "Scherz & Monk, Practical Electronics for Inventors, 4ª ed., capítulo Hands-On Electronics (protoboards)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T08-013
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Um divisor de tensão usa R1 = 10 kΩ (entre a entrada e a saída) e R2 = 10 kΩ (entre a saída e o terra), ambos com tolerância de ±5 %, alimentados com exatamente 5 V. No pior caso, qual é a **maior** tensão possível na saída (sem carga)? Responda em V, arredondando para 3 casas decimais.
+  resposta: {valor: 2.625, unidade: "V", tolerancia: 0.01}
+  explicacao: |
+    A saída é máxima com R2 no máximo e R1 no mínimo: R2 = 10,5 kΩ e R1 = 9,5 kΩ → 5 × 10,5 ÷ 20 = 2,625 V (o mínimo seria 2,375 V). Uma leitura de 2,58 V, por exemplo, está dentro do esperado e não indica erro. Somar ±5 % à saída (2,625 V) dá o mesmo número aqui por coincidência de R1 = R2; em geral, faça o cálculo de pior caso com os resistores.
+  fonte: "Boylestad, Introdução à Análise de Circuitos, capítulo Circuitos em série (divisor de tensão); manual do fabricante de resistores (tolerância)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T08-014
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Você liga uma fonte de 3,30 V (medida) a um resistor de 100,0 Ω (medido fora do circuito) com o multímetro em série na faixa de mA. O cálculo dá 33,0 mA, mas o multímetro indica 31,4 mA. Atribuindo toda a diferença à resistência interna do amperímetro, quanto ela vale? Responda em Ω, arredondando para 1 casa decimal.
+  resposta: {valor: 5.1, unidade: "Ω", tolerancia: 0.02}
+  explicacao: |
+    Com o medidor, a resistência total é 3,30 V ÷ 31,4 mA ≈ 105,1 Ω; tirando os 100,0 Ω do resistor, sobram ≈ 5,1 Ω (shunt + fusível + cabos + contatos). Como fonte e resistor foram medidos, a divergência de ≈ −4,8 % não vem da tolerância dos componentes: é o efeito de carga do amperímetro. Usar a faixa de A ou um shunt externo reduz esse erro.
+  fonte: "All About Circuits, Volume I: DC, cap. 8 (DC Metering Circuits), seção sobre o impacto do amperímetro no circuito medido"
+  origem: ia
+  revisao: rascunho

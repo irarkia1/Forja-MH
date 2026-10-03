@@ -1,0 +1,220 @@
+- id: Q-M0.4.T02-001
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Num nó entram 80 mA. Desse nó saem três ramos: um com 35 mA, outro com 25 mA e um terceiro com corrente desconhecida. Qual é a corrente no terceiro ramo? Responda em mA.
+  resposta: {valor: 20, unidade: "mA", tolerancia: 0.01}
+  explicacao: |
+    LKC: o que entra é igual ao que sai. 80 = 35 + 25 + I3 → I3 = 80 − 60 = 20 mA, saindo. Somar tudo (140 mA) é esquecer que entrada e saída ficam em lados opostos da equação.
+  fonte: "Boylestad, Introdução à Análise de Circuitos, capítulo Circuitos em paralelo (lei de Kirchhoff para correntes)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T02-002
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Quatro ramos chegam a um nó. Todas as correntes foram arbitradas como **entrando** no nó: I1 = +12 mA, I2 = −30 mA, I3 = +5 mA e I4 desconhecida. Calcule I4 com sinal, na mesma convenção (positivo = entrando). Responda em mA.
+  resposta: {valor: 13, unidade: "mA", tolerancia: 0.01}
+  explicacao: |
+    Com todas arbitradas entrando, a LKC fica Σ I = 0: 12 − 30 + 5 + I4 = 0 → I4 = +13 mA, ou seja, 13 mA entrando de fato. O sinal negativo de I2 só diz que ela, na realidade, sai do nó (30 mA saindo). Responder −13 mA é inverter a convenção no meio da conta.
+  fonte: "All About Circuits, Volume I: DC, cap. 6, seção Kirchhoff's Current Law (KCL)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T02-003
+  objetivo: O1
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Uma fonte de 5 V entrega 650 mA a uma placa IoT. Dessa corrente, o microcontrolador consome 220 mA, um sensor consome 30 mA e o resto vai para o módulo de rádio. Quanto o rádio consome?
+  alternativas:
+    - "400 mA"
+    - "870 mA"
+    - "650 mA"
+    - "250 mA"
+  resposta: 0
+  explicacao: |
+    Pela LKC no nó de alimentação: 650 = 220 + 30 + I_rádio → I_rádio = 400 mA. 870 mA soma tudo (inclusive a entrada); 250 mA é o consumo do microcontrolador mais o sensor, não o que sobra.
+  fonte: "Boylestad, Introdução à Análise de Circuitos, capítulo Circuitos em paralelo (lei de Kirchhoff para correntes)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T02-004
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Uma bateria de 9 V alimenta uma única malha com R1, um LED e R2, todos em série. Você mede 3,3 V sobre R1 e 2,0 V sobre o LED. Qual é a tensão sobre R2? Responda em V.
+  resposta: {valor: 3.7, unidade: "V", tolerancia: 0.01}
+  explicacao: |
+    LKT: a subida na bateria é igual à soma das quedas. 9 = 3,3 + 2,0 + V_R2 → V_R2 = 3,7 V. Não é preciso conhecer os valores dos resistores nem a corrente.
+  fonte: "Boylestad, Introdução à Análise de Circuitos, capítulo Circuitos em série (lei de Kirchhoff para tensões)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T02-005
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Uma única malha contém uma fonte de 9 V, uma fonte de 3 V e um resistor de 2 kΩ. Os terminais negativos das duas fontes estão ligados entre si, e o resistor liga o positivo da fonte de 9 V ao positivo da fonte de 3 V. Qual é o módulo da corrente na malha? Responda em mA.
+  resposta: {valor: 3, unidade: "mA", tolerancia: 0.01}
+  explicacao: |
+    As fontes estão em oposição: percorrendo a malha, sobe-se 9 V numa e desce-se 3 V na outra. LKT: 9 − 3 − I · 2 kΩ = 0 → I = 6 V ÷ 2 kΩ = 3 mA, saindo do positivo da fonte de 9 V. Somar as fontes (12 V → 6 mA) só valeria se estivessem em série no mesmo sentido.
+  fonte: "All About Circuits, Volume I: DC, cap. 6, seção Kirchhoff's Voltage Law (KVL)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T02-006
+  objetivo: O2
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: numa malha com uma fonte e vários resistores em série, a soma das tensões nos resistores é igual à tensão da fonte.
+  resposta: true
+  explicacao: |
+    É a LKT: percorrendo a malha, a subida de potencial na fonte é compensada exatamente pelas quedas nos resistores (Σ V = 0). Na bancada a soma medida pode diferir alguns décimos de porcento por causa da exatidão do multímetro e da resistência dos fios — não porque a lei falhe.
+  fonte: "Boylestad, Introdução à Análise de Circuitos, capítulo Circuitos em série (lei de Kirchhoff para tensões)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T02-007
+  objetivo: O2
+  tipo: multipla
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Uma malha tem uma fonte E e dois resistores R1 e R2 em série. A corrente I é arbitrada saindo do terminal positivo da fonte, passando por R1, depois por R2 e voltando ao terminal negativo. Quais equações estão corretas? Marque todas as corretas.
+  alternativas:
+    - "E − I·R1 − I·R2 = 0"
+    - "E = I·(R1 + R2)"
+    - "E + I·R1 + I·R2 = 0"
+    - "I·R1 + I·R2 − E = 0"
+  resposta: [0, 1, 3]
+  explicacao: |
+    Percorrendo no sentido da corrente: sobe E na fonte e desce I·R em cada resistor, o que dá E − I·R1 − I·R2 = 0. Rearranjar (E = I·(R1 + R2)) ou multiplicar tudo por −1 (I·R1 + I·R2 − E = 0) dá equações equivalentes. Somar as quedas com o mesmo sinal da fonte (E + I·R1 + I·R2 = 0) obrigaria I a ser negativa com E positiva — é o erro de convenção típico.
+  fonte: "MIT OCW 6.002 Circuits and Electronics, aula sobre o método básico de análise (KVL); Boylestad, capítulo Circuitos em série"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T02-008
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Uma fonte de 12 V tem o terminal negativo ligado ao terra. Do terminal positivo sai R1 = 3,3 kΩ até o nó M; de M sai R2 = 1,2 kΩ até o terra. Qual é a tensão do nó M em relação ao terra? Responda em V.
+  resposta: {valor: 3.2, unidade: "V", tolerancia: 0.01}
+  explicacao: |
+    I = 12 V ÷ (3,3 + 1,2) kΩ = 12 ÷ 4,5 ≈ 2,667 mA. V_M = I × R2 = 2,667 mA × 1,2 kΩ = 3,2 V (a tensão no resistor de baixo, que está entre M e o terra). 8,8 V é a queda em R1, não a tensão do nó.
+  fonte: "Boylestad, Introdução à Análise de Circuitos, capítulo Circuitos em série (notação de tensões e terra)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T02-009
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    No mesmo circuito (fonte de 12 V; R1 = 3,3 kΩ do positivo até o nó M; R2 = 1,2 kΩ de M até o negativo), a referência de terra é **mudada para o nó M**. Qual passa a ser a tensão do terminal negativo da fonte em relação ao terra? Responda em V, com sinal.
+  resposta: {valor: -3.2, unidade: "V", tolerancia: 0.01}
+  explicacao: |
+    As correntes e quedas não mudam: R2 continua com 3,2 V, com o lado de M mais positivo. Se M é 0 V, o negativo da fonte está 3,2 V abaixo: −3,2 V (e o positivo fica em +8,8 V). Trocar o terra muda as tensões de nó, mas não as diferenças entre nós.
+  fonte: "Boylestad, Introdução à Análise de Circuitos, capítulo Circuitos em série (terra e tensões negativas)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T02-010
+  objetivo: O3
+  tipo: unica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Num circuito, o ponto A está a +5 V e o ponto B está a −3,3 V, ambos em relação ao terra. Quanto vale V_AB (= V_A − V_B)?
+  alternativas:
+    - "1,7 V"
+    - "8,3 V"
+    - "−8,3 V"
+    - "−1,7 V"
+  resposta: 1
+  explicacao: |
+    V_AB = V_A − V_B = 5 − (−3,3) = 8,3 V. 1,7 V vem de esquecer o sinal de B (5 − 3,3); −8,3 V é V_BA, a diferença na ordem inversa.
+  fonte: "Boylestad, Introdução à Análise de Circuitos, capítulo Circuitos em série (notação de subscrito duplo)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T02-011
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Uma fonte simétrica fornece +12 V no nó A e −12 V no nó C, ambos em relação ao terra. Entre A e C há dois resistores em série: R1 = 10 kΩ de A até o nó B e R2 = 20 kΩ de B até C. Não há outra ligação ao nó B. Qual é a tensão do nó B em relação ao terra? Responda em V.
+  resposta: {valor: 4, unidade: "V", tolerancia: 0.01}
+  explicacao: |
+    A diferença total é V_A − V_C = 12 − (−12) = 24 V. I = 24 V ÷ 30 kΩ = 0,8 mA, de A para C. Queda em R1: 0,8 mA × 10 kΩ = 8 V → V_B = 12 − 8 = +4 V (confira: 4 − 0,8 × 20 = −12 V). Responder 0 V é supor que o meio dos resistores fica no terra, o que só valeria se R1 = R2.
+  fonte: "Boylestad, Introdução à Análise de Circuitos, capítulo Circuitos em série (tensões de nó e fontes com terra intermediário)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T02-012
+  objetivo: O4
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    A lei de Kirchhoff das correntes (LKC) é consequência de qual princípio físico?
+  alternativas:
+    - "Conservação da energia"
+    - "Conservação da carga elétrica"
+    - "Lei de Ohm"
+    - "Conservação da potência"
+  resposta: 1
+  explicacao: |
+    Num nó não se cria nem se acumula carga, então toda carga que chega por unidade de tempo precisa sair: Σ I = 0. A conservação de energia é a base da outra lei, a LKT. A lei de Ohm descreve resistores e não é necessária para a LKC, que vale para qualquer componente.
+  fonte: "All About Circuits, Volume I: DC, cap. 6, seção Kirchhoff's Current Law (KCL)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T02-013
+  objetivo: O4
+  tipo: unica
+  dificuldade: 3
+  bloom: entender
+  enunciado: |
+    Por que a soma das tensões ao longo de uma malha fechada é zero (LKT)?
+  alternativas:
+    - "Porque a corrente é a mesma em todos os elementos de qualquer malha"
+    - "Porque cada ponto do circuito tem um único potencial; uma carga que dá a volta completa retorna ao mesmo potencial, sem ganho nem perda líquida de energia"
+    - "Porque os resistores consomem toda a corrente fornecida pela fonte"
+    - "Porque a resistência total de uma malha é sempre zero"
+  resposta: 1
+  explicacao: |
+    A LKT expressa conservação de energia: a energia por carga ganha nas fontes é entregue nos outros elementos, e ao voltar ao ponto de partida a carga está no mesmo potencial. A corrente ser igual em todos os elementos só vale em série, e a LKT vale em qualquer malha. Resistores não "consomem corrente": a corrente que entra sai (LKC); eles convertem energia em calor.
+  fonte: "MIT OCW 6.002 Circuits and Electronics, aula sobre o método básico de análise (KVL); All About Circuits, Volume I: DC, cap. 6"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T02-014
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Uma fonte de 12 V entrega 10 mA a um circuito com três resistores (R1 em série com o paralelo de R2 e R3). R1 dissipa 50 mW e R2 dissipa 40 mW. Usando conservação de energia, quanto dissipa R3? Responda em mW.
+  resposta: {valor: 30, unidade: "mW", tolerancia: 0.01}
+  explicacao: |
+    A potência entregue pela fonte é P = V · I = 12 V × 10 mA = 120 mW, e toda ela é dissipada nos resistores: P_R3 = 120 − 50 − 40 = 30 mW. Não é preciso conhecer os valores dos resistores. Esse "balanço de potência" é a melhor forma de conferir uma análise.
+  fonte: "Boylestad, Introdução à Análise de Circuitos, capítulo Lei de Ohm, potência e energia; All About Circuits, Volume I: DC, cap. 6"
+  origem: ia
+  revisao: rascunho

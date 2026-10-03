@@ -44,6 +44,7 @@ T08 Condutores, isolantes e semicondutores (introdução) · T09 Óptica básica
 (luz, LED, fotodetecção)
 
 ### M0.4 — Circuitos DC · 140 h · base · Chefe 47
+*Ordem de estudo: T09 → T01 → T08 → T02…T07 (D018).*
 T01 Lei de Ohm e potência · T02 Leis de Kirchhoff · T03 Série, paralelo e
 divisores · T04 Análise nodal e de malhas · T05 Thévenin, Norton e
 superposição · T06 Capacitores e indutores em DC · T07 Transitórios RC e RL ·

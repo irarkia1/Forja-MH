@@ -1,45 +1,128 @@
 id: M0.4
 ato: A0
 nome: "Circuitos DC"
+missao: "Religue o gerador da Vila da Forja sem queimar a última lâmpada: domine tensão, corrente e resistência antes de acender as ruas."
 horas: 140
 trilha: base
 ordem: 4
 requer: ["M0.1"]
 tags_chefe: []
+# Ordem didática (D018): segurança primeiro, instrumentos logo após Ohm.
 topicos:
-  - id: M0.4.T01
-    nome: "Lei de Ohm e potência"
-    tipo: comum
-    peso: 1
-  - id: M0.4.T02
-    nome: "Leis de Kirchhoff"
-    tipo: comum
-    peso: 1
-  - id: M0.4.T03
-    nome: "Série, paralelo e divisores"
-    tipo: comum
-    peso: 1
-  - id: M0.4.T04
-    nome: "Análise nodal e de malhas"
-    tipo: comum
-    peso: 1
-  - id: M0.4.T05
-    nome: "Thévenin, Norton e superposição"
-    tipo: comum
-    peso: 1
-  - id: M0.4.T06
-    nome: "Capacitores e indutores em DC"
-    tipo: comum
-    peso: 1
-  - id: M0.4.T07
-    nome: "Transitórios RC e RL"
-    tipo: comum
-    peso: 1
-  - id: M0.4.T08
-    nome: "Multímetro, fonte de bancada e protoboard"
-    tipo: elite
-    peso: 2
   - id: M0.4.T09
     nome: "Segurança elétrica e ESD na bancada"
     tipo: elite
     peso: 2
+    objetivos:
+      - id: O1
+        texto: "Explicar os efeitos da corrente no corpo humano e os fatores que determinam o risco de choque (corrente, caminho, duração, resistência da pele)"
+      - id: O2
+        texto: "Aplicar as regras de segurança de bancada: categorias CAT, fusíveis, baterias de lítio, capacitores carregados e curtos"
+      - id: O3
+        texto: "Montar e verificar uma estação de trabalho protegida contra ESD (pulseira, tapete dissipativo, ponto de terra comum)"
+      - id: O4
+        texto: "Identificar componentes sensíveis a ESD e aplicar os procedimentos corretos de manuseio, transporte e embalagem"
+  - id: M0.4.T01
+    nome: "Lei de Ohm e potência"
+    tipo: comum
+    peso: 1
+    objetivos:
+      - id: O1
+        texto: "Calcular tensão, corrente ou resistência com a lei de Ohm, convertendo prefixos (mA, kΩ, µA, MΩ) corretamente"
+      - id: O2
+        texto: "Calcular a potência dissipada num resistor pelas três formas (P = V·I = I²·R = V²/R) e escolher a potência nominal com margem"
+      - id: O3
+        texto: "Calcular o resistor limitador de um LED e escolher um valor comercial E12/E24 seguro"
+      - id: O4
+        texto: "Identificar componentes não ôhmicos (LED, diodo, lâmpada incandescente) e explicar por que R = V/I não é constante neles"
+  - id: M0.4.T08
+    nome: "Multímetro, fonte de bancada e protoboard"
+    tipo: elite
+    peso: 2
+    objetivos:
+      - id: O1
+        texto: "Medir tensão, corrente e resistência escolhendo função, borne, escala e ligação, levando em conta a exatidão e o efeito de carga do multímetro"
+      - id: O2
+        texto: "Configurar a fonte de bancada (tensão, limite de corrente, modos CV e CC) e prever seu comportamento com uma carga"
+      - id: O3
+        texto: "Montar circuitos na protoboard identificando as conexões internas das fileiras e dos barramentos de alimentação"
+      - id: O4
+        texto: "Comparar valores medidos com calculados e explicar as divergências (tolerância, exatidão, resistência dos fios e do instrumento)"
+  - id: M0.4.T02
+    nome: "Leis de Kirchhoff"
+    tipo: comum
+    peso: 1
+    objetivos:
+      - id: O1
+        texto: "Aplicar a lei de Kirchhoff das correntes (LKC) para calcular correntes desconhecidas num nó"
+      - id: O2
+        texto: "Aplicar a lei de Kirchhoff das tensões (LKT) numa malha, com convenção de sinais consistente, para calcular tensões desconhecidas"
+      - id: O3
+        texto: "Calcular tensões de nó em relação ao terra e a diferença de potencial entre dois pontos quaisquer do circuito"
+      - id: O4
+        texto: "Explicar a LKC como conservação de carga e a LKT como conservação de energia"
+  - id: M0.4.T03
+    nome: "Série, paralelo e divisores"
+    tipo: comum
+    peso: 1
+    objetivos:
+      - id: O1
+        texto: "Calcular a resistência equivalente de associações em série, em paralelo e mistas"
+      - id: O2
+        texto: "Calcular tensões com o divisor de tensão e correntes com o divisor de corrente"
+      - id: O3
+        texto: "Calcular o efeito de uma carga (ou de um instrumento) ligada à saída de um divisor de tensão"
+      - id: O4
+        texto: "Projetar um divisor com resistores comerciais para adaptar uma tensão à entrada de um ADC, verificando corrente e tensão máxima"
+  - id: M0.4.T04
+    nome: "Análise nodal e de malhas"
+    tipo: comum
+    peso: 1
+    objetivos:
+      - id: O1
+        texto: "Montar as equações da análise nodal de um circuito, escolhendo o nó de referência e tratando fontes de tensão e de corrente"
+      - id: O2
+        texto: "Montar as equações da análise de malhas de um circuito com até três malhas"
+      - id: O3
+        texto: "Resolver o sistema linear resultante (2×2 ou 3×3) e calcular tensões, correntes e potências do circuito"
+      - id: O4
+        texto: "Escolher entre análise nodal e de malhas pelo número de equações e pelo tipo de fonte do circuito"
+  - id: M0.4.T05
+    nome: "Thévenin, Norton e superposição"
+    tipo: comum
+    peso: 1
+    objetivos:
+      - id: O1
+        texto: "Calcular o equivalente de Thévenin (Vth e Rth) visto por uma carga"
+      - id: O2
+        texto: "Converter um equivalente de Thévenin em Norton e vice-versa"
+      - id: O3
+        texto: "Aplicar a superposição em circuitos com duas fontes independentes, desligando cada fonte corretamente"
+      - id: O4
+        texto: "Calcular a resistência de carga que recebe a máxima potência e o valor dessa potência"
+  - id: M0.4.T06
+    nome: "Capacitores e indutores em DC"
+    tipo: comum
+    peso: 1
+    objetivos:
+      - id: O1
+        texto: "Calcular carga e energia armazenadas num capacitor (Q = C·V, E = C·V²/2) e energia num indutor (E = L·I²/2)"
+      - id: O2
+        texto: "Calcular a capacitância e a indutância equivalentes de associações em série e em paralelo"
+      - id: O3
+        texto: "Calcular tensões e correntes de regime permanente DC tratando capacitor como circuito aberto e indutor como curto-circuito"
+      - id: O4
+        texto: "Identificar o valor, a tensão nominal e a polaridade de capacitores reais (código 104, eletrolítico, cerâmico)"
+  - id: M0.4.T07
+    nome: "Transitórios RC e RL"
+    tipo: comum
+    peso: 1
+    objetivos:
+      - id: O1
+        texto: "Calcular a constante de tempo de circuitos RC (τ = R·C) e RL (τ = L/R)"
+      - id: O2
+        texto: "Calcular tensão e corrente num instante qualquer da carga e da descarga usando a exponencial"
+      - id: O3
+        texto: "Calcular o tempo para um circuito RC atingir uma tensão-alvo e aplicar isso a reset, debounce e temporização"
+      - id: O4
+        texto: "Explicar o pico de tensão ao interromper a corrente de um indutor e a função do diodo de roda livre"

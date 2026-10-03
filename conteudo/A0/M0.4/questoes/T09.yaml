@@ -1,0 +1,235 @@
+- id: Q-M0.4.T09-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    O que determina diretamente a gravidade de um choque elétrico?
+  alternativas:
+    - "Apenas a tensão da fonte, independentemente de qualquer outro fator"
+    - "A corrente que atravessa o corpo, junto com o caminho que ela percorre e a duração"
+    - "A potência nominal do equipamento que deu o choque"
+    - "A cor e a bitola do fio tocado"
+  resposta: 1
+  explicacao: |
+    O efeito fisiológico vem da corrente pelo corpo (I = V / R_corpo), do caminho (atravessar o tórax é o pior) e do tempo de exposição. A tensão importa porque empurra a corrente: 220 V com pele molhada pode fazer passar uma corrente perigosa; a mesma tensão com isolamento adequado não faz passar nada. A potência nominal do aparelho não diz quanto passa pelo corpo.
+  fonte: "All About Circuits, Volume I: DC, cap. 3 (Electrical Safety), seções sobre efeitos fisiológicos e choque; IEC 60479-1 (resumo)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T09-002
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Num choque mão–pé em 127 V, a resistência total do caminho (pele úmida + corpo) é de 1,5 kΩ. Qual corrente atravessa o corpo? Responda em mA, arredondando para 2 casas decimais.
+  resposta: {valor: 84.67, unidade: "mA", tolerancia: 0.01}
+  explicacao: |
+    I = V / R = 127 V ÷ 1500 Ω ≈ 0,08467 A ≈ 84,67 mA. Correntes de dezenas de mA atravessando o tórax por cerca de um segundo já estão na faixa de risco de fibrilação ventricular. É por isso que a rede está fora do escopo da bancada do A0, e por isso existe o DR de 30 mA.
+  fonte: "All About Circuits, Volume I: DC, cap. 3 (Electrical Safety); IEC 60479-1 (resumo das zonas de efeito)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T09-003
+  objetivo: O1
+  tipo: multipla
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Para uma mesma tensão de contato, quais fatores **aumentam** o risco de um choque? Marque todos os corretos.
+  alternativas:
+    - "Pele molhada ou suada"
+    - "Caminho de uma mão à outra, atravessando o tórax"
+    - "Maior duração do contato"
+    - "Pele seca e íntegra"
+  resposta: [0, 1, 2]
+  explicacao: |
+    Pele molhada reduz muito a resistência e aumenta a corrente; o caminho mão–mão (ou mão–pé) passa pelo coração; quanto mais longo o contato, menor a corrente necessária para causar fibrilação. Pele seca e íntegra é o oposto: aumenta a resistência e reduz a corrente.
+  fonte: "All About Circuits, Volume I: DC, cap. 3 (Electrical Safety), seções sobre caminhos de corrente; IEC 60479-1 (resumo)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T09-004
+  objetivo: O1
+  tipo: vf
+  dificuldade: 3
+  bloom: avaliar
+  enunciado: |
+    Verdadeiro ou falso: a resistência entre as mãos medida com um multímetro (que aplica poucos volts) é um bom valor para estimar a corrente de um choque em 220 V.
+  resposta: false
+  explicacao: |
+    A resistência da pele cai muito com tensões mais altas (a camada externa "rompe") e com o tempo de contato; o ohmímetro, com poucos volts, mede um valor alto e otimista. Usar essa leitura para 220 V subestima a corrente — exatamente o tipo de erro que leva alguém a achar que um choque seria inofensivo.
+  fonte: "IEC 60479-1 (resumo: impedância do corpo em função da tensão); All About Circuits, Volume I: DC, cap. 3 (Electrical Safety)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T09-005
+  objetivo: O2
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Pela classificação de categorias de medição da IEC 61010, qual categoria corresponde a medições num quadro de distribuição de um prédio (disjuntores, barramentos)?
+  alternativas:
+    - "CAT I"
+    - "CAT II"
+    - "CAT III"
+    - "CAT IV"
+  resposta: 2
+  explicacao: |
+    CAT III cobre a instalação fixa do prédio: quadros de distribuição, disjuntores, barramentos, circuitos alimentadores. CAT II é para equipamentos ligados por plugue; CAT IV é a origem da instalação (entrada de serviço, medidor de energia). Categoria maior significa ambiente com transientes de mais energia, não simplesmente "mais tensão".
+  fonte: "Fluke, ABCs of Multimeter Safety (categorias de medição); IEC 61010 (resumo)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T09-006
+  objetivo: O2
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    O fusível do borne de mA do seu multímetro queimou. Qual substituição é correta?
+  alternativas:
+    - "Qualquer fusível de vidro com a mesma corrente nominal"
+    - "Um pedaço de fio fino, até comprar o fusível certo"
+    - "Exatamente o modelo indicado no manual (corrente, tensão, tipo e capacidade de interrupção)"
+    - "Um fusível de corrente maior, para não queimar de novo"
+  resposta: 2
+  explicacao: |
+    Os fusíveis de multímetro são de alta capacidade de interrupção (cerâmicos, especificados para a tensão do instrumento): conseguem extinguir o arco de um curto numa fonte de alta energia. Um fusível de vidro comum pode não interromper o arco; fio ou fusível maior eliminam a proteção. O resultado pode ser o multímetro explodindo na mão.
+  fonte: "Fluke, ABCs of Multimeter Safety (fusíveis); manual do multímetro"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T09-007
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um eletrolítico de 470 µF de uma fonte desligada ainda está carregado com 35 V. Que energia ele armazena? Responda em mJ, arredondando para o inteiro mais próximo.
+  resposta: {valor: 288, unidade: "mJ", tolerancia: 0.01}
+  explicacao: |
+    E = ½ · C · V² = 0,5 × 470 × 10⁻⁶ × 35² ≈ 0,288 J = 288 mJ. Não é perigoso como choque nessa tensão, mas um curto com uma chave de fenda gera faísca, marca a ferramenta e pode danificar trilhas e componentes. Descarregue com um resistor (ex.: 1 kΩ: τ = 0,47 s; espere alguns segundos).
+  fonte: "Boylestad, Introdução à Análise de Circuitos, capítulo Capacitores (energia armazenada); All About Circuits, Volume I: DC, cap. 3 (Electrical Safety)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T09-008
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Uma célula de lítio 18650 (3,7 V, resistência interna de 50 mΩ) é curto-circuitada por um fio de 30 mΩ. Desprezando outras resistências, qual é a corrente de curto? Responda em A, arredondando para 2 casas decimais.
+  resposta: {valor: 46.25, unidade: "A", tolerancia: 0.01}
+  explicacao: |
+    I = 3,7 V ÷ (0,050 + 0,030) Ω = 46,25 A. O fio dissipa I²·R ≈ 64 W e a célula outros ≈ 107 W: o fio fica em brasa e a célula aquece rapidamente, com risco de incêndio. Baixa tensão não significa baixo risco quando a fonte tem baixa resistência interna.
+  fonte: "Boylestad, Introdução à Análise de Circuitos, capítulo Lei de Ohm, potência e energia; All About Circuits, Volume I: DC, cap. 11 (Batteries and Power Systems)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T09-009
+  objetivo: O2
+  tipo: multipla
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Sobre riscos numa bancada que só usa baixa tensão DC (até 12 V), quais afirmações estão corretas? Marque todas as corretas.
+  alternativas:
+    - "Um anel metálico que encoste num barramento de 12 V capaz de fornecer alta corrente pode causar queimadura grave"
+    - "Uma bateria de 9 V solta no bolso, junto com moedas ou chaves, pode entrar em curto e esquentar"
+    - "Abaixo de 50 V DC não existe nenhum risco na bancada"
+    - "Um capacitor desligado da fonte está sempre descarregado"
+  resposta: [0, 1]
+  explicacao: |
+    Em baixa tensão o choque é improvável, mas o risco de **energia** continua: curtos em fontes de baixa resistência interna (baterias, fontes de alta corrente) aquecem metais a ponto de queimar a pele e iniciar incêndio. Capacitores mantêm a carga depois de desligados, até serem descarregados — às vezes por muito tempo, se nada os drenar.
+  fonte: "All About Circuits, Volume I: DC, cap. 3 (Electrical Safety); Scherz & Monk, Practical Electronics for Inventors, 4ª ed., capítulo Hands-On Electronics (segurança)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T09-010
+  objetivo: O3
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Onde deve ser ligado o cabo da pulseira antiestática e do tapete dissipativo de uma estação de trabalho?
+  alternativas:
+    - "No neutro da tomada, que fica perto de 0 V"
+    - "Em qualquer parte metálica da bancada"
+    - "No terminal negativo da fonte de bancada"
+    - "Num ponto de terra comum ligado ao terra de proteção da instalação, por um plugue ou conexão própria para ESD"
+  resposta: 3
+  explicacao: |
+    Pulseira, tapete e equipamentos precisam ficar no mesmo potencial, ligados ao terra de proteção por um caminho confiável. O neutro conduz a corrente de retorno da instalação e pode ter tensão (e ligar algo nele é perigoso); uma parte metálica qualquer pode não estar aterrada; o negativo da fonte de bancada normalmente é flutuante.
+  fonte: "ESD Association, Fundamentals of Electrostatic Discharge (aterramento); ANSI/ESD S20.20 (resumo)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T09-011
+  objetivo: O3
+  tipo: unica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Na verificação diária, você coloca a pulseira no pulso e mede com o multímetro, na função Ω, entre um dedo da outra mão (segurando a ponta de prova) e o jacaré do cabo. O display mostra OL (fora de escala). Qual é a conclusão mais provável?
+  alternativas:
+    - "A pulseira está ótima: quanto maior a resistência, melhor a proteção contra ESD"
+    - "O caminho está aberto: cabo rompido, conexão solta ou a pulseira sem contato com a pele — a pulseira não está protegendo"
+    - "O resistor de 1 MΩ está em curto"
+    - "O multímetro precisa estar na função de tensão para esse teste"
+  resposta: 1
+  explicacao: |
+    O esperado é algo na ordem de 1 MΩ (o resistor do cabo, mais a resistência da pele). OL indica circuito aberto: a carga do corpo não tem para onde escoar. Um resistor em curto daria leitura **baixa**, não OL. Não use a pulseira até corrigir (trocar o cabo, ajustar a pulseira).
+  fonte: "ESD Association, Fundamentals of Electrostatic Discharge (aterramento pessoal e verificação); ANSI/ESD S20.20 (resumo)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T09-012
+  objetivo: O3
+  tipo: vf
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Verdadeiro ou falso: numa estação protegida contra ESD, a pulseira, o tapete e o ponto de terra devem estar ligados a um mesmo ponto de terra comum.
+  resposta: true
+  explicacao: |
+    O princípio da área protegida é manter pessoa, superfície de trabalho e componentes no mesmo potencial, e escoar cargas de forma controlada para o terra. Pontos de terra diferentes podem ter diferenças de potencial entre si e criar justamente a descarga que se quer evitar.
+  fonte: "ESD Association, Fundamentals of Electrostatic Discharge (princípios de controle); ANSI/ESD S20.20 (resumo)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T09-013
+  objetivo: O4
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Você precisa levar uma placa com um ESP32 da bancada até o laboratório de testes, em outro andar. Qual embalagem é a adequada?
+  alternativas:
+    - "Saco rosa antiestático, porque ele já protege contra ESD"
+    - "Saco blindado metalizado (prateado), fechado"
+    - "Plástico bolha comum, para proteger contra impacto"
+    - "Caixa de papelão sem forro"
+  resposta: 1
+  explicacao: |
+    O saco blindado tem uma camada metálica que protege o conteúdo de campos e descargas externas: é o indicado para guardar e transportar fora da área protegida. O saco rosa é só de baixa geração de carga (não carrega por atrito), mas não blinda. Plástico bolha comum gera carga por atrito; papelão sem forro não blinda nem controla carga.
+  fonte: "ESD Association, Fundamentals of Electrostatic Discharge (embalagem); ANSI/ESD S20.20 (resumo)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T09-014
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    O datasheet de um chip informa tolerância a ESD de ±2 kV no modelo do corpo humano (HBM), que representa a pessoa por 100 pF descarregando por 1,5 kΩ. Uma pessoa carregada com 3 kV — perto do limiar em que a descarga começa a ser sentida — toca um pino. Pelo modelo HBM, qual é o pico aproximado de corrente da descarga? Responda em A.
+  resposta: {valor: 2, unidade: "A", tolerancia: 0.01}
+  explicacao: |
+    No início da descarga, toda a tensão está sobre o resistor do modelo: I_pico ≈ V / R = 3000 V ÷ 1500 Ω = 2 A (a energia é ½ × 100 pF × 3000² = 450 µJ). A descarga está acima do que o chip suporta (2 kV corresponderia a ≈ 1,3 A) e a pessoa mal a percebe. Por isso o controle de ESD não pode depender de "sentir o choque", e o dano pode ficar latente.
+  fonte: "ESD Association, Fundamentals of Electrostatic Discharge (modelos de dano: HBM); JEDEC/ESDA JS-001 (resumo do modelo HBM)"
+  origem: ia
+  revisao: rascunho

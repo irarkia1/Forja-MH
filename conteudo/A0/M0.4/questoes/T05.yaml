@@ -1,0 +1,215 @@
+- id: Q-M0.4.T05-001
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Uma fonte de 10 V alimenta um divisor: R1 = 4,7 kΩ do terminal + da fonte até o nó a, e R2 = 4,7 kΩ do nó a até o terra (terminal b). Qual é a tensão de Thévenin vista pelos terminais a–b? Responda em V.
+  resposta: {valor: 5, unidade: "V", tolerancia: 0.01}
+  explicacao: |
+    Vth é a tensão em aberto entre a e b: o divisor sem carga dá 10 × 4,7 ÷ (4,7 + 4,7) = 5 V. Vth é sempre medido/calculado **sem** a carga.
+  fonte: "Boylestad, Introdução à Análise de Circuitos, capítulo Teoremas para análise de circuitos (teorema de Thévenin)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T05-002
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Uma fonte de tensão ideal de 10 V alimenta um divisor: R1 = 4,7 kΩ do terminal + da fonte até o nó a, e R2 = 4,7 kΩ do nó a até o terra (terminal b). Qual é a resistência de Thévenin vista pelos terminais a–b? Responda em kΩ.
+  resposta: {valor: 2.35, unidade: "kΩ", tolerancia: 0.01}
+  explicacao: |
+    Para Rth, desliga-se a fonte de tensão (vira curto). Vistos de a–b, R1 e R2 ficam ambos entre a e o terra: em paralelo. 4,7 ∥ 4,7 = 2,35 kΩ. Responder 9,4 kΩ é somá-los em série, como se a fonte tivesse virado circuito aberto.
+  fonte: "Boylestad, Introdução à Análise de Circuitos, capítulo Teoremas para análise de circuitos (teorema de Thévenin)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T05-003
+  objetivo: O1
+  tipo: unica
+  dificuldade: 2
+  bloom: lembrar
+  enunciado: |
+    Para calcular a resistência de Thévenin pelo método de "desligar as fontes", como se substituem as fontes independentes?
+  alternativas:
+    - "Fonte de tensão por curto-circuito; fonte de corrente por circuito aberto"
+    - "Fonte de tensão por circuito aberto; fonte de corrente por curto-circuito"
+    - "As duas por curto-circuito"
+    - "As duas por circuito aberto"
+  resposta: 0
+  explicacao: |
+    Desligar uma fonte é zerar o seu valor: uma fonte de tensão de 0 V mantém 0 V entre os terminais com qualquer corrente — é um curto. Uma fonte de corrente de 0 A não deixa passar corrente com qualquer tensão — é um aberto. Inverter isso é o erro mais comum do tópico.
+  fonte: "Boylestad, Introdução à Análise de Circuitos, capítulo Teoremas para análise de circuitos; MIT OCW 6.002, aula Superposition, Thévenin and Norton"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T05-004
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Nós: G (terra), A e B. Uma fonte de corrente de 2 mA injeta corrente no nó A (vinda de G). R1 = 3 kΩ entre A e G. R2 = 1 kΩ entre A e B. Os terminais de saída são B e G. Qual é a resistência de Thévenin vista de B–G? Responda em kΩ.
+  resposta: {valor: 4, unidade: "kΩ", tolerancia: 0.01}
+  explicacao: |
+    Desligar a fonte de corrente = circuito aberto. De B, olhando para dentro, vê-se R2 em série com R1 até o terra: 1 + 3 = 4 kΩ. (Vth = 2 mA × 3 kΩ = 6 V, pois em aberto não passa corrente por R2.) Tratar a fonte de corrente como curto daria só 1 kΩ.
+  fonte: "Boylestad, Introdução à Análise de Circuitos, capítulo Teoremas para análise de circuitos (Thévenin com fontes de corrente)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T05-005
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    O pino de saída de um circuito mostra 3,30 V em aberto. Com um resistor de 100 Ω ligado entre o pino e o terra, a tensão cai para 3,00 V. Modelando a saída por Thévenin, qual é Rth? Responda em Ω.
+  resposta: {valor: 10, unidade: "Ω", tolerancia: 0.01}
+  explicacao: |
+    Vth = V_oc = 3,30 V. Com carga, I = 3,00 V ÷ 100 Ω = 30 mA. A queda interna é 3,30 − 3,00 = 0,30 V, então Rth = 0,30 V ÷ 30 mA = 10 Ω. Fórmula direta: Rth = R_L · (V_oc − V_L)/V_L = 100 × 0,3/3,0 = 10 Ω.
+  fonte: "Boylestad, Introdução à Análise de Circuitos, capítulo Teoremas para análise de circuitos (determinação experimental dos parâmetros de Thévenin)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T05-006
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Um circuito tem equivalente de Thévenin Vth = 9 V e Rth = 450 Ω. Qual é a corrente da fonte do equivalente de Norton? Responda em mA.
+  resposta: {valor: 20, unidade: "mA", tolerancia: 0.01}
+  explicacao: |
+    In = Vth / Rth = 9 V ÷ 450 Ω = 0,02 A = 20 mA, que é a corrente que passaria com os terminais em curto. O resistor de Norton é o mesmo: Rn = Rth = 450 Ω, em paralelo com a fonte de corrente.
+  fonte: "Boylestad, Introdução à Análise de Circuitos, capítulo Teoremas para análise de circuitos (teorema de Norton)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T05-007
+  objetivo: O2
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um equivalente de Norton tem fonte de corrente In = 5 mA em paralelo com Rn = 2 kΩ. Qual é o equivalente de Thévenin?
+  alternativas:
+    - "10 V em série com 2 kΩ"
+    - "10 V em paralelo com 2 kΩ"
+    - "2,5 V em série com 2 kΩ"
+    - "5 V em série com 2 kΩ"
+  resposta: 0
+  explicacao: |
+    Vth = In · Rn = 5 mA × 2 kΩ = 10 V (a tensão em aberto: toda a corrente da fonte passa por Rn), e Rth = Rn = 2 kΩ, **em série**. 2,5 V vem de dividir em vez de multiplicar; uma fonte de tensão ideal em paralelo com um resistor teria resistência equivalente zero, o que não representa o circuito.
+  fonte: "All About Circuits, Volume I: DC, cap. 10, seção Thevenin-Norton Equivalencies"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T05-008
+  objetivo: O2
+  tipo: vf
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Verdadeiro ou falso: o resistor do equivalente de Norton (Rn) tem o mesmo valor do resistor do equivalente de Thévenin (Rth) do mesmo circuito.
+  resposta: true
+  explicacao: |
+    Rn = Rth: os dois equivalentes descrevem o mesmo circuito visto dos mesmos terminais, e a resistência obtida com as fontes desligadas não depende de como você representa a fonte. Muda só a posição: em série no Thévenin, em paralelo no Norton.
+  fonte: "Boylestad, Introdução à Análise de Circuitos, capítulo Teoremas para análise de circuitos (teorema de Norton)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T05-009
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Nós: G (terra), A e B. Fonte de 12 V com + em A e − em G. R1 = 2 kΩ entre A e B. R2 = 2 kΩ entre B e G. Uma fonte de corrente de 2 mA injeta corrente no nó B (vinda de G). Usando superposição, qual é a tensão do nó B? Responda em V.
+  resposta: {valor: 8, unidade: "V", tolerancia: 0.01}
+  explicacao: |
+    Só a fonte de tensão (fonte de corrente aberta): divisor 12 × 2/4 = 6 V. Só a fonte de corrente (fonte de tensão em curto): R1 ∥ R2 = 1 kΩ, então 2 mA × 1 kΩ = 2 V. Total: 6 + 2 = 8 V. Confira pela LKC: (12 − 8)/2 + 2 = 4 mA = 8/2 ✔.
+  fonte: "Boylestad, Introdução à Análise de Circuitos, capítulo Teoremas para análise de circuitos (teorema da superposição)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T05-010
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Nós: G (terra), A, B e C. Fonte V1 = 12 V com + em A e − em G. R1 = 4 kΩ entre A e B. R2 = 4 kΩ entre B e G. R3 = 2 kΩ entre B e C. Fonte V2 = 5 V com + em C e − em G. Usando superposição, qual é a tensão do nó B? Responda em V.
+  resposta: {valor: 5.5, unidade: "V", tolerancia: 0.01}
+  explicacao: |
+    Só V1 (V2 em curto): R2 ∥ R3 = 4 ∥ 2 ≈ 1,333 kΩ → V_B' = 12 × 1,333 ÷ (4 + 1,333) = 3 V. Só V2 (V1 em curto): R1 ∥ R2 = 2 kΩ → V_B'' = 5 × 2 ÷ (2 + 2) = 2,5 V. Total: 5,5 V. Confira: (12 − 5,5)/4 = 1,625 mA entram por R1; (5,5 − 5)/2 = 0,25 mA saem por R3; 5,5/4 = 1,375 mA descem por R2; 0,25 + 1,375 = 1,625 ✔.
+  fonte: "Boylestad, Introdução à Análise de Circuitos, capítulo Teoremas para análise de circuitos (teorema da superposição)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T05-011
+  objetivo: O3
+  tipo: multipla
+  dificuldade: 3
+  bloom: avaliar
+  enunciado: |
+    Sobre o teorema da superposição em circuitos com resistores e fontes independentes, quais afirmações estão corretas? Marque todas as corretas.
+  alternativas:
+    - "Vale para tensões e correntes de circuitos lineares"
+    - "Ao analisar a contribuição de uma fonte, as fontes de corrente desligadas são substituídas por circuitos abertos"
+    - "A potência total num resistor é a soma das potências calculadas em cada contribuição"
+    - "Ao analisar a contribuição de uma fonte, as fontes de tensão desligadas são substituídas por circuitos abertos"
+  resposta: [0, 1]
+  explicacao: |
+    Superposição vale para grandezas que dependem linearmente das fontes (tensões e correntes). Fonte de corrente desligada = aberto; fonte de tensão desligada = curto (não aberto). Potência é quadrática: (V' + V'')²/R ≠ V'²/R + V''²/R — calcule a tensão ou corrente total primeiro e só depois a potência.
+  fonte: "All About Circuits, Volume I: DC, cap. 10, seção Superposition Theorem; Boylestad, capítulo Teoremas para análise de circuitos"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T05-012
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Uma fonte tem Vth = 5 V e Rth = 50 Ω. Qual é a máxima potência que ela pode entregar a uma carga resistiva? Responda em mW.
+  resposta: {valor: 125, unidade: "mW", tolerancia: 0.01}
+  explicacao: |
+    A máxima potência ocorre com R_L = Rth = 50 Ω: I = 5 ÷ 100 = 50 mA, V_L = 2,5 V, P = 2,5 × 0,05 = 0,125 W = 125 mW. Fórmula direta: P_max = Vth² / (4·Rth) = 25 ÷ 200 = 0,125 W. Usar Vth²/Rth (500 mW) é calcular como se toda a tensão ficasse na carga.
+  fonte: "Boylestad, Introdução à Análise de Circuitos, capítulo Teoremas para análise de circuitos (teorema da máxima transferência de potência)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T05-013
+  objetivo: O4
+  tipo: unica
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Uma fonte de alimentação de 5 V tem resistência interna (Rth) de 0,5 Ω. Um colega sugere projetar a carga com 0,5 Ω "para aproveitar a máxima potência". Qual é a melhor avaliação?
+  alternativas:
+    - "Correto: casar a carga com Rth é sempre o objetivo em qualquer circuito"
+    - "Incorreto: com R_L = Rth a carga recebe a máxima potência, mas a eficiência é só 50 % e a tensão cai para 2,5 V; em alimentação busca-se R_L muito maior que Rth"
+    - "Incorreto: a máxima potência ocorre com a carga em curto-circuito"
+    - "Correto: com R_L = Rth a eficiência é de 100 %"
+  resposta: 1
+  explicacao: |
+    No casamento, metade da potência é dissipada dentro da fonte (eficiência 50 %) e a tensão na carga é Vth/2. Isso é desejável em sinais e RF (antenas, linhas de 50 Ω), não em alimentação, onde se quer tensão estável e pouca perda: Rth ≪ R_L. Em curto, a corrente é máxima mas a tensão na carga é zero, e a potência na carga também.
+  fonte: "Boylestad, Introdução à Análise de Circuitos, capítulo Teoremas para análise de circuitos (máxima transferência de potência e eficiência)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T05-014
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Uma fonte com Vth = 6 V e Rth = 1 kΩ alimenta uma carga R_L = 2 kΩ. Qual potência a carga recebe? Responda em mW.
+  resposta: {valor: 8, unidade: "mW", tolerancia: 0.01}
+  explicacao: |
+    I = 6 ÷ (1 + 2) kΩ = 2 mA; P = I² · R_L = 4 × 2 = 8 mW. Para comparar: com R_L = Rth = 1 kΩ seria o máximo, 6² ÷ (4 × 1 kΩ) = 9 mW. Dobrar a carga em relação ao casamento perde só ≈ 11 % da potência e sobe a eficiência de 50 % para 67 % — a curva de potência é bem achatada perto do máximo.
+  fonte: "Boylestad, Introdução à Análise de Circuitos, capítulo Teoremas para análise de circuitos (teorema da máxima transferência de potência)"
+  origem: ia
+  revisao: rascunho

@@ -1,0 +1,210 @@
+- id: Q-M0.4.T03-001
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Três resistores estão em série: 1 kΩ, 2,2 kΩ e 4,7 kΩ. Qual é a resistência equivalente? Responda em kΩ.
+  resposta: {valor: 7.9, unidade: "kΩ", tolerancia: 0.01}
+  explicacao: |
+    Em série as resistências somam: 1 + 2,2 + 4,7 = 7,9 kΩ. O equivalente em série é sempre maior que o maior dos resistores — se o seu resultado for menor que 4,7 kΩ, você usou a fórmula do paralelo.
+  fonte: "Boylestad, Introdução à Análise de Circuitos, capítulo Circuitos em série"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T03-002
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um resistor de 10 kΩ está em paralelo com um de 15 kΩ. Qual é a resistência equivalente? Responda em kΩ.
+  resposta: {valor: 6, unidade: "kΩ", tolerancia: 0.01}
+  explicacao: |
+    Produto sobre soma: (10 × 15) ÷ (10 + 15) = 150 ÷ 25 = 6 kΩ. Confira: o resultado é menor que o menor resistor (10 kΩ), como sempre acontece em paralelo. 25 kΩ seria a soma (série).
+  fonte: "Boylestad, Introdução à Análise de Circuitos, capítulo Circuitos em paralelo"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T03-003
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    R1 = 680 Ω está em série com a associação em paralelo de R2 = 1,2 kΩ e R3 = 1,8 kΩ (R2 e R3 ligados entre os mesmos dois nós). Qual é a resistência equivalente do conjunto? Responda em Ω.
+  resposta: {valor: 1400, unidade: "Ω", tolerancia: 0.01}
+  explicacao: |
+    Resolva de dentro para fora. Paralelo: (1,2 × 1,8) ÷ (1,2 + 1,8) = 2,16 ÷ 3 = 0,72 kΩ = 720 Ω. Série com R1: 680 + 720 = 1400 Ω (1,4 kΩ). Somar os três (3680 Ω) ignora o paralelo.
+  fonte: "Boylestad, Introdução à Análise de Circuitos, capítulo Circuitos série-paralelo"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T03-004
+  objetivo: O1
+  tipo: vf
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Verdadeiro ou falso: dois resistores de 1 kΩ ligados em paralelo equivalem a 2 kΩ.
+  resposta: false
+  explicacao: |
+    Em paralelo, n resistores iguais a R equivalem a R/n: 1 kΩ ∥ 1 kΩ = 500 Ω. Abrir um segundo caminho facilita a passagem da corrente, então a resistência equivalente diminui. 2 kΩ é o resultado da ligação em série.
+  fonte: "All About Circuits, Volume I: DC, cap. 5 (Series and Parallel Circuits)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T03-005
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Um divisor de tensão é alimentado com 5 V. R1 = 1 kΩ fica entre a entrada e a saída, e R2 = 1,5 kΩ fica entre a saída e o terra. Sem carga na saída, qual é a tensão de saída? Responda em V.
+  resposta: {valor: 3, unidade: "V", tolerancia: 0.01}
+  explicacao: |
+    V_out = V_in · R2 / (R1 + R2) = 5 × 1,5 ÷ 2,5 = 3 V. A saída é a tensão sobre o resistor de baixo. Usar R1 no numerador dá 2 V, que é a queda em R1.
+  fonte: "Boylestad, Introdução à Análise de Circuitos, capítulo Circuitos em série (regra do divisor de tensão)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T03-006
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Uma corrente total de 60 mA se divide entre dois resistores em paralelo: 220 Ω e 330 Ω. Qual é a corrente no resistor de 220 Ω? Responda em mA.
+  resposta: {valor: 36, unidade: "mA", tolerancia: 0.01}
+  explicacao: |
+    Divisor de corrente: I_220 = I · R_outro / (R1 + R2) = 60 × 330 ÷ 550 = 36 mA (e 24 mA no de 330 Ω). O numerador leva o **outro** resistor: quem tem menos resistência leva mais corrente. Colocar 220 no numerador dá 24 mA, a corrente do outro ramo.
+  fonte: "Boylestad, Introdução à Análise de Circuitos, capítulo Circuitos em paralelo (regra do divisor de corrente)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T03-007
+  objetivo: O2
+  tipo: unica
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Um resistor de 1 kΩ e outro de 10 kΩ estão em paralelo, ligados a uma fonte. Qual afirmação é correta?
+  alternativas:
+    - "Os dois conduzem a mesma corrente, porque estão em paralelo"
+    - "O de 10 kΩ conduz 10 vezes mais corrente, porque é maior"
+    - "O de 1 kΩ conduz 10 vezes mais corrente que o de 10 kΩ"
+    - "Os dois têm tensões diferentes, proporcionais às resistências"
+  resposta: 2
+  explicacao: |
+    Em paralelo a **tensão** é a mesma; a corrente em cada um é V/R, portanto inversamente proporcional à resistência: o de 1 kΩ leva 10 vezes mais. "Mesma corrente" é propriedade da ligação em série, e "tensões proporcionais às resistências" descreve o divisor de tensão (série).
+  fonte: "All About Circuits, Volume I: DC, cap. 6 (Divider Circuits and Kirchhoff's Laws), seção sobre divisor de corrente"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T03-008
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um divisor com R1 = 10 kΩ (entre a entrada e a saída) e R2 = 10 kΩ (entre a saída e o terra) é alimentado com 12 V. Uma carga de 10 kΩ é ligada entre a saída e o terra. Qual é a tensão na saída com a carga? Responda em V.
+  resposta: {valor: 4, unidade: "V", tolerancia: 0.01}
+  explicacao: |
+    A carga fica em paralelo com R2: 10 kΩ ∥ 10 kΩ = 5 kΩ. V_out = 12 × 5 ÷ (10 + 5) = 4 V. Sem carga seriam 6 V: a carga "puxou" a saída para baixo em 33 %. A carga deveria ser pelo menos 10× maior que R1 ∥ R2 (5 kΩ) para o efeito ser pequeno.
+  fonte: "Boylestad, Introdução à Análise de Circuitos, capítulo Circuitos série-paralelo (divisor de tensão com carga)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T03-009
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Um divisor de 4,7 MΩ (entre a entrada e a saída) e 4,7 MΩ (entre a saída e o terra) está ligado a 9 V. Você mede a saída com um multímetro cuja resistência de entrada em V DC é 10 MΩ. Que valor o multímetro mostra? Responda em V, arredondando para 2 casas decimais.
+  resposta: {valor: 3.64, unidade: "V", tolerancia: 0.01}
+  explicacao: |
+    O multímetro entra em paralelo com o resistor de baixo: 4,7 ∥ 10 = 47 ÷ 14,7 ≈ 3,197 MΩ. V = 9 × 3,197 ÷ (4,7 + 3,197) ≈ 3,64 V, em vez dos 4,5 V esperados. O erro não é "defeito" do multímetro: é efeito de carga, grande porque os resistores são da mesma ordem da entrada do instrumento.
+  fonte: "Boylestad, Introdução à Análise de Circuitos, capítulo Circuitos em paralelo (efeito de carga dos voltímetros); Horowitz & Hill, The Art of Electronics, 3ª ed., cap. 1 (divisores de tensão)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T03-010
+  objetivo: O3
+  tipo: multipla
+  dificuldade: 3
+  bloom: avaliar
+  enunciado: |
+    A saída de um divisor de tensão cai muito quando você liga uma carga. Quais medidas reduzem esse erro, mantendo a mesma razão de divisão? Marque todas as corretas.
+  alternativas:
+    - "Usar resistores de menor valor no divisor, na mesma proporção"
+    - "Usar uma carga com resistência pelo menos 10 vezes maior que R1 ∥ R2"
+    - "Aumentar a tensão de entrada do divisor"
+    - "Usar resistores de maior valor no divisor, na mesma proporção"
+  resposta: [0, 1]
+  explicacao: |
+    O erro depende da relação entre a carga e a resistência equivalente do divisor (R1 ∥ R2). Diminuir R1 e R2 ou aumentar a carga melhora essa relação (o custo de resistores menores é mais corrente e mais consumo). Aumentar a tensão de entrada muda a saída na mesma proporção, sem melhorar o erro relativo; resistores maiores pioram o efeito de carga.
+  fonte: "Horowitz & Hill, The Art of Electronics, 3ª ed., cap. 1 (divisores de tensão e a regra do 10×)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T03-011
+  objetivo: O4
+  tipo: unica
+  dificuldade: 3
+  bloom: avaliar
+  enunciado: |
+    Você vai medir uma bateria de lítio 3S (até 12,6 V totalmente carregada) com um ADC de entrada máxima 3,3 V, usando um divisor sem carga relevante. R1 fica entre a bateria e a entrada do ADC; R2 fica entre a entrada do ADC e o terra. Qual par mantém a entrada do ADC dentro do limite com a bateria cheia?
+  alternativas:
+    - "R1 = 27 kΩ, R2 = 10 kΩ"
+    - "R1 = 22 kΩ, R2 = 10 kΩ"
+    - "R1 = 33 kΩ, R2 = 10 kΩ"
+    - "R1 = 10 kΩ, R2 = 33 kΩ"
+  resposta: 2
+  explicacao: |
+    Com 33 kΩ/10 kΩ: 12,6 × 10 ÷ 43 ≈ 2,93 V (dentro). O par 27 kΩ/10 kΩ engana: dá ≈ 3,24 V em 12 V, mas ≈ 3,41 V com a bateria cheia — acima do limite. 22 kΩ/10 kΩ dá ≈ 3,94 V. 10 kΩ/33 kΩ está invertido e entregaria ≈ 9,67 V ao ADC.
+  fonte: "Boylestad, Introdução à Análise de Circuitos, capítulo Circuitos em série (regra do divisor de tensão); Scherz & Monk, Practical Electronics for Inventors, 4ª ed., cap. 2 (divisor de tensão)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T03-012
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um divisor com R1 = 33 kΩ (entre a bateria e o ADC) e R2 = 10 kΩ (entre o ADC e o terra) alimenta o ADC de um microcontrolador. O ADC lê 2,40 V. Desprezando o efeito de carga do ADC, qual é a tensão da bateria? Responda em V, arredondando para 2 casas decimais.
+  resposta: {valor: 10.32, unidade: "V", tolerancia: 0.01}
+  explicacao: |
+    Inverta o divisor: V_bat = V_adc × (R1 + R2) / R2 = 2,40 × 43 ÷ 10 = 2,40 × 4,3 = 10,32 V. Multiplicar por 3,3 (R1/R2) é o erro comum: o fator correto é (R1 + R2)/R2.
+  fonte: "Boylestad, Introdução à Análise de Circuitos, capítulo Circuitos em série (regra do divisor de tensão)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T03-013
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Para gastar menos bateria, o divisor de medição de um nó IoT usa R1 = 330 kΩ e R2 = 100 kΩ, em série, ligados permanentemente a uma bateria de 12,6 V. Qual corrente esse divisor drena da bateria? Responda em µA, arredondando para 2 casas decimais.
+  resposta: {valor: 29.3, unidade: "µA", tolerancia: 0.01}
+  explicacao: |
+    I = V ÷ (R1 + R2) = 12,6 V ÷ 430 kΩ ≈ 29,30 µA. Com 33 kΩ + 10 kΩ seriam ≈ 293 µA — dez vezes mais. Num dispositivo que dorme com poucos µA, até 29 µA pesam; por isso se usa também um transistor para desligar o divisor entre medições.
+  fonte: "Scherz & Monk, Practical Electronics for Inventors, 4ª ed., cap. 2 (divisor de tensão)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T03-014
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Um divisor com R1 = 33 kΩ (bateria → ADC) e R2 = 10 kΩ (ADC → terra) mede uma bateria de 12,6 V. A entrada do ADC se comporta como uma resistência de 100 kΩ entre o pino e o terra. O firmware calcula V_bat = V_adc × 4,3 (sem considerar o ADC). Que tensão de bateria o firmware vai mostrar? Responda em V, arredondando para 2 casas decimais.
+  resposta: {valor: 11.7, unidade: "V", tolerancia: 0.01}
+  explicacao: |
+    A entrada do ADC fica em paralelo com R2: 10 ∥ 100 ≈ 9,091 kΩ. V_adc = 12,6 × 9,091 ÷ (33 + 9,091) ≈ 2,721 V. O firmware mostra 2,721 × 4,3 ≈ 11,70 V — erro de quase 0,9 V. Correções: considerar o paralelo no fator, usar R1 e R2 menores ou calibrar com uma medição de referência.
+  fonte: "Boylestad, Introdução à Análise de Circuitos, capítulo Circuitos série-paralelo (divisor de tensão com carga)"
+  origem: ia
+  revisao: rascunho

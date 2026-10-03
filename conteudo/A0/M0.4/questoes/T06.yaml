@@ -1,0 +1,220 @@
+- id: Q-M0.4.T06-001
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Um capacitor de 220 µF está carregado com 9 V. Qual carga está armazenada nele? Responda em mC.
+  resposta: {valor: 1.98, unidade: "mC", tolerancia: 0.01}
+  explicacao: |
+    Q = C · V = 220 µF × 9 V = 1980 µC = 1,98 mC. µF × V dá µC; para passar a mC, divida por 1000. "Carga armazenada" significa +Q numa placa e −Q na outra: o capacitor como um todo continua neutro.
+  fonte: "Boylestad, Introdução à Análise de Circuitos, capítulo Capacitores (capacitância)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T06-002
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um capacitor de 1000 µF do reservatório de uma fonte está carregado com 12 V. Qual energia ele armazena? Responda em mJ.
+  resposta: {valor: 72, unidade: "mJ", tolerancia: 0.01}
+  explicacao: |
+    E = ½ · C · V² = 0,5 × 1000 × 10⁻⁶ F × 144 V² = 0,072 J = 72 mJ. Esquecer o ½ dá 144 mJ; esquecer o quadrado dá 6 mJ.
+  fonte: "Boylestad, Introdução à Análise de Circuitos, capítulo Capacitores (energia armazenada)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T06-003
+  objetivo: O1
+  tipo: vf
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: se a tensão num capacitor dobra, a energia armazenada nele também apenas dobra.
+  resposta: false
+  explicacao: |
+    E = ½ · C · V²: dobrar V multiplica a energia por 4. A **carga** (Q = C · V) é que dobra. Por isso capacitores de alta tensão, mesmo pequenos, podem guardar bastante energia.
+  fonte: "Boylestad, Introdução à Análise de Circuitos, capítulo Capacitores (energia armazenada)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T06-004
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um indutor de 22 mH conduz uma corrente constante de 1,5 A. Qual energia está armazenada no campo magnético? Responda em mJ, arredondando para 2 casas decimais.
+  resposta: {valor: 24.75, unidade: "mJ", tolerancia: 0.01}
+  explicacao: |
+    E = ½ · L · I² = 0,5 × 0,022 H × 2,25 A² = 0,02475 J = 24,75 mJ. É essa energia que precisa ir para algum lugar quando a corrente é interrompida — origem do pico de tensão estudado em transitórios RL.
+  fonte: "Boylestad, Introdução à Análise de Circuitos, capítulo Indutores (energia armazenada)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T06-005
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Um capacitor de 47 µF e outro de 22 µF estão ligados em paralelo. Qual é a capacitância equivalente? Responda em µF.
+  resposta: {valor: 69, unidade: "µF", tolerancia: 0.01}
+  explicacao: |
+    Em paralelo, capacitâncias somam: 47 + 22 = 69 µF (é como aumentar a área das placas). Usar produto sobre soma (≈ 15 µF) é aplicar a regra de resistores em paralelo — que, para capacitores, vale na ligação em série.
+  fonte: "Boylestad, Introdução à Análise de Circuitos, capítulo Capacitores (capacitores em série e em paralelo)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T06-006
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um capacitor de 10 µF está em série com outro de 15 µF. Qual é a capacitância equivalente? Responda em µF.
+  resposta: {valor: 6, unidade: "µF", tolerancia: 0.01}
+  explicacao: |
+    Em série: 1/C_eq = 1/10 + 1/15 → C_eq = (10 × 15) ÷ (10 + 15) = 150 ÷ 25 = 6 µF, menor que o menor deles (é como aumentar a distância entre as placas). Somar (25 µF) seria a ligação em paralelo.
+  fonte: "Boylestad, Introdução à Análise de Circuitos, capítulo Capacitores (capacitores em série e em paralelo)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T06-007
+  objetivo: O2
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Dois indutores de 10 µH e 22 µH, sem acoplamento magnético entre eles, estão ligados em série. Qual é a indutância equivalente?
+  alternativas:
+    - "32 µH"
+    - "≈ 6,88 µH"
+    - "220 µH"
+    - "12 µH"
+  resposta: 0
+  explicacao: |
+    Indutores sem acoplamento se associam como resistores: em série, somam (10 + 22 = 32 µH). ≈ 6,88 µH seria a ligação em paralelo (produto sobre soma). 220 µH é o produto, sem significado físico aqui.
+  fonte: "Boylestad, Introdução à Análise de Circuitos, capítulo Indutores (indutores em série e em paralelo)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T06-008
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Uma fonte de 12 V alimenta R1 = 2,2 kΩ, do terminal + até o nó X; R2 = 3,3 kΩ vai de X ao terra; um capacitor de 100 µF está ligado entre X e o terra. Depois de muito tempo (regime permanente DC), qual é a tensão no capacitor? Responda em V.
+  resposta: {valor: 7.2, unidade: "V", tolerancia: 0.01}
+  explicacao: |
+    Em regime DC o capacitor não conduz (circuito aberto) e o circuito vira um divisor: V_C = 12 × 3,3 ÷ (2,2 + 3,3) = 7,2 V. Responder 12 V é supor que o capacitor carrega até a fonte, o que só aconteceria sem R2 (nada drenando corrente do nó X).
+  fonte: "Boylestad, Introdução à Análise de Circuitos, capítulo Capacitores (condições de regime CC)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T06-009
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Uma fonte de 9 V alimenta R1 = 10 Ω, do terminal + até o nó Y. Entre Y e o terra há um indutor ideal (resistência desprezível) em paralelo com R2 = 47 Ω. Em regime permanente DC, qual é a corrente no indutor? Responda em A.
+  resposta: {valor: 0.9, unidade: "A", tolerancia: 0.01}
+  explicacao: |
+    Em regime DC o indutor ideal é um curto: V_Y = 0, R2 fica em curto (corrente zero nele) e toda a corrente passa pelo indutor: I = 9 V ÷ 10 Ω = 0,9 A. Calcular um divisor com R2 (≈ 0,16 A em R2) é tratar o indutor como aberto — que é o comportamento do capacitor, não do indutor.
+  fonte: "Boylestad, Introdução à Análise de Circuitos, capítulo Indutores (condições de regime CC)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T06-010
+  objetivo: O3
+  tipo: multipla
+  dificuldade: 3
+  bloom: entender
+  enunciado: |
+    Num circuito DC em regime permanente (todas as tensões e correntes constantes), quais afirmações sobre componentes ideais estão corretas? Marque todas as corretas.
+  alternativas:
+    - "A corrente num capacitor é zero"
+    - "A tensão num indutor é zero"
+    - "A tensão num capacitor é zero"
+    - "A corrente num indutor é zero"
+  resposta: [0, 1]
+  explicacao: |
+    i_C = C · dv/dt e v_L = L · di/dt: com tudo constante, as derivadas são zero, então i_C = 0 (capacitor = aberto) e v_L = 0 (indutor = curto). A tensão no capacitor pode ser qualquer valor (ele fica carregado), e a corrente no indutor pode ser qualquer valor (ele a conduz livremente).
+  fonte: "Boylestad, Introdução à Análise de Circuitos, capítulos Capacitores e Indutores (condições de regime CC)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T06-011
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Uma fonte de 12 V alimenta R1 = 1 kΩ, do terminal + até o nó X. Um capacitor C = 10 µF liga X ao terra. Um indutor ideal liga X ao nó Z, e R2 = 2 kΩ liga Z ao terra. Em regime permanente DC, qual energia está armazenada no capacitor? Responda em mJ.
+  resposta: {valor: 0.32, unidade: "mJ", tolerancia: 0.01}
+  explicacao: |
+    Em regime: indutor = curto (Z fica no mesmo potencial de X) e capacitor = aberto. Sobra o divisor R1/R2: V_X = 12 × 2 ÷ 3 = 8 V. Energia no capacitor: ½ × 10 µF × 8² = 320 µJ = 0,32 mJ. Supor o capacitor com 12 V daria 0,72 mJ.
+  fonte: "Boylestad, Introdução à Análise de Circuitos, capítulos Capacitores e Indutores (regime CC e energia armazenada)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T06-012
+  objetivo: O4
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um capacitor cerâmico tem a marcação "104". Qual é o seu valor?
+  alternativas:
+    - "104 pF"
+    - "10 nF"
+    - "100 nF"
+    - "1 µF"
+  resposta: 2
+  explicacao: |
+    O código de 3 dígitos é em picofarads: dois dígitos significativos e o número de zeros. 104 = 10 seguido de 4 zeros = 100 000 pF = 100 nF = 0,1 µF — o capacitor de desacoplamento mais comum. 10 nF seria "103".
+  fonte: "Scherz & Monk, Practical Electronics for Inventors, 4ª ed., cap. 3 (capacitores: códigos de marcação)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T06-013
+  objetivo: O4
+  tipo: unica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um capacitor de filme tem a marcação "474K". O que ela indica?
+  alternativas:
+    - "470 nF, tolerância ±10 %"
+    - "474 pF, tolerância ±5 %"
+    - "47 nF, tolerância ±10 %"
+    - "4,7 µF, tolerância ±20 %"
+  resposta: 0
+  explicacao: |
+    47 seguido de 4 zeros = 470 000 pF = 470 nF; a letra K indica ±10 % (J = ±5 %, M = ±20 %). 47 nF seria "473"; ler os três dígitos literalmente (474 pF) ignora que o último é o multiplicador.
+  fonte: "Scherz & Monk, Practical Electronics for Inventors, 4ª ed., cap. 3 (capacitores: códigos de marcação e tolerância)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T06-014
+  objetivo: O4
+  tipo: multipla
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Quais afirmações sobre capacitores reais estão corretas? Marque todas as corretas.
+  alternativas:
+    - "Um cerâmico multicamada X7R de 10 µF pode apresentar capacitância bem menor que a nominal quando opera com uma tensão DC próxima da sua tensão nominal"
+    - "Um eletrolítico de alumínio ligado com a polaridade invertida pode aquecer, estufar e romper"
+    - "Um cerâmico C0G (NP0) perde a maior parte da capacitância quando se aplica tensão DC"
+    - "Um eletrolítico de 16 V pode operar continuamente a 25 V, porque a tensão nominal já tem margem de segurança embutida"
+  resposta: [0, 1]
+  explicacao: |
+    Dielétricos de classe 2 (X5R, X7R) perdem capacitância com a polarização DC — às vezes mais da metade; as curvas do fabricante mostram isso. Eletrolíticos invertidos conduzem, aquecem e podem romper. C0G/NP0 é justamente o dielétrico estável, quase sem variação com tensão. A tensão nominal é um limite, não um valor de uso com folga embutida: o projeto é que deve deixar margem.
+  fonte: "Scherz & Monk, Practical Electronics for Inventors, 4ª ed., cap. 3 (tipos de capacitores); Horowitz & Hill, The Art of Electronics, 3ª ed., cap. 1 (capacitores)"
+  origem: ia
+  revisao: rascunho

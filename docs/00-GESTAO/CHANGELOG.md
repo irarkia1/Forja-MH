@@ -2,6 +2,10 @@
 
 Formato: data · o que mudou · onde.
 
+## 2026-10-03 — Conteúdo do M0.4
+- M0.4 Circuitos DC: 9 roteiros com exemplos resolvidos e gabarito, 126 questões
+  (67 numéricas conferidas por script). Ordem didática D018.
+
 ## 2026-10-03 — F4 entregue
 - Fantasmas (revisão espaçada 1/3/7/21/60) no mapa, no acampamento e no topo.
 - Feridas do chefe; consolidado e dominado; bloqueio com mais de 30 pendentes.

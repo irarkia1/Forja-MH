@@ -207,3 +207,11 @@ just-in-time é produzido nessa sequência. Meta final reforçada: entender e
 ser capaz de produzir uma placa completa e um processador próprio, e
 conhecer as máquinas da linha de produção — já coberto por A3, A5 e A6;
 "da mina ao componente" entra como missão secundária (TRILHAS.md).
+
+## D018 — M0.4 começa pela segurança
+**Data:** 2026-10-03 · **Status:** aceita
+
+No M0.4 a ordem de estudo é **T09 Segurança e ESD → T01 Ohm → T08 Multímetro,
+fonte e protoboard → T02 … T07**. Os exercícios "na bancada" dos tópicos de
+teoria já usam fonte com limite de corrente e amperímetro em série, então os
+instrumentos vêm cedo. Os IDs não mudam; só a ordem no `modulo.yaml`.

@@ -1,0 +1,215 @@
+- id: Q-M0.4.T07-001
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Um capacitor de 470 µF carrega através de um resistor de 10 kΩ. Qual é a constante de tempo do circuito? Responda em s.
+  resposta: {valor: 4.7, unidade: "s", tolerancia: 0.01}
+  explicacao: |
+    τ = R · C = 10 000 Ω × 470 × 10⁻⁶ F = 4,7 s. Atalho: kΩ × µF = ms, então 10 × 470 = 4700 ms = 4,7 s. O capacitor fica praticamente carregado em 5τ ≈ 23,5 s.
+  fonte: "Boylestad, Introdução à Análise de Circuitos, capítulo Capacitores (transitórios, constante de tempo)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T07-002
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Um indutor de 50 mH está em série com uma resistência total de 25 Ω. Qual é a constante de tempo do circuito RL? Responda em ms.
+  resposta: {valor: 2, unidade: "ms", tolerancia: 0.01}
+  explicacao: |
+    No RL, τ = L / R (e não L · R): 0,050 H ÷ 25 Ω = 0,002 s = 2 ms. Multiplicar (1,25 s) é o erro típico de quem decorou "R vezes alguma coisa" do RC. Mais resistência deixa o RL **mais rápido**, ao contrário do RC.
+  fonte: "Boylestad, Introdução à Análise de Circuitos, capítulo Indutores (transitórios R-L)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T07-003
+  objetivo: O1
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Uma fonte de 12 V alimenta R1 = 6 kΩ, do terminal + até o nó X; R2 = 3 kΩ liga X ao terra; um capacitor de 10 µF liga X ao terra. Qual é a constante de tempo de carga do capacitor?
+  alternativas:
+    - "20 ms"
+    - "90 ms"
+    - "60 ms"
+    - "30 ms"
+  resposta: 0
+  explicacao: |
+    O R da constante de tempo é a resistência de Thévenin vista pelo capacitor, com a fonte desligada (em curto): R1 ∥ R2 = 6 ∥ 3 = 2 kΩ. τ = 2 kΩ × 10 µF = 20 ms. 90 ms usa R1 + R2 em série; 60 ms e 30 ms usam só um dos resistores.
+  fonte: "Boylestad, Introdução à Análise de Circuitos, capítulo Capacitores (equivalente de Thévenin: τ = R_Th·C)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T07-004
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um capacitor inicialmente descarregado é carregado por um resistor a partir de uma fonte de 5 V. Qual é a tensão no capacitor depois de exatamente uma constante de tempo (t = τ)? Responda em V, arredondando para 2 casas decimais.
+  resposta: {valor: 3.16, unidade: "V", tolerancia: 0.01}
+  explicacao: |
+    v(t) = V · (1 − e^(−t/τ)); em t = τ: 5 × (1 − e⁻¹) = 5 × 0,632 ≈ 3,16 V (63,2 % da final). 1,84 V (36,8 %) é o que **falta** carregar — ou o que sobra numa descarga.
+  fonte: "All About Circuits, Volume I: DC, cap. 16 (RC and L/R Time Constants)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T07-005
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um capacitor carregado com 9 V começa a descarregar através de um resistor em t = 0. Qual é a tensão nele em t = 2τ? Responda em V, arredondando para 2 casas decimais.
+  resposta: {valor: 1.22, unidade: "V", tolerancia: 0.01}
+  explicacao: |
+    Descarga: v(t) = V0 · e^(−t/τ) = 9 × e⁻² = 9 × 0,1353 ≈ 1,22 V. Usar a fórmula de carga (9 × 0,865 ≈ 7,78 V) inverte o fenômeno: na descarga a tensão cai.
+  fonte: "Boylestad, Introdução à Análise de Circuitos, capítulo Capacitores (fase de descarga)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T07-006
+  objetivo: O2
+  tipo: vf
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Verdadeiro ou falso: depois de uma constante de tempo, um capacitor que carrega a partir de zero atinge cerca de 63 % da tensão final.
+  resposta: true
+  explicacao: |
+    1 − e⁻¹ ≈ 0,632. Em 5τ ele chega a ≈ 99,3 %, que na prática se considera "carregado". Na descarga, em t = τ, sobram ≈ 36,8 % da tensão inicial.
+  fonte: "All About Circuits, Volume I: DC, cap. 16 (RC and L/R Time Constants)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T07-007
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um circuito RL série tem fonte de 12 V, R = 24 Ω e L = 48 mH. A chave fecha em t = 0, com corrente inicial zero. Qual é a corrente em t = 4 ms? Responda em mA, arredondando para o inteiro mais próximo.
+  resposta: {valor: 432, unidade: "mA", tolerancia: 0.01}
+  explicacao: |
+    τ = L/R = 0,048 ÷ 24 = 2 ms; corrente final = 12 ÷ 24 = 0,5 A. i(t) = 0,5 × (1 − e^(−t/τ)) = 0,5 × (1 − e⁻²) ≈ 0,5 × 0,8647 ≈ 0,432 A = 432 mA. No indutor é a **corrente** que sobe gradualmente (começa em zero).
+  fonte: "Boylestad, Introdução à Análise de Circuitos, capítulo Indutores (transitórios R-L)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T07-008
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um capacitor de 100 nF, inicialmente descarregado, carrega através de 10 kΩ a partir de 3,3 V a partir de t = 0. Qual é a corrente no capacitor em t = 2 ms? Responda em µA, arredondando para 2 casas decimais.
+  resposta: {valor: 44.66, unidade: "µA", tolerancia: 0.01}
+  explicacao: |
+    τ = 10 kΩ × 100 nF = 1 ms. A corrente começa em 3,3 V ÷ 10 kΩ = 330 µA (capacitor descarregado age como curto) e decai: i(t) = 330 × e^(−t/τ) = 330 × e⁻² ≈ 44,66 µA. Usar (1 − e⁻²) dá ≈ 285 µA, o que seria uma corrente crescendo — o comportamento do indutor, não do capacitor.
+  fonte: "Boylestad, Introdução à Análise de Circuitos, capítulo Capacitores (corrente na fase de carga)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T07-009
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um capacitor de 100 µF carregado com 12 V descarrega por um resistor de 1 kΩ. Quanto tempo leva para a tensão cair a 1,2 V? Responda em ms, arredondando para o inteiro mais próximo.
+  resposta: {valor: 230, unidade: "ms", tolerancia: 0.01}
+  explicacao: |
+    τ = 1 kΩ × 100 µF = 100 ms. 1,2 V é 10 % de 12 V: e^(−t/τ) = 0,1 → t = τ · ln 10 = 100 × 2,303 ≈ 230 ms. Regra útil: cair a 10 % leva ≈ 2,3τ; a 1 %, ≈ 4,6τ.
+  fonte: "All About Circuits, Volume I: DC, cap. 16 (RC and L/R Time Constants), seção sobre resolver o tempo"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T07-010
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    O pino de reset de um microcontrolador é ligado a 3,3 V por um resistor de 10 kΩ e ao terra por um capacitor de 1 µF, inicialmente descarregado. O chip sai do reset quando o pino ultrapassa 2,0 V. Desprezando a corrente do pino, quanto tempo após a alimentação ligar isso acontece? Responda em ms, arredondando para 2 casas decimais.
+  resposta: {valor: 9.32, unidade: "ms", tolerancia: 0.01}
+  explicacao: |
+    τ = 10 kΩ × 1 µF = 10 ms. t = τ · ln[(V_final − V_inicial)/(V_final − V_alvo)] = 10 × ln(3,3/1,3) ≈ 10 × 0,9316 ≈ 9,32 ms. Responder 10 ms (= τ) só valeria se o limiar fosse 63,2 % de 3,3 V (≈ 2,09 V).
+  fonte: "All About Circuits, Volume I: DC, cap. 16 (RC and L/R Time Constants); Boylestad, capítulo Capacitores (valores instantâneos)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T07-011
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 4
+  bloom: criar
+  enunciado: |
+    Você vai projetar um atraso de reset: 3,3 V → resistor R → pino; capacitor de 1 µF do pino ao terra (inicialmente descarregado). O chip sai do reset quando o pino passa de 2,5 V, e isso deve acontecer pelo menos 20 ms após ligar. Desprezando a corrente do pino, qual é o **menor** valor de R que atende? Responda em kΩ, arredondando para 2 casas decimais.
+  resposta: {valor: 14.11, unidade: "kΩ", tolerancia: 0.01}
+  explicacao: |
+    t = R·C · ln(3,3 / (3,3 − 2,5)) = R·C · ln(4,125) ≈ R·C × 1,417. Para t ≥ 20 ms: R ≥ 20 ms ÷ (1 µF × 1,417) ≈ 14,11 kΩ. Na prática você escolheria o próximo valor comercial acima (15 kΩ, E12) e consideraria a tolerância do capacitor.
+  fonte: "All About Circuits, Volume I: DC, cap. 16 (RC and L/R Time Constants), seção sobre resolver o tempo"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T07-012
+  objetivo: O3
+  tipo: unica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Num circuito RC cuja tensão final é 5 V, o capacitor passa de 1 V para 4 V. Quanto tempo isso leva, em constantes de tempo?
+  alternativas:
+    - "≈ 1,39 τ"
+    - "3 τ"
+    - "≈ 0,69 τ"
+    - "≈ 0,6 τ"
+  resposta: 0
+  explicacao: |
+    t = τ · ln[(V_final − V_inicial)/(V_final − V_alvo)] = τ · ln[(5 − 1)/(5 − 4)] = τ · ln 4 ≈ 1,39 τ. A subida não é linear: "3 τ" supõe 1 V por τ, e 0,6 τ é a razão 3 V/5 V, como se a tensão subisse em linha reta. ≈ 0,69 τ (ln 2) é o tempo para percorrer metade do caminho entre 1 V e o valor final, ou seja, chegar a 3 V.
+  fonte: "All About Circuits, Volume I: DC, cap. 16 (RC and L/R Time Constants)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T07-013
+  objetivo: O4
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um transistor NPN aciona a bobina de um relé: o terminal de cima da bobina está ligado a +12 V e o de baixo vai ao coletor; o emissor está no terra. Onde deve ser ligado o diodo de roda livre?
+  alternativas:
+    - "Em paralelo com a bobina, com o catodo no terminal ligado a +12 V"
+    - "Em série com a bobina, com o catodo voltado para +12 V"
+    - "Em paralelo com a bobina, com o anodo no terminal ligado a +12 V"
+    - "Entre o emissor e o terra, em série com o transistor"
+  resposta: 0
+  explicacao: |
+    Com o relé ligado, o diodo fica reversamente polarizado (catodo em +12 V) e não conduz. Ao cortar o transistor, a bobina inverte a polaridade para manter a corrente, o diodo conduz e a corrente circula pela malha bobina-diodo, limitando a tensão no coletor a ≈ 12,7 V. Com o anodo em +12 V, o diodo ficaria em polarização direta quando o transistor conduzisse e curto-circuitaria a alimentação; em série, ele não oferece caminho alternativo para a corrente.
+  fonte: "Horowitz & Hill, The Art of Electronics, 3ª ed., cap. 1 (indutores e pico de tensão ao desligar); Scherz & Monk, Practical Electronics for Inventors, 4ª ed., seção sobre relés"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T07-014
+  objetivo: O4
+  tipo: multipla
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Uma bobina de relé é acionada por um transistor. Quais afirmações estão corretas? Marque todas as corretas.
+  alternativas:
+    - "Sem diodo de roda livre, ao cortar o transistor, a tensão no coletor pode subir muito acima da alimentação, porque v = L·di/dt"
+    - "Com o diodo de roda livre, a corrente da bobina continua circulando pelo diodo após o corte e decai com constante de tempo próxima de L/R da bobina"
+    - "O diodo de roda livre faz o relé soltar mais rápido do que sem o diodo"
+    - "O diodo de roda livre conduz durante todo o tempo em que o relé está ligado"
+  resposta: [0, 1]
+  explicacao: |
+    O indutor tenta manter a corrente; sem caminho, di/dt é enorme e a tensão dispara (centenas ou milhares de volts), destruindo o transistor. O diodo dá caminho e a corrente decai devagar (τ ≈ L/R_bobina). Efeito colateral: o relé solta **mais devagar** (o campo magnético persiste enquanto a corrente decai); quando isso importa, usa-se um zener ou resistor em série com o diodo. Com o relé ligado, o diodo está reversamente polarizado e não conduz.
+  fonte: "Horowitz & Hill, The Art of Electronics, 3ª ed., cap. 1 (indutores); Boylestad, Introdução à Análise de Circuitos, capítulo Indutores (transitórios R-L)"
+  origem: ia
+  revisao: rascunho

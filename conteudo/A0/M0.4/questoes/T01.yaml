@@ -1,0 +1,220 @@
+- id: Q-M0.4.T01-001
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Um resistor de 1,8 kΩ está ligado diretamente aos terminais de uma bateria de 9 V. Qual é a corrente no resistor? Responda em mA.
+  resposta: {valor: 5, unidade: "mA", tolerancia: 0.01}
+  explicacao: |
+    I = V / R = 9 V ÷ 1,8 kΩ = 5 mA. Volts divididos por quilo-ohms dão miliampères direto. Responder 5 A (ou 0,005 sem unidade) é esquecer o "k" do resistor.
+  fonte: "Boylestad, Introdução à Análise de Circuitos, capítulo Lei de Ohm, potência e energia"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T01-002
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Uma corrente de 2,5 mA atravessa um resistor de 2,2 kΩ. Qual é a tensão entre os terminais do resistor? Responda em V.
+  resposta: {valor: 5.5, unidade: "V", tolerancia: 0.01}
+  explicacao: |
+    V = R · I = 2,2 kΩ × 2,5 mA = 5,5 V. O "k" e o "m" se cancelam (10³ × 10⁻³ = 1), por isso mA × kΩ dá volts. Responder 5500 V é multiplicar 2200 Ω por 2,5 sem converter os miliampères.
+  fonte: "Boylestad, Introdução à Análise de Circuitos, capítulo Lei de Ohm, potência e energia"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T01-003
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um módulo sensor alimentado com 12 V consome 15 mA. Do ponto de vista da fonte, qual é a resistência equivalente desse módulo nesse ponto de operação? Responda em Ω.
+  resposta: {valor: 800, unidade: "Ω", tolerancia: 0.01}
+  explicacao: |
+    R = V / I = 12 V ÷ 0,015 A = 800 Ω (ou 12 V ÷ 15 mA = 0,8 kΩ). É uma resistência "vista" pela fonte naquele ponto: o módulo não é um resistor de verdade e, se a tensão mudar, a corrente pode não mudar na mesma proporção.
+  fonte: "Scherz & Monk, Practical Electronics for Inventors, 4ª ed., cap. 2 (Theory), seção sobre lei de Ohm"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T01-004
+  objetivo: O1
+  tipo: unica
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Você aplica 5 V a um resistor de 2 kΩ e faz a conta "5 ÷ 2 = 2,5" com os números como estão escritos (volts e quilo-ohms). Em que unidade está esse 2,5?
+  alternativas:
+    - "A"
+    - "mA"
+    - "µA"
+    - "kA"
+  resposta: 1
+  explicacao: |
+    V ÷ kΩ = V ÷ (10³ Ω) = 10⁻³ A = mA. Então a corrente é 2,5 mA. Ler 2,5 A é o erro mais comum (mil vezes maior); kA seria dividir em vez de multiplicar pelo fator do prefixo.
+  fonte: "Boylestad, Introdução à Análise de Circuitos, capítulo Lei de Ohm, potência e energia"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T01-005
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um resistor de 47 Ω está ligado a 5 V. Qual potência ele dissipa? Responda em mW, arredondando para o inteiro mais próximo.
+  resposta: {valor: 532, unidade: "mW", tolerancia: 0.01}
+  explicacao: |
+    Com V e R conhecidos, use P = V² / R = 25 ÷ 47 ≈ 0,532 W ≈ 532 mW. Um resistor de ¼ W (250 mW) queimaria; o de ½ W (500 mW) também fica abaixo da dissipação — o adequado é 1 W.
+  fonte: "Boylestad, Introdução à Análise de Circuitos, capítulo Lei de Ohm, potência e energia (potência e potência nominal)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T01-006
+  objetivo: O2
+  tipo: vf
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: se a corrente num resistor de valor fixo dobra, a potência dissipada nele também apenas dobra.
+  resposta: false
+  explicacao: |
+    P = I² · R: com R fixo, dobrar a corrente multiplica a potência por 2² = 4. O mesmo vale para a tensão (P = V²/R). Por isso um resistor pode estar confortável num ponto de operação e queimar com uma corrente "só um pouco" maior.
+  fonte: "All About Circuits, Volume I: DC, cap. 2 (Ohm's Law), seção Power in Electric Circuits"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T01-007
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um resistor de 1 kΩ tem potência nominal de ¼ W. Qual é a maior tensão contínua que pode ser aplicada a ele sem ultrapassar a potência nominal? Responda em V, arredondando para 2 casas decimais.
+  resposta: {valor: 15.81, unidade: "V", tolerancia: 0.01}
+  explicacao: |
+    De P = V² / R vem V = √(P · R) = √(0,25 × 1000) = √250 ≈ 15,81 V. Isso é o limite: com a margem prática de 2× (dissipar no máximo 0,125 W), o uso razoável vai até ≈ 11,2 V. Responder 250 V é esquecer a raiz quadrada.
+  fonte: "Boylestad, Introdução à Análise de Circuitos, capítulo Lei de Ohm, potência e energia (potência nominal de resistores)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T01-008
+  objetivo: O2
+  tipo: unica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um resistor de 100 Ω será ligado a 12 V. Seguindo a regra prática de escolher potência nominal de pelo menos o dobro da dissipação calculada, qual é a menor potência nominal adequada entre as opções?
+  alternativas:
+    - "¼ W"
+    - "1 W"
+    - "2 W"
+    - "3 W"
+  resposta: 3
+  explicacao: |
+    P = V² / R = 144 ÷ 100 = 1,44 W. Com margem de 2×, precisa de pelo menos 2,88 W → 3 W. O de 1 W queimaria (está abaixo da própria dissipação); o de 2 W suportaria 1,44 W, mas sem a margem, trabalhando muito quente.
+  fonte: "Scherz & Monk, Practical Electronics for Inventors, 4ª ed., cap. 3, seção sobre resistores (potência nominal)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T01-009
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um LED verde tem tensão direta de 2,2 V e deve operar com 20 mA. Ele será ligado em série com um resistor a uma fonte de 5 V. Qual valor de resistor dá exatamente 20 mA? Responda em Ω.
+  resposta: {valor: 140, unidade: "Ω", tolerancia: 0.01}
+  explicacao: |
+    O resistor fica com a diferença entre a fonte e o LED: R = (5 − 2,2) V ÷ 0,020 A = 2,8 ÷ 0,02 = 140 Ω. Responder 250 Ω (5 V ÷ 20 mA) é esquecer a queda no LED; 110 Ω (2,2 ÷ 0,02) é usar a tensão do LED no lugar da do resistor.
+  fonte: "Charles Platt, Make: Electronics, cap. 1 (experimentos com resistor e LED); Scherz & Monk, Practical Electronics for Inventors, 4ª ed., seção sobre LEDs"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T01-010
+  objetivo: O3
+  tipo: unica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um LED vermelho (tensão direta 2,0 V) será acionado por um GPIO de 3,3 V com corrente de no máximo 10 mA. O cálculo dá 130 Ω, que não existe na série E12. Qual valor E12 você deve usar?
+  alternativas:
+    - "100 Ω"
+    - "120 Ω"
+    - "150 Ω"
+    - "1,5 kΩ"
+  resposta: 2
+  explicacao: |
+    Para não ultrapassar a corrente máxima, arredonda-se o resistor para o valor comercial imediatamente **acima**: 150 Ω → I = 1,3 V ÷ 150 Ω ≈ 8,7 mA. 120 Ω é o vizinho de baixo e daria ≈ 10,8 mA, acima do limite. 1,5 kΩ seria seguro, mas a corrente cairia para menos de 1 mA (LED muito fraco) — erro de prefixo.
+  fonte: "Scherz & Monk, Practical Electronics for Inventors, 4ª ed., cap. 3 (resistores, valores padronizados) e seção sobre LEDs"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T01-011
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Três LEDs vermelhos (tensão direta 2,0 V cada) estão em série com um único resistor de 330 Ω, e o conjunto está ligado a 12 V. Qual é a corrente no circuito? Responda em mA, arredondando para 2 casas decimais.
+  resposta: {valor: 18.18, unidade: "mA", tolerancia: 0.01}
+  explicacao: |
+    Em série, as tensões diretas somam: 3 × 2,0 = 6,0 V. Sobram 12 − 6 = 6 V no resistor: I = 6 V ÷ 330 Ω ≈ 18,18 mA (a mesma em todos os LEDs). Usar só uma queda de LED dá 30,3 mA; ignorar os LEDs dá 36,4 mA.
+  fonte: "Scherz & Monk, Practical Electronics for Inventors, 4ª ed., seção sobre LEDs (LEDs em série)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T01-012
+  objetivo: O4
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: num LED ligado diretamente a uma fonte ajustável (sem resistor), passar de 2,0 V para 4,0 V apenas dobra a corrente, como aconteceria num resistor.
+  resposta: false
+  explicacao: |
+    O LED não é ôhmico: abaixo da tensão direta quase não conduz e, acima dela, a corrente cresce de forma muito mais rápida que a tensão (quase exponencial). Levar um LED vermelho a 4 V sem limitação de corrente provavelmente o destrói. Por isso o LED sempre precisa de algo que limite a corrente.
+  fonte: "All About Circuits, Volume I: DC, cap. 2 (Ohm's Law), seção Nonlinear Conduction; Charles Platt, Make: Electronics, cap. 1"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T01-013
+  objetivo: O4
+  tipo: multipla
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Quais destes componentes são **não ôhmicos**, isto é, a razão V/I muda conforme o ponto de operação? Marque todos os corretos.
+  alternativas:
+    - "LED vermelho"
+    - "Diodo 1N4148"
+    - "Lâmpada incandescente"
+    - "Resistor de filme metálico de 10 kΩ operando dentro da potência nominal"
+  resposta: [0, 1, 2]
+  explicacao: |
+    LED e diodo têm curva V × I exponencial; a lâmpada incandescente muda muito de resistência com a temperatura do filamento. O resistor de filme metálico, dentro da faixa de potência, mantém V/I praticamente constante: gráfico V × I em reta pela origem.
+  fonte: "Boylestad, Introdução à Análise de Circuitos, capítulo Lei de Ohm, potência e energia (gráfico da lei de Ohm); All About Circuits, Volume I: DC, cap. 2, seção Nonlinear Conduction"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.4.T01-014
+  objetivo: O4
+  tipo: unica
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Uma lâmpada incandescente de 12 V / 5 W deveria ter 28,8 Ω (V²/P). Com ela desligada e fria, o multímetro mede cerca de 3 Ω. Qual é a explicação correta?
+  alternativas:
+    - "A resistência do filamento cresce muito com a temperatura; fria ela é baixa, e ao ligar há um pico de corrente bem maior que a corrente de regime"
+    - "O multímetro está descalibrado, pois a lei de Ohm garante que a resistência é a mesma em qualquer condição"
+    - "A lâmpada está com defeito: uma lâmpada boa mediria 28,8 Ω também fria"
+    - "O valor de 28,8 Ω vale apenas em corrente alternada"
+  resposta: 0
+  explicacao: |
+    O filamento de tungstênio tem coeficiente de temperatura positivo: quente (cerca de 2500 °C), a resistência é muitas vezes a de frio. Ligada em 12 V, a corrente parte de algo perto de 12 ÷ 3 = 4 A e cai para ≈ 0,42 A (5 W ÷ 12 V) em frações de segundo. A lei de Ohm vale em cada instante, mas R não é constante. Nada disso depende de ser AC ou DC.
+  fonte: "Boylestad, Introdução à Análise de Circuitos, capítulo sobre resistência (efeito da temperatura); All About Circuits, Volume I: DC, cap. 2, seção Nonlinear Conduction"
+  origem: ia
+  revisao: rascunho
