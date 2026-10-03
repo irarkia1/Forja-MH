@@ -19,7 +19,11 @@ if [ -n "$(git status --porcelain -- apps packages conteudo ferramentas 2>/dev/n
   read -r r; [ "$r" = "s" ] || exit 1
 fi
 
-export NVM_DIR="$HOME/.nvm"; . "$NVM_DIR/nvm.sh" >/dev/null; nvm use >/dev/null
+# Node 22 local: o do PATH, ou o do nvm (o nvm não convive com set -eu).
+if ! node -v 2>/dev/null | grep -q '^v22'; then
+  set +eu; export NVM_DIR="$HOME/.nvm"; . "$NVM_DIR/nvm.sh" >/dev/null; nvm use "$(cat .nvmrc)" >/dev/null; set -eu
+fi
+node -v | grep -q '^v22' || { echo "Precisa do Node 22 local."; exit 1; }
 
 echo "--- 1/6 verificação local (tipos, testes, conteúdo) ---"
 LOG="$(mktemp)"
