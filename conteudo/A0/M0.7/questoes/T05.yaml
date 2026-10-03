@@ -1,0 +1,245 @@
+- id: Q-M0.7.T05-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Num datasheet, o que significa a tabela **Absolute Maximum Ratings**?
+  alternativas:
+    - "Limites além dos quais o componente pode sofrer dano permanente; não são condições de operação"
+    - "Os valores máximos para os quais o funcionamento é garantido e que devem ser usados no projeto"
+    - "As condições recomendadas de alimentação e temperatura"
+    - "Os valores típicos medidos em laboratório a 25 °C"
+  resposta: 0
+  explicacao: |
+    Os datasheets trazem a nota: "Stresses beyond those listed may cause permanent damage… functional operation at these conditions is not implied". São limites de dano, não de projeto. A faixa em que o funcionamento é garantido está em *Recommended Operating Conditions*; os típicos aparecem na coluna TYP de *Electrical Characteristics*.
+  fonte: "Texas Instruments, datasheet LM340/LM7805, seções Absolute Maximum Ratings e Recommended Operating Conditions"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.7.T05-002
+  objetivo: O1
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: se o *Absolute Maximum Ratings* de um CI lista "Supply voltage: 6.0 V", é aceitável projetar a placa para alimentá-lo continuamente com 6,0 V, já que esse é o valor que ele suporta.
+  resposta: false
+  explicacao: |
+    Operar no limite absoluto não tem garantia de funcionamento nem de vida útil, e qualquer sobretensão ou ruído passa do limite de dano. O projeto deve ficar dentro de *Recommended Operating Conditions* (por exemplo, até 5,5 V), com margem.
+  fonte: "Microchip, datasheet ATmega328P, Electrical Characteristics: Absolute Maximum Ratings (nota sobre estresse) e DC Characteristics"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.7.T05-003
+  objetivo: O3
+  tipo: unica
+  dificuldade: 3
+  bloom: avaliar
+  enunciado: |
+    A tabela *Electrical Characteristics* de um regulador de 5 V traz, nas condições de teste da sua aplicação: "Output voltage — MIN 4.80 V, TYP 5.00 V, MAX 5.20 V". O pino de entrada analógica do seu sensor aceita no máximo 5,1 V. O que se pode concluir?
+  alternativas:
+    - "Não dá para concluir nada, porque datasheets só garantem os valores típicos"
+    - "O projeto está garantido, porque o valor típico de 5,00 V está abaixo de 5,1 V"
+    - "O projeto não está garantido: no pior caso a saída pode chegar a 5,20 V, acima dos 5,1 V do sensor"
+    - "O projeto está garantido, porque a média entre MIN e MAX é 5,00 V"
+  resposta: 2
+  explicacao: |
+    MIN e MAX são os limites garantidos; TYP é o valor mais comum, **sem** garantia. Projeto robusto usa o pior caso: um regulador dentro da especificação pode entregar 5,20 V e passar do limite do sensor. Soluções: divisor, regulador mais preciso ou proteção na entrada.
+  fonte: "Texas Instruments, datasheet LM340/LM7805, seção Electrical Characteristics (colunas MIN/TYP/MAX e notas)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.7.T05-004
+  objetivo: O1
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    O datasheet diz: "Each I/O pin can **sink** up to 20 mA". Em qual ligação de LED o pino está **absorvendo** (sinking) a corrente?
+  alternativas:
+    - "Pino → LED → pino de outro GPIO, sem resistor"
+    - "VCC → resistor → LED → pino; o LED acende com o pino em nível baixo"
+    - "VCC → resistor → LED → GND, com o pino ligado ao ponto entre o resistor e o LED"
+    - "Pino → resistor → LED → GND; o LED acende com o pino em nível alto"
+  resposta: 1
+  explicacao: |
+    *Sink* = a corrente **entra** no pino e vai para o GND interno do chip (o pino em nível baixo "puxa" o catodo do LED). *Source* = a corrente **sai** do pino, vinda do VCC interno, como no LED ligado do pino ao GND. Muitos chips antigos conseguem absorver mais corrente do que fornecer, por isso o datasheet separa os dois.
+  fonte: "Microchip, datasheet ATmega328P, seção DC Characteristics (I_OL e I_OH) e I/O-Ports"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.7.T05-005
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um regulador fixo de 5 V tem, no datasheet, "Dropout voltage: 2.0 V" nas condições da sua aplicação. Qual é a menor tensão de entrada com que ele ainda mantém os 5 V na saída? Responda em V.
+  resposta: {valor: 7, unidade: "V", tolerancia: 0.01}
+  explicacao: |
+    *Dropout* é a menor diferença V_IN − V_OUT com que o regulador ainda regula: 5 V + 2 V = 7 V. Abaixo disso a saída "cai junto" com a entrada. Por isso um 7805 alimentado por 4 pilhas AA (≈ 6 V) não entrega 5 V; para isso existem os LDO (*low-dropout*), com dropout de algumas centenas de mV.
+  fonte: "Texas Instruments, datasheet LM340/LM7805, Electrical Characteristics (Dropout voltage); TI, Understanding LDO dropout"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.7.T05-006
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    O datasheet de um regulador informa "Ripple rejection: 60 dB" na frequência de interesse. A entrada tem 1 V pico a pico de ondulação. Qual ondulação se espera na saída? Responda em mV.
+  resposta: {valor: 1, unidade: "mV", tolerancia: 0.01}
+  explicacao: |
+    Rejeição em dB de tensão: fator = 10^(dB/20) = 10^(60/20) = 1000. A ondulação de saída é 1 V ÷ 1000 = 1 mV. Quem usa 10^(dB/10) chega a 1 µV (fórmula de potência, não de tensão); quem lê "60" como fator linear chega a ≈ 16,7 mV.
+  fonte: "Texas Instruments, datasheet LM340/LM7805, Electrical Characteristics (Ripple rejection); Scherz & Monk, Practical Electronics for Inventors, seção sobre decibéis"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.7.T05-007
+  objetivo: O2
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Numa norma IEC ou ISO, o que indica a frase "The equipment **shall** withstand a 4 kV contact discharge"?
+  alternativas:
+    - "Um requisito obrigatório: se o equipamento não suportar, não está conforme a norma"
+    - "Uma previsão de que o equipamento provavelmente suportará"
+    - "Uma recomendação, que pode ser ignorada com justificativa"
+    - "Uma permissão: o fabricante pode escolher testar ou não"
+  resposta: 0
+  explicacao: |
+    Nas Diretivas ISO/IEC, *shall* expressa requisito: descumprir é não conformidade. Recomendação é *should*; permissão é *may*; possibilidade ou capacidade é *can*. Repare também em *withstand* = suportar, aguentar (não *support*).
+  fonte: "ISO/IEC Directives, Part 2, cláusula Verbal forms for the expression of provisions"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.7.T05-008
+  objetivo: O2
+  tipo: multipla
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Pelas regras de redação das normas ISO/IEC, quais frases expressam **requisitos obrigatórios**? Marque todas as corretas.
+  alternativas:
+    - "Batteries shall not be accessible without a tool."
+    - "Cables should be routed away from the antenna."
+    - "The enclosure shall be marked with the rated voltage."
+    - "The enclosure may be made of ABS."
+  resposta: [0, 2]
+  explicacao: |
+    *Shall* e *shall not* são requisitos (obrigação e proibição). *Should* é recomendação — desviar exige justificativa, mas não é não conformidade por si só. *May* é permissão: autoriza uma escolha, não obriga a nada.
+  fonte: "ISO/IEC Directives, Part 2, cláusula Verbal forms for the expression of provisions (tabelas de requirement, recommendation, permission e possibility)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.7.T05-009
+  objetivo: O2
+  tipo: unica
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    A especificação do cliente diz: "The antenna feed line **should** be shielded." O seu projeto usa uma trilha de 50 Ω sem blindagem, e os testes de RF passaram. Qual é a situação correta?
+  alternativas:
+    - "É uma não conformidade, e a placa tem de ser refeita com cabo blindado"
+    - "É uma não conformidade só se o cliente pedir a blindagem por escrito de novo"
+    - "Não há nada a registrar, porque \"should\" é apenas uma sugestão de estilo"
+    - "Não é uma não conformidade automática, mas você deve registrar e justificar o desvio da recomendação"
+  resposta: 3
+  explicacao: |
+    *Should* é recomendação: o caminho preferido, do qual se pode desviar com boa razão. A boa prática é documentar por que se desviou (aqui, os testes de RF que passaram). Tratar como obrigatório leva a retrabalho desnecessário; ignorar sem registro deixa o projeto sem defesa numa auditoria.
+  fonte: "ISO/IEC Directives, Part 2, cláusula Verbal forms for the expression of provisions (recommendation); IETF RFC 2119 (SHOULD)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.7.T05-010
+  objetivo: O3
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    No datasheet do ATmega328P, em *Absolute Maximum Ratings*, aparece "DC Current per I/O Pin ........ 40.0 mA". Você quer acionar um relé cuja bobina consome 70 mA. Qual é a decisão correta?
+  alternativas:
+    - "Ligar a bobina direto no pino com um resistor em série que limite a corrente a 40 mA"
+    - "Acionar a bobina por um transistor (com diodo de roda livre), usando o pino só para comandar a base ou o gate"
+    - "Ligar a bobina direto no pino, porque o limite de 40 mA é só para picos"
+    - "Ligar a bobina em dois pinos em paralelo, que somam 80 mA"
+  resposta: 1
+  explicacao: |
+    40 mA é limite de **dano**, não de projeto — e 70 mA passa dele. O pino só deve comandar um transistor que chaveia a bobina; o diodo de roda livre protege contra o pico da indutância (M0.4.T07). Pinos em paralelo não dividem corrente de forma garantida e ainda somam na corrente total do chip; limitar a corrente a 40 mA deixaria a bobina sem corrente para fechar o relé e o pino no limite absoluto.
+  fonte: "Microchip, datasheet ATmega328P, Electrical Characteristics: Absolute Maximum Ratings e DC Characteristics (notas sobre corrente por pino)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.7.T05-011
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um LM7805 recebe 12 V na entrada e fornece 500 mA a 5 V. Desprezando a corrente quiescente, quanta potência ele dissipa? Responda em W.
+  resposta: {valor: 3.5, unidade: "W", tolerancia: 0.01}
+  explicacao: |
+    Num regulador linear, toda a diferença de tensão vira calor: P = (V_IN − V_OUT) × I = (12 − 5) × 0,5 = 3,5 W. É muito para um TO-220 sem dissipador; o datasheet (seções de *thermal information* e *Layout*) mostra como calcular a temperatura da junção. Quem responde 2,5 W calculou a potência entregue à carga (5 × 0,5).
+  fonte: "Texas Instruments, datasheet LM340/LM7805, seções Thermal Information e Power Dissipation (Application and Implementation)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.7.T05-012
+  objetivo: O3
+  tipo: unica
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    A tabela *Speed Grades* do datasheet do ATmega328P informa: "0 – 4 MHz @ 1.8 – 5.5 V; 0 – 10 MHz @ 2.7 – 5.5 V; 0 – 20 MHz @ 4.5 – 5.5 V". Um colega quer alimentar uma placa com cristal de 16 MHz em 3,3 V "porque funcionou na bancada". Qual avaliação está correta?
+  alternativas:
+    - "Fora da especificação, porque o ATmega328P não pode ser alimentado com menos de 4,5 V"
+    - "Fora da especificação: a 3,3 V o fabricante só garante até 10 MHz; pode funcionar numa placa e falhar em outra ou em outra temperatura"
+    - "Dentro da especificação, porque 16 MHz é menor que 20 MHz"
+    - "Dentro da especificação, porque 3,3 V está na faixa de 1,8 a 5,5 V"
+  resposta: 1
+  explicacao: |
+    A frequência máxima garantida depende da tensão: a 3,3 V vale a faixa de 2,7–5,5 V, com até 10 MHz; 20 MHz só de 4,5 a 5,5 V. "Funcionou na bancada" é uma amostra numa temperatura — não substitui a garantia. Com 3,3 V, use 8 MHz (ou alimente com 5 V). O chip funciona abaixo de 4,5 V, só que mais devagar.
+  fonte: "Microchip, datasheet ATmega328P, seção Electrical Characteristics: Speed Grades"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.7.T05-013
+  objetivo: O4
+  tipo: unica
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Qual é a tradução correta de "**Actually**, the sensor output is ratiometric"?
+  alternativas:
+    - "Atualmente, a saída do sensor é ratiométrica"
+    - "Na verdade, a saída do sensor é ratiométrica"
+    - "Atualizando: a saída do sensor é ratiométrica"
+    - "Eventualmente, a saída do sensor é ratiométrica"
+  resposta: 1
+  explicacao: |
+    *Actually* é falso cognato: significa "na verdade", "de fato". "Atualmente" em inglês é *currently* ou *nowadays*. Traduzir errado muda o sentido: "atualmente" sugere que antes era diferente.
+  fonte: "Cambridge Dictionary, verbete actually"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.7.T05-014
+  objetivo: O4
+  tipo: unica
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Numa nota de aplicação: "Without a heatsink, the regulator will **eventually** enter thermal shutdown." O que a frase diz?
+  alternativas:
+    - "Sem dissipador, o regulador acabará entrando em desligamento térmico"
+    - "Sem dissipador, o regulador talvez entre em desligamento térmico, raramente"
+    - "Sem dissipador, o regulador ocasionalmente entra em desligamento térmico"
+    - "Sem dissipador, o regulador entra imediatamente em desligamento térmico"
+  resposta: 0
+  explicacao: |
+    *Eventually* = "por fim", "mais cedo ou mais tarde", "acabará": o desligamento vai acontecer, só não de imediato (o encapsulamento leva um tempo para aquecer). "Eventualmente" no sentido de "às vezes" seria *occasionally*. Ler como "às vezes" faz o leitor subestimar um problema certo.
+  fonte: "Cambridge Dictionary, verbete eventually"
+  origem: ia
+  revisao: rascunho

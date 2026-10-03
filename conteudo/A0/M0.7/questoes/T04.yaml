@@ -1,0 +1,255 @@
+- id: Q-M0.7.T04-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Num arquivo Markdown, qual linha cria um título de **nível 2** com o texto "Medições"?
+  alternativas:
+    - "`## Medições`"
+    - "`Medições:`"
+    - "`#Medições#`"
+    - "`**Medições**`"
+  resposta: 0
+  explicacao: |
+    O número de `#` no começo da linha dá o nível do título, e é preciso um espaço depois deles. `**texto**` é só negrito (não aparece no sumário nem gera âncora); `#Medições#` sem espaço não é título no CommonMark/GFM.
+  fonte: "GitHub Docs, Basic writing and formatting syntax (Headings); CommonMark Spec, ATX headings"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.7.T04-002
+  objetivo: O1
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Qual destes trechos é renderizado pelo GitHub como uma **tabela** de duas colunas?
+  alternativas:
+    - "`+-------+------------+` na 1ª linha, `| Ponto | Tensão (V) |` na 2ª e `+-------+------------+` na 3ª"
+    - "`Ponto, Tensão (V)` na 1ª linha e `TP1, 4,98` na 2ª"
+    - "`| Ponto | Tensão (V) |` na 1ª linha, `|---|---:|` na 2ª e `| TP1 | 4,98 |` na 3ª"
+    - "`| Ponto | Tensão (V) |` na 1ª linha e `| TP1 | 4,98 |` na 2ª"
+  resposta: 2
+  explicacao: |
+    No GFM a tabela exige a linha de cabeçalho **seguida da linha separadora** (`|---|---|`); os `:` definem o alinhamento (`---:` à direita, bom para números). Sem a separadora, as linhas viram texto comum. Vírgulas (CSV) e a moldura com `+---+` não são sintaxe de tabela do GFM.
+  fonte: "GitHub Docs, Organizing information with tables; GitHub Flavored Markdown Spec, Tables (extension)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.7.T04-003
+  objetivo: O1
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: pela especificação CommonMark, duas linhas de texto separadas apenas por uma quebra de linha simples (sem linha em branco entre elas) são renderizadas como dois parágrafos separados.
+  resposta: false
+  explicacao: |
+    Uma quebra simples é uma *soft line break*: as duas linhas ficam no **mesmo** parágrafo, separadas por um espaço na página. Para um parágrafo novo, deixe uma linha em branco; para só quebrar a linha, termine-a com `\` ou dois espaços (*hard line break*).
+  fonte: "CommonMark Spec, seções Paragraphs, Soft line breaks e Hard line breaks"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.7.T04-004
+  objetivo: O1
+  tipo: unica
+  dificuldade: 3
+  bloom: avaliar
+  enunciado: |
+    O `README.md` está na raiz do repositório e a foto está em `fotos/placa.jpg`, dentro do mesmo repositório. Qual linha mostra a imagem para qualquer pessoa que abrir o README no GitHub ou num clone?
+  alternativas:
+    - "`![Placa montada, vista de cima](fotos/placa.jpg)`"
+    - "`![fotos/placa.jpg](Placa montada, vista de cima)`"
+    - "`[Placa montada, vista de cima](fotos/placa.jpg)`"
+    - "`![Placa montada, vista de cima](/home/matheus/projeto/fotos/placa.jpg)`"
+  resposta: 0
+  explicacao: |
+    Imagem = `!` + `[texto alternativo](caminho)`, e o caminho relativo ao arquivo funciona em qualquer cópia do repositório. Sem o `!` vira só um link. O caminho absoluto do seu computador não existe na máquina de ninguém (nem no GitHub). Trocar a ordem coloca o texto no lugar do caminho.
+  fonte: "GitHub Docs, Basic writing and formatting syntax (Images e Relative links)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.7.T04-005
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    No README, você quer mostrar o comando `screen /dev/ttyUSB0 115200` num bloco de código com destaque de sintaxe de shell. Como se abre esse bloco?
+  alternativas:
+    - "Colocando `>` no começo da linha do comando"
+    - "Colocando o comando entre `**` e `**`"
+    - "Com uma linha `<code bash>` e fecha-se com `</code>`"
+    - "Com uma linha só com três crases seguidas de `bash`, e fecha-se com outra linha de três crases"
+  resposta: 3
+  explicacao: |
+    O bloco cercado (*fenced code block*) começa com três crases (ou três tis) e a palavra da linguagem, que ativa o destaque, e termina com três crases. `>` cria citação; `**` é negrito. Dentro do bloco, nada é interpretado como Markdown — ideal para comandos e código.
+  fonte: "GitHub Docs, Creating and highlighting code blocks; CommonMark Spec, Fenced code blocks"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.7.T04-006
+  objetivo: O2
+  tipo: multipla
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Quais informações um README de projeto de hardware precisa ter para que outra pessoa consiga montar, alimentar e testar a placa? Marque todas as corretas.
+  alternativas:
+    - "Lista de materiais (BOM) com referência, valor e quantidade de cada componente"
+    - "Procedimento de teste com os valores esperados"
+    - "A transcrição completa do `git log` do projeto"
+    - "Tensão de alimentação, conector e polaridade"
+  resposta: [0, 1, 3]
+  explicacao: |
+    Alimentação errada queima a placa no primeiro minuto; sem BOM não se compra nem se monta; sem valores esperados ninguém sabe se a montagem funcionou. O histórico de commits já está no próprio Git e não ajuda quem quer reproduzir a placa.
+  fonte: "OSHWA, Best Practices for Open Source Hardware; GitHub Docs, About READMEs"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.7.T04-007
+  objetivo: O2
+  tipo: unica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    O README de uma placa diz apenas: "Pisca-pisca com 555. Monte os componentes conforme a foto, ligue a fonte e o LED pisca." A placa tem um capacitor eletrolítico de 16 V e um conector de dois pinos sem marcação. Qual informação ausente pode **danificar** a placa na primeira vez que alguém a ligar?
+  alternativas:
+    - "A frequência esperada de piscagem"
+    - "A licença do projeto"
+    - "O nome de quem projetou a placa"
+    - "A tensão de alimentação e qual pino do conector é o positivo"
+  resposta: 3
+  explicacao: |
+    Sem a tensão, alguém pode ligar 24 V num eletrolítico de 16 V; sem a polaridade, pode inverter a alimentação do 555 e do eletrolítico. As outras faltas também são defeitos do README (a frequência faz falta no teste), mas não destroem nada.
+  fonte: "OSHWA, Best Practices for Open Source Hardware (documentação); GitHub Docs, About READMEs"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.7.T04-008
+  objetivo: O2
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: se você publica um repositório público no GitHub **sem** arquivo de licença, qualquer pessoa fica legalmente livre para copiar, modificar e redistribuir o projeto.
+  resposta: false
+  explicacao: |
+    Sem licença vale o direito autoral padrão: você mantém todos os direitos. Os termos do GitHub permitem ver o repositório e fazer fork pela plataforma, mas não dão permissão para reutilizar ou distribuir. Se quer que outros usem, escolha uma licença explícita (ex.: CERN-OHL para hardware, MIT para código, CC BY para documentação).
+  fonte: "GitHub Docs, Licensing a repository (Choosing the right license)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.7.T04-009
+  objetivo: O3
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Num README do GitHub, qual bloco gera um diagrama com uma seta do bloco "Sensor" para o bloco "ESP32"?
+  alternativas:
+    - "Um bloco `mermaid` com as linhas `flowchart LR` e `S[Sensor] -> E[ESP32]`"
+    - "Um bloco `mermaid` com apenas a linha `S[Sensor] --> E[ESP32]`"
+    - "Um bloco `text` com as linhas `flowchart LR` e `S[Sensor] --> E[ESP32]`"
+    - "Um bloco `mermaid` com as linhas `flowchart LR` e `S[Sensor] --> E[ESP32]`"
+  resposta: 3
+  explicacao: |
+    O GitHub só desenha blocos marcados como `mermaid`, e a primeira linha precisa declarar o tipo de diagrama (`flowchart LR`). No flowchart a seta é `-->` (dois traços); `->` é erro de sintaxe. Sem a declaração do tipo, o Mermaid não reconhece o diagrama; num bloco `text`, o código aparece como texto.
+  fonte: "GitHub Docs, Creating diagrams; Mermaid, Flowcharts Syntax (mermaid.js.org)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.7.T04-010
+  objetivo: O3
+  tipo: multipla
+  dificuldade: 3
+  bloom: entender
+  enunciado: |
+    Sobre registros de decisão de arquitetura (ADR), no formato proposto por Michael Nygard, quais afirmações estão corretas? Marque todas as corretas.
+  alternativas:
+    - "O status indica se a decisão está proposta, aceita ou substituída por outra"
+    - "As consequências incluem também os efeitos negativos ou os custos da decisão"
+    - "O contexto descreve o problema e as restrições existentes no momento da decisão"
+    - "Quando a decisão muda, edita-se o texto do ADR antigo para refletir a nova escolha"
+  resposta: [0, 1, 2]
+  explicacao: |
+    Contexto, decisão, consequências (boas e ruins) e status são o núcleo do formato. O valor do ADR está em preservar o raciocínio: se a decisão muda, escreve-se um ADR novo e o antigo recebe o status "substituído por…", sem reescrever o que foi pensado na época.
+  fonte: "Michael Nygard, Documenting Architecture Decisions (2011); adr.github.io"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.7.T04-011
+  objetivo: O3
+  tipo: unica
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    O ADR-0003 (aceito) escolheu um regulador LDO para o nó IoT. Seis meses depois, testes de bateria mostram que um conversor buck aumenta muito a autonomia e a equipe decide trocar. Como registrar isso?
+  alternativas:
+    - "Não registrar: a mudança já aparece no esquema e no histórico do Git"
+    - "Reescrever o ADR-0003 trocando LDO por buck, para que a documentação reflita o projeto atual"
+    - "Escrever o ADR-0007 com o novo contexto (resultados da bateria), a decisão e as consequências, e mudar o status do ADR-0003 para \"substituído por ADR-0007\""
+    - "Apagar o ADR-0003, pois uma decisão revertida só confunde quem lê"
+  resposta: 2
+  explicacao: |
+    O ADR antigo continua verdadeiro como registro do que se sabia na época; o novo explica o que mudou (os dados de bateria). Reescrever ou apagar perde justamente o porquê, e alguém pode propor de novo o LDO sem saber que já foi medido. O esquema e o Git mostram **o que** mudou, não **por que**.
+  fonte: "Michael Nygard, Documenting Architecture Decisions (2011), seção sobre status e decisões substituídas"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.7.T04-012
+  objetivo: O4
+  tipo: unica
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Num relatório de teste, em que momento deve ser definido o critério de aceitação (por exemplo, "4,75 V ≤ V_out ≤ 5,25 V")?
+  alternativas:
+    - "Depois de ver os resultados, para que o critério fique realista"
+    - "Não é necessário: basta registrar os valores medidos"
+    - "Só se algum resultado ficar fora do esperado"
+    - "Antes de executar o teste, a partir da especificação"
+  resposta: 3
+  explicacao: |
+    O critério vem da especificação e é fixado antes de medir; ajustá-lo depois de ver os números transforma qualquer resultado em "aprovado". Sem critério, o relatório não diz se a placa serve ou não.
+  fonte: "ISO/IEC/IEEE 29119-3, Test documentation (test case specification: expected results); roteiro M0.7.T04 (relatório de teste)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.7.T04-013
+  objetivo: O4
+  tipo: unica
+  dificuldade: 3
+  bloom: avaliar
+  enunciado: |
+    Qual destas linhas é o melhor registro de resultado num relatório de teste do regulador de 5 V (critério: 4,75 V a 5,25 V)?
+  alternativas:
+    - "`V_out = 4,978346 V`"
+    - "`V_out = 4,98 V com carga de 300 mA (multímetro modelo X, faixa 6 V); critério 4,75–5,25 V: APROVADO`"
+    - "`A tensão de saída ficou boa, perto de 5 V`"
+    - "`V_out = 4,98; aprovado`"
+  resposta: 1
+  explicacao: |
+    Um resultado útil tem valor com unidade, a condição de teste (carga), o instrumento e a faixa (para avaliar a incerteza) e a comparação explícita com o critério. "Ficou boa" não é verificável; sem unidade e sem condição não dá para repetir; seis casas decimais fingem uma exatidão que o multímetro não tem e não dizem se passou.
+  fonte: "ISO/IEC/IEEE 29119-3, Test documentation (test result reporting); roteiro M0.7.T04 (relatório de teste)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.7.T04-014
+  objetivo: O4
+  tipo: unica
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Num lote de 10 placas, o critério é 4,75 V ≤ V_out ≤ 5,25 V para **cada** placa. Nove mediram entre 4,95 V e 5,02 V; a placa nº 7 mediu 4,52 V. A média do lote é 4,95 V. Qual conclusão o relatório deve trazer?
+  alternativas:
+    - "Teste inconclusivo, porque nove de dez placas é uma amostra pequena"
+    - "Lote aprovado, descartando a placa nº 7 como medição anômala"
+    - "Lote aprovado, porque a média de 4,95 V está dentro do critério"
+    - "Lote reprovado neste critério: a placa nº 7 está fora (4,52 V); registrar o número de série e abrir investigação da causa"
+  resposta: 3
+  explicacao: |
+    O critério é por placa, então uma placa fora reprova o lote nesse critério — a média esconde exatamente o defeito que o teste existe para pegar. Descartar a medição sem investigar é maquiar o resultado; o certo é anotar a anomalia, identificar a placa e buscar a causa (componente, solda, medição). A amostra não é o problema: o critério foi aplicado a todas.
+  fonte: "ISO/IEC/IEEE 29119-3, Test documentation (incident/anomaly reporting); roteiro M0.7.T04 (relatório de teste)"
+  origem: ia
+  revisao: rascunho

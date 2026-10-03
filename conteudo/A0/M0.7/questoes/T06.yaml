@@ -1,0 +1,255 @@
+- id: Q-M0.7.T06-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Qual é a função principal do **fluxo** na soldagem?
+  alternativas:
+    - "Remover a oxidação das superfícies para que o estanho molhe e adira ao pad e ao terminal"
+    - "Isolar eletricamente a junta depois de pronta"
+    - "Esfriar a ponta do ferro entre uma junta e outra"
+    - "Baixar a temperatura de fusão do estanho"
+  resposta: 0
+  explicacao: |
+    Metais expostos ao ar se cobrem de óxido, e o estanho não adere ao óxido. O fluxo, ativado pelo calor, limpa as superfícies e permite o molhamento. Ele não muda o ponto de fusão da liga nem isola a junta. Como o fluxo do núcleo do fio se esgota em segundos, retrabalho pede fluxo novo.
+  fonte: "Adafruit Guide to Excellent Soldering, seções Tools e Preparation (fluxo)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.7.T06-002
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: lembrar
+  enunciado: |
+    A liga Sn63/Pb37 é eutética: funde e solidifica a uma única temperatura. Qual é essa temperatura? Responda em °C.
+  resposta: {valor: 183, unidade: "°C", tolerancia: 0.01}
+  explicacao: |
+    Sn63/Pb37 funde a 183 °C, sem faixa pastosa — por isso é tolerante para quem está começando (a junta passa de líquida a sólida de uma vez). A Sn60/Pb40 tem faixa de ≈ 183–190 °C, e as sem chumbo do tipo SAC305 fundem por volta de 217–220 °C. A ponta do ferro trabalha bem acima disso (≈ 320–350 °C) para fornecer calor rápido.
+  fonte: "Adafruit Guide to Excellent Soldering, seção Tools (solder); Charles Platt, Make: Electronics, capítulo em que a solda é apresentada"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.7.T06-003
+  objetivo: O1
+  tipo: unica
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Comparada à liga Sn63/Pb37, o que se espera ao soldar com uma liga **sem chumbo** do tipo SAC305?
+  alternativas:
+    - "Ponto de fusão mais alto (≈ 217–220 °C), necessidade de mais calor e juntas boas com aparência mais fosca"
+    - "Ponto de fusão mais baixo e juntas mais brilhantes"
+    - "O mesmo ponto de fusão, mudando apenas o preço"
+    - "Dispensa o uso de fluxo, porque a prata limpa a oxidação"
+  resposta: 0
+  explicacao: |
+    SAC305 (Sn96,5/Ag3/Cu0,5) funde em torno de 217–220 °C, cerca de 35 °C acima da eutética com chumbo, e molha mais devagar: pede um pouco mais de temperatura e bom fluxo. A junta correta tende a ficar acetinada, o que confunde quem só conhece estanho com chumbo. Continua precisando de fluxo.
+  fonte: "Adafruit Guide to Excellent Soldering, seção Tools (lead-free solder); IPC-A-610, critérios para juntas sem chumbo (referência)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.7.T06-004
+  objetivo: O1
+  tipo: unica
+  dificuldade: 3
+  bloom: avaliar
+  enunciado: |
+    Com ponta cônica fina a 330 °C, você não consegue fundir o estanho no terminal de um conector ligado a um grande plano de terra: depois de 6 s ainda não molhou. Qual é a primeira correção adequada?
+  alternativas:
+    - "Derreter bastante estanho na ponta e pingar na junta"
+    - "Manter a ponta no pad por 20 s até fundir"
+    - "Trocar para uma ponta chata maior, com mais área de contato e massa térmica, e acrescentar fluxo"
+    - "Subir a temperatura para 450 °C e manter a ponta fina"
+  resposta: 2
+  explicacao: |
+    O que limita é a **transferência** de calor: a ponta fina toca pouca área e esfria ao encostar no cobre grande. Ponta maior e fluxo resolvem com tempo curto. Subir muito a temperatura oxida a ponta e queima o fluxo; insistir por 20 s cozinha a placa e pode levantar o pad; estanho pingado gera junta fria.
+  fonte: "Adafruit Guide to Excellent Soldering, seções Tools (tips) e Common Problems"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.7.T06-005
+  objetivo: O2
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Qual sequência descreve corretamente uma junta THT?
+  alternativas:
+    - "Encostar o estanho no pad frio e então aquecê-lo com o ferro por cima do estanho"
+    - "Encostar a ponta limpa no pad e no terminal ao mesmo tempo; após ≈ 1 s, alimentar o estanho na junta, do lado oposto à ponta; retirar o estanho e depois o ferro; não mexer até solidificar"
+    - "Derreter o estanho na ponta, levar a gota até o pad e espalhá-la com a ponta"
+    - "Aquecer só o terminal por 10 s e encostar o estanho na ponta do ferro"
+  resposta: 1
+  explicacao: |
+    Pad e terminal precisam estar quentes juntos para o estanho molhar os dois; alimentado na junta, ele funde pelo calor dela e escorre para o furo. Retira-se o estanho primeiro (senão ele solda no ferro ou sobra) e espera-se a solidificação sem mexer. Aquecer só o terminal deixa o pad frio; estanho levado na ponta perde o fluxo.
+  fonte: "Adafruit Guide to Excellent Soldering, seção Making a good solder joint; SparkFun, How to Solder: Through-Hole Soldering"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.7.T06-006
+  objetivo: O2
+  tipo: vf
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: derreter uma gota de estanho na ponta do ferro e depois depositá-la sobre a junta é uma boa técnica para soldar componentes THT.
+  resposta: false
+  explicacao: |
+    Na ponta, o fluxo do estanho evapora e queima em segundos; a gota chega sem fluxo a um pad e terminal frios e não molha — junta fria. Uma pequena gota na ponta só serve como "ponte térmica" no início; o estanho da junta deve ser alimentado nela, já aquecida.
+  fonte: "Adafruit Guide to Excellent Soldering, seção Making a good solder joint"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.7.T06-007
+  objetivo: O2
+  tipo: multipla
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Um iniciante mantém o ferro a 380 °C encostado num pad de placa perfurada por cerca de 15 s em cada tentativa. Quais consequências são esperadas? Marque todas as corretas.
+  alternativas:
+    - "A junta fica mais resistente, porque o estanho penetra mais no cobre"
+    - "O fluxo se esgota e queima antes de a junta terminar, piorando o molhamento"
+    - "O pad pode descolar da placa (pad levantado)"
+    - "O componente pode ser danificado pelo calor conduzido pelo terminal"
+  resposta: [1, 2, 3]
+  explicacao: |
+    O adesivo entre cobre e fibra perde força com calor prolongado, e o pad descola. O fluxo do núcleo dura poucos segundos; depois disso o estanho oxida e a junta fica opaca. O calor sobe pelo terminal até o componente (diodos, LEDs, plásticos). Tempo extra não fortalece a junta — uma boa junta THT leva 2–5 s.
+  fonte: "Adafruit Guide to Excellent Soldering, seção Common Problems (lifted pad, overheated joint)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.7.T06-008
+  objetivo: O3
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Qual descrição corresponde a uma junta THT **boa** feita com estanho com chumbo?
+  alternativas:
+    - "Superfície fosca e granulada, com o estanho em forma de bola apoiada no pad"
+    - "Bola grande e convexa que cobre completamente o terminal"
+    - "Pad parcialmente coberto, com o furo ainda visível ao redor do terminal"
+    - "Filete côncavo e liso, em forma de cone, molhando todo o pad e o terminal, com o contorno do terminal visível e superfície brilhante"
+  resposta: 3
+  explicacao: |
+    O filete côncavo indica que o estanho molhou as duas superfícies (ângulo de contato baixo). A bola convexa é excesso (e pode esconder uma junta que não molhou por dentro); a superfície fosca e granulada é típica de junta fria; pad parcialmente coberto é falta de estanho.
+  fonte: "Adafruit Guide to Excellent Soldering, seção Common Problems (fotos de juntas); IPC-A-610, conexões em furo metalizado (referência)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.7.T06-009
+  objetivo: O3
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Uma junta está opaca, granulada e com uma pequena rachadura em volta do terminal. Você lembra que o resistor se mexeu enquanto o estanho esfriava. Qual é o diagnóstico e a correção?
+  alternativas:
+    - "Excesso de estanho; retirar tudo com malha e deixar o terminal sem solda"
+    - "Junta normal para estanho com chumbo; nada a fazer"
+    - "Junta fria (perturbada); reaquecer com fluxo novo, acrescentar um pouco de estanho e não mexer até solidificar"
+    - "Ponte de solda; cortar o terminal mais curto"
+  resposta: 2
+  explicacao: |
+    Movimento durante a solidificação gera estrutura granulada e trincas: a junta conduz de forma intermitente, o pior tipo de defeito para achar depois. Reaquecer com fluxo novo refunde e permite o molhamento; o estanho extra repõe fluxo e massa. Junta boa com chumbo é lisa e brilhante.
+  fonte: "Adafruit Guide to Excellent Soldering, seção Common Problems (cold joint, disturbed joint)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.7.T06-010
+  objetivo: O3
+  tipo: unica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Ao soldar uma barra de pinos (passo 2,54 mm), o estanho ligou dois pinos vizinhos. Qual é a forma correta de desfazer a ponte?
+  alternativas:
+    - "Deixar como está, porque os pinos vizinhos de uma barra são sempre o mesmo sinal"
+    - "Aquecer a ponte e soprar forte para o estanho escorrer"
+    - "Raspar a ponte com uma chave de fenda com a placa fria"
+    - "Aplicar fluxo, colocar a malha dessoldadora sobre a ponte e o ferro por cima da malha, retirando os dois juntos quando o estanho subir"
+  resposta: 3
+  explicacao: |
+    A malha com fluxo puxa o excesso por capilaridade e deixa as juntas com a quantidade certa; retirar malha e ferro juntos evita que ela fique soldada. (Arrastar a ponta limpa com fluxo também funciona.) Raspar a frio danifica pads e solda mal; soprar espalha estanho e o resfria de forma irregular. Pinos vizinhos raramente são o mesmo sinal — confira com o teste de continuidade.
+  fonte: "Adafruit Guide to Excellent Soldering, seções Common Problems (solder bridge) e Desoldering"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.7.T06-011
+  objetivo: O3
+  tipo: multipla
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Você precisa retirar um diodo THT soldado numa placa de face dupla para trocá-lo. Quais práticas estão corretas? Marque todas as corretas.
+  alternativas:
+    - "Puxar o diodo com o alicate enquanto o estanho ainda está sólido, para não aquecer demais a placa"
+    - "Armar o sugador, fundir toda a junta, encostar o bico e disparar"
+    - "Usar malha dessoldadora com fluxo, retirando malha e ferro ao mesmo tempo"
+    - "Acrescentar um pouco de estanho novo à junta antiga antes de dessoldar"
+  resposta: [1, 2, 3]
+  explicacao: |
+    Estanho novo traz fluxo e mais massa líquida, e a junta velha funde de uma vez. Sugador e malha são os métodos padrão; ambos exigem a junta totalmente fundida. Puxar com estanho sólido arranca o pad — e, em face dupla, o furo metalizado.
+  fonte: "Adafruit Guide to Excellent Soldering, seção Desoldering; Charles Platt, Make: Electronics, capítulo sobre solda (dessoldagem)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.7.T06-012
+  objetivo: O3
+  tipo: unica
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Um colega inspeciona uma placa soldada com SAC305 (sem chumbo) e quer refazer todas as juntas porque "estão foscas, logo são frias". As juntas têm filete côncavo, molham pad e terminal, e o contorno dos terminais é visível. Qual avaliação está correta?
+  alternativas:
+    - "As juntas devem ser refeitas com estanho com chumbo, mantendo os resíduos de SAC305"
+    - "As juntas são frias e devem ser todas refeitas, porque junta boa é sempre brilhante"
+    - "As juntas são aceitáveis: o aspecto fosco é normal no sem chumbo; o critério é o molhamento e a forma do filete"
+    - "Não é possível avaliar juntas sem chumbo visualmente; só raio X serve"
+  resposta: 2
+  explicacao: |
+    Ligas sem chumbo solidificam com superfície acetinada ou fosca mesmo quando corretas. O que separa junta boa de fria é o molhamento: ângulo de contato baixo, filete côncavo, contorno visível. Refazer tudo aquece a placa à toa e pode criar defeitos; misturar ligas na mesma junta é má prática. Inspeção visual vale para THT; raio X é para juntas ocultas (como BGA).
+  fonte: "IPC-A-610, critérios de aceitação para juntas sem chumbo (referência); Adafruit Guide to Excellent Soldering, seção Common Problems"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.7.T06-013
+  objetivo: O4
+  tipo: unica
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Ao soldar com estanho com núcleo de fluxo de resina, de onde vem principalmente a fumaça e qual é a medida de proteção adequada?
+  alternativas:
+    - "Do chumbo evaporando; usar máscara contra gases de metais pesados"
+    - "Do estanho queimando; reduzir a temperatura para 200 °C"
+    - "Do fluxo (resina/colofônia), que é irritante e sensibilizante respiratório; usar extração de fumos ou boa ventilação e não ficar com o rosto sobre a fumaça"
+    - "Da placa de fenolite; trocar por placa de fibra de vidro"
+  resposta: 2
+  explicacao: |
+    Na temperatura de solda o chumbo praticamente não evapora; a fumaça visível é do fluxo, cujos vapores podem causar irritação e asma ocupacional por sensibilização. Extrator com filtro ou exaustão local é a medida principal. 200 °C é pouco para soldar bem. O risco do chumbo é outro: ingestão pelas mãos.
+  fonte: "UK HSE, Controlling health risks from rosin (colophony) based solder fluxes (INDG249)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.7.T06-014
+  objetivo: O4
+  tipo: unica
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Na bancada de um colega você observa: extrator de fumos ligado; estanho Sn60/Pb40; ferro no suporte; óculos ao cortar terminais; um pacote de biscoito aberto ao lado da placa, de onde ele come entre uma junta e outra, sem lavar as mãos. Qual mudança é a mais importante?
+  alternativas:
+    - "Trocar o extrator por uma máscara, porque o chumbo evapora durante a solda"
+    - "Usar luvas térmicas grossas para segurar o ferro"
+    - "Tirar a comida da bancada e lavar as mãos antes de comer, porque o risco do chumbo é a ingestão"
+    - "Desligar o extrator, porque ele resfria a ponta do ferro"
+  resposta: 2
+  explicacao: |
+    Tudo o mais está certo. O chumbo do estanho passa para os dedos e, deles, para a comida: a via de exposição é a **ingestão**, não a inalação. Regra: nada de comida e bebida na bancada e mãos lavadas depois de soldar. Máscara não substitui extração e não resolve a ingestão; luvas grossas atrapalham o controle do ferro; o extrator deve ficar ligado.
+  fonte: "UK HSE, Lead and you: a guide to working safely with lead (INDG305), seção sobre higiene; roteiro M0.7.T06 (segurança)"
+  origem: ia
+  revisao: rascunho

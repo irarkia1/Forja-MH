@@ -1,0 +1,315 @@
+- id: Q-M0.7.T03-001
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Qual número este programa imprime?
+    ```python
+    x = 7
+    y = 2
+    print(x // y + x % y)
+    ```
+  resposta: {valor: 4, unidade: "", tolerancia: 0}
+  explicacao: |
+    `//` é a divisão inteira (7 // 2 = 3) e `%` é o resto (7 % 2 = 1); 3 + 1 = 4. Quem usa `/` no lugar de `//` chega a 4.5 (3.5 + 1).
+  fonte: "The Python Tutorial (docs.python.org), seção 3.1.1 Numbers"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.7.T03-002
+  objetivo: O1
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    O que este programa imprime?
+    ```python
+    print(10 / 5, 10 // 4, type(10 / 5).__name__)
+    ```
+  alternativas:
+    - "`2 2 int`"
+    - "`2.0 2 float`"
+    - "`2.0 2.5 float`"
+    - "`2 2.5 int`"
+  resposta: 1
+  explicacao: |
+    Em Python 3, `/` **sempre** devolve float, mesmo quando a divisão é exata: 10 / 5 = `2.0`, do tipo `float`. `//` é divisão inteira: 10 // 4 = `2`. Esperar `2` (int) para `10 / 5` é hábito de C ou de Python 2.
+  fonte: "The Python Tutorial (docs.python.org), seção 3.1.1 Numbers"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.7.T03-003
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Qual número este programa imprime?
+    ```python
+    def resistor_led(v_fonte, v_f=2.0, i=0.010):
+        return (v_fonte - v_f) / i
+
+    print(round(resistor_led(5, i=0.020)))
+    ```
+  resposta: {valor: 150, unidade: "Ω", tolerancia: 0}
+  explicacao: |
+    `v_f` não foi passado e usa o padrão 2.0; `i` foi passado por nome e vale 0.020. (5 − 2) / 0,020 = 150. Quem responde 300 usou o `i` padrão (0.010), ignorando o argumento nomeado.
+  fonte: "The Python Tutorial (docs.python.org), seções 4.8.1 Default Argument Values e 4.8.2 Keyword Arguments"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.7.T03-004
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Qual número este programa imprime?
+    ```python
+    leituras = [3.31, 3.29, -1, 3.30, 0, 3.35, 99, 3.28]
+    soma = 0
+    for v in leituras:
+        if v < 0:
+            continue
+        if v > 50:
+            break
+        soma += v
+    print(round(soma, 2))
+    ```
+  resposta: {valor: 13.25, unidade: "", tolerancia: 0.0001}
+  explicacao: |
+    `continue` pula só o −1; o 0 não é negativo e entra na soma (sem mudar nada); ao chegar no 99, `break` encerra o laço e o 3.28 nunca é visto. Soma: 3,31 + 3,29 + 3,30 + 0 + 3,35 = 13,25. Quem soma também o 3.28 (16,53) tratou `break` como `continue`.
+  fonte: "The Python Tutorial (docs.python.org), seção 4.4 break and continue Statements"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.7.T03-005
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Qual número este programa imprime?
+    ```python
+    medidas = [4.98, 5.01, 5.02, 4.97, 5.00]
+    print(len(medidas[1:4]))
+    ```
+  resposta: {valor: 3, unidade: "elementos", tolerancia: 0}
+  explicacao: |
+    A fatia `[1:4]` pega os índices 1, 2 e 3 — o fim é **exclusivo**. São 3 elementos (5.01, 5.02, 4.97). Quem responde 4 incluiu o índice 4.
+  fonte: "The Python Tutorial (docs.python.org), seção 3.1.2 Text (fatiamento) e 3.1.3 Lists"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.7.T03-006
+  objetivo: O2
+  tipo: unica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    O que este programa imprime?
+    ```python
+    bom = {"R1": "10k", "R2": "1k", "C1": "10u"}
+    bom["R2"] = "4k7"
+    bom["D1"] = "1N4148"
+    print(len(bom), bom["R2"])
+    ```
+  alternativas:
+    - "`4 1k`"
+    - "`5 4k7`"
+    - "`3 4k7`"
+    - "`4 4k7`"
+  resposta: 3
+  explicacao: |
+    Atribuir a uma chave que já existe (`R2`) **substitui** o valor; atribuir a uma chave nova (`D1`) acrescenta. O dicionário fica com R1, R2, C1 e D1: 4 itens, e R2 vale "4k7". Chaves de dicionário não se repetem.
+  fonte: "The Python Tutorial (docs.python.org), seção 5.5 Dictionaries"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.7.T03-007
+  objetivo: O2
+  tipo: unica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Uma placa envia pela serial a linha abaixo. O que o programa imprime?
+    ```python
+    linha = "T=23.5;U=61;V=3.29\r\n"
+    campos = dict(p.split("=") for p in linha.strip().split(";"))
+    print(campos["U"] * 2)
+    ```
+  alternativas:
+    - "`122`"
+    - "Um erro `TypeError`"
+    - "`6161`"
+    - "`122.0`"
+  resposta: 2
+  explicacao: |
+    `strip()` tira o `\r\n`, `split(";")` separa os campos e `split("=")` gera pares chave/valor — mas os valores continuam **strings**. `"61" * 2` repete o texto: `"6161"`. Para obter 122, converta antes: `int(campos["U"]) * 2`. Não há TypeError porque string × inteiro é uma operação válida em Python.
+  fonte: "The Python Tutorial (docs.python.org), seção 3.1.2 Text; Al Sweigart, Automate the Boring Stuff with Python, 2ª ed., cap. 6 (Manipulating Strings)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.7.T03-008
+  objetivo: O2
+  tipo: unica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    O que este programa imprime?
+    ```python
+    def mediana(valores):
+        valores.sort()
+        return valores[len(valores) // 2]
+
+    medidas = [5.02, 4.97, 5.10, 4.99, 5.00]
+    m = mediana(medidas)
+    print(medidas[0], m)
+    ```
+  alternativas:
+    - "`4.97 5.1`"
+    - "`5.02 5.0`"
+    - "`5.02 5.1`"
+    - "`4.97 5.0`"
+  resposta: 3
+  explicacao: |
+    A função recebe uma referência para **a mesma** lista e `sort()` a ordena no lugar: depois da chamada, `medidas` vale [4.97, 4.99, 5.0, 5.02, 5.1]. O elemento do meio (índice 5 // 2 = 2) é 5.0, e `medidas[0]` agora é 4.97. Quem responde 5.02 achou que a lista original ficaria intacta; para não alterá-la, use `sorted(valores)`, que devolve uma cópia ordenada.
+  fonte: "The Python Tutorial (docs.python.org), seção 5.1 More on Lists (list.sort) e 4.8 Defining Functions (passagem por referência de objeto)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.7.T03-009
+  objetivo: O3
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    No Ubuntu 24.04, `pip install pyserial` falha com o erro `externally-managed-environment`. Qual é a solução recomendada?
+  alternativas:
+    - "Apagar o arquivo de configuração que gera o aviso e repetir o `pip install`"
+    - "Rodar `pip install --break-system-packages pyserial` sempre que der esse erro"
+    - "Rodar `sudo pip install pyserial`"
+    - "Criar um ambiente virtual com `python3 -m venv .venv`, ativá-lo com `source .venv/bin/activate` e instalar com `pip install pyserial`"
+  resposta: 3
+  explicacao: |
+    O Python do sistema é gerenciado pelo apt (PEP 668); misturar pacotes do pip nele pode quebrar ferramentas do próprio Ubuntu. O venv cria um Python isolado por projeto, onde o pip é livre, e o `requirements.txt` registra as versões. `sudo pip` e `--break-system-packages` contornam a proteção e fazem exatamente o que ela tenta evitar.
+  fonte: "The Python Tutorial (docs.python.org), seção 12 Virtual Environments and Packages; PEP 668"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.7.T03-010
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Qual número este programa imprime?
+    ```python
+    import csv
+    with open("carga.csv", "w") as f:
+        f.write("tempo_s,tensao_V\n0,0.00\n1,3.16\n2,4.32\n3,4.75\n")
+
+    with open("carga.csv", newline="") as f:
+        tensoes = [float(l["tensao_V"]) for l in csv.DictReader(f)]
+    print(len(tensoes))
+    ```
+  resposta: {valor: 4, unidade: "valores", tolerancia: 0}
+  explicacao: |
+    O arquivo tem 5 linhas, mas a primeira é o cabeçalho: o `DictReader` a usa como nomes das chaves e devolve só as 4 linhas de dados. Quem responde 5 contou o cabeçalho. Repare no `float()`: o csv devolve tudo como texto.
+  fonte: "Documentação Python, csv — CSV File Reading and Writing (csv.DictReader); Al Sweigart, Automate the Boring Stuff with Python, 2ª ed., cap. 16"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.7.T03-011
+  objetivo: O3
+  tipo: unica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Com o pyserial instalado, o que este programa imprime? (`loop://` é uma porta virtual em que tudo o que se escreve volta na leitura.)
+    ```python
+    import serial
+    ser = serial.serial_for_url("loop://", timeout=1)
+    ser.write(b"3.29\r\n")
+    a = ser.readline()
+    b = ser.readline()
+    print(a, b)
+    ```
+  alternativas:
+    - "`b'3.29\\r\\n'` e depois o programa fica travado esperando a segunda linha"
+    - "`3.29` e depois um erro de timeout"
+    - "`b'3.29\\r\\n' b''`"
+    - "`3.29 None`"
+  resposta: 2
+  explicacao: |
+    `readline()` devolve **bytes**, com o terminador incluído: `b'3.29\r\n'`. A segunda chamada não encontra dados e, ao fim do `timeout` de 1 s, devolve bytes vazios (`b''`) — sem exceção e sem travar. É por isso que o código de leitura testa `if not bruto:` e decodifica com `.decode().strip()` antes do `float()`. Sem `timeout`, aí sim a segunda leitura esperaria para sempre.
+  fonte: "Documentação do pyserial (pyserial.readthedocs.io), Short introduction (readline e timeout) e URL Handlers (loop://)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.7.T03-012
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Você mediu cinco vezes a mesma tensão. Qual número o programa imprime?
+    ```python
+    import statistics as st
+    v = [4.98, 5.02, 5.00, 4.96, 5.04]
+    print(round(st.stdev(v), 4))
+    ```
+  resposta: {valor: 0.0316, unidade: "V", tolerancia: 0.002}
+  explicacao: |
+    Média = 5,00 V. Desvios: −0,02; +0,02; 0; −0,04; +0,04; quadrados somam 0,004 V². `stdev` é o desvio **amostral**: divide por n − 1 = 4 → 0,001; raiz = 0,0316 V. `pstdev` (populacional) dividiria por 5 e daria 0,0283 V. Para repetições de uma medição, o amostral é o adequado.
+  fonte: "Documentação Python, statistics — Mathematical statistics functions (stdev e pstdev)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.7.T03-013
+  objetivo: O4
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    As listas `t` (tempo, em s) e `v` (tensão, em V) já existem e `matplotlib.pyplot` foi importado como `plt`. Qual trecho grava em `carga.png` um gráfico da tensão em função do tempo, com os dois eixos rotulados?
+  alternativas:
+    - "`plt.plot(t, v); plt.xlabel(\"tempo (s)\"); plt.ylabel(\"tensão (V)\"); plt.savefig(\"carga.png\")`"
+    - "`plt.plot(t, v); plt.savefig(\"carga.png\")`"
+    - "`plt.plot(t, v); plt.xlabel(\"tempo (s)\"); plt.ylabel(\"tensão (V)\"); plt.show()`"
+    - "`plt.plot(v, t); plt.xlabel(\"tempo (s)\"); plt.ylabel(\"tensão (V)\"); plt.savefig(\"carga.png\")`"
+  resposta: 0
+  explicacao: |
+    Em `plt.plot(x, y)` o primeiro argumento vai para o eixo horizontal: tempo em x, tensão em y. `savefig` grava o arquivo. Inverter para `plot(v, t)` põe a tensão na horizontal e deixa os rótulos mentindo; `show()` só abre a janela, não grava nada; sem `xlabel`/`ylabel` o gráfico não diz o que nem em que unidade.
+  fonte: "Matplotlib, Pyplot tutorial e Quick start guide (matplotlib.org)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.7.T03-014
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Este programa automatiza a escolha do resistor de um LED (M0.4.T01). Qual número ele imprime?
+    ```python
+    E12 = [1.0, 1.2, 1.5, 1.8, 2.2, 2.7, 3.3, 3.9, 4.7, 5.6, 6.8, 8.2]
+
+    def e12_acima(r):
+        decada = 1
+        while True:
+            for base in E12:
+                if base * decada >= r:
+                    return base * decada
+            decada *= 10
+
+    r = (5.0 - 2.2) / 0.015
+    print(round(e12_acima(r)))
+    ```
+  resposta: {valor: 220, unidade: "Ω", tolerancia: 0}
+  explicacao: |
+    r = 2,8 / 0,015 ≈ 186,7 Ω. A função testa a década 1 (1,0…8,2: todos menores), depois a 10 (10…82: menores) e então a 100: 100, 120, 150, 180 são menores; 220 é o primeiro ≥ 186,7. Resultado: 220 Ω — o valor comercial imediatamente acima, como manda a regra do resistor de LED. Quem responde 180 pegou o vizinho de baixo (corrente acima da desejada).
+  fonte: "Al Sweigart, Automate the Boring Stuff with Python, 2ª ed., cap. 2 (Flow Control) e cap. 3 (Functions); Scherz & Monk, Practical Electronics for Inventors, cap. 3 (valores padronizados de resistores)"
+  origem: ia
+  revisao: rascunho

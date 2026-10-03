@@ -1,0 +1,269 @@
+- id: Q-M0.7.T02-001
+  objetivo: O4
+  tipo: unica
+  dificuldade: 1
+  bloom: avaliar
+  enunciado: |
+    Você corrigiu o firmware de um sensor: a leitura do ADC saturava acima de 3,1 V porque a atenuação estava errada. Qual mensagem de commit segue as boas práticas?
+  alternativas:
+    - "`Corrige atenuação do ADC que saturava acima de 3,1 V`"
+    - "`ajustes`"
+    - "`agora funciona!!!`"
+    - "`Mudei umas coisas no adc.c e no main.c e também no README`"
+  resposta: 0
+  explicacao: |
+    Uma boa linha de assunto é curta, no imperativo e diz **o que muda** — quem lê o `git log` daqui a seis meses entende sem abrir o código. "ajustes" e "agora funciona" não dizem nada; listar arquivos é inútil (o próprio Git já mostra quais mudaram) e sugere várias mudanças misturadas num só commit.
+  fonte: "Chris Beams, How to Write a Git Commit Message (cbea.ms/git-commit); Pro Git, cap. 5, seção Contributing to a Project (Commit Guidelines)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.7.T02-002
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Você editou `main.c` e **ainda não** rodou `git add`. Qual comando mostra, linha a linha, o que você mudou?
+  alternativas:
+    - "`git status`"
+    - "`git log -p`"
+    - "`git diff --staged`"
+    - "`git diff`"
+  resposta: 3
+  explicacao: |
+    `git diff` compara o diretório de trabalho com a área de preparação: mostra exatamente as linhas ainda não preparadas. `git diff --staged` mostra o que já foi preparado (aqui, nada). `git log -p` mostra mudanças de commits já feitos. `git status` lista os arquivos modificados, mas não as linhas.
+  fonte: "Pro Git (Chacon & Straub), cap. 2, seção Recording Changes to the Repository (Viewing Your Staged and Unstaged Changes)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.7.T02-003
+  objetivo: O1
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    `config.h` contém `#define INTERVALO 60`. Você muda para 30 e roda `git add config.h`. Depois muda de novo para 10, salva e roda `git commit -m "Reduz intervalo"`. O que acontece?
+  alternativas:
+    - "O commit grava o valor 10, e o `git status` fica limpo"
+    - "O commit grava o valor 30, e `config.h` continua aparecendo como modificado no `git status`"
+    - "O commit grava o valor 60, porque o `git add` foi feito antes da última edição"
+    - "O Git recusa o commit porque o arquivo mudou depois do `git add`"
+  resposta: 1
+  explicacao: |
+    O `git add` copia para a área de preparação a versão **daquele momento** (30). O commit leva o que está preparado. A edição para 10 continua só no diretório de trabalho, e o `status` mostra o arquivo como modificado. Para incluir o 10, seria preciso outro `git add` antes do commit.
+  fonte: "Pro Git (Chacon & Straub), cap. 2, seção Recording Changes to the Repository (Staging Modified Files)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.7.T02-004
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Com nome e e-mail do Git já configurados, você roda numa pasta vazia:
+    ```bash
+    git init -q -b main exp && cd exp
+    echo a > f.txt; git add f.txt; git commit -qm "c1"
+    echo b >> f.txt; git commit -qm "c2"
+    echo c >> f.txt; git commit -qam "c3"
+    git log --oneline | wc -l
+    ```
+    Qual número o último comando imprime?
+  resposta: {valor: 2, unidade: "commits", tolerancia: 0}
+  explicacao: |
+    O segundo `git commit` falha ("no changes added to commit"): a edição foi feita, mas nada foi preparado. O terceiro usa `-a`, que prepara automaticamente os arquivos já rastreados — então grava as linhas b e c de uma vez. Ficam 2 commits (c1 e c3). Quem responde 3 supõe que `commit` sem `add` funciona.
+  fonte: "Pro Git (Chacon & Straub), cap. 2, seção Recording Changes to the Repository (Skipping the Staging Area)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.7.T02-005
+  objetivo: O2
+  tipo: unica
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Em `main`, você roda `git switch -c sensor`, cria `dht22.c`, faz `git add` e `git commit`. Depois roda `git switch main`. O que acontece com `dht22.c` no diretório de trabalho?
+  alternativas:
+    - "É apagado definitivamente, porque o branch `sensor` não foi mesclado"
+    - "Continua lá, como arquivo não rastreado em `main`"
+    - "Continua lá, porque os arquivos do diretório de trabalho não dependem do branch"
+    - "Some do diretório de trabalho, porque `main` não tem esse arquivo; ele volta ao trocar para `sensor`"
+  resposta: 3
+  explicacao: |
+    Trocar de branch atualiza o diretório de trabalho para o último commit daquele branch. `dht22.c` só existe nos commits de `sensor`, então o Git o remove do disco ao ir para `main` e o recria ao voltar. Nada se perde: o arquivo está no commit. (Se ele **não** tivesse sido commitado, continuaria no disco como não rastreado.)
+  fonte: "Pro Git (Chacon & Straub), cap. 3, seção Branches in a Nutshell (Switching Branches)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.7.T02-006
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Com nome e e-mail do Git já configurados, você roda numa pasta vazia:
+    ```bash
+    git init -q -b main ff && cd ff
+    echo 1 > a; git add a; git commit -qm "base"
+    git switch -qc feature
+    echo 2 > b; git add b; git commit -qm "b"
+    echo 3 > c; git add c; git commit -qm "c"
+    git switch -q main
+    git merge -q feature
+    git log --oneline | wc -l
+    ```
+    Qual número o último comando imprime?
+  resposta: {valor: 3, unidade: "commits", tolerancia: 0}
+  explicacao: |
+    `main` não ganhou nenhum commit depois que `feature` foi criado, então o merge é **fast-forward**: o Git só avança o ponteiro de `main` até o commit "c", sem criar commit de merge. O histórico tem base, b e c. Quem responde 4 imagina um commit de merge, que só aparece quando os dois branches andaram (ou com `--no-ff`).
+  fonte: "Pro Git (Chacon & Straub), cap. 3, seção Basic Branching and Merging"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.7.T02-007
+  objetivo: O2
+  tipo: unica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    `main.c` tinha `#define LED_PIN 2`. No branch `feature`, você mudou para 5 e fez commit. Depois, em `main`, mudou para 4 e fez commit. Estando em `main`, você roda `git merge feature` e o Git acusa conflito. No arquivo, qual linha aparece entre `<<<<<<< HEAD` e `=======`?
+  alternativas:
+    - "`#define LED_PIN 4`"
+    - "`#define LED_PIN 5`"
+    - "Nenhuma: o Git escolhe automaticamente a versão mais recente e não deixa marcadores"
+    - "`#define LED_PIN 2`"
+  resposta: 0
+  explicacao: |
+    `HEAD` é o branch em que você está — `main`, onde o valor é 4. Entre `=======` e `>>>>>>> feature` fica a versão que está chegando (5). A versão original (2) não aparece no formato padrão. O Git nunca escolhe "a mais recente": quando os dois lados mudaram a mesma linha, a decisão é sua.
+  fonte: "Pro Git (Chacon & Straub), cap. 3, seção Basic Branching and Merging (Basic Merge Conflicts)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.7.T02-008
+  objetivo: O2
+  tipo: unica
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Um `git merge` parou com conflito em `main.c`. Qual sequência finaliza o merge corretamente?
+  alternativas:
+    - "Apagar `main.c`, rodar `git add main.c` e `git commit`, e recriar o arquivo depois"
+    - "Rodar `git push --force` para o remoto decidir qual versão vale"
+    - "Rodar `git commit -am \"merge\"` direto, já que o Git marcou os conflitos no arquivo"
+    - "Editar `main.c` deixando o código certo e apagando os marcadores, rodar `git add main.c` e depois `git commit`"
+  resposta: 3
+  explicacao: |
+    O Git deixa a decisão para você: edite o arquivo, remova `<<<<<<<`, `=======` e `>>>>>>>`, prepare com `git add` (é assim que se marca "resolvido") e faça o commit de merge. `git commit -am` sem editar é aceito pelo Git e grava os marcadores no histórico — o código nem compila. `push --force` não resolve nada e pode apagar trabalho alheio; apagar o arquivo joga fora as duas versões.
+  fonte: "Pro Git (Chacon & Straub), cap. 3, seção Basic Branching and Merging (Basic Merge Conflicts)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.7.T02-009
+  objetivo: O3
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um colega enviou commits para `main` no GitHub. Você, sem ter baixado esses commits, fez um commit local em `main` e rodou `git push`. O Git recusou com `! [rejected] main -> main (fetch first)`. O que fazer?
+  alternativas:
+    - "Apagar o repositório local e clonar de novo, refazendo a mudança"
+    - "Rodar `git pull`, resolver conflitos se houver, testar e rodar `git push` de novo"
+    - "Rodar `git push --force`, porque o seu commit é o mais novo"
+    - "Esperar alguns minutos e repetir o `git push`, pois é uma falha temporária do GitHub"
+  resposta: 1
+  explicacao: |
+    A recusa significa que o remoto tem commits que você não tem; aceitar seu push apagaria os do colega. `git pull` traz e integra esses commits; depois o push é aceito. `--force` sobrescreve o remoto e descarta o trabalho do colega. Reclonar funciona, mas é desperdício; esperar não muda nada.
+  fonte: "Pro Git (Chacon & Straub), cap. 2, seção Working with Remotes (Pushing to Your Remotes); cap. 5, seção Contributing to a Project"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.7.T02-010
+  objetivo: O3
+  tipo: vf
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: `git fetch` baixa os commits novos do remoto e já atualiza os arquivos do seu diretório de trabalho.
+  resposta: false
+  explicacao: |
+    `git fetch` só baixa os commits e atualiza as referências remotas (`origin/main`); seus arquivos e seu branch local não mudam. Quem integra é o `git merge` (ou o `git pull`, que faz fetch + merge). Por isso o fetch é seguro para "olhar antes": `git log main..origin/main` mostra o que chegou.
+  fonte: "Pro Git (Chacon & Straub), cap. 2, seção Working with Remotes (Fetching and Pulling from Your Remotes)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.7.T02-011
+  objetivo: O3
+  tipo: multipla
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Sobre issues e pull requests no GitHub, quais afirmações estão corretas? Marque todas as corretas.
+  alternativas:
+    - "Só quem tem permissão de escrita no repositório pode propor mudanças por pull request"
+    - "Um pull request propõe mesclar um branch em outro e permite revisar e comentar as mudanças linha a linha antes do merge"
+    - "Escrever `Closes #12` na descrição de um pull request faz a issue #12 fechar automaticamente quando esse PR é mesclado no branch padrão"
+    - "Abrir uma issue cria automaticamente um branch e um commit no repositório"
+  resposta: [1, 2]
+  explicacao: |
+    O PR é o lugar da revisão: comentários por linha, aprovação, verificações automáticas. Palavras-chave como `Closes`, `Fixes` e `Resolves` seguidas de `#número` ligam o PR à issue e a fecham no merge para o branch padrão. Sem permissão de escrita, você faz um **fork** e abre o PR a partir dele. Uma issue é só um registro de discussão; não mexe no código.
+  fonte: "GitHub Docs, About pull requests e Linking a pull request to an issue; Pro Git, cap. 6, seção Contributing to a Project"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.7.T02-012
+  objetivo: O4
+  tipo: multipla
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    O `.gitignore` na raiz do repositório contém exatamente estas duas linhas:
+    ```
+    *.log
+    build/
+    ```
+    Quais arquivos o Git vai ignorar (supondo que nenhum deles foi commitado antes)? Marque todos os corretos.
+  alternativas:
+    - "`build/firmware.bin`"
+    - "`debug.log`"
+    - "`src/build.c`"
+    - "`logs/serial.log`"
+  resposta: [0, 1, 3]
+  explicacao: |
+    Um padrão sem barra (`*.log`) vale em qualquer nível, então pega `debug.log` e `logs/serial.log`. `build/` (barra no fim) casa com **pastas** chamadas build, e tudo dentro delas é ignorado. `src/build.c` é um arquivo cujo nome só começa com "build": não casa com nenhum padrão. Confira com `git check-ignore -v caminho`.
+  fonte: "Pro Git (Chacon & Straub), cap. 2, seção Recording Changes to the Repository (Ignoring Files); documentação gitignore (git-scm.com/docs/gitignore)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.7.T02-013
+  objetivo: O4
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: se `config.log` já foi commitado e depois você acrescenta `*.log` ao `.gitignore`, o Git passa a ignorar as mudanças nesse arquivo.
+  resposta: false
+  explicacao: |
+    O `.gitignore` só vale para arquivos **não rastreados**. Um arquivo já commitado continua rastreado e suas mudanças continuam aparecendo. Para parar de rastrear sem apagar do disco: `git rm --cached config.log` e commit. Se for um segredo (senha, token), ele continua no histórico: troque o segredo.
+  fonte: "Pro Git (Chacon & Straub), cap. 2, seção Recording Changes to the Repository (Ignoring Files e Removing Files)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.7.T02-014
+  objetivo: O4
+  tipo: unica
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Ontem você enviou (`git push`) para `main` um commit que quebrou o firmware, e dois colegas já fizeram `git pull` e trabalham em cima dele. Qual é a forma segura de desfazer a mudança?
+  alternativas:
+    - "`git revert <hash do commit>` e `git push`, criando um commit novo que inverte o defeituoso"
+    - "Apagar o branch `main` no GitHub e enviar de novo a partir de uma cópia antiga"
+    - "`git commit --amend` para substituir o commit defeituoso e `git push`"
+    - "`git reset --hard HEAD~1` e `git push --force`, para o commit sumir do histórico"
+  resposta: 0
+  explicacao: |
+    Commit já compartilhado não deve ter o histórico reescrito. `git revert` cria um commit novo que desfaz o efeito do antigo; os colegas só precisam de um `pull` normal. `reset --hard` + `push --force` e `--amend` reescrevem o histórico: os colegas ficam com commits que "não existem mais" no remoto e o próximo push deles reintroduz a confusão (o `--amend` sem `--force` nem seria aceito). Apagar `main` é o mesmo problema, maior.
+  fonte: "Pro Git (Chacon & Straub), cap. 2, seção Undoing Things; cap. 3, seção Rebasing (The Perils of Rebasing); documentação git-revert"
+  origem: ia
+  revisao: rascunho

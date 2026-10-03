@@ -1,0 +1,291 @@
+- id: Q-M0.7.T01-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Você está em `/home/matheus/projetos/kit555`. Qual comando leva você para `/home/matheus/projetos`?
+  alternativas:
+    - "`cd ~`"
+    - "`cd .`"
+    - "`cd /`"
+    - "`cd ..`"
+  resposta: 3
+  explicacao: |
+    `..` é o diretório pai: de `kit555` você sobe para `projetos`. `.` é o próprio diretório atual (não sai do lugar), `/` é a raiz do sistema e `~` é a sua casa (`/home/matheus`), um nível acima do que você queria.
+  fonte: "William Shotts, The Linux Command Line, cap. Navigation"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.7.T01-002
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Você roda este trecho numa pasta vazia. Qual número o último comando imprime?
+    ```bash
+    mkdir -p lab/dados lab/fotos
+    touch lab/dados/m1.csv lab/dados/m2.csv lab/fotos/placa.jpg
+    cd lab
+    mv dados/m2.csv fotos/
+    cp fotos/placa.jpg dados/
+    ls dados | wc -l
+    ```
+  resposta: {valor: 2, unidade: "arquivos", tolerancia: 0}
+  explicacao: |
+    `dados` começa com m1.csv e m2.csv. O `mv` tira m2.csv de lá (vai para `fotos`), e o `cp` coloca uma cópia de placa.jpg em `dados`. Sobram m1.csv e placa.jpg: 2 linhas no `ls`, que o `wc -l` conta. Quem responde 3 esquece que `mv` remove da origem; quem responde 1 confunde `cp` com `mv`.
+  fonte: "William Shotts, The Linux Command Line, cap. Manipulating Files and Directories"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.7.T01-003
+  objetivo: O1
+  tipo: vf
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Verdadeiro ou falso: no terminal do Ubuntu, `rm -r medicoes/` move a pasta para a lixeira, de onde ela pode ser recuperada pelo gerenciador de arquivos.
+  resposta: false
+  explicacao: |
+    `rm` remove direto, sem passar pela lixeira — a lixeira é um recurso do ambiente gráfico. Por isso, antes de um `rm -r`, confira onde você está (`pwd`) e o que vai apagar (`ls`). Dados de medição importantes devem estar versionados (Git) ou com cópia de segurança.
+  fonte: "William Shotts, The Linux Command Line, cap. Manipulating Files and Directories (rm)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.7.T01-004
+  objetivo: O2
+  tipo: unica
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    O comando `ls -l` mostra:
+    ```
+    -rwxr-x--- 1 matheus dialout 812 out  3 10:00 grava.sh
+    ```
+    O que um usuário que pertence ao grupo `dialout` (mas não é `matheus`) pode fazer com esse arquivo?
+  alternativas:
+    - "Ler, alterar e executar"
+    - "Ler e executar, mas não alterar"
+    - "Apenas ler"
+    - "Nada, porque não é o dono"
+  resposta: 1
+  explicacao: |
+    Os trios são dono (`rwx`), grupo (`r-x`) e outros (`---`). O grupo tem r (ler) e x (executar), sem w (escrever). Quem não é dono nem do grupo não pode nada — mas aqui a pessoa é do grupo.
+  fonte: "William Shotts, The Linux Command Line, cap. Permissions"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.7.T01-005
+  objetivo: O2
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Depois de `chmod 640 relatorio.txt`, como fica a coluna de permissões no `ls -l`?
+  alternativas:
+    - "`----r---w-`"
+    - "`-rwxr-----`"
+    - "`-rw-r-----`"
+    - "`-rw-r--r--`"
+  resposta: 2
+  explicacao: |
+    Cada dígito é a soma r = 4, w = 2, x = 1 para dono, grupo e outros. 6 = 4 + 2 → `rw-`; 4 → `r--`; 0 → `---`. Resultado: `rw-r-----`. `rwxr-----` seria 740; `rw-r--r--` seria 644.
+  fonte: "William Shotts, The Linux Command Line, cap. Permissions (chmod, notação octal)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.7.T01-006
+  objetivo: O2
+  tipo: unica
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Ao abrir a porta serial do seu ESP32 você recebe `Permission denied: '/dev/ttyUSB0'`. O `ls -l /dev/ttyUSB0` mostra `crw-rw---- 1 root dialout ...` e o comando `groups` não lista `dialout`. Qual é a correção adequada e duradoura?
+  alternativas:
+    - "Rodar `sudo chmod 666 /dev/ttyUSB0`"
+    - "Rodar a IDE e os scripts sempre com `sudo`"
+    - "Rodar `sudo usermod -aG dialout $USER` e sair e entrar de novo na sessão"
+    - "Rodar `sudo chown matheus /dev/ttyUSB0`"
+  resposta: 2
+  explicacao: |
+    O dispositivo dá leitura e escrita ao grupo `dialout`; o que falta é você estar nesse grupo. `usermod -aG` (o `-a` acrescenta sem tirar dos outros grupos) resolve, e os grupos só são relidos num novo login. `chmod` e `chown` no dispositivo funcionam até você replugar o cabo, porque `/dev/ttyUSB0` é recriado a cada conexão; e rodar tudo com `sudo` cria arquivos de root no seu projeto e expõe o sistema sem necessidade.
+  fonte: "Documentação do Arduino, Fix port access on Linux (grupo dialout); William Shotts, The Linux Command Line, cap. Permissions"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.7.T01-007
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Qual número este trecho imprime?
+    ```bash
+    printf 'temp,23.1\numid,55\ntemp,23.4\ntemp,ERRO\n' > log.txt
+    grep temp log.txt | grep -v ERRO | wc -l
+    ```
+  resposta: {valor: 2, unidade: "linhas", tolerancia: 0}
+  explicacao: |
+    O arquivo tem 4 linhas. `grep temp` deixa passar as 3 linhas com "temp"; `grep -v ERRO` remove a que contém ERRO; sobram 2, contadas pelo `wc -l`. Quem responde 3 esquece que `-v` inverte o filtro; quem responde 1 acha que `-v` mantém só a linha com ERRO.
+  fonte: "William Shotts, The Linux Command Line, cap. Redirection (pipelines, filtros grep e wc)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.7.T01-008
+  objetivo: O3
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    O que o último comando mostra?
+    ```bash
+    echo "A" > saida.txt
+    echo "B" >> saida.txt
+    echo "C" > saida.txt
+    cat saida.txt
+    ```
+  alternativas:
+    - "As linhas `A` e `B`"
+    - "Só a linha `C`"
+    - "As linhas `A`, `B` e `C`"
+    - "As linhas `B` e `C`"
+  resposta: 1
+  explicacao: |
+    `>` cria o arquivo ou **apaga** o conteúdo antes de gravar; `>>` acrescenta no fim. Depois das duas primeiras linhas o arquivo tem A e B, mas o terceiro `>` zera o arquivo e grava só C. É o jeito clássico de perder um log: usar `>` onde se queria `>>`.
+  fonte: "William Shotts, The Linux Command Line, cap. Redirection"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.7.T01-009
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Qual número o último comando imprime?
+    ```bash
+    cat > media.sh << 'EOF'
+    #!/usr/bin/env bash
+    total=0
+    for v in "$@"; do
+      total=$((total + v))
+    done
+    echo $((total / $#))
+    EOF
+    chmod +x media.sh
+    ./media.sh 10 20 35
+    ```
+  resposta: {valor: 21, unidade: "", tolerancia: 0}
+  explicacao: |
+    O laço soma os argumentos: 10 + 20 + 35 = 65. `$#` vale 3 (número de argumentos). A aritmética `$(( ))` do bash é **inteira**: 65 / 3 = 21,67 vira 21 (a parte fracionária é descartada, não arredondada). Para média com casas decimais, use outra ferramenta (`awk`, `bc` ou Python).
+  fonte: "William Shotts, The Linux Command Line, cap. Writing Your First Script e Flow Control: Looping with for; man bash, seção ARITHMETIC EVALUATION"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.7.T01-010
+  objetivo: O3
+  tipo: multipla
+  dificuldade: 3
+  bloom: avaliar
+  enunciado: |
+    Você quer listar **todos** os arquivos `.csv` dentro de `~/lab`, inclusive os que estão em subpastas (ex.: `~/lab/2026/out/m1.csv`). Quais comandos fazem isso? Marque todos os corretos.
+  alternativas:
+    - "`find ~/lab -name \"*.csv\"`"
+    - "`find ~/lab -type f -name \"*.csv\"`"
+    - "`grep -r \".csv\" ~/lab`"
+    - "`ls ~/lab/*.csv`"
+  resposta: [0, 1]
+  explicacao: |
+    `find` desce em toda a árvore e filtra pelo **nome**; `-type f` só acrescenta a restrição de ser arquivo comum. `ls ~/lab/*.csv` só enxerga o primeiro nível (o `*` do shell não entra em subpastas). `grep -r` procura o texto ".csv" **dentro** dos arquivos, não no nome.
+  fonte: "William Shotts, The Linux Command Line, cap. Searching for Files (find)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.7.T01-011
+  objetivo: O4
+  tipo: unica
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    O que faz o comando `sudo apt update`?
+  alternativas:
+    - "Baixa a lista atualizada dos pacotes disponíveis nos repositórios, sem instalar nem atualizar nenhum programa"
+    - "Atualiza todos os programas instalados para as versões mais novas"
+    - "Instala o pacote chamado update"
+    - "Atualiza o kernel e reinicia a máquina"
+  resposta: 0
+  explicacao: |
+    `apt update` só renova o índice (quais versões existem nos repositórios). Quem efetivamente instala as versões novas é `apt upgrade`. A sequência comum é `sudo apt update && sudo apt upgrade`, e antes de um `apt install` convém um `update` para não pedir uma versão que o repositório já não tem.
+  fonte: "Manual do apt (man apt), comandos update e upgrade; help.ubuntu.com, Command Line"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.7.T01-012
+  objetivo: O4
+  tipo: unica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Num terminal novo (onde `PORTA` ainda não existe), você roda:
+    ```bash
+    PORTA=/dev/ttyUSB0
+    bash -c 'echo "porta=[$PORTA]"'
+    export PORTA
+    bash -c 'echo "porta=[$PORTA]"'
+    ```
+    Quais são as duas linhas impressas, na ordem?
+  alternativas:
+    - "`porta=[]` duas vezes"
+    - "`porta=[/dev/ttyUSB0]` duas vezes"
+    - "`porta=[]` e depois `porta=[/dev/ttyUSB0]`"
+    - "`porta=[$PORTA]` duas vezes"
+  resposta: 2
+  explicacao: |
+    `PORTA=...` cria uma variável só do shell atual. O `bash -c` é um processo filho e só herda variáveis **exportadas**: na primeira vez ele não vê nada; depois do `export`, vê. As aspas simples impedem que o shell de fora expanda `$PORTA` — quem expande é o bash filho. É o mesmo motivo pelo qual um script Python não enxerga uma variável que você só atribuiu no terminal.
+  fonte: "William Shotts, The Linux Command Line, cap. The Environment"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.7.T01-013
+  objetivo: O4
+  tipo: unica
+  dificuldade: 2
+  bloom: lembrar
+  enunciado: |
+    Você abriu a porta serial com `screen /dev/ttyUSB0 115200` e quer encerrar a sessão, liberando a porta para o script Python. O que você digita?
+  alternativas:
+    - "`Ctrl+A` e depois `k`, confirmando com `y`"
+    - "`Ctrl+C`"
+    - "`exit` e Enter"
+    - "`:q` e Enter"
+  resposta: 0
+  explicacao: |
+    No screen, os comandos começam com `Ctrl+A`; `k` (kill) fecha a janela e libera a porta. `Ctrl+C`, `:q` e `exit` são caracteres que o screen simplesmente **envia ao dispositivo** pela serial — a sessão continua aberta e a porta continua presa.
+  fonte: "Manual do GNU screen (man screen), seção DEFAULT KEY BINDINGS (C-a k)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.7.T01-014
+  objetivo: O3
+  tipo: unica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Numa pasta onde **não** existe o arquivo `nao_existe`, você roda:
+    ```bash
+    ls nao_existe > a.txt 2>&1
+    ls nao_existe 2>&1 > b.txt
+    ```
+    Onde vai parar a mensagem de erro de cada comando?
+  alternativas:
+    - "As duas aparecem no terminal e os dois arquivos ficam vazios"
+    - "A do primeiro vai para `a.txt`; a do segundo aparece no terminal e `b.txt` fica vazio"
+    - "As duas vão para os arquivos (`a.txt` e `b.txt`)"
+    - "A do primeiro aparece no terminal; a do segundo vai para `b.txt`"
+  resposta: 1
+  explicacao: |
+    Os redirecionamentos são aplicados da esquerda para a direita. No primeiro, o stdout vai para `a.txt` e então `2>&1` liga o stderr ao **mesmo destino atual** do stdout (o arquivo). No segundo, `2>&1` liga o stderr ao destino atual do stdout — ainda o terminal — e só depois o stdout é desviado para `b.txt`. Como `ls` de arquivo inexistente só escreve no stderr, `b.txt` fica vazio. Para capturar tudo num log, use `> log.txt 2>&1`.
+  fonte: "William Shotts, The Linux Command Line, cap. Redirection (Redirecting Standard Output and Standard Error to One File)"
+  origem: ia
+  revisao: rascunho

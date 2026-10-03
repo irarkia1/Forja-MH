@@ -1,0 +1,240 @@
+- id: Q-M0.7.T07-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Como identificar o terminal **negativo** de um capacitor eletrolítico radial novo, antes de soldar?
+  alternativas:
+    - "É o terminal do lado oposto à faixa impressa no corpo"
+    - "Tanto faz: eletrolíticos não têm polaridade"
+    - "É o terminal do lado da faixa com sinais \"−\" no corpo, e é o terminal mais curto"
+    - "É o terminal mais longo"
+  resposta: 2
+  explicacao: |
+    No eletrolítico de alumínio, a faixa com "−" marca o negativo e, numa peça nova, o terminal positivo é o mais longo. Invertido, ele aquece, estufa e pode estourar. (Depois de cortados os terminais, só a faixa vale.)
+  fonte: "Charles Platt, Make: Electronics, apresentação dos capacitores eletrolíticos; Scherz & Monk, Practical Electronics for Inventors, seção sobre capacitores (eletrolíticos)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.7.T07-002
+  objetivo: O1
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Você olha um NE555 em encapsulamento DIP-8 **de cima**, com o chanfro (meia-lua) virado para a esquerda. Onde fica o pino 8?
+  alternativas:
+    - "Na fileira de cima, na ponta da esquerda (junto ao chanfro)"
+    - "Na fileira de baixo, na ponta da direita"
+    - "Na fileira de cima, na ponta da direita"
+    - "Na fileira de baixo, na ponta da esquerda (junto ao chanfro)"
+  resposta: 0
+  explicacao: |
+    Com o chanfro à esquerda, o pino 1 fica embaixo à esquerda e a numeração corre no sentido anti-horário: 1–4 na fileira de baixo, da esquerda para a direita, e 5–8 na de cima, da direita para a esquerda. O pino 8 fica em cima à esquerda, do mesmo lado do chanfro que o pino 1. Embaixo à esquerda é o pino 1; em cima à direita, o 5; embaixo à direita, o 4.
+  fonte: "Texas Instruments, datasheet xx555 Precision Timers, seção Pin Configuration and Functions"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.7.T07-003
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Num kit THT com resistores, soquete DIP-8, capacitores cerâmicos, LEDs, um eletrolítico alto e um clipe de bateria, qual ordem de montagem é a recomendada?
+  alternativas:
+    - "Eletrolítico, LEDs, clipe de bateria, soquete e resistores"
+    - "Tanto faz a ordem, desde que todos os componentes sejam soldados no mesmo dia"
+    - "Resistores, soquete, cerâmicos, LEDs, eletrolítico e, por último, o clipe de bateria"
+    - "Clipe de bateria primeiro, para já poder testar, e depois o resto em qualquer ordem"
+  resposta: 2
+  explicacao: |
+    Do mais baixo para o mais alto: com a placa virada para soldar, os componentes baixos ficam apoiados na bancada e não caem nem entortam. Componentes altos primeiro fazem a placa "mancar" e os baixos caírem. O clipe da bateria fica por último para ninguém energizar uma placa incompleta.
+  fonte: "Adafruit Guide to Excellent Soldering, seção Preparation; instruções típicas de montagem de kits THT"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.7.T07-004
+  objetivo: O1
+  tipo: unica
+  dificuldade: 3
+  bloom: avaliar
+  enunciado: |
+    Conferindo a BOM de um kit alimentado por bateria de 9 V, você encontra o eletrolítico "C1 — 10 µF / 6,3 V", quando a lista pede 10 µF / 16 V. Qual é a decisão correta?
+  alternativas:
+    - "Não usar a peça: substituí-la por 10 µF com tensão nominal de 16 V ou mais"
+    - "Usar a peça invertida, para que ela suporte mais tensão"
+    - "Usar a peça, porque o que importa é a capacitância de 10 µF estar certa"
+    - "Usar dois capacitores de 10 µF / 6,3 V em paralelo para dobrar a tensão suportada"
+  resposta: 0
+  explicacao: |
+    O capacitor fica com até 9 V (mais, com bateria nova) — acima dos 6,3 V nominais: ele aquece, perde capacitância e pode estufar ou estourar. A tensão nominal deve superar a de trabalho com margem. Inverter destrói o eletrolítico; em **paralelo** a capacitância soma, mas a tensão suportada continua 6,3 V.
+  fonte: "Scherz & Monk, Practical Electronics for Inventors, seção sobre capacitores (tensão nominal); M0.4.T06 (capacitores reais)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.7.T07-005
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um NE555 em modo astável tem R_A = 10 kΩ, R_B = 47 kΩ e C = 10 µF. Usando f = 1,44 / ((R_A + 2·R_B)·C), qual é a frequência esperada? Responda em Hz, com 3 algarismos significativos.
+  resposta: {valor: 1.38, unidade: "Hz", tolerancia: 0.01}
+  explicacao: |
+    R_A + 2·R_B = 10 k + 94 k = 104 kΩ; × 10 µF = 1,04 s; f = 1,44 / 1,04 ≈ 1,38 Hz (período ≈ 0,72 s). Esquecer o fator 2 em R_B dá 2,53 Hz. Na prática, a tolerância de ±20 % do eletrolítico faz a frequência real variar bastante.
+  fonte: "Texas Instruments, datasheet xx555 Precision Timers, seção Astable Operation"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.7.T07-006
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    No mesmo 555 astável (R_A = 10 kΩ, R_B = 47 kΩ, C = 10 µF), com t_H = 0,693·(R_A + R_B)·C e t_L = 0,693·R_B·C, qual é o ciclo de trabalho (fração do período em nível alto)? Responda em %, com 1 casa decimal.
+  resposta: {valor: 54.8, unidade: "%", tolerancia: 0.005}
+  explicacao: |
+    D = t_H / (t_H + t_L) = (R_A + R_B) / (R_A + 2·R_B) = 57 / 104 ≈ 54,8 % (t_H ≈ 0,395 s e t_L ≈ 0,326 s). Os termos 0,693·C se cancelam. Nesta ligação o capacitor carrega por R_A + R_B e descarrega só por R_B, então D fica sempre acima de 50 %.
+  fonte: "Texas Instruments, datasheet xx555 Precision Timers, seção Astable Operation"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.7.T07-007
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    No kit da fonte regulada, um LM7805 recebe 12 V e alimenta uma carga de 150 mA em 5 V. Desprezando a corrente quiescente, qual potência o regulador dissipa? Responda em W.
+  resposta: {valor: 1.05, unidade: "W", tolerancia: 0.01}
+  explicacao: |
+    P = (V_IN − V_OUT) · I = (12 − 5) × 0,15 = 1,05 W. É esse calor que esquenta o TO-220. A potência entregue à carga é 5 × 0,15 = 0,75 W; a "eficiência" do regulador linear aqui é só 5/12 ≈ 42 %.
+  fonte: "Texas Instruments, datasheet LM340/LM7805, seção Power Dissipation (Application and Implementation)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.7.T07-008
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    O LM7805 do kit, sem dissipador, tem θ_JA = 50 °C/W (suponha esse valor). A entrada é 12 V, a saída 5 V, o ambiente dentro da caixa chega a 35 °C e você quer manter a junção em no máximo 125 °C. Desprezando a corrente quiescente, qual é a maior corrente de carga possível? Responda em mA, arredondando para o inteiro mais próximo.
+  resposta: {valor: 257, unidade: "mA", tolerancia: 0.01}
+  explicacao: |
+    Elevação permitida: 125 − 35 = 90 °C. Potência máxima: 90 / 50 = 1,8 W. Corrente: P / (V_IN − V_OUT) = 1,8 / 7 ≈ 0,257 A = 257 mA. Usar 25 °C de ambiente dá 286 mA (otimista: a caixa esquenta); dividir por 5 V (tensão de saída) dá 360 mA, errado — o que aquece é a queda de 7 V. Acima disso, dissipador ou uma entrada mais baixa.
+  fonte: "Texas Instruments, datasheet LM340/LM7805, seções Thermal Information e Power Dissipation"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.7.T07-009
+  objetivo: O3
+  tipo: vf
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: antes de ligar a placa recém-montada pela primeira vez, convém medir com o ohmímetro a resistência entre +V e GND no conector de alimentação para detectar um curto-circuito.
+  resposta: true
+  explicacao: |
+    Uma ponte de solda ou um componente invertido entre +V e GND aparece como resistência quase nula, e é muito melhor descobrir isso com o ohmímetro do que com a bateria esquentando. Com eletrolíticos na placa, a leitura começa baixa e sobe enquanto o ohmímetro os carrega — isso é normal; um curto fica parado em ≈ 0 Ω.
+  fonte: "Adafruit Guide to Excellent Soldering, seção Common Problems; Scherz & Monk, Practical Electronics for Inventors, capítulo prático (testes de montagem)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.7.T07-010
+  objetivo: O3
+  tipo: unica
+  dificuldade: 2
+  bloom: analisar
+  enunciado: |
+    O pisca-pisca não acende nenhum LED. A bateria mede 9,2 V solta, mas, com a placa ligada, o multímetro mede 0 V entre os pinos 8 e 1 do soquete do 555. Onde está o problema mais provável?
+  alternativas:
+    - "Nos resistores dos LEDs, que estão com valor alto demais"
+    - "No 555, que está queimado"
+    - "No capacitor de temporização, que está com valor errado"
+    - "No caminho da alimentação até o soquete: clipe da bateria, chave, junta fria no conector ou trilha interrompida"
+  resposta: 3
+  explicacao: |
+    Se a alimentação não chega aos pinos 8 e 1, nada depois disso importa: siga o caminho da bateria até o soquete medindo ponto a ponto (fio do clipe, junta do conector, chave, trilha). Um capacitor ou resistor errado mudaria o funcionamento, mas não zeraria a tensão no soquete; um 555 queimado não impede a tensão de aparecer nos pinos.
+  fonte: "Charles Platt, Make: Electronics, dicas de diagnóstico de montagens; roteiro M0.7.T07 (teste em etapas)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.7.T07-011
+  objetivo: O3
+  tipo: unica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    No pisca-pisca (R_A = 10 kΩ, R_B = 47 kΩ, esperado ≈ 1,4 Hz), os dois LEDs parecem acesos o tempo todo, com brilho mais fraco, e o multímetro em V DC no pino 3 mostra um valor estável perto da metade da alimentação. O CI não esquenta. Qual é a causa mais provável?
+  alternativas:
+    - "Foi montado um capacitor de 10 nF (código 103) no lugar do eletrolítico de 10 µF: o circuito oscila a ≈ 1,4 kHz, rápido demais para o olho, e o multímetro mostra a média"
+    - "O 555 está invertido no soquete"
+    - "Os dois LEDs estão invertidos"
+    - "O pino 3 está em curto com o GND"
+  resposta: 0
+  explicacao: |
+    Com C 1000 vezes menor, f = 1,44 / (104 kΩ × 10 nF) ≈ 1385 Hz. Os LEDs alternam rápido demais para o olho e parecem acesos com metade do brilho; o voltímetro DC mostra o valor médio da onda. CI invertido costuma esquentar e não acender nada direito; pino 3 em curto com o GND apagaria o LED do pino 3; LEDs invertidos não acenderiam.
+  fonte: "Texas Instruments, datasheet xx555 Precision Timers, seção Astable Operation; M0.4.T06 (código de capacitores)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.7.T07-012
+  objetivo: O3
+  tipo: unica
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    No kit da fonte com LM7805, a saída mede 5,00 V sem carga. Com a placa de teste ligada (≈ 300 mA), a saída cai para 4,1 V e a entrada, medida no pino do regulador, cai de 9,0 V para 6,2 V. Qual é o diagnóstico mais provável?
+  alternativas:
+    - "O LM7805 está com defeito, pois deveria manter 5 V com qualquer tensão de entrada"
+    - "O capacitor de saída está invertido"
+    - "A fonte de entrada não sustenta a corrente: com 6,2 V na entrada, a diferença para a saída fica abaixo do dropout (≈ 2 V) e o regulador sai de regulação"
+    - "O multímetro está com a bateria fraca, porque a leitura sem carga estava correta"
+  resposta: 2
+  explicacao: |
+    O regulador precisa de cerca de 2 V acima da saída (≥ 7 V). Com carga, a entrada despencou para 6,2 V — fonte ou bateria fraca, ou fiação resistiva — e a saída acompanha a entrada menos o dropout. O sintoma "só falha com carga, e a entrada cai junto" aponta para a alimentação, não para o regulador. Corrija a fonte de entrada (ou use um LDO).
+  fonte: "Texas Instruments, datasheet LM340/LM7805, Electrical Characteristics (Dropout voltage)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.7.T07-013
+  objetivo: O4
+  tipo: multipla
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    O que deve ser versionado no repositório GitHub do kit? Marque todos os corretos.
+  alternativas:
+    - "O esquema (PNG ou PDF) e a BOM em CSV"
+    - "As fotos da montagem e do verso da placa"
+    - "A tabela de medições com valor esperado, medido, unidade e instrumento"
+    - "A pasta `.venv` usada para rodar o script de análise"
+  resposta: [0, 1, 2]
+  explicacao: |
+    Esquema, BOM, fotos e medições são o que permite outra pessoa reproduzir e conferir o kit. O `.venv` é específico da sua máquina, pesado e recriável com `python3 -m venv` + `pip install -r requirements.txt`: vai no `.gitignore` (versione o `requirements.txt`).
+  fonte: "OSHWA, Best Practices for Open Source Hardware; Pro Git, cap. 2, seção Ignoring Files; The Python Tutorial, seção 12 (Virtual Environments and Packages)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.7.T07-014
+  objetivo: O4
+  tipo: unica
+  dificuldade: 3
+  bloom: avaliar
+  enunciado: |
+    Qual registro de frequência é o mais adequado para a tabela de medições do README do kit?
+  alternativas:
+    - "`f = 1,31 Hz (média de 5 contagens de 20 piscadas, cronômetro do celular); esperado 1,38 Hz; erro −5 %, dentro da tolerância de ±20 % do eletrolítico`"
+    - "`f = 1,3125 Hz`"
+    - "`f ≈ 1,38 Hz (calculado)`"
+    - "`Frequência: ok, pisca normal`"
+  resposta: 0
+  explicacao: |
+    O registro útil diz o valor medido com unidade, o método (quem quiser repetir sabe como), o esperado, o erro e a explicação. "Ok" não é medição; quatro casas decimais sem método sugerem uma exatidão que a contagem manual não tem; e o valor calculado não é resultado de teste.
+  fonte: "roteiro M0.7.T04 (relatório de teste); OSHWA, Best Practices for Open Source Hardware"
+  origem: ia
+  revisao: rascunho

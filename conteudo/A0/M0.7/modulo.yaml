@@ -1,37 +1,102 @@
 id: M0.7
 ato: A0
 nome: "Ferramentas do engenheiro"
+missao: "Organize a oficina da Vila da Forja: ferramentas afiadas, registros em dia e a primeira solda que não esfarela."
 horas: 100
 trilha: base
 ordem: 7
 requer: ["M0.1"]
 tags_chefe: []
+# Ordem didática: terminal → Git → Markdown (o README é o primeiro arquivo que você versiona) → Python (scripts já nascem num repositório) → inglês (datasheet antes de comprar e montar) → solda → kit, que junta tudo.
 topicos:
   - id: M0.7.T01
     nome: "Linux e terminal"
     tipo: comum
     peso: 1
+    objetivos:
+      - id: O1
+        texto: "Navegar no sistema de arquivos e criar, copiar, mover e apagar arquivos e diretórios usando caminhos absolutos e relativos"
+      - id: O2
+        texto: "Interpretar e alterar permissões de arquivos (rwx, chmod, sudo) e configurar o acesso do usuário a uma porta serial (grupo dialout)"
+      - id: O3
+        texto: "Combinar comandos com pipes, redirecionamento, grep e find, e escrever scripts bash simples com variáveis, laços e argumentos"
+      - id: O4
+        texto: "Instalar pacotes com apt, controlar processos, usar variáveis de ambiente e acessar uma porta serial (screen) e uma máquina remota (ssh)"
   - id: M0.7.T02
     nome: "Git e GitHub"
     tipo: comum
     peso: 1
-  - id: M0.7.T03
-    nome: "Python para automação e análise de dados"
-    tipo: comum
-    peso: 1
+    objetivos:
+      - id: O1
+        texto: "Criar um repositório e registrar mudanças com o ciclo add/commit, inspecionando o estado com status, log e diff"
+      - id: O2
+        texto: "Criar, trocar e mesclar branches, prevendo o resultado do merge e resolvendo conflitos"
+      - id: O3
+        texto: "Sincronizar com repositórios remotos (clone, fetch, pull, push) e colaborar no GitHub com issues e pull requests"
+      - id: O4
+        texto: "Configurar o .gitignore, escrever mensagens de commit claras e desfazer erros com segurança (restore, amend, revert)"
   - id: M0.7.T04
     nome: "Documentação técnica e Markdown"
     tipo: comum
     peso: 1
+    objetivos:
+      - id: O1
+        texto: "Escrever documentos em Markdown com títulos, listas, tabelas, links, imagens e blocos de código que renderizam corretamente no GitHub"
+      - id: O2
+        texto: "Estruturar o README de um projeto de hardware com propósito, estado, BOM, montagem, teste e licença"
+      - id: O3
+        texto: "Representar ligações e fluxos com diagramas em texto (Mermaid) e registrar decisões técnicas (ADR) com contexto, alternativas e consequências"
+      - id: O4
+        texto: "Redigir um relatório de teste reprodutível com objetivo, montagem, procedimento, critério de aceitação, resultados e conclusão"
+  - id: M0.7.T03
+    nome: "Python para automação e análise de dados"
+    tipo: comum
+    peso: 1
+    objetivos:
+      - id: O1
+        texto: "Prever a saída de programas curtos com tipos básicos, condicionais, laços e funções"
+      - id: O2
+        texto: "Manipular strings, listas e dicionários para organizar e filtrar dados de medição"
+      - id: O3
+        texto: "Ler e gravar arquivos de texto e CSV, isolar dependências com venv e pip e ler linhas de uma porta serial com pyserial"
+      - id: O4
+        texto: "Calcular média e desvio-padrão de medições, gerar um gráfico com matplotlib e automatizar um cálculo de circuitos"
   - id: M0.7.T05
     nome: "Inglês técnico (leitura de datasheet e norma)"
     tipo: comum
     peso: 1
+    objetivos:
+      - id: O1
+        texto: "Interpretar o vocabulário de datasheet (absolute maximum ratings, recommended operating conditions, typical, min/max, sink/source, pull-up, dropout, ripple)"
+      - id: O2
+        texto: "Distinguir o grau de obrigação dos verbos em normas e especificações (shall, should, may, can)"
+      - id: O3
+        texto: "Localizar parâmetros num datasheet real (LM7805, ATmega328P) e usá-los numa decisão de projeto"
+      - id: O4
+        texto: "Evitar falsos cognatos e erros de tradução comuns em textos técnicos em inglês"
   - id: M0.7.T06
     nome: "Solda THT: ferro, estanho, fluxo, inspeção"
     tipo: elite
     peso: 2
+    objetivos:
+      - id: O1
+        texto: "Escolher e preparar ferro, ponta, temperatura, liga de estanho e fluxo para soldar componentes THT"
+      - id: O2
+        texto: "Executar juntas THT aquecendo pad e terminal juntos, com a quantidade de estanho e o tempo corretos"
+      - id: O3
+        texto: "Inspecionar juntas, diagnosticar defeitos (fria, ponte, excesso, falta de estanho, pad levantado) e corrigi-los com malha e sugador"
+      - id: O4
+        texto: "Aplicar as regras de segurança da solda: fumos de fluxo, queimaduras, manuseio de chumbo e higiene"
   - id: M0.7.T07
     nome: "Primeiro kit montado e documentado"
     tipo: elite
     peso: 2
+    objetivos:
+      - id: O1
+        texto: "Planejar a montagem de um kit THT conferindo a BOM, identificando valores e polaridades e definindo a ordem de montagem"
+      - id: O2
+        texto: "Calcular o comportamento esperado do circuito do kit (frequência do 555 astável ou dissipação do 7805)"
+      - id: O3
+        texto: "Testar o kit com multímetro antes e depois de energizar e localizar falhas comparando medido com esperado"
+      - id: O4
+        texto: "Documentar o kit num repositório GitHub com README, esquema, BOM, fotos e tabela de medições"
