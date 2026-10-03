@@ -1,5 +1,11 @@
 import {
   CONFIG,
+  bonusMemoria,
+  curaPorAcerto,
+  defesaDeSkill,
+  esquivaDeSkill,
+  horasDeDescanso,
+  nv,
   danoDoGolpe,
   etapaEfetiva,
   proximaRevisao,
@@ -31,6 +37,7 @@ import { abrirFerida, agendar, demaisPendentes, feridasAbertas, fusoDo, proximaP
 import { DIA_MS, inicioDoDia } from '../tempo';
 import { adaptacaoDe, fase, revisoesJogaveis, topicoDaFase, type LinhaModulo } from './mapa';
 import { darXp, evento, nivelAtual, type Ganho } from './personagem';
+import { gastarEnergia, ganharEnergia, niveis as niveisSkill } from './skills';
 
 type Tipo = 'combate' | 'chefe' | 'fantasma';
 
@@ -59,12 +66,21 @@ interface Plano {
   etapa?: number;
   ferida?: boolean;
   minAcertos?: number;
+  esquiva?: number;
+  sorte?: number;
+  cura?: number;
+  niveisAtivas?: Record<string, number>;
 }
 
 interface Estado {
   vida: number;
   proxima: number;
   acertos: number;
+  sorte?: number; // rerrolagens que sobram
+  escudo?: number | null; // ordem da questão com escudo armado
+  usos?: Record<string, number>;
+  cortes?: Record<string, number[]>; // ordem → índices ocultos na tela
+  ajudas?: number[]; // ordens com ajuda
 }
 
 interface LinhaTentativa {
@@ -160,7 +176,7 @@ function montarItem(ctx: Contexto, q: QuestaoPool): ItemPlano {
 }
 
 // O que vai para a tela: nunca gabarito nem explicação (D004).
-function vistaQuestao(ctx: Contexto, plano: Plano, ordem: number) {
+function vistaQuestao(ctx: Contexto, plano: Plano, ordem: number, estado?: Estado) {
   const item = plano.questoes[ordem]!;
   const q = questao(ctx, item.id);
   const dados = JSON.parse(q.dados) as { alternativas?: string[]; unidade?: string };
@@ -174,6 +190,8 @@ function vistaQuestao(ctx: Contexto, plano: Plano, ordem: number) {
     unidade: dados.unidade,
     dificuldade: q.dificuldade,
     rascunho: q.revisao !== 'revisada',
+    ocultas: estado?.cortes?.[String(ordem)] ?? [],
+    escudo: estado?.escudo === ordem,
   };
 }
 
@@ -213,13 +231,13 @@ export function iniciar(ctx: Contexto, uid: number, tipo: Tipo, alvoId: string) 
   const plano =
     tipo === 'combate' ? planejarCombate(ctx, uid, alvoId) : tipo === 'chefe' ? planejarChefe(ctx, uid, alvoId) : planejarFantasma(ctx, uid, alvoId);
   return transacao(ctx.db, () => {
-    const estado: Estado = { vida: plano.vidaMax, proxima: 0, acertos: 0 };
+    const estado: Estado = { vida: plano.vidaMax, proxima: 0, acertos: 0, sorte: plano.sorte ?? 0, escudo: null, usos: {}, cortes: {}, ajudas: [] };
     const r = exec(ctx.db, `INSERT INTO tentativa (usuario_id, tipo, alvo_id, revanche, variante_id, plano, estado, inicio, total)
       VALUES (:uid, :tipo, :alvo, :rev, :var, :plano, :estado, :inicio, :total)`, {
       uid, tipo, alvo: alvoId, rev: plano.revanche, var: tipo === 'chefe' ? 'guardiao' : null,
       plano: JSON.stringify(plano), estado: JSON.stringify(estado), inicio: ctx.agora().toISOString(), total: plano.questoes.length,
     });
-    return { tentativaId: r.lastInsertRowid, ...publicoDoPlano(plano), vida: estado.vida, questao: vistaQuestao(ctx, plano, 0) };
+    return { tentativaId: r.lastInsertRowid, ...publicoDoPlano(plano), vida: estado.vida, questao: vistaQuestao(ctx, plano, 0, estado) };
   });
 }
 
@@ -228,6 +246,7 @@ function publicoDoPlano(p: Plano) {
     tipo: p.tipo, alvoNome: p.alvoNome, moduloId: p.moduloId, trilha: p.trilha, elite: Boolean(p.elite), total: p.questoes.length, poder: p.poder, vidaMax: p.vidaMax,
     defesa: p.defesa, perfuracao: p.perfuracao, adaptacao: p.adaptacao, revanche: p.revanche, piso: p.piso,
     fantasma: p.tipo === 'fantasma' ? { etapa: p.etapa ?? 0, ferida: Boolean(p.ferida), minAcertos: p.minAcertos ?? 0 } : null,
+    skills: p.tipo === 'fantasma' ? null : { esquiva: p.esquiva ?? 0, sorte: p.sorte ?? 0, cura: p.cura ?? 0, corte: p.niveisAtivas?.corte ?? 0, escudo: p.niveisAtivas?.escudo ?? 0 },
     variante: p.tipo === 'chefe' ? { id: 'guardiao', nome: 'O Guardião', regra: 'Prova direta. Chegue vivo ao fim com pelo menos 60% de acerto.' } : null,
   };
 }
@@ -263,14 +282,16 @@ function planejarCombate(ctx: Contexto, uid: number, topicoId: string): Plano {
     rng: ctx.rng,
   });
   if (qs.length < CONFIG.combate.questoes) throw new ErroApp(409, 'sem_questoes', 'Este inimigo ainda não tem questões suficientes.');
+  const sk = niveisSkill(ctx, uid);
   return {
+    ...efeitosDeSkill(sk, poderDaFase(m.horas_antes, { elite: linha.tipo === 'elite', adaptacao })),
     tipo: 'combate',
     alvoNome: linha.nome,
     moduloId: m.id,
     questoes: qs.map((q) => montarItem(ctx, q)),
     poder: poderDaFase(m.horas_antes, { elite: linha.tipo === 'elite', adaptacao }),
-    vidaMax: vidaMaxima(nivelAtual(ctx, uid)),
-    defesa: defesaTotal(0, defesaDePreparo(resumo.estudadoSeg, resumo.minimoSeg)),
+    vidaMax: vidaMaxima(nivelAtual(ctx, uid), nv(sk, 'vitalidade')),
+    defesa: defesaTotal(defesaDeSkill(sk), defesaDePreparo(resumo.estudadoSeg, resumo.minimoSeg)),
     perfuracao: perfuracao(adaptacao),
     adaptacao,
     revanche,
@@ -311,19 +332,30 @@ function planejarChefe(ctx: Contexto, uid: number, moduloId: string): Plano {
     fraquezaObjetivo: new Map([...desObj].map(([k, d]) => [k, fraqueza(d)])),
     rng: ctx.rng,
   });
+  const sk = niveisSkill(ctx, uid);
   return {
+    ...efeitosDeSkill(sk, poderDaFase(m.horas_antes, { adaptacao })),
     tipo: 'chefe',
     alvoNome: `O Guardião — ${m.nome}`,
     moduloId,
     questoes: qs.map((q) => montarItem(ctx, q)),
     poder: poderDaFase(m.horas_antes, { adaptacao }),
-    vidaMax: vidaDeBatalha(vidaMaxima(nivelAtual(ctx, uid)), qs.length),
-    defesa: 0,
+    vidaMax: vidaDeBatalha(vidaMaxima(nivelAtual(ctx, uid), nv(sk, 'vitalidade')), qs.length),
+    defesa: defesaTotal(defesaDeSkill(sk), 0),
     perfuracao: perfuracao(adaptacao),
     adaptacao,
     revanche,
     piso: CONFIG.chefe.piso,
     trilha: m.trilha,
+  };
+}
+
+function efeitosDeSkill(sk: Record<string, number>, poder: number) {
+  return {
+    esquiva: esquivaDeSkill(sk),
+    sorte: nv(sk, 'sorte'),
+    cura: curaPorAcerto(sk, poder),
+    niveisAtivas: { corte: nv(sk, 'corte'), escudo: nv(sk, 'escudo') },
   };
 }
 
@@ -379,19 +411,38 @@ export function responder(ctx: Contexto, uid: number, id: number, ordem: number,
     gravarDesempenho(ctx, uid, 'topico', q.topico_id, correta);
     gravarDesempenho(ctx, uid, 'objetivo', q.objetivo_id, correta);
 
-    let golpe: { dado: number; dano: number; vidaAntes: number; vida: number } | null = null;
-    if (correta) estado.acertos += 1;
-    else if (plano.tipo !== 'fantasma') {
-      const dado = ctx.dado();
-      const dano = danoDoGolpe({ dado, poder: plano.poder, defesa: plano.defesa, perfuracao: plano.perfuracao });
+    let golpe: { dado: number; dano: number; vidaAntes: number; vida: number; esquivou?: boolean; escudo?: boolean; sorte?: number[] } | null = null;
+    let cura = 0;
+    if (correta) {
+      estado.acertos += 1;
+      if (plano.cura && plano.tipo !== 'fantasma') {
+        const antes = estado.vida;
+        estado.vida = Math.min(plano.vidaMax, Math.round((estado.vida + plano.cura) * 10) / 10);
+        cura = Math.round((estado.vida - antes) * 10) / 10;
+      }
+    } else if (plano.tipo !== 'fantasma') {
       const vidaAntes = estado.vida;
+      const detalhe: { esquivou?: boolean; escudo?: boolean; sorte?: number[] } = {};
+      let dado = ctx.dado();
+      // Perfuração também atravessa a esquiva (D015).
+      const esquiva = (plano.esquiva ?? 0) * (1 - plano.perfuracao);
+      if (estado.escudo === ordem) detalhe.escudo = true;
+      else if (esquiva > 0 && ctx.rng() < esquiva) detalhe.esquivou = true;
+      else if (dado >= 4 && (estado.sorte ?? 0) > 0) {
+        const outro = ctx.dado();
+        detalhe.sorte = [dado, outro];
+        dado = Math.min(dado, outro);
+        estado.sorte = (estado.sorte ?? 0) - 1;
+      }
+      const dano = detalhe.escudo || detalhe.esquivou ? 0 : danoDoGolpe({ dado, poder: plano.poder, defesa: plano.defesa, perfuracao: plano.perfuracao });
       estado.vida = Math.max(0, Math.round((estado.vida - dano) * 10) / 10);
-      golpe = { dado, dano, vidaAntes, vida: estado.vida };
-      exec(ctx.db, `INSERT INTO golpe (tentativa_id, ordem, dado, poder, defesa, perfuracao, dano, vida_depois)
-        VALUES (:t, :o, :d, :p, :def, :perf, :dano, :v)`, {
-        t: id, o: ordem, d: dado, p: plano.poder, def: plano.defesa, perf: plano.perfuracao, dano, v: estado.vida,
+      golpe = { dado, dano, vidaAntes, vida: estado.vida, ...detalhe };
+      exec(ctx.db, `INSERT INTO golpe (tentativa_id, ordem, dado, poder, defesa, perfuracao, dano, vida_depois, detalhe)
+        VALUES (:t, :o, :d, :p, :def, :perf, :dano, :v, :det)`, {
+        t: id, o: ordem, d: dado, p: plano.poder, def: plano.defesa, perf: plano.perfuracao, dano, v: estado.vida, det: JSON.stringify(detalhe),
       });
     }
+    if (estado.escudo === ordem) estado.escudo = null;
     estado.proxima += 1;
     exec(ctx.db, 'UPDATE tentativa SET estado = :e, acertos = :a WHERE id = :id', { e: JSON.stringify(estado), a: estado.acertos, id });
 
@@ -402,11 +453,12 @@ export function responder(ctx: Contexto, uid: number, id: number, ordem: number,
       explicacao: q.explicacao_md,
       fonte: q.fonte,
       golpe,
+      cura,
       vida: estado.vida,
       vidaMax: plano.vidaMax,
       acertos: estado.acertos,
       fim: acabou ? finalizar(ctx, uid, t, plano, estado) : null,
-      proxima: acabou ? null : vistaQuestao(ctx, plano, estado.proxima),
+      proxima: acabou ? null : vistaQuestao(ctx, plano, estado.proxima, estado),
     };
   });
 }
@@ -447,7 +499,8 @@ function finalizar(ctx: Contexto, uid: number, t: LinhaTentativa, plano: Plano, 
     }
     if (vitoria) {
       const noPrazo = agora.getTime() < new Date(rev.vence_em).getTime() + DIA_MS;
-      xp = noPrazo ? CONFIG.xp.fantasmaNoDia : CONFIG.xp.fantasmaAtrasado;
+      xp = (noPrazo ? CONFIG.xp.fantasmaNoDia : CONFIG.xp.fantasmaAtrasado) * bonusMemoria(niveisSkill(ctx, uid));
+      if (noPrazo) ganharEnergia(ctx, uid, CONFIG.energia.fantasma);
     }
     revisao = { passou: vitoria, proximaEm, concluido, consolidado };
   } else if (plano.tipo === 'combate') {
@@ -481,9 +534,12 @@ function finalizar(ctx: Contexto, uid: number, t: LinhaTentativa, plano: Plano, 
         mudarAdaptacao(ctx, uid, t.alvo_id, 0);
       }
     } else if (!plano.revanche) {
-      exec(ctx.db, 'UPDATE progresso_modulo SET cooldown_ate = :ate WHERE usuario_id = :uid AND modulo_id = :m', {
-        ate: new Date(agora.getTime() + CONFIG.chefe.cooldownHoras * 3_600_000).toISOString(), uid, m: t.alvo_id,
-      });
+      // Descanso de 48 h só a partir da 2ª derrota seguida (★★) — D020.
+      if (plano.adaptacao + 1 >= CONFIG.chefe.cooldownAPartirDeAdaptacao) {
+        exec(ctx.db, 'UPDATE progresso_modulo SET cooldown_ate = :ate WHERE usuario_id = :uid AND modulo_id = :m', {
+          ate: new Date(agora.getTime() + horasDeDescanso(niveisSkill(ctx, uid)) * 3_600_000).toISOString(), uid, m: t.alvo_id,
+        });
+      }
       // Feridas: cada tema errado vira fantasma imediato.
       for (const { topico_id } of todos<{ topico_id: string }>(ctx.db, `SELECT DISTINCT q.topico_id FROM resposta r JOIN questao q ON q.id = r.questao_id
         WHERE r.tentativa_id = :t AND r.correta = 0`, { t: t.id })) abrirFerida(ctx, uid, topico_id);
@@ -523,5 +579,59 @@ export function emCurso(ctx: Contexto, uid: number) {
   if (!t) return null;
   const plano = JSON.parse(t.plano) as Plano;
   const estado = JSON.parse(t.estado) as Estado;
-  return { tentativaId: t.id, alvoId: t.alvo_id, ...publicoDoPlano(plano), vida: estado.vida, acertos: estado.acertos, questao: vistaQuestao(ctx, plano, estado.proxima) };
+  return { tentativaId: t.id, alvoId: t.alvo_id, ...publicoDoPlano(plano), vida: estado.vida, acertos: estado.acertos, questao: vistaQuestao(ctx, plano, estado.proxima, estado) };
 }
+
+// ---------------------------------------------------------------------------
+// Skills ativas: Corte e Escudo. Nunca revelam a resposta; tudo fica registrado.
+
+export function usarSkill(ctx: Contexto, uid: number, id: number, skill: 'corte' | 'escudo', ordem: number) {
+  return transacao(ctx.db, () => {
+    const t = tentativa(ctx, uid, id);
+    if (t.resultado !== 'em_curso') throw new ErroApp(409, 'luta_encerrada', 'Essa luta já terminou.');
+    const plano = JSON.parse(t.plano) as Plano;
+    const estado = JSON.parse(t.estado) as Estado;
+    if (plano.tipo === 'fantasma') throw new ErroApp(409, 'sem_skill_fantasma', 'Fantasmas não aceitam skills: a revisão prova o que ficou.');
+    if (ordem !== estado.proxima) throw new ErroApp(409, 'ordem_errada', 'Só dá para usar skill na questão atual.');
+    const nivel = plano.niveisAtivas?.[skill] ?? 0;
+    if (!nivel) throw new ErroApp(409, 'skill_sem_nivel', 'Você ainda não tem essa skill.');
+    estado.usos ??= {};
+    estado.cortes ??= {};
+    estado.ajudas ??= [];
+    const novaAjuda = !estado.ajudas.includes(ordem);
+    if (plano.tipo === 'chefe' && novaAjuda && estado.ajudas.length + 1 > Math.floor(plano.questoes.length * CONFIG.energia.ajudaMaxChefe)) {
+      throw new ErroApp(409, 'ajuda_limite', 'Limite de ajuda do chefe atingido (20% das questões).');
+    }
+    let resposta: { ocultar?: number[]; escudo?: boolean } = {};
+    if (skill === 'corte') {
+      const item = plano.questoes[ordem]!;
+      if (!item.perm) throw new ErroApp(409, 'corte_invalido', 'Corte só funciona em questões com alternativas.');
+      if (estado.cortes[String(ordem)]?.length) throw new ErroApp(409, 'corte_usado', 'Corte já usado nesta questão.');
+      const q = questao(ctx, item.id);
+      const g = JSON.parse(q.gabarito) as number | number[];
+      const certas = new Set((Array.isArray(g) ? g : [g]).map((i) => item.perm!.indexOf(i)));
+      const erradas = embaralhar(item.perm.map((_, i) => i).filter((i) => !certas.has(i)), ctx.rng);
+      const quantas = nivel >= 3 && item.perm.length >= 5 ? 2 : 1;
+      // Nunca deixa só as certas: sobram pelo menos 2 alternativas e 1 errada.
+      const ocultar = erradas.slice(0, Math.min(quantas, erradas.length - 1, item.perm.length - 2));
+      if (!ocultar.length) throw new ErroApp(409, 'corte_invalido', 'Não há alternativa para cortar aqui.');
+      estado.cortes[String(ordem)] = ocultar;
+      resposta = { ocultar };
+    } else {
+      if ((estado.usos.escudo ?? 0) >= nivel) throw new ErroApp(409, 'escudo_esgotado', `Escudo já usado ${nivel} vez(es) nesta luta.`);
+      if (estado.escudo === ordem) throw new ErroApp(409, 'escudo_armado', 'O escudo já está armado nesta questão.');
+      estado.escudo = ordem;
+      resposta = { escudo: true };
+    }
+    const sobra = gastarEnergia(ctx, uid, SKILLS_ENERGIA[skill]);
+    estado.usos[skill] = (estado.usos[skill] ?? 0) + 1;
+    if (novaAjuda) estado.ajudas.push(ordem);
+    exec(ctx.db, 'UPDATE tentativa SET estado = :e WHERE id = :id', { e: JSON.stringify(estado), id });
+    exec(ctx.db, 'INSERT INTO uso_skill (usuario_id, skill_id, tentativa_id, ordem, em) VALUES (:uid, :s, :t, :o, :em)', {
+      uid, s: skill, t: id, o: ordem, em: ctx.agora().toISOString(),
+    });
+    return { ...resposta, energia: Math.round(sobra * 10) / 10 };
+  });
+}
+
+const SKILLS_ENERGIA = { corte: 2, escudo: 3 } as const;

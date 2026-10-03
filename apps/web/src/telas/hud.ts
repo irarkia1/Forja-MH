@@ -15,7 +15,8 @@ export function hud(): { el: HTMLElement; destruir: () => void } {
         barra('xp', p.xpFaixa / p.xpProximo, 'Experiência'),
         h('span.mudo', {}, `${p.xpFaixa.toLocaleString('pt-BR')}/${p.xpProximo.toLocaleString('pt-BR')}`),
       ),
-      h('div.grupo', { title: 'Vida máxima (6 + nível − 1)' }, '❤', h('b', {}, String(p.vida))),
+      h('div.grupo', { title: 'Vida máxima' }, '❤', h('b', {}, String(p.vida))),
+      h('div.grupo', { title: 'Energia: gasta nas skills ativas; recarrega com fantasmas, notas e laboratório', style: 'color:var(--energia)' }, '⚡', h('b', {}, `${num(p.energia)}/${p.energiaMax}`)),
       fantasmas ? h('a.grupo', { href: '#/mundo', title: 'Fantasmas (revisões) para hoje', style: 'color:var(--energia);text-decoration:none' }, '👻', h('b', {}, String(fantasmas)), h('span.mudo', {}, 'revisões hoje')) : null,
       h('div.grupo', { title: 'Horas válidas nos últimos 7 dias' },
         '⏱', h('b', {}, `${num(p.horasSemana)}h`), h('span.mudo', {}, `/ ${p.metaSemana}h na semana`),
@@ -25,6 +26,7 @@ export function hud(): { el: HTMLElement; destruir: () => void } {
         h('span.mudo', {}, p.proximoMarco ? `${num(p.horasTotais)} / ${p.proximoMarco.toLocaleString('pt-BR')} h` : `${num(p.horasTotais)} h`),
       ),
       h('div.espaco'),
+      h('a.btn', { href: '#/skills', style: 'text-decoration:none' + (p.pontosLivres > 0 ? ';border-color:var(--destaque);color:var(--destaque)' : '') }, '✨ Skills', p.pontosLivres > 0 ? h('span.selo', { style: 'color:var(--destaque);border-color:var(--destaque)' }, String(p.pontosLivres)) : null),
       eu()?.papel === 'admin' ? h('a.btn', { href: '#/admin', style: 'border-style:dashed;border-color:var(--energia);color:var(--energia);text-decoration:none' }, '🔧 Admin') : null,
       fatorTempo > 1 ? h('span.selo.dev', { title: 'Modo de desenvolvimento: cada segundo conta mais' }, `DEV ×${fatorTempo}`) : null,
       h('button.btn.fantasma', {

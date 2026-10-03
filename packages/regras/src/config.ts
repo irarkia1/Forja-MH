@@ -34,6 +34,7 @@ export const CONFIG = {
     divisorVida: 7,
     piso: 0.6,
     cooldownHoras: 48,
+    cooldownAPartirDeAdaptacao: 2, // 1ª derrota: sem descanso; ★★ em diante: 48 h
   },
   xp: {
     inimigoBase: 100,
@@ -53,6 +54,7 @@ export const CONFIG = {
     faixas: 5,
     baseXp: 100,
     xpPorHoraReferencia: 85,
+    xpPorMinuto: 1,
     pontosPorNivel: 2,
   },
   adaptacao: {
@@ -65,6 +67,14 @@ export const CONFIG = {
     dificilBase: 0.3,
     dificilPorNivel: 0.04,
     dificilMax: 0.5,
+  },
+  energia: {
+    max: 10,
+    inicial: 5,
+    fantasma: 1,
+    evidencia: 3,
+    nota: 0.5,
+    ajudaMaxChefe: 0.2, // no chefe, no máximo 20% das questões com ajuda
   },
   fraqueza: {
     meiaVidaDias: 30,

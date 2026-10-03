@@ -17,6 +17,7 @@ import { fase, mapa } from './servicos/mapa';
 import { resumo, salvarPosicao } from './servicos/personagem';
 import { um } from './db';
 import * as provas from './servicos/provas';
+import * as skills from './servicos/skills';
 
 const COOKIE = 'forja_sessao';
 
@@ -152,6 +153,12 @@ export async function criarApp(o: OpcoesApp): Promise<{ app: FastifyInstance; ct
       a.post('/api/admin/zerar', async (req) => admin.zerarProgresso(ctx, req.usuarioId));
     });
 
+    r.get('/api/skills', async (req) => skills.listar(ctx, req.usuarioId));
+    r.post('/api/skills/:id/evoluir', async (req) => skills.evoluir(ctx, req.usuarioId, Id.parse(req.params).id));
+    r.post('/api/tentativas/:id/skill', async (req) => {
+      const b = z.object({ skill: z.enum(['corte', 'escudo']), ordem: z.number().int().min(0) }).parse(req.body);
+      return provas.usarSkill(ctx, req.usuarioId, IdNum.parse(req.params).id, b.skill, b.ordem);
+    });
     r.post('/api/tentativas/:id/desistir', async (req) => provas.desistir(ctx, req.usuarioId, IdNum.parse(req.params).id));
   });
 

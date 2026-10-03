@@ -40,7 +40,10 @@ export interface Personagem {
   xpTotal: number;
   vida: number;
   defesa: number;
+  energia: number;
+  energiaMax: number;
   pontosSkill: number;
+  pontosLivres: number;
   horasTotais: number;
   horasSemana: number;
   metaSemana: number;
@@ -78,6 +81,7 @@ export interface DetalheTopico extends TopicoFase {
 export interface QuestaoTela {
   ordem: number; total: number; id: string; tipo: 'unica' | 'multipla' | 'vf' | 'numerica';
   enunciado: string; alternativas?: string[]; unidade?: string; dificuldade: number; rascunho: boolean;
+  ocultas: number[]; escudo: boolean;
 }
 export interface Ganho { xp: number; niveisGanhos: number; marcos: number; nivel: number }
 export interface Luta {
@@ -85,6 +89,7 @@ export interface Luta {
   poder: number; vidaMax: number; defesa: number; perfuracao: number; adaptacao: number; revanche: boolean; piso: number;
   variante: { id: string; nome: string; regra: string } | null; vida: number; acertos?: number; questao: QuestaoTela;
   fantasma: { etapa: number; ferida: boolean; minAcertos: number } | null;
+  skills: { esquiva: number; sorte: number; cura: number; corte: number; escudo: number } | null;
 }
 export interface Fim {
   resultado: 'vitoria' | 'derrota'; motivo: 'vida' | 'piso' | 'fuga' | null; critico: boolean; acertos: number;
@@ -93,7 +98,8 @@ export interface Fim {
 }
 export interface Retorno {
   correta: boolean; gabarito: unknown; explicacao: string; fonte: string;
-  golpe: { dado: number; dano: number; vidaAntes: number; vida: number } | null;
+  golpe: { dado: number; dano: number; vidaAntes: number; vida: number; esquivou?: boolean; escudo?: boolean; sorte?: number[] } | null;
+  cura: number;
   vida: number; vidaMax: number; acertos: number; fim: Fim | null; proxima: QuestaoTela | null;
 }
 export interface Eu { personagem: Personagem; luta: Luta | null; sessao: string | null; fantasmasHoje: number; papel: 'jogador' | 'admin'; dev?: { fatorTempo: number } }
@@ -101,3 +107,10 @@ export interface Fantasmas {
   hoje: { topicoId: string; nome: string; moduloId: string; tipo: 'agenda' | 'ferida'; etapa: number; atrasoDias: number }[];
   proximos: { topicoId: string; nome: string; etapa: number; venceEm: string }[];
 }
+
+export interface SkillTela {
+  id: string; ramo: 'guerreiro' | 'estudioso' | 'estrategista' | 'explorador'; nome: string; efeito: string;
+  nivelMax: number; nivel: number; energia?: number; pronta: boolean; podeEvoluir: boolean; custoProximo: number | null; motivo: string | null;
+  requer?: { skill: string; nivel: number }[];
+}
+export interface ArvoreSkills { pontos: { total: number; gastos: number; livres: number }; energia: { atual: number; max: number }; skills: SkillTela[] }

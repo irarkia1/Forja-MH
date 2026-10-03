@@ -1,9 +1,10 @@
-import { CONFIG } from '@forja/regras';
+import { CONFIG, bonusFerreiro, bonusFoco } from '@forja/regras';
 import { exec, todos, transacao, um } from '../db';
 import type { Contexto } from '../contexto';
 import { ErroApp, naoEncontrado } from '../erros';
 import { topicoDaFase, progressoTopico } from './mapa';
 import { darXp, sincronizarHoras } from './personagem';
+import { ganharEnergia, niveis } from './skills';
 
 // Cronômetro com a autoridade no servidor (D004, ESTUDO-E-REVISAO.md).
 
@@ -59,6 +60,10 @@ function avancar(ctx: Contexto, s: LinhaSessao, visivel: boolean, agora: Date): 
 
 function consolidar(ctx: Contexto, s: LinhaSessao, agora: Date): void {
   if (s.pendente_seg > 0) {
+    // 1 XP por minuto válido; Foco Profundo dá bônus em sessões de 50 min ou mais.
+    const minutos = Math.floor((s.segundos_validos + s.pendente_seg) / 60) - Math.floor(s.segundos_validos / 60);
+    const foco = s.segundos_validos + s.pendente_seg >= 50 * 60 ? bonusFoco(niveis(ctx, s.usuario_id)) : 1;
+    if (minutos > 0) darXp(ctx, s.usuario_id, minutos * CONFIG.curva.xpPorMinuto * foco, 'estudo');
     exec(ctx.db, 'UPDATE progresso_topico SET segundos_estudo = segundos_estudo + :s WHERE usuario_id = :uid AND topico_id = :t', {
       s: s.pendente_seg, uid: s.usuario_id, t: s.topico_id,
     });
@@ -181,6 +186,7 @@ export function salvarNota(ctx: Contexto, uid: number, topicoId: string, texto: 
     exec(ctx.db, 'UPDATE progresso_topico SET nota = :n, nota_em = :em WHERE usuario_id = :uid AND topico_id = :t', {
       n: limpo, em: ctx.agora().toISOString(), uid, t: topicoId,
     });
+    if (primeira) ganharEnergia(ctx, uid, CONFIG.energia.nota);
     return { ganho: primeira ? darXp(ctx, uid, CONFIG.xp.nota, 'nota') : null };
   });
 }
@@ -194,6 +200,8 @@ export function adicionarEvidencia(ctx: Contexto, uid: number, topicoId: string,
     exec(ctx.db, 'INSERT INTO evidencia (usuario_id, topico_id, descricao_md, link, criada_em) VALUES (:uid, :t, :d, :l, :em)', {
       uid, t: topicoId, d: descricao.trim(), l: link, em: ctx.agora().toISOString(),
     });
-    return { ganho: ja?.n ? null : darXp(ctx, uid, CONFIG.xp.evidencia, 'evidencia') };
+    if (ja?.n) return { ganho: null };
+    ganharEnergia(ctx, uid, CONFIG.energia.evidencia);
+    return { ganho: darXp(ctx, uid, CONFIG.xp.evidencia * bonusFerreiro(niveis(ctx, uid)), 'evidencia') };
   });
 }

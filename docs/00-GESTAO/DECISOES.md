@@ -226,3 +226,22 @@ descanso do chefe e revanches), XP, adaptação, ver a resposta da questão
 atual e zerar. Fora de produção nasce a conta `teste` (admin).
 **Consequências.** O D004 (gabarito nunca sai antes da resposta) continua
 valendo para jogadores; a exceção é só para admin, que existe para testar.
+
+## D020 — Chefe só descansa a partir da 2ª derrota seguida
+**Data:** 2026-10-03 · **Status:** aceita (pedido do Matheus)
+
+Na 1ª derrota (★) o chefe não descansa: basta curar as feridas. O descanso de
+48 h (menos 8 h por nível de Recuperação) só vale quando ele chega a ★★, ou
+seja, na 2ª derrota seguida. Substitui a regra de 48 h em toda derrota.
+
+## D021 — Skills: o que entra agora e o que fica para depois
+**Data:** 2026-10-03 · **Status:** aceita
+
+Prontas: todo o ramo Guerreiro, todo o Estudioso, e Corte e Escudo no
+Estrategista. **Corte vira a raiz do Estrategista** (antes dependia da Lupa),
+e Escudo exige Corte nv. 1. Lupa (precisa de dicas escritas por questão),
+Segunda Chance, Rascunho e o ramo Explorador (depende das variantes de chefe)
+ficam marcadas "em breve". A Sorte age sozinha: dado 4 ou mais rola de novo e
+fica o menor. Energia começa em 5 (máx. 10 + 2 por Vigor).
+Junto: estudar passou a dar o XP de 1 por minuto que o BALANCEAMENTO previa
+(antes só vitórias davam XP).

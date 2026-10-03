@@ -1,5 +1,9 @@
 import {
   CONFIG,
+  defesaDeSkill,
+  energiaMaxima,
+  nv,
+  pontosGastos,
   aplicarHoras,
   custoProximoNivel,
   ganharXp,
@@ -9,6 +13,7 @@ import {
 } from '@forja/regras';
 import { exec, um } from '../db';
 import type { Contexto } from '../contexto';
+import { niveis as niveisSkill } from './skills';
 
 interface LinhaPersonagem {
   nivel: number;
@@ -84,15 +89,20 @@ export function resumo(ctx: Contexto, uid: number) {
     uid, desde: seteDias,
   });
   const proximoMarco = e.faixa < CONFIG.curva.faixas - 1 ? (e.faixa + 1) * CONFIG.curva.faixaHoras : null;
+  const sk = niveisSkill(ctx, uid);
+  const energia = um<{ energia: number }>(ctx.db, 'SELECT energia FROM personagem WHERE usuario_id = :uid', { uid })?.energia ?? 0;
   return {
     nivel: e.nivel,
     faixa: e.faixa + 1,
     xpFaixa: e.xpFaixa,
     xpProximo: custoProximoNivel(e),
     xpTotal: e.xpTotal,
-    vida: vidaMaxima(e.nivel),
-    defesa: 0,
+    vida: vidaMaxima(e.nivel, nv(sk, 'vitalidade')),
+    defesa: defesaDeSkill(sk),
+    energia: Math.min(energia, energiaMaxima(sk)),
+    energiaMax: energiaMaxima(sk),
     pontosSkill: pontosDeSkill(e.nivel),
+    pontosLivres: pontosDeSkill(e.nivel) - pontosGastos(sk),
     horasTotais: Math.round(horas * 100) / 100,
     horasSemana: Math.round(((semana?.s ?? 0) / 3600) * 100) / 100,
     metaSemana: 20,

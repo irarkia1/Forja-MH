@@ -171,7 +171,7 @@ describe('combate', () => {
     dado = 6; // poder 1, vida 6 → um golpe de 6 derruba
     const { ultima } = await lutar('combate', 'M0.1.T01', () => false);
     expect(ultima.golpe).toMatchObject({ dado: 6, dano: 6, vida: 0 });
-    expect(ultima.fim).toMatchObject({ resultado: 'derrota', motivo: 'vida', respondidas: 1, adaptacaoNova: 1 });
+    expect(ultima.fim).toMatchObject({ resultado: 'derrota', motivo: 'vida', adaptacaoNova: 1 }); // estudar dá XP: mais vida, aguenta mais de um golpe
     const t = (await chamar('GET', '/api/modulos/M0.1')).json.topicos[0];
     expect(t.estado).toBe('em_estudo');
     expect(t.exigidoSeg).toBe(MINIMO + 0.2 * MINIMO);
@@ -224,15 +224,26 @@ describe('chefe', () => {
     expect(m.modulos.find((x: any) => x.id === 'M0.2').estado).toBe('em_preparo');
   });
 
-  it('abaixo do piso: derrota, cooldown de 48 h e adaptação', async () => {
+  it('abaixo do piso: 1ª derrota sem descanso; ★★ (2ª seguida) descansa 48 h', async () => {
     await liberarChefe();
     dado = 0;
-    const { ultima } = await lutar('chefe', 'M0.1', (i) => i < 7); // 7/13 = 53,8%
-    expect(ultima.fim).toMatchObject({ resultado: 'derrota', motivo: 'piso' });
+    const curar = async () => {
+      for (let i = 0; i < 20; i++) {
+        const hoje = (await chamar('GET', '/api/fantasmas')).json.hoje;
+        if (!hoje.length) break;
+        await lutar('fantasma', hoje[0].topicoId, () => true);
+      }
+    };
+    const a = await lutar('chefe', 'M0.1', (i) => i < 7); // 7/13 = 53,8%
+    expect(a.ultima.fim).toMatchObject({ resultado: 'derrota', motivo: 'piso', adaptacaoNova: 1 });
+    expect((await chamar('GET', '/api/modulos/M0.1')).json.chefe).toMatchObject({ cooldownAte: null, adaptacao: 1, perfuracao: 0.1 });
+    await curar();
+    const b = await lutar('chefe', 'M0.1', (i) => i < 7);
+    expect(b.ultima.fim).toMatchObject({ resultado: 'derrota', adaptacaoNova: 2 });
+    await curar();
     expect((await chamar('POST', '/api/tentativas', { tipo: 'chefe', alvo_id: 'M0.1' })).json.erro).toBe('chefe_cooldown');
     andar(48 * 3600 + 1);
-    const f = (await chamar('GET', '/api/modulos/M0.1')).json;
-    expect(f.chefe).toMatchObject({ estado: 'liberado', adaptacao: 1, perfuracao: 0.1 });
+    expect((await chamar('GET', '/api/modulos/M0.1')).json.chefe).toMatchObject({ estado: 'liberado', adaptacao: 2 });
   });
 
   it('prova retoma depois de fechar o navegador', async () => {
@@ -334,5 +345,43 @@ describe('modo admin', () => {
     const eu = (await chamar('GET', '/api/eu')).json;
     expect(eu.personagem).toMatchObject({ nivel: 1, horasTotais: 0 });
     expect((await chamar('GET', '/api/mapa')).json.modulos.find((x: any) => x.id === 'M0.1').estado).toBe('disponivel');
+  });
+});
+
+describe('skills', () => {
+  it('estudar dá 1 XP por minuto e pontos de skill', async () => {
+    await estudar('M0.1.T01', 3600);
+    const p = (await chamar('GET', '/api/eu')).json.personagem;
+    expect(p.xpTotal).toBe(60);
+    expect(p.energia).toBe(5);
+  });
+
+  it('evoluir respeita pontos e pré-requisitos; Vitalidade aumenta a vida', async () => {
+    await estudar('M0.1.T01', MINIMO); // 720 XP → nível 4 → 6 pontos
+    const s = (await chamar('GET', '/api/skills')).json;
+    expect(s.pontos.livres).toBe(6);
+    expect((await chamar('POST', '/api/skills/defesa/evoluir')).json.erro).toBe('nao_pode_evoluir');
+    for (let i = 0; i < 3; i++) await chamar('POST', '/api/skills/vitalidade/evoluir');
+    expect((await chamar('POST', '/api/skills/defesa/evoluir')).status).toBe(200);
+    const eu = (await chamar('GET', '/api/eu')).json.personagem;
+    expect(eu.vida).toBe(6 + 3 + 3);
+    expect(eu.defesa).toBe(0.02);
+    expect(eu.pontosLivres).toBe(2);
+  });
+
+  it('Corte esconde uma errada (nunca a certa); Escudo anula o dano; fantasma recusa skill', async () => {
+    await prepararParaAtacar('M0.1.T01');
+    await chamar('POST', '/api/skills/corte/evoluir');
+    await chamar('POST', '/api/skills/escudo/evoluir');
+    const ini = (await chamar('POST', '/api/tentativas', { tipo: 'combate', alvo_id: 'M0.1.T01' })).json;
+    const corte = (await chamar('POST', `/api/tentativas/${ini.tentativaId}/skill`, { skill: 'corte', ordem: 0 })).json;
+    expect(corte.ocultar).toHaveLength(1);
+    expect(corte.ocultar[0]).not.toBe(certaNaTela(ini.tentativaId, 0));
+    expect(corte.energia).toBe(3.5); // 5 + 0,5 da nota − 2
+    await chamar('POST', `/api/tentativas/${ini.tentativaId}/skill`, { skill: 'escudo', ordem: 0 });
+    dado = 6;
+    const r = (await chamar('POST', `/api/tentativas/${ini.tentativaId}/respostas`, { ordem: 0, resposta: (certaNaTela(ini.tentativaId, 0) + 1) % 4 })).json;
+    expect(r.golpe).toMatchObject({ escudo: true, dano: 0 });
+    expect((await chamar('POST', `/api/tentativas/${ini.tentativaId}/skill`, { skill: 'escudo', ordem: 1 })).json.erro).toBe('escudo_esgotado'); // nv. 1 = 1 uso por luta
   });
 });

@@ -38,8 +38,12 @@ export function telaLuta(l: Luta, aoTerminarBruto: (fim: Fim | null, luta: Luta)
   const pintarVida = () => vidaBarra.replaceChildren(barra('vida', vida / l.vidaMax, 'Sua vida'), h('div', { style: 'font:600 13px var(--fonte-mono)' }, `❤ ${num(vida)} / ${num(l.vidaMax)}`));
   pintarVida();
   const progressoInimigo = h('div');
+  // A vida do inimigo só cai quando você ACERTA.
   const pintarInimigo = (respondidas: number) =>
-    progressoInimigo.replaceChildren(barra('', 1 - respondidas / l.total, 'Questões restantes'), h('div', { style: 'font:600 13px var(--fonte-mono)' }, `${l.total - respondidas} questões · ✔ ${acertos}`));
+    progressoInimigo.replaceChildren(
+      barra('', 1 - acertos / l.total, 'Vida do inimigo'),
+      h('div', { style: 'font:600 13px var(--fonte-mono)' }, `✔ ${acertos} acerto(s) · ${l.total - respondidas} questão(ões) restante(s)`),
+    );
   pintarInimigo(questao.ordem);
 
   const heroi = h('div.lutador', {}, retrato(HEROI[0]!, 5), h('div.nome', {}, 'VOCÊ'),
@@ -103,6 +107,33 @@ export function telaLuta(l: Luta, aoTerminarBruto: (fim: Fim | null, luta: Luta)
 
   // ---- Questão
   let escolha: number | number[] | boolean | string | null = null;
+  let cortarAlternativas: (idx: number[]) => void = () => undefined;
+
+  // Corte e Escudo (gastam energia; nunca mostram a resposta).
+  function botoesSkill(q: QuestaoTela): HTMLElement | null {
+    const sk = l.skills;
+    if (!sk || (!sk.corte && !sk.escudo)) return null;
+    const escudoSelo = h('span', { style: 'color:var(--energia);font-size:13px' }, q.escudo ? '🛡 escudo armado' : '');
+    const usar = async (skill: 'corte' | 'escudo', botao: HTMLButtonElement) => {
+      try {
+        const r = await api.post<{ ocultar?: number[]; escudo?: boolean; energia: number }>(`tentativas/${l.tentativaId}/skill`, { skill, ordem: q.ordem });
+        if (r.ocultar) cortarAlternativas(r.ocultar);
+        if (r.escudo) escudoSelo.textContent = '🛡 escudo armado';
+        botao.disabled = true;
+        toast(`${skill === 'corte' ? '✂ Corte' : '🛡 Escudo'} usado · ⚡ ${num(r.energia)} restante`, 'ok');
+        void recarregarEu();
+      } catch (e) {
+        toast(e instanceof ErroApi ? e.message : 'Falha.', 'erro');
+      }
+    };
+    const temAlternativas = q.tipo === 'unica' || q.tipo === 'multipla';
+    const corte = sk.corte && temAlternativas ? h('button.btn', { style: 'color:var(--energia)', disabled: (q.ocultas ?? []).length > 0 }, '✂ Corte 2⚡') : null;
+    const escudo = sk.escudo ? h('button.btn', { style: 'color:var(--energia)', disabled: q.escudo }, '🛡 Escudo 3⚡') : null;
+    corte?.addEventListener('click', () => void usar('corte', corte));
+    escudo?.addEventListener('click', () => void usar('escudo', escudo));
+    return h('div', { style: 'display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:12px' }, corte, escudo, escudoSelo);
+  }
+
   function pintarQuestao(): void {
     if (!questao) return;
     const q = questao;
@@ -130,6 +161,16 @@ export function telaLuta(l: Luta, aoTerminarBruto: (fim: Fim | null, luta: Luta)
           },
         }, h('span.letra', {}, LETRAS[i] ?? String(i + 1)), h('span', { html: markdown(alt).replace(/^<p>|<\/p>\s*$/g, '') })),
       );
+      // Alternativas cortadas pela skill Corte ficam riscadas e desabilitadas.
+      const cortar = (idx: number[]) => idx.forEach((i) => {
+        const b = botoes[i];
+        if (!b) return;
+        b.disabled = true;
+        b.style.opacity = '0.35';
+        b.style.textDecoration = 'line-through';
+      });
+      cortar(q.ocultas ?? []);
+      cortarAlternativas = cortar;
       corpo = h('div.opcoes', {}, q.tipo === 'multipla' ? h('div.mudo', { style: 'font-size:13px' }, 'Marque todas as corretas.') : null, botoes);
     } else if (q.tipo === 'vf') {
       const botoes = [true, false].map((v) =>
@@ -164,6 +205,7 @@ export function telaLuta(l: Luta, aoTerminarBruto: (fim: Fim | null, luta: Luta)
         ),
         h('div.enunciado', { html: markdown(q.enunciado) }),
         corpo,
+        botoesSkill(q),
         h('div.rodape-luta', {},
           h('span.mudo', { style: 'font-size:13px' }, q.tipo === 'vf' ? 'Teclas: V / F' : q.tipo === 'numerica' ? 'Use vírgula ou ponto' : 'Teclas: 1–4 ou A–D'),
           ehAdmin() ? botaoAdmin('Mostrar resposta', async () => {
@@ -232,6 +274,7 @@ export function telaLuta(l: Luta, aoTerminarBruto: (fim: Fim | null, luta: Luta)
     quadro.querySelector('.questao')!.append(retorno);
     if (r.golpe) await animarGolpe(r.golpe, retorno);
     else inimigo.classList.add('levou'), setTimeout(() => inimigo.classList.remove('levou'), 400);
+    if (r.cura > 0) retorno.append(h('div.conta', {}, `✨ Regeneração: +${num(r.cura)} de vida`));
     vida = r.vida;
     pintarVida();
     retorno.append(h('div', { html: markdown(r.explicacao), style: 'margin-top:8px' }), h('div.fonte', {}, `Fonte: ${r.fonte}`));
@@ -265,7 +308,10 @@ export function telaLuta(l: Luta, aoTerminarBruto: (fim: Fim | null, luta: Luta)
     heroi.classList.add('levou');
     setTimeout(() => heroi.classList.remove('levou'), 400);
     const defEf = l.defesa * (1 - l.perfuracao);
-    onde.append(h('div.conta', {}, `🎲 ${g.dado} × poder ${num(l.poder, 2)}${defEf ? ` × (1 − ${pct(defEf)})` : ''} = ${num(g.dano)} de dano · ❤ ${num(g.vidaAntes)} → ${num(g.vida)}`));
+    if (g.sorte) onde.append(h('div.conta', {}, `🍀 Sorte: tirou ${g.sorte[0]}, rolou de novo (${g.sorte[1]}) e ficou o menor.`));
+    if (g.escudo) onde.append(h('div.conta', {}, '🛡 O escudo absorveu o golpe: 0 de dano.'));
+    else if (g.esquivou) onde.append(h('div.conta', {}, '💨 Esquivou! O golpe passou de raspão: 0 de dano.'));
+    else onde.append(h('div.conta', {}, `🎲 ${g.dado} × poder ${num(l.poder, 2)}${defEf ? ` × (1 − ${pct(defEf)})` : ''} = ${num(g.dano)} de dano · ❤ ${num(g.vidaAntes)} → ${num(g.vida)}`));
   }
 
   function mostrarFim(fim: Fim): void {
@@ -284,7 +330,7 @@ export function telaLuta(l: Luta, aoTerminarBruto: (fim: Fim | null, luta: Luta)
       if (rv.proximaEm) linhas.push(h('p', {}, `${rv.passou ? 'Próxima revisão' : 'Errou: a agenda recomeça. Volta'} em ${new Date(rv.proximaEm).toLocaleDateString('pt-BR')}.`));
       if (!rv.passou && l.fantasma?.ferida) linhas.push(h('p', {}, 'A ferida continua aberta: estude o tema e tente de novo.'));
     } else if (!vitoria && !fim.revanche) {
-      linhas.push(h('p', {}, chefe ? 'O chefe se recupera por 48 h. Revise os temas em que errou.' : 'Você foi expulso da fase. Para lutar de novo contra este inimigo, estude mais 20% do tempo mínimo. Os inimigos que você já venceu continuam vencidos.'));
+      linhas.push(h('p', {}, chefe ? (fim.adaptacaoNova >= 2 ? 'Segunda derrota seguida: o chefe se recupera por 48 h. Cure as feridas (fantasmas dos temas que você errou).' : 'Cure as feridas (fantasmas dos temas que você errou) e o chefe já pode ser enfrentado de novo.') : 'Você foi expulso da fase. Para lutar de novo contra este inimigo, estude mais 20% do tempo mínimo. Os inimigos que você já venceu continuam vencidos.'));
       linhas.push(h('div.aviso.erro', { style: 'text-align:left' }, h('span.estrelas', {}, estrelas(fim.adaptacaoNova)), ` Ele aprendeu com você: agora tem adaptação ${fim.adaptacaoNova} e vai mirar seus pontos fracos.`));
     }
     if (fim.ganho.marcos) linhas.push(h('div.aviso.ok', {}, `🏁 MARCO! Nova faixa de XP: você volta a subir rápido.`));
