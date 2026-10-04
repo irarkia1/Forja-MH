@@ -9,7 +9,7 @@ set -euo pipefail
 
 SERVIDOR="${SERVIDOR:-root@143.95.166.153}"
 PORTA="${PORTA:-22022}"
-ENDERECO="${ENDERECO:-https://forja.meh-eng.com}"
+ENDERECO="${ENDERECO:-https://planejamento.meh-eng.com/forja/}"
 RAIZ="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$RAIZ"
 ssh_() { ssh -p "$PORTA" "$SERVIDOR" "$@"; }

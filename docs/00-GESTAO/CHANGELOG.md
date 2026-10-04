@@ -2,6 +2,10 @@
 
 Formato: data · o que mudou · onde.
 
+## 2026-10-03 — No ar
+- Publicado em https://planejamento.meh-eng.com/forja/ (D022): Node 22 no VPS,
+  serviço systemd `forja`, backup diário, `implantacao/atualizar.sh`.
+
 ## 2026-10-03 — Skills e ajustes do teste
 - Botão ✨ Skills no topo e árvore: Guerreiro, Estudioso, Corte e Escudo (D021).
 - Energia ⚡ no topo; Sorte, Esquiva, Regeneração e Escudo aparecem na luta.

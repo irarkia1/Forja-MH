@@ -245,3 +245,13 @@ ficam marcadas "em breve". A Sorte age sozinha: dado 4 ou mais rola de novo e
 fica o menor. Energia começa em 5 (máx. 10 + 2 por Vigor).
 Junto: estudar passou a dar o XP de 1 por minuto que o BALANCEAMENTO previa
 (antes só vitórias davam XP).
+
+## D022 — No ar em subcaminho do planejamento, por enquanto
+**Data:** 2026-10-03 · **Status:** aceita
+
+O DNS de `meh-eng.com` está numa conta Cloudflare a que o Matheus ainda não
+tem acesso, então `forja.meh-eng.com` não pôde ser criado. Solução imediata:
+`planejamento.meh-eng.com/forja/` (já resolve para o VPS). O front usa
+caminhos relativos (D009), então nada no código mudou. Cópia do Caddyfile
+anterior em `/etc/caddy/Caddyfile.antes-forja-subcaminho`. Migrar para
+endereço próprio quando houver domínio/DNS.
