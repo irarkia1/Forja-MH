@@ -255,3 +255,29 @@ tem acesso, então `forja.meh-eng.com` não pôde ser criado. Solução imediata
 caminhos relativos (D009), então nada no código mudou. Cópia do Caddyfile
 anterior em `/etc/caddy/Caddyfile.antes-forja-subcaminho`. Migrar para
 endereço próprio quando houver domínio/DNS.
+
+## D023 — As 20 variantes de chefe, como foram implementadas
+**Data:** 2026-10-03 · **Status:** aceita
+
+- **Vida de batalha proporcional ao dado:** `vida × Σ(fator do dano de cada
+  questão) ÷ 7`, onde o fator é a média do dado do bloco comparada ao D (2D = 2,
+  D+1 = 4/3, D÷2 = ½). Assim 2D/3D mudam a **variância** e o ritmo da luta, sem
+  tornar a variante impossível. Oráculo usa fator 2 (confiança média);
+  Fúria, 1,2.
+- **Disponibilidade por marcas do módulo:** `calculo` (questões numéricas
+  suficientes) libera o Colosso; `pratico` (tópico de elite) libera a Bancada;
+  `arquivo` (outro módulo vencido na mesma trilha) libera o Arquivista.
+  **Espelho** (precisa de questões "ache o erro") e **Engenheiro Sombrio**
+  (precisa de estudos de caso) ficam fora do sorteio até o conteúdo ter esses
+  tipos. Módulos integradores só sorteiam Bancada/Engenheiro.
+- **Variante fixa até vencer** em `progresso_modulo.variante_atual`; vencer
+  limpa; revanche sorteia na hora. O admin pode forçar uma variante (testes).
+- **O tempo só começa no "Enfrentar"** (`POST /tentativas/:id/comecar`), e o
+  servidor confere o limite com 10 s de folga.
+- **Feynman:** a explicação é conferida pelo próprio jogador na rubrica de 4
+  itens (honra), com mínimo de 150 caracteres. Correção por IA fica opcional
+  para depois (P7).
+- **Mímico:** prioriza as questões com maior taxa de erro histórica.
+- Skills do Explorador ligadas: Olho do Batedor (revela e fixa a variante,
+  2⚡), Fôlego (+15% de tempo por nível), Sangue-Frio (½ dano no ataque
+  surpresa e na ressurreição do Lich).

@@ -36,9 +36,9 @@ export const SKILLS: Skill[] = [
   { id: 'segunda_chance', ramo: 'estrategista', nome: 'Segunda Chance', efeito: 'Errou? Explique o erro e responda uma questão irmã', nivelMax: 3, custo: { tipo: 'progressivo' }, energia: 3, pronta: false },
   { id: 'rascunho', ramo: 'estrategista', nome: 'Rascunho', efeito: 'Abre sua folha de fórmulas numa questão numérica', nivelMax: 1, custo: { tipo: 'progressivo' }, energia: 1, pronta: false },
   // Explorador — depende das variantes de chefe (F2)
-  { id: 'olho', ramo: 'explorador', nome: 'Olho do Batedor', efeito: 'Revela a variante do chefe antes de entrar', nivelMax: 1, custo: { tipo: 'progressivo' }, energia: 2, pronta: false },
-  { id: 'folego', ramo: 'explorador', nome: 'Fôlego', efeito: '+15% de tempo por nível nas variantes cronometradas', nivelMax: 3, custo: { tipo: 'progressivo' }, pronta: false },
-  { id: 'sangue_frio', ramo: 'explorador', nome: 'Sangue-Frio', efeito: 'Ataque surpresa: dano −50%', nivelMax: 2, custo: { tipo: 'progressivo' }, energia: 2, pronta: false },
+  { id: 'olho', ramo: 'explorador', nome: 'Olho do Batedor', efeito: 'Revela a variante do chefe antes de entrar (ela fica fixa)', nivelMax: 1, custo: { tipo: 'progressivo' }, energia: 2, pronta: true },
+  { id: 'folego', ramo: 'explorador', nome: 'Fôlego', efeito: '+15% de tempo por nível nas variantes cronometradas', nivelMax: 3, custo: { tipo: 'progressivo' }, pronta: true },
+  { id: 'sangue_frio', ramo: 'explorador', nome: 'Sangue-Frio', efeito: 'Ataque surpresa do Traiçoeiro e ressurreição do Lich: dano −50%', nivelMax: 1, custo: { tipo: 'progressivo' }, requer: [{ skill: 'olho', nivel: 1 }], pronta: true },
   { id: 'mapa_estelar', ramo: 'explorador', nome: 'Mapa Estelar', efeito: 'Mostra quando cada fase será alcançada no seu ritmo', nivelMax: 1, custo: { tipo: 'progressivo' }, pronta: false },
 ];
 
@@ -77,6 +77,7 @@ export const esquivaDeSkill = (n: Niveis) => Math.min(CONFIG.personagem.esquivaM
 export const curaPorAcerto = (n: Niveis, poder: number) => Math.round(0.05 * nv(n, 'regeneracao') * poder * 100) / 100;
 export const energiaMaxima = (n: Niveis) => CONFIG.energia.max + 2 * nv(n, 'vigor');
 export const horasDeDescanso = (n: Niveis) => CONFIG.chefe.cooldownHoras - 8 * nv(n, 'recuperacao');
+export const fatorTempo = (n: Niveis) => 1 + 0.15 * nv(n, 'folego');
 export const bonusFoco = (n: Niveis) => 1 + 0.05 * nv(n, 'foco');
 export const bonusMemoria = (n: Niveis) => 1 + 0.1 * nv(n, 'memoria');
 export const bonusFerreiro = (n: Niveis) => 1 + 0.1 * nv(n, 'ferreiro');

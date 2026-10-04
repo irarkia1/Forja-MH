@@ -79,28 +79,34 @@ export interface DetalheTopico extends TopicoFase {
 }
 
 export interface QuestaoTela {
-  ordem: number; total: number; id: string; tipo: 'unica' | 'multipla' | 'vf' | 'numerica';
+  ordem: number; total: number; id: string; tipo: 'unica' | 'multipla' | 'vf' | 'numerica' | 'feynman';
   enunciado: string; alternativas?: string[]; unidade?: string; dificuldade: number; rascunho: boolean;
   ocultas: number[]; escudo: boolean;
+  bloco: { nome: string; indice: number; total: number; dano: string } | null;
+  limiteSeg?: number | null; restanteSeg?: number | null; confianca: boolean; rubrica?: string[];
 }
 export interface Ganho { xp: number; niveisGanhos: number; marcos: number; nivel: number }
 export interface Luta {
   tentativaId: number; tipo: 'combate' | 'chefe' | 'fantasma'; alvoNome: string; moduloId: string; alvoId?: string; total: number; trilha: string; elite: boolean;
   poder: number; vidaMax: number; defesa: number; perfuracao: number; adaptacao: number; revanche: boolean; piso: number;
-  variante: { id: string; nome: string; regra: string } | null; vida: number; acertos?: number; questao: QuestaoTela;
+  variante: { id: string; nome: string; frase: string; regra: string } | null; vida: number; acertos?: number; questao: QuestaoTela;
   fantasma: { etapa: number; ferida: boolean; minAcertos: number } | null;
+  blocos: { nome: string; piso: number; dano: string; limiteSeg: number | null; curaAntes: number | null }[] | null;
+  bancada: boolean; barras: number[] | null; barrasAtuais: number[] | null; comecou: boolean; furia: { nivel: number; seq: number } | null;
   skills: { esquiva: number; sorte: number; cura: number; corte: number; escudo: number } | null;
 }
 export interface Fim {
-  resultado: 'vitoria' | 'derrota'; motivo: 'vida' | 'piso' | 'fuga' | null; critico: boolean; acertos: number;
+  resultado: 'vitoria' | 'derrota'; motivo: 'vida' | 'piso' | 'fuga' | 'pausa' | null; critico: boolean; acertos: number;
+  oraculo: { ordem: number; correta: boolean; conf: number; dano: number; cura: number }[] | null;
+  pontos: { feitos: number; alvo: number } | null; vidaFinal: number;
   respondidas: number; total: number; revanche: boolean; ganho: Ganho; adaptacaoNova: number;
   revisao: { passou: boolean; proximaEm: string | null; concluido: boolean; consolidado: boolean } | null;
 }
 export interface Retorno {
-  correta: boolean; gabarito: unknown; explicacao: string; fonte: string;
-  golpe: { dado: number; dano: number; vidaAntes: number; vida: number; esquivou?: boolean; escudo?: boolean; sorte?: number[] } | null;
-  cura: number;
-  vida: number; vidaMax: number; acertos: number; fim: Fim | null; proxima: QuestaoTela | null;
+  correta: boolean | null; gabarito: unknown; explicacao: string; fonte: string; oculto: boolean;
+  golpe: { dados: number[]; dano: number; vidaAntes: number; vida: number; barra?: number; esquivou?: boolean; escudo?: boolean; sorte?: number[] } | null;
+  cura: number; avisos: string[]; barras: number[] | null; total: number; furia: { nivel: number; seq: number } | null;
+  vida: number; vidaMax: number; acertos: number | null; fim: Fim | null; proxima: QuestaoTela | null;
 }
 export interface Eu { personagem: Personagem; luta: Luta | null; sessao: string | null; fantasmasHoje: number; papel: 'jogador' | 'admin'; dev?: { fatorTempo: number } }
 export interface Fantasmas {

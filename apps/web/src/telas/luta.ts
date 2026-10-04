@@ -18,31 +18,50 @@ function retrato(sprite: Parameters<typeof desenhar>[1], escala: number, espelha
   return c;
 }
 
-// Luta: combate (3 questões) ou chefe (N). Erro = golpe com dado do servidor.
+type Escolha = number | number[] | boolean | string | { texto: string; rubrica: boolean[] } | null;
+
+// Luta: combate (3 questões), fantasma (revisão) ou chefe (20 variantes).
 export function telaLuta(l: Luta, aoTerminarBruto: (fim: Fim | null, luta: Luta) => void) {
   const [cor, escura] = CORES_TRILHA[l.trilha] ?? CORES_TRILHA.base!;
   let terminou = false;
   const aoTerminar = (fim: Fim | null, luta: Luta) => {
     if (terminou) return;
     terminou = true;
+    pararRelogio();
     aoTerminarBruto(fim, luta);
   };
   const chefe = l.tipo === 'chefe';
   const fantasma = l.tipo === 'fantasma';
+  const oraculo = l.variante?.id === 'oraculo';
   let vida = l.vida;
+  let barras = l.barrasAtuais ? [...l.barrasAtuais] : null;
+  let total = l.total;
   let questao: QuestaoTela | null = l.questao;
   let acertos = l.acertos ?? 0;
+  let furia = l.furia;
   let ocupado = false;
 
+  // ---- Barras de vida (Gêmeos: duas)
   const vidaBarra = h('div');
-  const pintarVida = () => vidaBarra.replaceChildren(barra('vida', vida / l.vidaMax, 'Sua vida'), h('div', { style: 'font:600 13px var(--fonte-mono)' }, `❤ ${num(vida)} / ${num(l.vidaMax)}`));
+  const pintarVida = () => {
+    if (barras && l.barras) {
+      preencher(vidaBarra, ...barras.map((b, i) =>
+        h('div', { style: 'margin-bottom:4px' },
+          barra('vida', b / l.barras![i]!, `Vida contra o gêmeo ${i ? 'B' : 'A'}`),
+          h('div', { style: 'font:600 12px var(--fonte-mono)' }, `❤ ${i ? 'B' : 'A'} ${num(b)} / ${num(l.barras![i]!)}`))));
+      return;
+    }
+    preencher(vidaBarra, barra('vida', vida / l.vidaMax, 'Sua vida'), h('div', { style: 'font:600 13px var(--fonte-mono)' }, `❤ ${num(vida)} / ${num(l.vidaMax)}`));
+  };
   pintarVida();
   const progressoInimigo = h('div');
-  // A vida do inimigo só cai quando você ACERTA.
+  // A vida do inimigo só cai quando você ACERTA (no Oráculo, fica escondida).
   const pintarInimigo = (respondidas: number) =>
-    progressoInimigo.replaceChildren(
-      barra('', 1 - acertos / l.total, 'Vida do inimigo'),
-      h('div', { style: 'font:600 13px var(--fonte-mono)' }, `✔ ${acertos} acerto(s) · ${l.total - respondidas} questão(ões) restante(s)`),
+    preencher(progressoInimigo,
+      barra('', oraculo ? 1 : 1 - acertos / Math.max(1, total), 'Vida do inimigo'),
+      h('div', { style: 'font:600 13px var(--fonte-mono)' },
+        oraculo ? `${total - respondidas} questão(ões) restante(s) · resultado só no fim` : `✔ ${acertos} acerto(s) · ${total - respondidas} questão(ões) restante(s)`),
+      furia ? h('div', { style: 'font:600 13px var(--fonte-mono);color:var(--erro)' }, `🔥 fúria ${furia.nivel}/5`) : null,
     );
   pintarInimigo(questao.ordem);
 
@@ -61,7 +80,7 @@ export function telaLuta(l: Luta, aoTerminarBruto: (fim: Fim | null, luta: Luta)
       ? h('div.mudo', { style: 'font-size:12px' }, l.fantasma?.ferida ? 'ferida do chefe' : `revisão · etapa ${l.fantasma?.etapa} de 5`)
       : h('div.mudo', { style: 'font-size:12px' }, `poder ${num(l.poder, 2)}${l.revanche ? ' · revanche' : ''}`),
   );
-  const dado = h('div.dado', { 'aria-live': 'polite', title: fantasma ? 'Fantasma não ataca' : 'Dado do inimigo (0 a 6)' }, fantasma ? '👻' : '?');
+  const dado = h('div.dado', { 'aria-live': 'polite', title: fantasma ? 'Fantasma não ataca' : 'Dado do inimigo (0 a 6)' }, fantasma ? '👻' : oraculo ? '👁' : '?');
   const quadro = h('div.quadro');
   const el = h('section.tela', {},
     h('div.tela-topo', {},
@@ -88,31 +107,66 @@ export function telaLuta(l: Luta, aoTerminarBruto: (fim: Fim | null, luta: Luta)
 
   // ---- Apresentação do chefe (antes da 1ª questão)
   function intro(): void {
-    preencher(quadro, 
+    const desc = h('textarea', { placeholder: 'O que você montou, o que mediu, o que deu diferente do esperado (mín. 80 caracteres).', 'aria-label': 'Tarefa prática' });
+    const link = h('input', { type: 'url', placeholder: 'https:// foto, vídeo ou repositório (opcional)', 'aria-label': 'Link da tarefa' });
+    const enfrentar = h('button.btn.principal', {
+      onclick: async () => {
+        try {
+          const r = await api.post<Luta>(`tentativas/${l.tentativaId}/comecar`, l.bancada ? { bancada: { descricao: desc.value, link: link.value || null } } : {});
+          questao = r.questao;
+          teclas = null;
+          pintarQuestao();
+        } catch (e) {
+          toast(e instanceof ErroApi ? e.message : 'Falha ao começar.', 'erro');
+        }
+      },
+    }, 'Enfrentar ', h('span.tecla', {}, 'Enter'));
+    preencher(quadro,
       h('div.questao.resultado', {},
         h('h2', {}, l.variante?.nome ?? 'CHEFE'),
-        h('p', {}, l.variante?.regra ?? ''),
+        l.variante?.frase ? h('p', {}, h('em', {}, `“${l.variante.frase}”`)) : null,
+        h('p', { style: 'text-align:left' }, l.variante?.regra ?? ''),
         l.adaptacao ? h('div.aviso.erro', { style: 'text-align:left' }, h('span.estrelas', {}, estrelas(l.adaptacao)), ` Ele aprendeu com você: poder +${l.adaptacao * 10}%, perfuração ${pct(l.perfuracao)} e mais questões nos seus pontos fracos.`) : null,
         h('div.numeros', {},
           h('div', {}, 'Questões', h('b', {}, String(l.total))),
-          h('div', {}, 'Vida de batalha', h('b', {}, num(l.vidaMax))),
+          h('div', {}, l.barras ? 'Vida (A + B)' : 'Vida de batalha', h('b', {}, num(l.vidaMax))),
           h('div', {}, 'Piso', h('b', {}, pct(l.piso))),
           h('div', {}, 'Poder', h('b', {}, num(l.poder, 2))),
         ),
-        h('p.mudo', { style: 'font-size:14px' }, 'A prova salva a cada resposta: pode fechar o navegador e voltar depois.'),
-        h('button.btn.principal', { onclick: () => { teclas = null; pintarQuestao(); } }, 'Enfrentar ', h('span.tecla', {}, 'Enter')),
+        l.blocos && l.blocos.length > 1
+          ? h('ol', { style: 'text-align:left;font-size:14px;margin:0 auto 12px;max-width:520px' }, l.blocos.map((b) =>
+              h('li', {}, h('b', {}, b.nome), ` — dano ${b.dano}${b.piso ? `, piso ${pct(b.piso)}` : ''}${b.limiteSeg ? `, ${b.limiteSeg} s por questão` : ''}${b.curaAntes ? `, cura ${pct(b.curaAntes)} ao entrar` : ''}`)))
+          : l.blocos?.[0]?.limiteSeg ? h('p', {}, `⏳ ${l.blocos[0].limiteSeg} s por questão (numéricas: o dobro).`) : null,
+        !l.skills && chefe ? h('p.mudo', { style: 'font-size:13px' }, 'Skills ativas desligadas nesta luta.') : null,
+        l.bancada ? h('div', { style: 'text-align:left;display:grid;gap:8px;margin:12px 0' }, h('b', {}, '🔧 Tarefa prática do módulo'), desc, link) : null,
+        h('p.mudo', { style: 'font-size:14px' }, 'A prova salva a cada resposta: pode fechar o navegador e voltar depois. O tempo só começa a contar quando você clicar em Enfrentar.'),
+        enfrentar,
       ),
     );
+    teclas = (e) => {
+      if (e.key === 'Enter' && !(e.target instanceof HTMLTextAreaElement) && !(e.target instanceof HTMLInputElement)) {
+        e.preventDefault();
+        enfrentar.click();
+      }
+    };
   }
 
+  // ---- Cronômetro por questão (Cronomante, Enxame, fase 3 do Dragão)
+  let relogio: number | undefined;
+  const pararRelogio = () => {
+    if (relogio) clearInterval(relogio);
+    relogio = undefined;
+  };
+
   // ---- Questão
-  let escolha: number | number[] | boolean | string | null = null;
+  let escolha: Escolha = null;
+  let confianca: number | null = null;
   let cortarAlternativas: (idx: number[]) => void = () => undefined;
 
   // Corte e Escudo (gastam energia; nunca mostram a resposta).
   function botoesSkill(q: QuestaoTela): HTMLElement | null {
     const sk = l.skills;
-    if (!sk || (!sk.corte && !sk.escudo)) return null;
+    if (!sk || (!sk.corte && !sk.escudo) || q.tipo === 'feynman') return null;
     const escudoSelo = h('span', { style: 'color:var(--energia);font-size:13px' }, q.escudo ? '🛡 escudo armado' : '');
     const usar = async (skill: 'corte' | 'escudo', botao: HTMLButtonElement) => {
       try {
@@ -128,7 +182,7 @@ export function telaLuta(l: Luta, aoTerminarBruto: (fim: Fim | null, luta: Luta)
     };
     const temAlternativas = q.tipo === 'unica' || q.tipo === 'multipla';
     const corte = sk.corte && temAlternativas ? h('button.btn', { style: 'color:var(--energia)', disabled: (q.ocultas ?? []).length > 0 }, '✂ Corte 2⚡') : null;
-    const escudo = sk.escudo ? h('button.btn', { style: 'color:var(--energia)', disabled: q.escudo }, '🛡 Escudo 3⚡') : null;
+    const escudo = sk.escudo && !oraculo ? h('button.btn', { style: 'color:var(--energia)', disabled: q.escudo }, '🛡 Escudo 3⚡') : null;
     corte?.addEventListener('click', () => void usar('corte', corte));
     escudo?.addEventListener('click', () => void usar('escudo', escudo));
     return h('div', { style: 'display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:12px' }, corte, escudo, escudoSelo);
@@ -136,12 +190,31 @@ export function telaLuta(l: Luta, aoTerminarBruto: (fim: Fim | null, luta: Luta)
 
   function pintarQuestao(): void {
     if (!questao) return;
+    pararRelogio();
     const q = questao;
     escolha = q.tipo === 'multipla' ? [] : null;
+    confianca = null;
     const confirmar = h('button.btn.principal', { disabled: true, onclick: () => void responder() }, 'Confirmar ', h('span.tecla', {}, 'Enter'));
-    const habilitar = () => (confirmar.disabled = escolha === null || (Array.isArray(escolha) && escolha.length === 0) || escolha === '');
+    const habilitar = () => {
+      const vazia = escolha === null || (Array.isArray(escolha) && escolha.length === 0) || escolha === '';
+      confirmar.disabled = vazia || (q.confianca && confianca === null);
+    };
     let corpo: HTMLElement;
-    if (q.tipo === 'unica' || q.tipo === 'multipla') {
+    if (q.tipo === 'feynman') {
+      const texto = h('textarea', { style: 'min-height:180px', placeholder: 'Sua explicação…', 'aria-label': 'Explicação' });
+      const caixas = (q.rubrica ?? []).map((r) => h('input', { type: 'checkbox' }) as HTMLInputElement & { _r?: string });
+      const contagem = h('span.mudo', { style: 'font-size:12px' }, '0/150');
+      const atualizar = () => {
+        contagem.textContent = `${texto.value.trim().length}/150`;
+        escolha = { texto: texto.value, rubrica: caixas.map((c) => c.checked) };
+        confirmar.disabled = texto.value.trim().length < 1;
+      };
+      texto.addEventListener('input', atualizar);
+      caixas.forEach((c) => c.addEventListener('change', atualizar));
+      corpo = h('div', { style: 'display:grid;gap:10px;margin-top:12px' }, texto, contagem,
+        h('div', { style: 'display:grid;gap:6px' }, h('b', {}, 'Rubrica (seja honesto):'),
+          (q.rubrica ?? []).map((r, i) => h('label', { style: 'display:flex;gap:8px;align-items:flex-start;font-size:14px' }, caixas[i]!, r))));
+    } else if (q.tipo === 'unica' || q.tipo === 'multipla') {
       const botoes = (q.alternativas ?? []).map((alt, i) =>
         h('button.opcao', {
           'aria-pressed': 'false',
@@ -161,7 +234,6 @@ export function telaLuta(l: Luta, aoTerminarBruto: (fim: Fim | null, luta: Luta)
           },
         }, h('span.letra', {}, LETRAS[i] ?? String(i + 1)), h('span', { html: markdown(alt).replace(/^<p>|<\/p>\s*$/g, '') })),
       );
-      // Alternativas cortadas pela skill Corte ficam riscadas e desabilitadas.
       const cortar = (idx: number[]) => idx.forEach((i) => {
         const b = botoes[i];
         if (!b) return;
@@ -196,23 +268,65 @@ export function telaLuta(l: Luta, aoTerminarBruto: (fim: Fim | null, luta: Luta)
       corpo = h('div.numerica', {}, input, h('b', {}, q.unidade ?? ''));
       queueMicrotask(() => input.focus());
     }
-    preencher(quadro, 
+
+    // Oráculo: confiança 1–3 em cada resposta.
+    const seletorConfianca = q.confianca
+      ? h('div', { style: 'display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:12px' },
+          h('b', { style: 'font-size:14px' }, 'Confiança:'),
+          ...[1, 2, 3].map((c) => {
+            const b = h('button.btn', { 'aria-pressed': 'false', 'data-conf': c }, c === 1 ? '1 · chute' : c === 2 ? '2 · acho' : '3 · certeza');
+            b.addEventListener('click', () => {
+              confianca = c;
+              b.parentElement!.querySelectorAll('[data-conf]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+              (b.parentElement!.querySelectorAll('[data-conf]') as NodeListOf<HTMLElement>).forEach((x) => (x.style.borderColor = x === b ? 'var(--destaque)' : ''));
+              habilitar();
+            });
+            return b;
+          }),
+          h('span.mudo', { style: 'font-size:12px' }, 'acerto vale a confiança; erro tira (confiança − 1)'))
+      : null;
+
+    // Cronômetro visível; ao zerar, envia o que tiver (o servidor confere).
+    const tempoEl = h('span', { style: 'font:600 15px var(--fonte-mono)' });
+    if (q.limiteSeg && q.restanteSeg !== null && q.restanteSeg !== undefined) {
+      const fimEm = Date.now() + q.restanteSeg * 1000;
+      const tique = () => {
+        const s = Math.max(0, Math.ceil((fimEm - Date.now()) / 1000));
+        tempoEl.textContent = `⏳ ${s}s`;
+        tempoEl.style.color = s <= 10 ? 'var(--erro)' : '';
+        if (s <= 0) {
+          pararRelogio();
+          if (!ocupado) {
+            if (escolha === null || (Array.isArray(escolha) && !escolha.length)) escolha = '';
+            if (q.confianca && confianca === null) confianca = 1;
+            void responder(true);
+          }
+        }
+      };
+      tique();
+      relogio = window.setInterval(tique, 250);
+    }
+
+    preencher(quadro,
       h('div.questao', {},
         h('div.cabeca', {},
           h('span', {}, `Questão ${q.ordem + 1} de ${q.total}`),
-          h('span', {}, `dificuldade ${'◆'.repeat(q.dificuldade)}${'◇'.repeat(5 - q.dificuldade)}`),
+          q.bloco && q.bloco.total > 1 ? h('span.selo', {}, `${q.bloco.nome} · dano ${q.bloco.dano}`) : null,
+          q.tipo !== 'feynman' ? h('span', {}, `dificuldade ${'◆'.repeat(q.dificuldade)}${'◇'.repeat(5 - q.dificuldade)}`) : null,
+          q.limiteSeg ? tempoEl : null,
           q.rascunho ? h('span.selo.rascunho', { title: 'Questão escrita por IA, ainda sem revisão humana' }, 'RASCUNHO') : null,
         ),
         h('div.enunciado', { html: markdown(q.enunciado) }),
         corpo,
+        seletorConfianca,
         botoesSkill(q),
         h('div.rodape-luta', {},
-          h('span.mudo', { style: 'font-size:13px' }, q.tipo === 'vf' ? 'Teclas: V / F' : q.tipo === 'numerica' ? 'Use vírgula ou ponto' : 'Teclas: 1–4 ou A–D'),
+          h('span.mudo', { style: 'font-size:13px' }, q.tipo === 'vf' ? 'Teclas: V / F' : q.tipo === 'numerica' ? 'Use vírgula ou ponto' : q.tipo === 'feynman' ? 'Escreva e marque a rubrica' : 'Teclas: 1–4 ou A–D'),
           ehAdmin() ? botaoAdmin('Mostrar resposta', async () => {
             try {
               const g = await api.get<{ tipo: string; resposta: unknown }>('admin/gabarito');
               const r = g.resposta;
-              const texto = g.tipo === 'unica' ? LETRAS[r as number] : g.tipo === 'multipla' ? (r as number[]).map((i) => LETRAS[i]).join(', ') : g.tipo === 'vf' ? (r ? 'Verdadeiro' : 'Falso') : `${(r as { valor: number }).valor} ${(r as { unidade: string }).unidade}`;
+              const texto = g.tipo === 'unica' ? LETRAS[r as number] : g.tipo === 'multipla' ? (r as number[]).map((i) => LETRAS[i]).join(', ') : g.tipo === 'vf' ? (r ? 'Verdadeiro' : 'Falso') : g.tipo === 'feynman' ? String(r) : `${(r as { valor: number }).valor} ${(r as { unidade: string }).unidade}`;
               toast(`🔧 Resposta: ${texto}`, 'ok', 6000);
             } catch { toast('Falha ao buscar a resposta.', 'erro'); }
           }) : null,
@@ -220,7 +334,7 @@ export function telaLuta(l: Luta, aoTerminarBruto: (fim: Fim | null, luta: Luta)
       ),
     );
     teclas = (e: KeyboardEvent) => {
-      if (document.querySelector('.veu') || e.target instanceof HTMLInputElement) return;
+      if (document.querySelector('.veu') || e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
       const k = e.key.toLowerCase();
       if (q.tipo === 'vf' && (k === 'v' || k === 'f')) (quadro.querySelectorAll('.opcao')[k === 'v' ? 0 : 1] as HTMLButtonElement).click();
       const idx = /^[1-6]$/.test(k) ? Number(k) - 1 : LETRAS.map((x) => x.toLowerCase()).indexOf(k);
@@ -232,13 +346,14 @@ export function telaLuta(l: Luta, aoTerminarBruto: (fim: Fim | null, luta: Luta)
     };
   }
 
-  async function responder(): Promise<void> {
-    if (ocupado || !questao || escolha === null) return;
+  async function responder(forcado = false): Promise<void> {
+    if (ocupado || !questao || (escolha === null && !forcado)) return;
     ocupado = true;
+    pararRelogio();
     const q = questao;
     let r: Retorno;
     try {
-      r = await api.post<Retorno>(`tentativas/${l.tentativaId}/respostas`, { ordem: q.ordem, resposta: escolha });
+      r = await api.post<Retorno>(`tentativas/${l.tentativaId}/respostas`, { ordem: q.ordem, resposta: escolha ?? '', ...(q.confianca ? { confianca: confianca ?? 1 } : {}) });
     } catch (e) {
       ocupado = false;
       if (e instanceof ErroApi && e.codigo === 'ordem_errada') {
@@ -247,37 +362,43 @@ export function telaLuta(l: Luta, aoTerminarBruto: (fim: Fim | null, luta: Luta)
       }
       return toast(e instanceof ErroApi ? e.message : 'Falha ao enviar. Tente de novo.', 'erro');
     }
-    acertos = r.acertos;
+    if (r.acertos !== null) acertos = r.acertos;
+    total = r.total;
+    furia = r.furia;
     teclas = null;
-    // Marca certa/errada nas alternativas
     const opcoes = [...quadro.querySelectorAll<HTMLButtonElement>('.opcao')];
     opcoes.forEach((b) => (b.disabled = true));
-    if (q.tipo === 'unica') {
-      opcoes[r.gabarito as number]?.classList.add('certa');
-      if (!r.correta) opcoes[escolha as number]?.classList.add('errada');
-    } else if (q.tipo === 'multipla') {
-      const certos = r.gabarito as number[];
-      opcoes.forEach((b, i) => {
-        if (certos.includes(i)) b.classList.add('certa');
-        else if ((escolha as number[]).includes(i)) b.classList.add('errada');
-      });
-    } else if (q.tipo === 'vf') {
-      opcoes[r.gabarito ? 0 : 1]?.classList.add('certa');
-      if (!r.correta) opcoes[r.gabarito ? 1 : 0]?.classList.add('errada');
+    quadro.querySelectorAll<HTMLButtonElement>('[data-conf]').forEach((b) => (b.disabled = true));
+    if (!r.oculto) {
+      if (q.tipo === 'unica') {
+        opcoes[r.gabarito as number]?.classList.add('certa');
+        if (!r.correta) opcoes[escolha as number]?.classList.add('errada');
+      } else if (q.tipo === 'multipla') {
+        const certos = r.gabarito as number[];
+        opcoes.forEach((b, i) => {
+          if (certos.includes(i)) b.classList.add('certa');
+          else if ((escolha as number[]).includes(i)) b.classList.add('errada');
+        });
+      } else if (q.tipo === 'vf') {
+        opcoes[r.gabarito ? 0 : 1]?.classList.add('certa');
+        if (!r.correta) opcoes[r.gabarito ? 1 : 0]?.classList.add('errada');
+      }
     }
     pintarInimigo(q.ordem + 1);
 
-    const retorno = h('div.retorno', { class: r.correta ? '' : 'errou' },
-      h('div.titulo', {}, r.correta ? '✔ ACERTOU — golpe no inimigo!' : fantasma ? '✘ ERROU — o fantasma resiste' : '✘ ERROU — o inimigo contra-ataca'),
-      q.tipo === 'numerica' && !r.correta ? h('div.conta', {}, `Resposta: ${num((r.gabarito as { valor: number }).valor, 4)} ${(r.gabarito as { unidade: string }).unidade}`) : null,
+    const retorno = h('div.retorno', { class: r.oculto || r.correta ? '' : 'errou', style: r.oculto ? 'border-left-color:var(--energia)' : '' },
+      h('div.titulo', {}, r.oculto ? '👁 Resposta registrada — o Oráculo só revela no fim' : r.correta ? '✔ ACERTOU — golpe no inimigo!' : fantasma ? '✘ ERROU — o fantasma resiste' : '✘ ERROU — o inimigo contra-ataca'),
+      q.tipo === 'numerica' && r.correta === false && r.gabarito ? h('div.conta', {}, `Resposta: ${num((r.gabarito as { valor: number }).valor, 4)} ${(r.gabarito as { unidade: string }).unidade}`) : null,
     );
     quadro.querySelector('.questao')!.append(retorno);
     if (r.golpe) await animarGolpe(r.golpe, retorno);
-    else inimigo.classList.add('levou'), setTimeout(() => inimigo.classList.remove('levou'), 400);
-    if (r.cura > 0) retorno.append(h('div.conta', {}, `✨ Regeneração: +${num(r.cura)} de vida`));
+    else if (r.correta) inimigo.classList.add('levou'), setTimeout(() => inimigo.classList.remove('levou'), 400);
+    if (r.cura > 0) retorno.append(h('div.conta', {}, `✨ +${num(r.cura)} de vida`));
+    for (const a of r.avisos ?? []) retorno.append(h('div.aviso', { style: 'margin:8px 0' }, a));
     vida = r.vida;
+    if (r.barras) barras = r.barras;
     pintarVida();
-    retorno.append(h('div', { html: markdown(r.explicacao), style: 'margin-top:8px' }), h('div.fonte', {}, `Fonte: ${r.fonte}`));
+    if (!r.oculto) retorno.append(h('div', { html: markdown(r.explicacao), style: 'margin-top:8px' }), h('div.fonte', {}, `Fonte: ${r.fonte}`));
     const seguir = h('button.btn.principal', {
       autofocus: true,
       onclick: () => {
@@ -304,25 +425,36 @@ export function telaLuta(l: Luta, aoTerminarBruto: (fim: Fim | null, luta: Luta)
       girar();
     });
     dado.classList.remove('rolando');
-    dado.textContent = String(g.dado);
+    dado.textContent = g.dados.length ? g.dados.join('+') : '0';
     heroi.classList.add('levou');
     setTimeout(() => heroi.classList.remove('levou'), 400);
     const defEf = l.defesa * (1 - l.perfuracao);
+    const alvoBarra = g.barra !== undefined ? ` (barra ${g.barra ? 'B' : 'A'})` : '';
     if (g.sorte) onde.append(h('div.conta', {}, `🍀 Sorte: tirou ${g.sorte[0]}, rolou de novo (${g.sorte[1]}) e ficou o menor.`));
     if (g.escudo) onde.append(h('div.conta', {}, '🛡 O escudo absorveu o golpe: 0 de dano.'));
     else if (g.esquivou) onde.append(h('div.conta', {}, '💨 Esquivou! O golpe passou de raspão: 0 de dano.'));
-    else onde.append(h('div.conta', {}, `🎲 ${g.dado} × poder ${num(l.poder, 2)}${defEf ? ` × (1 − ${pct(defEf)})` : ''} = ${num(g.dano)} de dano · ❤ ${num(g.vidaAntes)} → ${num(g.vida)}`));
+    else onde.append(h('div.conta', {}, `🎲 ${g.dados.join(' + ')} → × poder ${num(l.poder, 2)}${defEf ? ` × (1 − ${pct(defEf)})` : ''} = ${num(g.dano)} de dano${alvoBarra} · ❤ ${num(g.vidaAntes)} → ${num(g.vida)}`));
   }
 
   function mostrarFim(fim: Fim): void {
     teclas = null;
+    pararRelogio();
     const vitoria = fim.resultado === 'vitoria';
     const motivo =
       fim.motivo === 'vida' ? 'Sua vida chegou a zero.' :
+      fim.motivo === 'pausa' ? 'O Purista não aceita pausa de mais de 24 h.' :
       fim.motivo === 'piso' && fantasma ? `Precisava de ${l.fantasma?.minAcertos} acertos.` :
-      fim.motivo === 'piso' ? (chefe ? 'Você chegou vivo, mas abaixo do piso de 60% de acerto.' : 'Nenhum acerto: o piso de conhecimento não deixa passar.') :
+      fim.motivo === 'piso' && fim.pontos ? `Pontos: ${fim.pontos.feitos} de ${fim.pontos.alvo} necessários.` :
+      fim.motivo === 'piso' ? (chefe ? 'Você ficou abaixo do piso de acerto (num bloco ou no total).' : 'Nenhum acerto: o piso de conhecimento não deixa passar.') :
       fim.motivo === 'fuga' ? 'Você fugiu da luta.' : '';
     const linhas: (HTMLElement | null)[] = [];
+    if (fim.oraculo?.length) {
+      linhas.push(h('div', { style: 'text-align:left;font-size:14px;max-height:220px;overflow:auto;margin:8px 0' },
+        h('b', {}, '👁 O Oráculo revela:'),
+        h('ol', { style: 'margin:6px 0;padding-left:22px' }, fim.oraculo.map((o) =>
+          h('li', {}, `${o.correta ? '✔' : '✘'} confiança ${o.conf}${o.dano ? ` · −${num(o.dano)} ❤` : ''}${o.cura ? ` · +${num(o.cura)} ❤` : ''}`)))));
+    }
+    if (fim.pontos && vitoria) linhas.push(h('p', {}, `Pontos: ${fim.pontos.feitos} (precisava de ${fim.pontos.alvo}).`));
     if (fim.revisao) {
       const rv = fim.revisao;
       if (rv.concluido) linhas.push(h('div.aviso.ok', {}, '⭐ Tema DOMINADO: passou pela revisão de 60 dias.'));
@@ -330,12 +462,12 @@ export function telaLuta(l: Luta, aoTerminarBruto: (fim: Fim | null, luta: Luta)
       if (rv.proximaEm) linhas.push(h('p', {}, `${rv.passou ? 'Próxima revisão' : 'Errou: a agenda recomeça. Volta'} em ${new Date(rv.proximaEm).toLocaleDateString('pt-BR')}.`));
       if (!rv.passou && l.fantasma?.ferida) linhas.push(h('p', {}, 'A ferida continua aberta: estude o tema e tente de novo.'));
     } else if (!vitoria && !fim.revanche) {
-      linhas.push(h('p', {}, chefe ? (fim.adaptacaoNova >= 2 ? 'Segunda derrota seguida: o chefe se recupera por 48 h. Cure as feridas (fantasmas dos temas que você errou).' : 'Cure as feridas (fantasmas dos temas que você errou) e o chefe já pode ser enfrentado de novo.') : 'Você foi expulso da fase. Para lutar de novo contra este inimigo, estude mais 20% do tempo mínimo. Os inimigos que você já venceu continuam vencidos.'));
+      linhas.push(h('p', {}, chefe ? (fim.adaptacaoNova >= 2 ? 'Segunda derrota seguida: o chefe se recupera por 48 h. Cure as feridas (fantasmas dos temas que você errou).' : 'Cure as feridas (fantasmas dos temas que você errou) e o chefe já pode ser enfrentado de novo. A variante continua a mesma até você vencer.') : 'Você foi expulso da fase. Para lutar de novo contra este inimigo, estude mais 20% do tempo mínimo. Os inimigos que você já venceu continuam vencidos.'));
       linhas.push(h('div.aviso.erro', { style: 'text-align:left' }, h('span.estrelas', {}, estrelas(fim.adaptacaoNova)), ` Ele aprendeu com você: agora tem adaptação ${fim.adaptacaoNova} e vai mirar seus pontos fracos.`));
     }
     if (fim.ganho.marcos) linhas.push(h('div.aviso.ok', {}, `🏁 MARCO! Nova faixa de XP: você volta a subir rápido.`));
     if (fim.ganho.niveisGanhos > 0) linhas.push(h('div.aviso.ok', {}, `⬆ Subiu para o nível ${fim.ganho.nivel}! +${fim.ganho.niveisGanhos} de vida.`));
-    preencher(quadro, 
+    preencher(quadro,
       h('div.questao.resultado', { class: vitoria ? 'vitoria' : 'derrota' },
         h('h2', {}, fantasma ? (vitoria ? 'FANTASMA DISSIPADO!' : 'O FANTASMA FICOU') : vitoria ? (fim.critico ? 'GOLPE CRÍTICO!' : 'VITÓRIA!') : 'DERROTA'),
         motivo ? h('p', {}, motivo) : null,
@@ -360,16 +492,14 @@ export function telaLuta(l: Luta, aoTerminarBruto: (fim: Fim | null, luta: Luta)
   const ouvir = (e: KeyboardEvent) => teclas?.(e);
   window.addEventListener('keydown', ouvir);
 
-  if (chefe && questao.ordem === 0) {
-    intro();
-    teclas = (e) => {
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        teclas = null;
-        pintarQuestao();
-      }
-    };
-  } else pintarQuestao();
+  if (chefe && !l.comecou) intro();
+  else pintarQuestao();
 
-  return { el, destruir: () => window.removeEventListener('keydown', ouvir) };
+  return {
+    el,
+    destruir: () => {
+      pararRelogio();
+      window.removeEventListener('keydown', ouvir);
+    },
+  };
 }

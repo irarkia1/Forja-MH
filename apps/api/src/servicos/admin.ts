@@ -1,4 +1,5 @@
-import { CONFIG, limitarAdaptacao } from '@forja/regras';
+import { CONFIG, VARIANTE_POR_ID, limitarAdaptacao } from '@forja/regras';
+import { fixarVariante } from './chefes';
 import { exec, todos, transacao, um } from '../db';
 import type { Contexto } from '../contexto';
 import { ErroApp, naoEncontrado } from '../erros';
@@ -105,7 +106,8 @@ export function gabaritoAtual(ctx: Contexto, uid: number) {
   if (!t) throw new ErroApp(404, 'sem_luta', 'Nenhuma luta em andamento.');
   const plano = JSON.parse(t.plano) as { questoes: { id: string; perm?: number[] }[] };
   const ordem = (JSON.parse(t.estado) as { proxima: number }).proxima;
-  const item = plano.questoes[ordem]!;
+  const item = plano.questoes[ordem] as { id: string; perm?: number[]; feynman?: unknown };
+  if (item.feynman) return { ordem, tipo: 'feynman', resposta: 'Escreva 150+ caracteres e marque 3 itens da rubrica.' };
   const q = um<{ tipo: string; gabarito: string }>(ctx.db, 'SELECT tipo, gabarito FROM questao WHERE id = :id', { id: item.id })!;
   const g = JSON.parse(q.gabarito) as unknown;
   const naTela = (i: number) => item.perm!.indexOf(i);
@@ -119,10 +121,17 @@ export function zerarProgresso(ctx: Contexto, uid: number) {
     const lista = JSON.stringify(ids);
     exec(ctx.db, 'DELETE FROM golpe WHERE tentativa_id IN (SELECT value FROM json_each(:l))', { l: lista });
     exec(ctx.db, 'DELETE FROM resposta WHERE tentativa_id IN (SELECT value FROM json_each(:l))', { l: lista });
-    for (const tabela of ['revisao', 'tentativa', 'sessao_estudo', 'progresso_topico', 'progresso_modulo', 'evidencia', 'adaptacao', 'desempenho', 'evento']) {
+    for (const tabela of ['uso_skill', 'revisao', 'tentativa', 'sessao_estudo', 'progresso_topico', 'progresso_modulo', 'evidencia', 'adaptacao', 'desempenho', 'evento']) {
       exec(ctx.db, `DELETE FROM ${tabela} WHERE usuario_id = :uid`, { uid });
     }
     exec(ctx.db, 'UPDATE personagem SET nivel = 1, faixa = 0, niveis_na_faixa = 0, xp_faixa = 0, xp_total = 0, posicao = NULL WHERE usuario_id = :uid', { uid });
   });
   return { ok: true, vidaBase: CONFIG.personagem.vidaBase };
+}
+
+// Força a variante do próximo chefe deste módulo (para testar cada uma).
+export function forcarVariante(ctx: Contexto, uid: number, moduloId: string, variante: string) {
+  if (!VARIANTE_POR_ID.has(variante)) throw new ErroApp(400, 'variante_invalida', `Variante desconhecida: ${variante}`);
+  fixarVariante(ctx, uid, moduloId, variante);
+  return { modulo: moduloId, variante };
 }

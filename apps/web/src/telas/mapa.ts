@@ -3,6 +3,7 @@ import { Cena, type No } from '../jogo/cena';
 import { eu, recarregarEu } from '../estado';
 import { barra, estrelas, h, num, pct, preencher, tempo, toast } from '../ui';
 import { botaoAdmin, ehAdmin, ferramenta } from './admin';
+import { VARIANTES } from '@forja/regras';
 
 export interface Navegar {
   ir: (hash: string) => void;
@@ -277,21 +278,45 @@ function painelInimigo(painel: HTMLElement, t: TopicoFase, emPreparo: boolean, a
 function painelChefe(painel: HTMLElement, f: Fase, enfrentar: () => void) {
   const c = f.chefe;
   const vida = eu()?.personagem.vida ?? 6;
-  preencher(painel, 
+  // Variante já sorteada (fixa até vencer) ou revelada pelo Olho do Batedor.
+  const varianteEl = h('div');
+  const pintarVariante = (v: { nome: string; frase: string; regra: string } | null) =>
+    preencher(varianteEl, v
+      ? h('div.aviso', { style: 'border-left-color:var(--energia)' }, h('b', {}, `👁 ${v.nome}`), h('div', { style: 'font-size:13px;margin-top:4px' }, v.regra))
+      : h('div.aviso', {}, '❔ A variante é sorteada entre 20 quando você entra, e fica fixa até vencer.'));
+  if (c.estado !== 'vencido') {
+    void api.get<{ variante: { nome: string; frase: string; regra: string } | null }>(`modulos/${f.modulo.id}/variante`).then((r) => pintarVariante(r.variante)).catch(() => undefined);
+  }
+  const olho = h('button.btn', { style: 'color:var(--energia)' }, '👁 Olho do Batedor (2⚡)');
+  olho.addEventListener('click', async () => {
+    try {
+      const r = await api.post<{ variante: { nome: string; frase: string; regra: string } }>(`modulos/${f.modulo.id}/olho`);
+      pintarVariante(r.variante);
+      void recarregarEu();
+    } catch (e) {
+      toast(e instanceof ErroApi ? e.message : 'Falha.', 'erro');
+    }
+  });
+  const seletor = h('select', { style: 'padding:8px;border-radius:6px;background:var(--fundo-2);border:2px dashed var(--energia);color:var(--texto)' },
+    VARIANTES.map((v) => h('option', { value: v.id }, v.nome)));
+  preencher(painel,
     h('h2', {}, '💀 CHEFE'),
-    h('h3', {}, `Guardião de ${f.modulo.nome}`),
+    h('h3', {}, `Chefe de ${f.modulo.nome}`),
     c.adaptacao ? h('div.aviso.erro', {}, h('span.estrelas', {}, estrelas(c.adaptacao)), ` Ele lembra de você: poder +${c.adaptacao * 10}%, perfuração ${pct(c.perfuracao)} e mais questões nos seus pontos fracos.`) : null,
     h('dl.ficha', {},
       h('dt', {}, 'Situação'), h('dd', {}, NOME_ESTADO[c.estado] ?? c.estado),
-      h('dt', {}, 'Questões'), h('dd', {}, String(c.questoes)),
+      h('dt', {}, 'Questões'), h('dd', {}, `${c.questoes} (a variante pode mudar)`),
       h('dt', {}, 'Vida de batalha'), h('dd', {}, `≈ ${num((vida * c.questoes) / 7)} (vida × N ÷ 7)`),
       h('dt', {}, 'Poder'), h('dd', {}, num(c.poder, 2)),
-      h('dt', {}, 'Para vencer'), h('dd', {}, 'chegar vivo ao fim + ≥ 60% de acerto'),
+      h('dt', {}, 'Para vencer'), h('dd', {}, 'chegar vivo ao fim + piso da variante'),
     ),
     c.cooldownAte ? h('div.aviso.erro', {}, `Recuperando-se até ${new Date(c.cooldownAte).toLocaleString('pt-BR')}.`) : null,
     c.estado === 'bloqueado' ? h('div.aviso', {}, 'Derrote todos os inimigos da fase para liberar o chefe.') : null,
+    c.estado !== 'vencido' ? varianteEl : null,
     h('div.acoes', {},
       h('button.btn.principal', { disabled: c.estado === 'bloqueado' || Boolean(c.cooldownAte), onclick: enfrentar }, c.estado === 'vencido' ? '↺ Revanche (50% do XP, a cada 7 dias)' : '⚔ Enfrentar o chefe'),
+      c.estado !== 'vencido' ? olho : null,
+      ehAdmin() ? h('div', { style: 'display:grid;gap:6px' }, seletor, botaoAdmin('Forçar esta variante', () => ferramenta('variante', { modulo_id: f.modulo.id, variante: seletor.value }, `variante: ${seletor.selectedOptions[0]?.textContent ?? ''}`))) : null,
     ),
   );
 }

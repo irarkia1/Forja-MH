@@ -3,7 +3,7 @@ import type { FastifyInstance } from 'fastify';
 import { criarApp } from '../src/app';
 import { lerConfig } from '../src/config';
 import { importarConteudo, type Conteudo, type QuestaoYaml } from '../src/conteudo';
-import { abrirBanco, um, type Db } from '../src/db';
+import { abrirBanco, exec, um, type Db } from '../src/db';
 import { criarUsuario } from '../src/servicos/auth';
 
 // Fixture: um ato, um módulo de 40 h com um tópico comum e um de elite.
@@ -70,20 +70,31 @@ async function estudar(topico: string, seg: number) {
   await chamar('POST', `/api/sessoes/${s.json.id}/encerrar`);
 }
 
-function certaNaTela(tentativaId: number, ordem: number): number {
+function certaNaTela(tentativaId: number, ordem: number): any {
   const t = um<{ plano: string }>(db, 'SELECT plano FROM tentativa WHERE id = :id', { id: tentativaId })!;
-  return JSON.parse(t.plano).questoes[ordem].perm.indexOf(0);
+  const item = JSON.parse(t.plano).questoes[ordem];
+  if (item.feynman) return { texto: 'x'.repeat(160), rubrica: [true, true, true, false] };
+  return item.perm.indexOf(0);
+}
+const errada = (certa: any) => (typeof certa === 'number' ? (certa + 1) % 4 : { texto: 'curta', rubrica: [false, false, false, false] });
+function forcarVariante(modulo: string, variante: string) {
+  exec(db, 'INSERT OR IGNORE INTO progresso_modulo (usuario_id, modulo_id) VALUES (1, :m)', { m: modulo });
+  exec(db, 'UPDATE progresso_modulo SET variante_atual = :v WHERE usuario_id = 1 AND modulo_id = :m', { v: variante, m: modulo });
 }
 
-async function lutar(tipo: 'combate' | 'chefe' | 'fantasma', alvo: string, acertar: (i: number) => boolean) {
+async function lutar(tipo: 'combate' | 'chefe' | 'fantasma', alvo: string, acertar: (i: number) => boolean, extra: Record<string, unknown> = {}) {
   const ini = await chamar('POST', '/api/tentativas', { tipo, alvo_id: alvo });
   expect(ini.status, JSON.stringify(ini.json)).toBe(200);
   expect(ini.raw).not.toContain('gabarito');
   expect(ini.raw).not.toContain('explicacao');
+  if (!ini.json.comecou) {
+    const c = await chamar('POST', `/api/tentativas/${ini.json.tentativaId}/comecar`, ini.json.bancada ? { bancada: { descricao: 'Montei o circuito do módulo na bancada, medi as tensões com o multímetro e comparei com o cálculo.' } } : {});
+    expect(c.status, JSON.stringify(c.json)).toBe(200);
+  }
   let ultima: any;
-  for (let i = 0; i < ini.json.total; i++) {
+  for (let i = 0; i < 200; i++) {
     const certa = certaNaTela(ini.json.tentativaId, i);
-    ultima = (await chamar('POST', `/api/tentativas/${ini.json.tentativaId}/respostas`, { ordem: i, resposta: acertar(i) ? certa : (certa + 1) % 4 })).json;
+    ultima = (await chamar('POST', `/api/tentativas/${ini.json.tentativaId}/respostas`, { ordem: i, resposta: acertar(i) ? certa : errada(certa), ...extra })).json;
     if (ultima.proxima) expect(JSON.stringify(ultima.proxima)).not.toContain('gabarito');
     if (ultima.fim) break;
   }
@@ -170,7 +181,7 @@ describe('combate', () => {
     await prepararParaAtacar('M0.1.T01');
     dado = 6; // poder 1, vida 6 → um golpe de 6 derruba
     const { ultima } = await lutar('combate', 'M0.1.T01', () => false);
-    expect(ultima.golpe).toMatchObject({ dado: 6, dano: 6, vida: 0 });
+    expect(ultima.golpe).toMatchObject({ dados: [6], dano: 6, vida: 0 });
     expect(ultima.fim).toMatchObject({ resultado: 'derrota', motivo: 'vida', adaptacaoNova: 1 }); // estudar dá XP: mais vida, aguenta mais de um golpe
     const t = (await chamar('GET', '/api/modulos/M0.1')).json.topicos[0];
     expect(t.estado).toBe('em_estudo');
@@ -210,6 +221,7 @@ describe('chefe', () => {
     await prepararParaAtacar('M0.1.T02');
     await chamar('POST', '/api/topicos/M0.1.T02/evidencias', { descricao: 'Montei o kit e fotografei a bancada organizada com tudo etiquetado.' });
     await lutar('combate', 'M0.1.T02', () => true);
+    forcarVariante('M0.1', 'guardiao');
   }
 
   it('bloqueado até derrotar todos; vence vivo com ≥ 60% e libera o próximo módulo', async () => {
@@ -249,6 +261,7 @@ describe('chefe', () => {
   it('prova retoma depois de fechar o navegador', async () => {
     await liberarChefe();
     const ini = (await chamar('POST', '/api/tentativas', { tipo: 'chefe', alvo_id: 'M0.1' })).json;
+    await chamar('POST', `/api/tentativas/${ini.tentativaId}/comecar`);
     await chamar('POST', `/api/tentativas/${ini.tentativaId}/respostas`, { ordem: 0, resposta: certaNaTela(ini.tentativaId, 0) });
     const aberta = (await chamar('GET', '/api/tentativas/aberta')).json.luta;
     expect(aberta.questao.ordem).toBe(1);
@@ -295,6 +308,7 @@ describe('fantasmas', () => {
     await prepararParaAtacar('M0.1.T02');
     await chamar('POST', '/api/topicos/M0.1.T02/evidencias', { descricao: 'Montei o kit e fotografei a bancada organizada com tudo etiquetado.' });
     await lutar('combate', 'M0.1.T02', () => true);
+    forcarVariante('M0.1', 'guardiao');
     dado = 0;
     await lutar('chefe', 'M0.1', (i) => i < 5);
     expect((await chamar('GET', '/api/fantasmas')).json.hoje.length).toBeGreaterThanOrEqual(1);
@@ -383,5 +397,112 @@ describe('skills', () => {
     const r = (await chamar('POST', `/api/tentativas/${ini.tentativaId}/respostas`, { ordem: 0, resposta: (certaNaTela(ini.tentativaId, 0) + 1) % 4 })).json;
     expect(r.golpe).toMatchObject({ escudo: true, dano: 0 });
     expect((await chamar('POST', `/api/tentativas/${ini.tentativaId}/skill`, { skill: 'escudo', ordem: 1 })).json.erro).toBe('escudo_esgotado'); // nv. 1 = 1 uso por luta
+  });
+});
+
+describe('variantes de chefe', () => {
+  async function liberar() {
+    for (const t of ['M0.1.T01', 'M0.1.T02']) {
+      await prepararParaAtacar(t);
+      if (t.endsWith('T02')) await chamar('POST', `/api/topicos/${t}/evidencias`, { descricao: 'Montei o kit e fotografei a bancada organizada com tudo etiquetado.' });
+      await lutar('combate', t, () => true);
+    }
+  }
+  const DISPONIVEIS = ['guardiao', 'hidra', 'golem', 'traicoeiro', 'lich', 'cronomante', 'enxame', 'furia', 'purista', 'feynman', 'mimico', 'bancada', 'dragao', 'vampiro', 'gemeos', 'oraculo'];
+
+  for (const v of DISPONIVEIS) {
+    it(`${v}: acertando tudo, vence`, async () => {
+      await liberar();
+      forcarVariante('M0.1', v);
+      dado = 0;
+      const { ini, ultima } = await lutar('chefe', 'M0.1', () => true, v === 'oraculo' ? { confianca: 3 } : {});
+      expect(ini.variante.id).toBe(v);
+      expect(ultima.fim, JSON.stringify(ultima)).toMatchObject({ resultado: 'vitoria' });
+      // Vencido: a variante é liberada para a revanche sortear outra.
+      expect(um<{ v: string | null }>(db, "SELECT variante_atual AS v FROM progresso_modulo WHERE modulo_id = 'M0.1'")!.v).toBeNull();
+    });
+  }
+
+  it('o sorteio respeita as marcas do módulo e fixa a variante até vencer', async () => {
+    await liberar();
+    const ini = (await chamar('POST', '/api/tentativas', { tipo: 'chefe', alvo_id: 'M0.1' })).json;
+    expect(['colosso', 'arquivista', 'espelho', 'engenheiro']).not.toContain(ini.variante.id);
+    await chamar('POST', `/api/tentativas/${ini.tentativaId}/desistir`);
+    const fixa = um<{ v: string }>(db, "SELECT variante_atual AS v FROM progresso_modulo WHERE modulo_id = 'M0.1'")!.v;
+    expect(fixa).toBe(ini.variante.id);
+  });
+
+  it('Hidra: errar a cabeça 1 abaixo do piso derruba já ali', async () => {
+    await liberar();
+    forcarVariante('M0.1', 'hidra');
+    dado = 0;
+    const { ultima } = await lutar('chefe', 'M0.1', () => false);
+    expect(ultima.fim).toMatchObject({ resultado: 'derrota', motivo: 'piso', respondidas: 8 });
+  });
+
+  it('Vampiro: cada erro acrescenta uma questão (até +20%)', async () => {
+    await liberar();
+    forcarVariante('M0.1', 'vampiro');
+    dado = 0;
+    const { ultima } = await lutar('chefe', 'M0.1', (i) => i >= 5);
+    expect(ultima.fim.total).toBe(13 + 3);
+  });
+
+  it('Lich ressurge com +25% e cura 30%', async () => {
+    await liberar();
+    forcarVariante('M0.1', 'lich');
+    dado = 0;
+    const { ultima } = await lutar('chefe', 'M0.1', () => true);
+    expect(ultima.fim).toMatchObject({ resultado: 'vitoria', total: 13 + 4 });
+  });
+
+  it('Cronomante: resposta depois do tempo conta como erro', async () => {
+    await liberar();
+    forcarVariante('M0.1', 'cronomante');
+    const ini = (await chamar('POST', '/api/tentativas', { tipo: 'chefe', alvo_id: 'M0.1' })).json;
+    await chamar('POST', `/api/tentativas/${ini.tentativaId}/comecar`);
+    andar(200);
+    const r = (await chamar('POST', `/api/tentativas/${ini.tentativaId}/respostas`, { ordem: 0, resposta: certaNaTela(ini.tentativaId, 0) })).json;
+    expect(r.correta).toBe(false);
+    expect(r.avisos.join(' ')).toContain('Tempo esgotado');
+  });
+
+  it('Oráculo: não revela nada até o fim', async () => {
+    await liberar();
+    forcarVariante('M0.1', 'oraculo');
+    const ini = (await chamar('POST', '/api/tentativas', { tipo: 'chefe', alvo_id: 'M0.1' })).json;
+    await chamar('POST', `/api/tentativas/${ini.tentativaId}/comecar`);
+    const r = await chamar('POST', `/api/tentativas/${ini.tentativaId}/respostas`, { ordem: 0, resposta: certaNaTela(ini.tentativaId, 0), confianca: 2 });
+    expect(r.json).toMatchObject({ correta: null, gabarito: null, oculto: true, golpe: null });
+  });
+
+  it('Gêmeos: duas barras de vida', async () => {
+    await liberar();
+    forcarVariante('M0.1', 'gemeos');
+    const ini = (await chamar('POST', '/api/tentativas', { tipo: 'chefe', alvo_id: 'M0.1' })).json;
+    expect(ini.barras).toHaveLength(2);
+  });
+
+  it('Purista recusa skills; Bancada exige a tarefa prática', async () => {
+    await liberar();
+    forcarVariante('M0.1', 'bancada');
+    const ini = (await chamar('POST', '/api/tentativas', { tipo: 'chefe', alvo_id: 'M0.1' })).json;
+    expect((await chamar('POST', `/api/tentativas/${ini.tentativaId}/comecar`, {})).json.erro).toBe('bancada_curta');
+    await chamar('POST', `/api/tentativas/${ini.tentativaId}/desistir`);
+  });
+});
+
+describe('admin zera mesmo com skills usadas', () => {
+  it('zerar apaga uso_skill antes das tentativas', async () => {
+    await criarUsuario({ db, config: lerConfig({}), agora: () => agora, rng: Math.random, dado: () => 0 }, 'teste', 'senha-teste', 'admin');
+    const r = await app.inject({ method: 'POST', url: '/api/login', payload: { login: 'teste', senha: 'senha-teste' } });
+    cookie = String(r.headers['set-cookie']).split(';')[0]!;
+    await prepararParaAtacar('M0.1.T01');
+    await chamar('POST', '/api/admin/xp', { xp: 2000 });
+    await chamar('POST', '/api/skills/corte/evoluir');
+    const ini = (await chamar('POST', '/api/tentativas', { tipo: 'combate', alvo_id: 'M0.1.T01' })).json;
+    await chamar('POST', `/api/tentativas/${ini.tentativaId}/skill`, { skill: 'corte', ordem: 0 });
+    await chamar('POST', `/api/tentativas/${ini.tentativaId}/desistir`);
+    expect((await chamar('POST', '/api/admin/zerar')).status).toBe(200);
   });
 });

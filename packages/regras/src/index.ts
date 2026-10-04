@@ -6,3 +6,4 @@ export * from './sorteio';
 export * from './progresso';
 export * from './revisao';
 export * from './skills';
+export * from './chefes';

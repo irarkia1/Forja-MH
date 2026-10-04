@@ -209,3 +209,32 @@ describe('fantasmas', () => {
     expect(etapaEfetiva(3, vence, new Date('2026-10-12'))).toBe(2);
   });
 });
+
+import { VARIANTES, fatorDano, pontosOraculo, proximaFuria, sortearVariante, variantesPossiveis, dano } from '../src';
+
+describe('chefes', () => {
+  it('são 20 variantes; sem marcas, Espelho, Engenheiro, Colosso, Arquivista e Bancada ficam de fora', () => {
+    expect(VARIANTES).toHaveLength(20);
+    const ids = variantesPossiveis(new Set(), false).map((v) => v.id);
+    for (const fora of ['espelho', 'engenheiro', 'colosso', 'arquivista', 'bancada']) expect(ids).not.toContain(fora);
+    expect(variantesPossiveis(new Set(['pratico']), true).map((v) => v.id)).toEqual(['bancada']);
+  });
+
+  it('nunca repete as 3 últimas', () => {
+    let s = 7;
+    const rng = () => ((s = (s * 16807) % 2147483647) - 1) / 2147483646;
+    for (let i = 0; i < 200; i++) {
+      const v = sortearVariante({ marcas: new Set(), integrador: false, ultimas: ['guardiao', 'hidra', 'lich'], rng });
+      expect(['guardiao', 'hidra', 'lich']).not.toContain(v.id);
+    }
+  });
+
+  it('fator do dano, fúria e pontos do oráculo', () => {
+    expect(fatorDano(dano())).toBe(1);
+    expect(fatorDano(dano(2))).toBe(2);
+    expect(fatorDano(dano(1, 0, 0.5))).toBe(0.5);
+    expect(proximaFuria({ nivel: 3, seq: 2 }, true)).toEqual({ nivel: 4, seq: 0 });
+    expect(proximaFuria({ nivel: 1, seq: 1 }, false)).toEqual({ nivel: 1, seq: 0 });
+    expect(pontosOraculo([{ correta: true, conf: 3 }, { correta: false, conf: 3 }, { correta: false, conf: 1 }])).toBe(1);
+  });
+});

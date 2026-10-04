@@ -18,6 +18,7 @@ import { resumo, salvarPosicao } from './servicos/personagem';
 import { um } from './db';
 import * as provas from './servicos/provas';
 import * as skills from './servicos/skills';
+import * as chefes from './servicos/chefes';
 
 const COOKIE = 'forja_sessao';
 
@@ -126,9 +127,16 @@ export async function criarApp(o: OpcoesApp): Promise<{ app: FastifyInstance; ct
     r.get('/api/tentativas/aberta', async (req) => ({ luta: provas.emCurso(ctx, req.usuarioId) }));
     r.post('/api/tentativas/:id/respostas', async (req) => {
       const b = z
-        .object({ ordem: z.number().int().min(0), resposta: z.union([z.number(), z.array(z.number().int()).max(10), z.boolean(), z.string().max(40)]) })
+        .object({
+          ordem: z.number().int().min(0),
+          resposta: z.union([
+            z.number(), z.array(z.number().int()).max(10), z.boolean(), z.string().max(40),
+            z.object({ texto: z.string().max(5000), rubrica: z.array(z.boolean()).max(4) }),
+          ]),
+          confianca: z.number().int().min(1).max(3).optional(),
+        })
         .parse(req.body);
-      return provas.responder(ctx, req.usuarioId, IdNum.parse(req.params).id, b.ordem, b.resposta);
+      return provas.responder(ctx, req.usuarioId, IdNum.parse(req.params).id, b.ordem, b.resposta, b.confianca);
     });
     // ---- admin (ferramentas de teste; só mexem na própria conta)
     await r.register(async (a) => {
@@ -149,6 +157,10 @@ export async function criarApp(o: OpcoesApp): Promise<{ app: FastifyInstance; ct
         const b = z.object({ alvo_id: z.string().max(20), nivel: z.number().int().min(0).max(5) }).parse(req.body);
         return admin.definirAdaptacao(ctx, req.usuarioId, b.alvo_id, b.nivel);
       });
+      a.post('/api/admin/variante', async (req) => {
+        const b = z.object({ modulo_id: z.string().max(12), variante: z.string().max(20) }).parse(req.body);
+        return admin.forcarVariante(ctx, req.usuarioId, b.modulo_id, b.variante);
+      });
       a.get('/api/admin/gabarito', async (req) => admin.gabaritoAtual(ctx, req.usuarioId));
       a.post('/api/admin/zerar', async (req) => admin.zerarProgresso(ctx, req.usuarioId));
     });
@@ -158,6 +170,15 @@ export async function criarApp(o: OpcoesApp): Promise<{ app: FastifyInstance; ct
     r.post('/api/tentativas/:id/skill', async (req) => {
       const b = z.object({ skill: z.enum(['corte', 'escudo']), ordem: z.number().int().min(0) }).parse(req.body);
       return provas.usarSkill(ctx, req.usuarioId, IdNum.parse(req.params).id, b.skill, b.ordem);
+    });
+    r.post('/api/tentativas/:id/comecar', async (req) => {
+      const b = z.object({ bancada: z.object({ descricao: z.string().max(5000), link: z.string().max(500).nullish() }).optional() }).parse(req.body ?? {});
+      return provas.comecar(ctx, req.usuarioId, IdNum.parse(req.params).id, b.bancada ? { descricao: b.bancada.descricao, link: b.bancada.link?.trim() || null } : undefined);
+    });
+    r.get('/api/modulos/:id/variante', async (req) => ({ variante: chefes.varianteRevelada(ctx, req.usuarioId, Id.parse(req.params).id) }));
+    r.post('/api/modulos/:id/olho', async (req) => {
+      const id = Id.parse(req.params).id;
+      return { variante: chefes.revelarVariante(ctx, req.usuarioId, provas.contextoDoChefe(ctx, req.usuarioId, id, 0)) };
     });
     r.post('/api/tentativas/:id/desistir', async (req) => provas.desistir(ctx, req.usuarioId, IdNum.parse(req.params).id));
   });
