@@ -21,11 +21,12 @@ Dois trilhos andando juntos. O do **sistema** é curto e vem primeiro; o do
 - [x] Chefe provisório (O Guardião) com vida de batalha, piso, cooldown
 - [x] Conteúdo do M0.1 completo (98 questões em rascunho — **revisar**)
 
-### F2 — Chefes
-- [ ] Motor de variantes (20) com sorteio sem repetição recente
-- [ ] Prova longa com retomada (fechar o navegador não perde a prova)
-- [ ] Cooldown e "feridas" após derrota
-- [ ] Fraqueza por tópico/objetivo e adaptação 0–5 (D015)
+### F2 — Chefes ✔ (2026-10-03)
+- [x] Motor de variantes (20) com sorteio sem repetição recente (18 jogáveis; D023)
+- [x] Prova longa com retomada (fechar o navegador não perde a prova)
+- [x] Descanso e "feridas" após derrota (D020)
+- [x] Fraqueza por tópico/objetivo e adaptação 0–5 (D015)
+- [ ] Conteúdo "ache o erro" e estudos de caso (libera Espelho e Engenheiro)
 
 ### F3 — Personagem (parcial, 2026-10-03)
 - [x] XP com curva por faixas e Marcos (D014), vida por nível, revanches

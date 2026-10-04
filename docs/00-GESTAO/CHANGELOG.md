@@ -2,6 +2,15 @@
 
 Formato: data · o que mudou · onde.
 
+## 2026-10-03 — F2: 20 variantes de chefe
+- 18 jogáveis: Guardião, Hidra, Golem, Traiçoeiro, Lich, Cronomante, Enxame,
+  Colosso, Arquivista, Fúria, Purista, Feynman, Mímico, Bancada, Dragão,
+  Vampiro, Gêmeos, Oráculo. Espelho e Engenheiro aguardam conteúdo (D023).
+- Intro do chefe com regra e blocos; cronômetro; confiança do Oráculo;
+  rubrica do Feynman; duas barras dos Gêmeos; avisos de troca de bloco.
+- Skills Olho do Batedor, Fôlego e Sangue-Frio. Admin: forçar variante.
+- 70 testes.
+
 ## 2026-10-03 — No ar
 - Publicado em https://planejamento.meh-eng.com/forja/ (D022): Node 22 no VPS,
   serviço systemd `forja`, backup diário, `implantacao/atualizar.sh`.

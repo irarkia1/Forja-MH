@@ -66,6 +66,12 @@ Cada variante tem sprite, nome, frase de entrada e a **animação do dado** a
 cada golpe. O nome combina a variante com o tema: *"Hidra do Clock, Guardiã
 do STM32"*.
 
+## Situação (2026-10-03)
+18 variantes jogáveis. **Espelho Quebrado** e **Engenheiro Sombrio** esperam
+conteúdo com questões "ache o erro" e estudos de caso; até lá não entram no
+sorteio. Detalhes de implementação na D023 (vida proporcional ao dado,
+marcas do módulo, variante fixa, tempo contado pelo servidor).
+
 ## Implementação
 Cada variante é um módulo em `packages/regras/chefes/` com `planejar`,
 `aoResponder` e `resultado` (ARQUITETURA.md). O dado é rolado **no servidor**

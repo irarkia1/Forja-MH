@@ -73,4 +73,6 @@ no VPS, em `meh-eng.com/estudos`.
 - [x] Conteúdo do M0.1: 7 roteiros, 98 questões em **rascunho** (revisar)
 - [x] F4 — fantasmas (revisão espaçada) e feridas
 - [ ] Conteúdo na ordem M0.4 → M0.7 → M0.6 → M0.2 (D017)
-- [ ] F2 — as 20 variantes de chefe
+- [x] F2 — 20 variantes de chefe (18 jogáveis; D023)
+- [x] F3 parcial — skills, energia, XP por minuto
+- [x] No ar: https://planejamento.meh-eng.com/forja/ (D022)
