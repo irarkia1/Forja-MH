@@ -1,0 +1,210 @@
+- id: Q-M0.2.T07-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Como se classifica a equação diferencial y'' + 3y' + 2y = sen t?
+  alternativas:
+    - "2ª ordem, linear, não homogênea"
+    - "2ª ordem, linear, homogênea"
+    - "3ª ordem, linear, não homogênea"
+    - "2ª ordem, não linear, não homogênea"
+  resposta: 0
+  explicacao: |
+    A maior derivada é y'' (2ª ordem). y, y' e y'' aparecem só à primeira potência, sem produtos entre si: linear. O termo sen t não contém y e não é zero: não homogênea (é a "fonte" do sistema). O "3" de 3y' é um coeficiente, não a ordem.
+  fonte: "OpenStax, Calculus Volume 2, capítulo Introduction to Differential Equations, seção Basics of Differential Equations; OpenStax, Calculus Volume 3, seção Second-Order Linear Equations"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T07-002
+  objetivo: O1
+  tipo: vf
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Verdadeiro ou falso: a função y(t) = e^(−2t) é solução da equação diferencial y' + 2y = 0.
+  resposta: true
+  explicacao: |
+    y' = −2e^(−2t). Substituindo: −2e^(−2t) + 2·e^(−2t) = 0 para todo t ✔. Qualquer múltiplo A·e^(−2t) também é solução; a constante A é fixada pela condição inicial.
+  fonte: "OpenStax, Calculus Volume 2, capítulo Introduction to Differential Equations, seção Basics of Differential Equations (verifying solutions)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T07-003
+  objetivo: O1
+  tipo: multipla
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Marque as funções que são soluções da equação y'' + 4y = 0.
+  alternativas:
+    - "y = sen(2t)"
+    - "y = 3·sen(2t) − cos(2t)"
+    - "y = e^(2t)"
+    - "y = sen(4t)"
+  resposta: [0, 1]
+  explicacao: |
+    (sen 2t)'' = −4·sen 2t, então −4 sen 2t + 4 sen 2t = 0 ✔; o mesmo vale para cos 2t, e como a EDO é linear e homogênea, qualquer combinação (como 3 sen 2t − cos 2t) também é solução. (e^(2t))'' = 4e^(2t) e 4e^(2t) + 4e^(2t) ≠ 0. (sen 4t)'' = −16 sen 4t, que somado a 4 sen 4t dá −12 sen 4t ≠ 0. É a equação de um circuito LC ideal com ω₀ = 2 rad/s.
+  fonte: "OpenStax, Calculus Volume 3, capítulo Second-Order Differential Equations, seção Second-Order Linear Equations (superposition principle)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T07-004
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Num circuito RL série, a EDO é L·di/dt + R·i = V. Qual é a constante de tempo com L = 50 mH e R = 10 Ω? Responda em ms.
+  resposta: {valor: 5, unidade: "ms", tolerancia: 0.001}
+  explicacao: |
+    Divida por L: di/dt + (R/L)·i = V/L. A forma padrão dy/dt + y/τ = … mostra que 1/τ = R/L ⇒ τ = L/R = 0,05/10 = 0,005 s = 5 ms. Quem multiplica L·R (0,5 s) usou a forma do RC por analogia errada.
+  fonte: "OpenStax, Calculus Volume 2, capítulo Introduction to Differential Equations, seção First-order Linear Equations (applications: electrical circuits)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T07-005
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um capacitor com v(0) = 2 V é ligado, por um resistor, a uma fonte de 10 V; a constante de tempo é τ = 1 ms. Usando v(t) = v∞ + (v₀ − v∞)·e^(−t/τ), qual é a tensão em t = 2 ms? Responda em V, com 2 casas decimais.
+  resposta: {valor: 8.92, unidade: "V", tolerancia: 0.002}
+  explicacao: |
+    v∞ = 10 V, v₀ = 2 V. v(2 ms) = 10 + (2 − 10)·e^(−2) = 10 − 8 × 0,1353 ≈ 8,92 V. Quem usa a fórmula da carga a partir de zero, 10·(1 − e^(−2)) = 8,65 V, ignora que o capacitor já começava com 2 V.
+  fonte: "OpenStax, Calculus Volume 2, capítulo Introduction to Differential Equations, seção First-order Linear Equations; Boylestad, Introdução à Análise de Circuitos, capítulo Capacitores (condições iniciais)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T07-006
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Resolva dy/dt + 50·y = 250 com y(0) = 1 (t em segundos) e calcule y(0,04). Responda com 2 casas decimais.
+  resposta: {valor: 4.46, unidade: "valor", tolerancia: 0.002}
+  explicacao: |
+    Forma padrão: 1/τ = 50 ⇒ τ = 0,02 s; valor final y∞ = 250/50 = 5 (em regime, dy/dt = 0). Solução: y = 5 + (1 − 5)·e^(−50t). Em t = 0,04 s = 2τ: y = 5 − 4·e^(−2) ≈ 5 − 0,541 = 4,46. Quem toma τ = 50 s ou y∞ = 250 lê a EDO errado.
+  fonte: "OpenStax, Calculus Volume 2, capítulo Introduction to Differential Equations, seção First-order Linear Equations; Paul's Online Math Notes, Differential Equations, Linear Equations"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T07-007
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Uma fonte de 12 V em série com R1 = 4 Ω alimenta um nó X. Do nó X ao terra estão, em paralelo, R2 = 4 Ω e um indutor de 20 mH (inicialmente sem corrente). A chave fecha em t = 0. Quanto tempo leva para a corrente no indutor chegar a 2 A? Responda em ms, com 1 casa decimal.
+  resposta: {valor: 11.0, unidade: "ms", tolerancia: 0.003}
+  explicacao: |
+    Thévenin visto pelo indutor: V_th = 12 × 4/(4 + 4) = 6 V; R_th = 4 ∥ 4 = 2 Ω. EDO: L·di/dt + R_th·i = V_th ⇒ τ = L/R_th = 0,02/2 = 10 ms; i∞ = 6/2 = 3 A. i(t) = 3·(1 − e^(−t/τ)). 2 = 3·(1 − e^(−t/τ)) ⇒ e^(−t/τ) = 1/3 ⇒ t = τ·ln 3 ≈ 10 × 1,0986 ≈ 11,0 ms. Usar só R1 (τ = 5 ms, i∞ = 3 A) ignora R2 em paralelo com o indutor.
+  fonte: "Boylestad, Introdução à Análise de Circuitos, capítulo Indutores (transitórios R-L, equivalente de Thévenin); OpenStax, Calculus Volume 2, seção First-order Linear Equations"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T07-008
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Escreva a equação característica de y'' + 5y' + 6y = 0 e encontre suas raízes. Qual é a raiz de **maior módulo**?
+  resposta: {valor: -3, unidade: "valor", tolerancia: 0.001}
+  explicacao: |
+    Substituindo y = e^(st): s² + 5s + 6 = 0 ⇒ (s + 2)(s + 3) = 0 ⇒ s = −2 ou s = −3. A de maior módulo é −3. A solução geral é y = A·e^(−2t) + B·e^(−3t): raízes reais, distintas e negativas, resposta superamortecida. Quem responde +3 esqueceu o sinal (raízes positivas dariam uma resposta que cresce sem parar).
+  fonte: "OpenStax, Calculus Volume 3, capítulo Second-Order Differential Equations, seção Second-Order Linear Equations (characteristic equation); Paul's Online Math Notes, Differential Equations, Real Roots"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T07-009
+  objetivo: O3
+  tipo: unica
+  dificuldade: 2
+  bloom: analisar
+  enunciado: |
+    Como é a resposta descrita por y'' + 2y' + 10y = 0?
+  alternativas:
+    - "Subamortecida: oscila com amplitude decrescente"
+    - "Superamortecida: decai sem oscilar"
+    - "Criticamente amortecida"
+    - "Oscilação permanente, sem amortecimento"
+  resposta: 0
+  explicacao: |
+    s² + 2s + 10 = 0 ⇒ Δ = 4 − 40 = −36 < 0 ⇒ s = −1 ± j3. Raízes complexas com parte real negativa: y = e^(−t)·(A·cos 3t + B·sen 3t), uma oscilação de 3 rad/s cujo envelope decai com e^(−t). Oscilação permanente exigiria parte real zero (sem o termo em y').
+  fonte: "OpenStax, Calculus Volume 3, capítulo Second-Order Differential Equations, seção Second-Order Linear Equations; Paul's Online Math Notes, Differential Equations, Complex Roots"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T07-010
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 4
+  bloom: aplicar
+  enunciado: |
+    Resolva y'' + 4y' + 4y = 0 com y(0) = 1 e y'(0) = 0 e calcule y(1). Responda com 3 casas decimais.
+  resposta: {valor: 0.406, unidade: "valor", tolerancia: 0.002}
+  explicacao: |
+    s² + 4s + 4 = (s + 2)² = 0: raiz dupla s = −2 (amortecimento crítico). Solução geral: y = (A + B·t)·e^(−2t). y(0) = A = 1. y' = B·e^(−2t) − 2(A + Bt)·e^(−2t) ⇒ y'(0) = B − 2A = 0 ⇒ B = 2. y = (1 + 2t)·e^(−2t); y(1) = 3·e^(−2) ≈ 0,406. Quem usa só A·e^(−2t) não consegue satisfazer as duas condições (daria 0,135 e y'(0) = −2).
+  fonte: "OpenStax, Calculus Volume 3, capítulo Second-Order Differential Equations, seção Second-Order Linear Equations; Paul's Online Math Notes, Differential Equations, Repeated Roots"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T07-011
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    A resposta de um sistema é descrita por y'' + 2y' + 10y = 0. Qual é a frequência angular da oscilação amortecida? Responda em rad/s.
+  resposta: {valor: 3, unidade: "rad/s", tolerancia: 0.001}
+  explicacao: |
+    Raízes: s = (−2 ± √(4 − 40))/2 = −1 ± j3. A parte imaginária é a frequência amortecida, ωd = 3 rad/s; a parte real dá o decaimento, α = 1 s⁻¹. Repare que ω₀ = √10 ≈ 3,16 rad/s é a frequência natural (sem amortecimento), um pouco maior que ωd. Quem responde √36 = 6 esqueceu de dividir por 2a.
+  fonte: "OpenStax, Calculus Volume 3, capítulo Second-Order Differential Equations, seção Applications (damped vibrations)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T07-012
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Num circuito RLC série com L = 10 mH e C = 1 µF, qual é a frequência natural ω₀ = 1/√(LC)? Responda em rad/s.
+  resposta: {valor: 10000, unidade: "rad/s", tolerancia: 0.001}
+  explicacao: |
+    LC = 10⁻² × 10⁻⁶ = 10⁻⁸ s²; √(10⁻⁸) = 10⁻⁴ s; ω₀ = 1/10⁻⁴ = 10 000 rad/s, ou f₀ = ω₀/(2π) ≈ 1,59 kHz. Ela vem do termo 1/(LC) da equação característica s² + (R/L)s + 1/(LC) = 0. Quem responde 1592 deu a resposta em Hz.
+  fonte: "OpenStax, Calculus Volume 3, capítulo Second-Order Differential Equations, seção Applications (RLC series circuits)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T07-013
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Para o mesmo RLC série (L = 10 mH, C = 1 µF), qual valor de R torna a resposta criticamente amortecida? Responda em Ω.
+  resposta: {valor: 200, unidade: "Ω", tolerancia: 0.001}
+  explicacao: |
+    Crítico quando o discriminante de s² + (R/L)s + 1/(LC) é zero: (R/L)² = 4/(LC) ⇒ R = 2·√(L/C) = 2·√(0,01/10⁻⁶) = 2·√10⁴ = 200 Ω. Equivalente: α = R/(2L) = ω₀. Abaixo de 200 Ω o circuito oscila; acima, decai sem oscilar. Quem responde 100 Ω esqueceu o fator 2.
+  fonte: "OpenStax, Calculus Volume 3, capítulo Second-Order Differential Equations, seção Applications (RLC series circuits)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T07-014
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    O RLC série com L = 10 mH e C = 1 µF tem agora R = 50 Ω. Calcule a frequência angular amortecida ωd = √(ω₀² − α²), com α = R/(2L). Responda em rad/s, sem casas decimais.
+  resposta: {valor: 9682, unidade: "rad/s", tolerancia: 0.002}
+  explicacao: |
+    α = 50/(2 × 0,01) = 2500 s⁻¹; ω₀ = 10 000 rad/s. Como α < ω₀, a resposta é subamortecida: ωd = √(10⁸ − 6,25 × 10⁶) = √(9,375 × 10⁷) ≈ 9682 rad/s (≈ 1,54 kHz). ζ = α/ω₀ = 0,25. Quem usa α = R/L = 5000 obtém 8660 rad/s.
+  fonte: "OpenStax, Calculus Volume 3, capítulo Second-Order Differential Equations, seção Applications (RLC series circuits)"
+  origem: ia
+  revisao: rascunho

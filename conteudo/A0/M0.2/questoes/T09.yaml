@@ -1,0 +1,210 @@
+- id: Q-M0.2.T09-001
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Quatro leituras de um multímetro numa fonte de 3,3 V foram 3,28 V; 3,31 V; 3,30 V e 3,27 V. Qual é a média? Responda em V, com 3 casas decimais.
+  resposta: {valor: 3.29, unidade: "V", tolerancia: 0.0005}
+  explicacao: |
+    x̄ = (3,28 + 3,31 + 3,30 + 3,27)/4 = 13,16/4 = 3,290 V. A média é o "centro de massa" das leituras. Nenhuma das leituras é exatamente 3,29 V, e tudo bem: a média não precisa ser um dos valores medidos.
+  fonte: "OpenStax, Introductory Statistics 2e, capítulo Descriptive Statistics, seção Measures of the Center of the Data"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T09-002
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um ADC devolveu cinco leituras: 2047, 2049, 2048, 3100 e 2046 (a leitura 3100 foi um pico de interferência). Qual é a mediana?
+  resposta: {valor: 2048, unidade: "LSB", tolerancia: 0}
+  explicacao: |
+    Ordene primeiro: 2046, 2047, 2048, 2049, 3100. Com N = 5 (ímpar), a mediana é o 3º valor: 2048. A média seria 2258, arrastada pelo pico; a mediana nem percebe — é por isso que filtros de mediana eliminam ruído impulsivo. Quem pega o valor do meio sem ordenar obtém 2048 por coincidência aqui; com outra ordem, erraria.
+  fonte: "OpenStax, Introductory Statistics 2e, capítulo Descriptive Statistics, seção Measures of the Center of the Data"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T09-003
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Calcule o desvio padrão **amostral** (com N − 1 no denominador) das leituras 10, 12, 11, 13 e 14 (em mV). Responda em mV, com 2 casas decimais.
+  resposta: {valor: 1.58, unidade: "mV", tolerancia: 0.003}
+  explicacao: |
+    Média = 60/5 = 12. Desvios: −2, 0, −1, 1, 2; quadrados: 4, 0, 1, 1, 4 (soma 10). s² = 10/(5 − 1) = 2,5 mV²; s = √2,5 ≈ 1,58 mV. Dividindo por N (desvio padrão da população) obtém-se √2 ≈ 1,41 mV. Esquecer a raiz (2,5) dá a variância, em mV².
+  fonte: "OpenStax, Introductory Statistics 2e, capítulo Descriptive Statistics, seção Measures of the Spread of the Data"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T09-004
+  objetivo: O1
+  tipo: unica
+  dificuldade: 2
+  bloom: avaliar
+  enunciado: |
+    Um sensor sofre picos esporádicos de interferência que geram leituras absurdas. Qual medida de centro é a mais adequada para estimar o valor real a partir de um bloco de leituras?
+  alternativas:
+    - "A mediana"
+    - "A média aritmética"
+    - "A amplitude (máximo − mínimo)"
+    - "O valor máximo do bloco"
+  resposta: 0
+  explicacao: |
+    A mediana depende só da ordem dos valores, não do seu tamanho: alguns picos no extremo não a deslocam. A média é puxada por cada pico. A amplitude é uma medida de dispersão, não de centro, e é a mais sensível a extremos. O máximo seria o próprio pico.
+  fonte: "OpenStax, Introductory Statistics 2e, capítulo Descriptive Statistics, seções Measures of the Center of the Data e Skewness and the Mean, Median, and Mode"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T09-005
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um nó IoT só funciona se o regulador (confiabilidade 98 % em um ano) **e** o rádio (95 %) funcionarem. Supondo falhas independentes, qual é a confiabilidade do nó em um ano? Responda em %, com 1 casa decimal.
+  resposta: {valor: 93.1, unidade: "%", tolerancia: 0.002}
+  explicacao: |
+    Os dois precisam funcionar (sistema em série) e as falhas são independentes: P = 0,98 × 0,95 = 0,931 = 93,1 %. A confiabilidade do conjunto é sempre menor que a do pior componente. Somar (193 %) ou fazer a média (96,5 %) não tem sentido para "e".
+  fonte: "OpenStax, Introductory Statistics 2e, capítulo Probability Topics, seções Independent and Mutually Exclusive Events e Two Basic Rules of Probability"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T09-006
+  objetivo: O2
+  tipo: vf
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Verdadeiro ou falso: se dois eventos A e B são mutuamente exclusivos (não podem acontecer ao mesmo tempo), então P(A ou B) = P(A) + P(B).
+  resposta: true
+  explicacao: |
+    A regra geral é P(A ou B) = P(A) + P(B) − P(A e B). Se A e B não podem ocorrer juntos, P(A e B) = 0 e sobra a soma simples. Ex.: um registrador de estado indica "ocioso" ou "transmitindo", nunca os dois; as probabilidades se somam.
+  fonte: "OpenStax, Introductory Statistics 2e, capítulo Probability Topics, seção Two Basic Rules of Probability (the addition rule)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T09-007
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Uma placa tem 200 pontos de solda. Cada solda sai boa com probabilidade 0,999, de forma independente. Qual é a probabilidade de **todas** as soldas da placa estarem boas? Responda em %, com 1 casa decimal.
+  resposta: {valor: 81.9, unidade: "%", tolerancia: 0.002}
+  explicacao: |
+    Todas boas = boa e boa e … (200 vezes), eventos independentes: 0,999²⁰⁰ ≈ 0,8186 ≈ 81,9 %. Ou seja, quase 1 placa em 5 tem pelo menos um defeito, mesmo com 99,9 % por solda. Quem faz 1 − 200 × 0,001 = 80 % usou uma aproximação que só vale para probabilidades muito pequenas.
+  fonte: "OpenStax, Introductory Statistics 2e, capítulo Probability Topics, seção Independent and Mutually Exclusive Events"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T09-008
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Uma placa tem dois reguladores redundantes (o sistema funciona se **pelo menos um** funcionar), cada um com confiabilidade 0,90, em série com um microcontrolador de confiabilidade 0,98. Falhas independentes. Qual é a confiabilidade da placa? Responda em %, com 1 casa decimal.
+  resposta: {valor: 97.0, unidade: "%", tolerancia: 0.002}
+  explicacao: |
+    Par redundante: falha só se os dois falharem, 0,10 × 0,10 = 0,01 ⇒ confiabilidade 0,99. Em série com o MCU: 0,99 × 0,98 = 0,9702 ≈ 97,0 %. Sem a redundância seria 0,90 × 0,98 = 88,2 %. Quem soma 0,90 + 0,90 obtém uma "probabilidade" maior que 1.
+  fonte: "OpenStax, Introductory Statistics 2e, capítulo Probability Topics, seção Two Basic Rules of Probability (complemento e regra do produto)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T09-009
+  objetivo: O3
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Para uma grandeza com distribuição normal, aproximadamente que fração dos valores fica dentro de dois desvios padrão da média (μ ± 2σ)?
+  alternativas:
+    - "95 %"
+    - "68 %"
+    - "99,7 %"
+    - "50 %"
+  resposta: 0
+  explicacao: |
+    Regra 68–95–99,7: ≈ 68 % em μ ± σ, ≈ 95 % em μ ± 2σ e ≈ 99,7 % em μ ± 3σ. 50 % é a fração abaixo (ou acima) da média.
+  fonte: "OpenStax, Introductory Statistics 2e, capítulo The Normal Distribution, seção The Standard Normal Distribution (the empirical rule)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T09-010
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um lote de resistores de 1 kΩ tem distribuição normal com μ = 1000 Ω e σ = 10 Ω. Que porcentagem dos resistores tem resistência **acima** de 1020 Ω? Use Φ(2) = 0,9772. Responda em %, com 2 casas decimais.
+  resposta: {valor: 2.28, unidade: "%", tolerancia: 0.005}
+  explicacao: |
+    z = (1020 − 1000)/10 = 2. P(Z > 2) = 1 − Φ(2) = 1 − 0,9772 = 0,0228 = 2,28 %. Quem responde 5 % usou a regra dos 95 % sem dividir os 5 % restantes entre as duas caudas; quem responde 97,72 % calculou a fração abaixo de 1020 Ω.
+  fonte: "OpenStax, Introductory Statistics 2e, capítulo The Normal Distribution, seções The Standard Normal Distribution e Using the Normal Distribution"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T09-011
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Resistores de 1 kΩ com tolerância nominal de ±5 % (950 a 1050 Ω) vêm de um processo normal com μ = 1000 Ω e σ = 20 Ω. Que porcentagem do lote fica dentro da tolerância? Use Φ(2,5) = 0,9938. Responda em %, com 2 casas decimais.
+  resposta: {valor: 98.76, unidade: "%", tolerancia: 0.0005}
+  explicacao: |
+    Os limites estão a z = ±50/20 = ±2,5. P(−2,5 < Z < 2,5) = Φ(2,5) − (1 − Φ(2,5)) = 2·Φ(2,5) − 1 = 2 × 0,9938 − 1 = 0,9876 = 98,76 %. Cerca de 1,24 % do lote (0,62 % em cada cauda) estaria fora da tolerância. Responder 99,38 % é confundir "abaixo de 1050" com "entre 950 e 1050".
+  fonte: "OpenStax, Introductory Statistics 2e, capítulo The Normal Distribution, seção Using the Normal Distribution"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T09-012
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    As leituras de um ADC têm ruído aleatório com desvio padrão de 8 LSB. O firmware passa a reportar a média de 16 leituras independentes. Qual é o desvio padrão esperado dessa média? Responda em LSB.
+  resposta: {valor: 2, unidade: "LSB", tolerancia: 0.001}
+  explicacao: |
+    σ_média = σ/√N = 8/√16 = 8/4 = 2 LSB. Quem responde 0,5 LSB dividiu por N (16) em vez de √N. A melhoria cresce devagar: para chegar a 1 LSB seriam necessárias 64 leituras.
+  fonte: "OpenStax, Introductory Statistics 2e, capítulo The Central Limit Theorem, seção The Central Limit Theorem for Sample Means (Averages); Microchip, AVR121: Enhancing ADC resolution by oversampling"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T09-013
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Uma medição tem ruído aleatório com desvio padrão de 6 mV. Quantas leituras independentes, no mínimo, precisam ser promediadas para que o desvio padrão da média caia para 1 mV?
+  resposta: {valor: 36, unidade: "leituras", tolerancia: 0}
+  explicacao: |
+    6/√N ≤ 1 ⇒ √N ≥ 6 ⇒ N ≥ 36. Reduzir o ruído 6 vezes custa 36 vezes mais leituras (e 36 vezes mais tempo). Quem responde 6 esqueceu que o ganho é pela raiz de N.
+  fonte: "OpenStax, Introductory Statistics 2e, capítulo The Central Limit Theorem, seção The Central Limit Theorem for Sample Means (Averages)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T09-014
+  objetivo: O4
+  tipo: multipla
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Você fez o histograma de 1000 leituras de um ADC com a entrada fixa. Marque as interpretações corretas.
+  alternativas:
+    - "Um histograma mais estreito indica leituras com menos ruído"
+    - "Dois picos bem separados (histograma bimodal) podem indicar interferência ou algo alternando entre dois estados"
+    - "A média de 100 leituras tem o mesmo desvio padrão que uma leitura isolada"
+    - "A altura de cada barra é a tensão medida naquele instante"
+  resposta: [0, 1]
+  explicacao: |
+    A largura do histograma acompanha o desvio padrão: mais estreito, menos ruído. Dois picos sugerem duas "populações" de leituras, como uma carga PWM ligando e desligando perto do sensor. A média de 100 leituras tem desvio padrão σ/√100 = σ/10. A altura de cada barra é a **contagem** de leituras naquele intervalo, não uma tensão.
+  fonte: "OpenStax, Introductory Statistics 2e, capítulo Descriptive Statistics, seção Histograms, Frequency Polygons, and Time Series Graphs"
+  origem: ia
+  revisao: rascunho

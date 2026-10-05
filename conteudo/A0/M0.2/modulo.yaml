@@ -1,57 +1,167 @@
 id: M0.2
 ato: A0
 nome: "Matemática para engenharia"
+missao: "Afie a régua de cálculo do ferreiro na Vila da Forja: quem não domina os números deixa o metal esfriar antes do golpe certo."
 horas: 200
 trilha: base
 ordem: 2
 requer: ["M0.1"]
 tags_chefe: []
+# Ordem didática: álgebra (a ferramenta de todo o resto) → numeração e Boole logo em seguida (só exigem aritmética e reaproveitam na hora o que você fez com bits no M0.6) → funções, exponencial e log → trigonometria → complexos (o pré-cálculo completo da corrente alternada) → álgebra linear (fecha a parte algébrica com a análise nodal do M0.4 e entrega os sistemas 2×2 que a EDO usa) → derivadas → integrais → EDO (a cadeia do cálculo, que termina no RC e no RLC e usa as raízes complexas do T04) → probabilidade e estatística → erro e incerteza (que precisa do desvio padrão e, na propagação, das derivadas).
 topicos:
   - id: M0.2.T01
     nome: "Álgebra e manipulação de equações"
     tipo: comum
     peso: 1
-  - id: M0.2.T02
-    nome: "Funções, gráficos, exponencial e logaritmo"
-    tipo: comum
-    peso: 1
-  - id: M0.2.T03
-    nome: "Trigonometria e senoides"
-    tipo: comum
-    peso: 1
-  - id: M0.2.T04
-    nome: "Números complexos e forma polar"
-    tipo: comum
-    peso: 1
-  - id: M0.2.T05
-    nome: "Limites e derivadas"
-    tipo: comum
-    peso: 1
-  - id: M0.2.T06
-    nome: "Integrais e aplicações"
-    tipo: comum
-    peso: 1
-  - id: M0.2.T07
-    nome: "Equações diferenciais ordinárias de 1ª e 2ª ordem"
-    tipo: comum
-    peso: 1
-  - id: M0.2.T08
-    nome: "Álgebra linear: vetores, matrizes, sistemas"
-    tipo: comum
-    peso: 1
-  - id: M0.2.T09
-    nome: "Probabilidade e estatística descritiva"
-    tipo: comum
-    peso: 1
-  - id: M0.2.T10
-    nome: "Erro, incerteza e algarismos significativos"
-    tipo: comum
-    peso: 1
+    objetivos:
+      - id: O1
+        texto: "Manipular expressões com potências, raízes, frações e notação científica, usando os prefixos do SI (p, n, µ, m, k, M, G) nas contas de circuitos"
+      - id: O2
+        texto: "Isolar uma variável em fórmulas de eletrônica (lei de Ohm, potência, divisor de tensão, resistores em paralelo, constante de tempo) sem trocar sinais nem inverter frações"
+      - id: O3
+        texto: "Resolver equações do 1º e do 2º grau e sistemas lineares de duas incógnitas por substituição e por eliminação"
+      - id: O4
+        texto: "Conferir resultados por análise dimensional e por estimativa de ordem de grandeza"
   - id: M0.2.T11
     nome: "Sistemas de numeração (binário, hexadecimal, complemento de 2)"
     tipo: comum
     peso: 1
+    objetivos:
+      - id: O1
+        texto: "Converter números inteiros e frações simples entre decimal, binário, octal e hexadecimal"
+      - id: O2
+        texto: "Representar inteiros com sinal em complemento de 2, calcular a faixa de int8_t, int16_t e int32_t e interpretar o mesmo byte como valor com e sem sinal"
+      - id: O3
+        texto: "Somar e subtrair em binário e distinguir o vai-um (carry) do estouro com sinal (overflow)"
+      - id: O4
+        texto: "Converter leituras de ADC e campos de registradores em grandezas físicas e reconhecer as representações em ponto fixo (formato Q) e BCD"
   - id: M0.2.T12
     nome: "Lógica booleana e álgebra de Boole"
     tipo: comum
     peso: 1
+    objetivos:
+      - id: O1
+        texto: "Construir tabelas-verdade das portas NOT, AND, OR, NAND, NOR, XOR e XNOR e de expressões combinadas"
+      - id: O2
+        texto: "Simplificar expressões com os teoremas da álgebra de Boole e as leis de De Morgan"
+      - id: O3
+        texto: "Obter a soma de produtos a partir de uma tabela-verdade e simplificá-la com mapas de Karnaugh de até 4 variáveis"
+      - id: O4
+        texto: "Implementar funções lógicas só com portas NAND ou só com NOR e relacionar os operadores booleanos às máscaras de bits em C"
+  - id: M0.2.T02
+    nome: "Funções, gráficos, exponencial e logaritmo"
+    tipo: comum
+    peso: 1
+    objetivos:
+      - id: O1
+        texto: "Ler e esboçar gráficos de funções afins, quadráticas, de potência e inversas, interpretando inclinação, intercepto e domínio (curva V×I, P = V²/R)"
+      - id: O2
+        texto: "Calcular exponenciais e usá-las para modelar a carga e a descarga de um capacitor com e^(−t/τ)"
+      - id: O3
+        texto: "Aplicar as propriedades dos logaritmos para isolar o tempo em equações exponenciais e trocar de base (ln, log₁₀, log₂)"
+      - id: O4
+        texto: "Converter razões de tensão e de potência em decibéis e de volta (dB, dBm), e ler eixos em escala logarítmica"
+  - id: M0.2.T03
+    nome: "Trigonometria e senoides"
+    tipo: comum
+    peso: 1
+    objetivos:
+      - id: O1
+        texto: "Converter ângulos entre graus e radianos e calcular seno, cosseno e tangente no triângulo retângulo e no círculo trigonométrico"
+      - id: O2
+        texto: "Identificar amplitude, valor de pico a pico, período, frequência, frequência angular e fase em v(t) = Vp·sen(ωt + φ)"
+      - id: O3
+        texto: "Calcular a defasagem entre duas senoides em graus e em tempo e aplicar as identidades trigonométricas básicas"
+      - id: O4
+        texto: "Relacionar valor de pico, valor eficaz (RMS) e valor médio de uma senoide e aplicá-los à tensão da rede elétrica"
+  - id: M0.2.T04
+    nome: "Números complexos e forma polar"
+    tipo: comum
+    peso: 1
+    objetivos:
+      - id: O1
+        texto: "Somar, subtrair, multiplicar e dividir números complexos na forma retangular, usando o conjugado e j como unidade imaginária"
+      - id: O2
+        texto: "Converter entre as formas retangular e polar, escolhendo o quadrante correto do ângulo"
+      - id: O3
+        texto: "Multiplicar, dividir e elevar a potências na forma polar e usar a fórmula de Euler e^(jθ) = cos θ + j·sen θ"
+      - id: O4
+        texto: "Representar resistores, capacitores e indutores como impedâncias complexas e calcular associações em série e em paralelo"
+  - id: M0.2.T08
+    nome: "Álgebra linear: vetores, matrizes, sistemas"
+    tipo: comum
+    peso: 1
+    objetivos:
+      - id: O1
+        texto: "Operar com vetores (soma, produto por escalar, produto escalar, norma) e interpretar essas operações geometricamente"
+      - id: O2
+        texto: "Multiplicar matrizes e calcular a transposta, o determinante 2×2 e 3×3 e a inversa de uma matriz 2×2"
+      - id: O3
+        texto: "Resolver sistemas lineares por eliminação de Gauss e pela regra de Cramer e reconhecer sistemas sem solução ou com infinitas soluções"
+      - id: O4
+        texto: "Escrever as equações da análise nodal na forma matricial G·v = i e resolvê-las à mão e com NumPy"
+  - id: M0.2.T05
+    nome: "Limites e derivadas"
+    tipo: comum
+    peso: 1
+    objetivos:
+      - id: O1
+        texto: "Calcular limites simples, inclusive no infinito, e interpretá-los como o comportamento final de um circuito"
+      - id: O2
+        texto: "Derivar polinômios, exponenciais, logaritmos, senos e cossenos com as regras da soma, do produto, do quociente e da cadeia"
+      - id: O3
+        texto: "Interpretar a derivada como taxa de variação e aplicá-la em i = C·dv/dt, v = L·di/dt e na taxa de subida (slew rate) de um sinal"
+      - id: O4
+        texto: "Encontrar máximos e mínimos com a derivada e linearizar uma função perto de um ponto de operação"
+  - id: M0.2.T06
+    nome: "Integrais e aplicações"
+    tipo: comum
+    peso: 1
+    objetivos:
+      - id: O1
+        texto: "Calcular integrais indefinidas e definidas de polinômios, exponenciais e senoides com antiderivadas e o Teorema Fundamental do Cálculo"
+      - id: O2
+        texto: "Interpretar a integral como área e acumulação e aplicá-la para obter carga (q = ∫i dt), tensão no capacitor e energia (E = ∫p dt)"
+      - id: O3
+        texto: "Calcular o valor médio e o valor eficaz (RMS) de formas de onda senoidal, quadrada e PWM pela definição com integral"
+      - id: O4
+        texto: "Aplicar a substituição simples e a integração numérica pela regra dos trapézios a amostras de um sinal"
+  - id: M0.2.T07
+    nome: "Equações diferenciais ordinárias de 1ª e 2ª ordem"
+    tipo: comum
+    peso: 1
+    objetivos:
+      - id: O1
+        texto: "Classificar uma equação diferencial ordinária (ordem, linearidade, homogeneidade) e verificar se uma função dada é solução"
+      - id: O2
+        texto: "Resolver EDOs lineares de 1ª ordem com coeficientes constantes e aplicar a condição inicial em circuitos RC e RL"
+      - id: O3
+        texto: "Resolver EDOs lineares homogêneas de 2ª ordem pela equação característica e classificar a resposta como superamortecida, crítica ou subamortecida"
+      - id: O4
+        texto: "Montar a EDO de um circuito RLC série pelas leis de Kirchhoff e calcular ω₀, o coeficiente de amortecimento α e a frequência amortecida ωd"
+  - id: M0.2.T09
+    nome: "Probabilidade e estatística descritiva"
+    tipo: comum
+    peso: 1
+    objetivos:
+      - id: O1
+        texto: "Calcular média, mediana, moda, variância e desvio padrão de um conjunto de leituras"
+      - id: O2
+        texto: "Calcular probabilidades com as regras do complemento, da soma e do produto, inclusive para eventos independentes como falhas de componentes"
+      - id: O3
+        texto: "Usar a distribuição normal (regra 68–95–99,7 e escore z) para estimar a fração de componentes dentro de uma tolerância"
+      - id: O4
+        texto: "Explicar como a média de N amostras reduz o ruído pelo fator √N e interpretar histogramas de leituras de ADC"
+  - id: M0.2.T10
+    nome: "Erro, incerteza e algarismos significativos"
+    tipo: comum
+    peso: 1
+    objetivos:
+      - id: O1
+        texto: "Aplicar as regras de algarismos significativos e de arredondamento a medições e a resultados de contas"
+      - id: O2
+        texto: "Distinguir erro sistemático de erro aleatório e exatidão de precisão, e calcular erro absoluto e erro relativo"
+      - id: O3
+        texto: "Calcular a incerteza de uma leitura de multímetro a partir da especificação do fabricante e distinguir as avaliações tipo A e tipo B"
+      - id: O4
+        texto: "Propagar incertezas em somas, produtos, quocientes e potências e expressar o resultado com incerteza expandida e unidade"

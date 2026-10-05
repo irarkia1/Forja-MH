@@ -1,0 +1,220 @@
+- id: Q-M0.2.T08-001
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Qual é a norma (o tamanho) do vetor u = (2, −1, 2)?
+  resposta: {valor: 3, unidade: "valor", tolerancia: 0.001}
+  explicacao: |
+    |u| = √(2² + (−1)² + 2²) = √(4 + 1 + 4) = √9 = 3. Os sinais não importam porque cada componente entra ao quadrado. Somar as componentes (2 − 1 + 2 = 3) dá o mesmo número aqui por coincidência — com (1, 1, 1), por exemplo, a soma daria 3 e a norma √3.
+  fonte: "OpenStax, Algebra and Trigonometry 2e, capítulo Further Applications of Trigonometry, seção Vectors; 3Blue1Brown, Essence of Linear Algebra, Vectors, what even are they?"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T08-002
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Calcule o produto escalar u·v de u = (1, 2, 3) e v = (4, −5, 6).
+  resposta: {valor: 12, unidade: "valor", tolerancia: 0.001}
+  explicacao: |
+    u·v = 1·4 + 2·(−5) + 3·6 = 4 − 10 + 18 = 12. O produto escalar é um número (não um vetor). Quem responde (4, −10, 18) fez o produto componente a componente e esqueceu de somar.
+  fonte: "OpenStax, Algebra and Trigonometry 2e, capítulo Further Applications of Trigonometry, seção Vectors (dot product); 3Blue1Brown, Essence of Linear Algebra, Dot products and duality"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T08-003
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Qual é o ângulo entre os vetores u = (1, 2, 2) e v = (2, 0, 1)? Responda em graus, com 1 casa decimal.
+  resposta: {valor: 53.4, unidade: "°", tolerancia: 0.002}
+  explicacao: |
+    u·v = 2 + 0 + 2 = 4; |u| = √(1 + 4 + 4) = 3; |v| = √(4 + 0 + 1) = √5 ≈ 2,236. cos θ = 4/(3 × 2,236) ≈ 0,5963 ⇒ θ = arccos(0,5963) ≈ 53,4°. Calculadora em radianos daria 0,93 — confira o modo.
+  fonte: "OpenStax, Algebra and Trigonometry 2e, capítulo Further Applications of Trigonometry, seção Vectors (finding the angle between two vectors)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T08-004
+  objetivo: O2
+  tipo: vf
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Verdadeiro ou falso: para quaisquer matrizes quadradas A e B do mesmo tamanho, A·B = B·A.
+  resposta: false
+  explicacao: |
+    O produto de matrizes **não é comutativo**. Exemplo: A = [[1, 0], [2, 1]] e B = [[1, 3], [0, 1]] dão A·B = [[1, 3], [2, 7]] e B·A = [[7, 3], [2, 1]]. Geometricamente, aplicar uma transformação e depois outra não é o mesmo que na ordem inversa.
+  fonte: "3Blue1Brown, Essence of Linear Algebra, Matrix multiplication as composition; OpenStax, Algebra and Trigonometry 2e, seção Matrices and Matrix Operations"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T08-005
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Calcule o determinante da matriz [[3, −2], [4, 5]] (linhas entre colchetes internos).
+  resposta: {valor: 23, unidade: "valor", tolerancia: 0.001}
+  explicacao: |
+    det [[a, b], [c, d]] = a·d − b·c = 3·5 − (−2)·4 = 15 + 8 = 23. O erro mais comum é o sinal: quem faz 15 − 8 = 7 esqueceu que b é negativo.
+  fonte: "OpenStax, Algebra and Trigonometry 2e, capítulo Systems of Equations and Inequalities, seção Solving Systems with Cramer's Rule (evaluating the determinant of a 2×2 matrix)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T08-006
+  objetivo: O2
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Calcule o produto A·B, com A = [[1, 2], [3, 4]] e B = [[0, 1], [1, 0]] (linhas entre colchetes internos).
+  alternativas:
+    - "[[2, 1], [4, 3]]"
+    - "[[3, 4], [1, 2]]"
+    - "[[0, 2], [3, 0]]"
+    - "[[1, 2], [3, 4]]"
+  resposta: 0
+  explicacao: |
+    Elemento (i, j) = linha i de A · coluna j de B. (1,1): 1·0 + 2·1 = 2; (1,2): 1·1 + 2·0 = 1; (2,1): 3·0 + 4·1 = 4; (2,2): 3·1 + 4·0 = 3. Multiplicar à direita por B troca as **colunas** de A. [[3, 4], [1, 2]] é B·A (troca as linhas); [[0, 2], [3, 0]] é o produto elemento a elemento (o `*` do NumPy).
+  fonte: "OpenStax, Algebra and Trigonometry 2e, capítulo Systems of Equations and Inequalities, seção Matrices and Matrix Operations (finding the product of two matrices)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T08-007
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Calcule o determinante da matriz 3×3 [[2, 1, 0], [1, 3, 1], [0, 1, 2]].
+  resposta: {valor: 8, unidade: "valor", tolerancia: 0.001}
+  explicacao: |
+    Expansão pela 1ª linha (sinais + − +): 2·(3·2 − 1·1) − 1·(1·2 − 1·0) + 0·(…) = 2·5 − 1·2 = 8. Quem soma o termo do meio (10 + 2 = 12) esqueceu o sinal alternado dos cofatores. Matrizes assim (tridiagonais e simétricas) aparecem na análise nodal de uma "escada" de resistores.
+  fonte: "OpenStax, Algebra and Trigonometry 2e, capítulo Systems of Equations and Inequalities, seção Solving Systems with Cramer's Rule (evaluating a 3×3 determinant)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T08-008
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 4
+  bloom: aplicar
+  enunciado: |
+    Uma fonte de corrente injeta 5 mA no nó 1. Há um resistor de 500 Ω do nó 1 ao terra, um de 1 kΩ entre os nós 1 e 2 e um de 1 kΩ do nó 2 ao terra. Monte G·v = i (em mS, mA e V) e resolva. Qual é a tensão v1? Responda em V.
+  resposta: {valor: 2, unidade: "V", tolerancia: 0.001}
+  explicacao: |
+    Condutâncias: 500 Ω = 2 mS; 1 kΩ = 1 mS. G = [[2 + 1, −1], [−1, 1 + 1]] = [[3, −1], [−1, 2]]; i = [5, 0]. det G = 6 − 1 = 5. Por Cramer: v1 = (5·2 − (−1)·0)/5 = 2 V; v2 = (3·0 − (−1)·5)/5 = 1 V. Conferência: correntes que saem do nó 1: 2 V/500 Ω = 4 mA e (2 − 1) V/1 kΩ = 1 mA, total 5 mA ✔. Em NumPy: `np.linalg.solve([[3, -1], [-1, 2]], [5, 0])`.
+  fonte: "Boylestad, Introdução à Análise de Circuitos, capítulo Métodos de análise e tópicos selecionados (CC), seção Análise nodal (abordagem padronizada); documentação do NumPy, numpy.linalg.solve"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T08-009
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Resolva por eliminação de Gauss o sistema x + y + z = 6; 2x − y + z = 3; x + 2y − z = 2. Qual é o valor de z?
+  resposta: {valor: 3, unidade: "valor", tolerancia: 0.001}
+  explicacao: |
+    L2 − 2·L1: −3y − z = −9. L3 − L1: y − 2z = −4. Agora 3·(nova L3) + (nova L2): (3y − 6z) + (−3y − z) = −12 − 9 ⇒ −7z = −21 ⇒ z = 3. Voltando: y = −4 + 2·3 = 2 e x = 6 − 2 − 3 = 1. Conferência na 2ª equação: 2 − 2 + 3 = 3 ✔.
+  fonte: "OpenStax, Algebra and Trigonometry 2e, capítulo Systems of Equations and Inequalities, seção Solving Systems with Gaussian Elimination"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T08-010
+  objetivo: O3
+  tipo: unica
+  dificuldade: 2
+  bloom: lembrar
+  enunciado: |
+    Na regra de Cramer para o sistema A·x = b, com det(A) ≠ 0, como se calcula a incógnita xₖ?
+  alternativas:
+    - "det(Aₖ)/det(A), em que Aₖ é A com a coluna k substituída por b"
+    - "det(A)/det(Aₖ), em que Aₖ é A com a coluna k substituída por b"
+    - "det(Aₖ)/det(A), em que Aₖ é A com a linha k substituída por b"
+    - "bₖ/det(A)"
+  resposta: 0
+  explicacao: |
+    Cramer: xₖ = det(Aₖ)/det(A), trocando a **coluna** k (a coluna dos coeficientes de xₖ) pelo vetor b. Trocar a linha não tem sentido, porque cada linha é uma equação. Inverter a fração dá o recíproco da resposta. E se det(A) = 0 a regra não se aplica: não há solução única.
+  fonte: "OpenStax, Algebra and Trigonometry 2e, capítulo Systems of Equations and Inequalities, seção Solving Systems with Cramer's Rule; 3Blue1Brown, Essence of Linear Algebra, Cramer's rule, explained geometrically"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T08-011
+  objetivo: O3
+  tipo: multipla
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Considere o sistema 2x + 4y = 6 e x + 2y = 3. Marque as afirmações corretas.
+  alternativas:
+    - "O determinante da matriz dos coeficientes é zero"
+    - "O sistema tem infinitas soluções"
+    - "A regra de Cramer não pode ser usada para resolvê-lo"
+    - "O sistema tem exatamente uma solução, x = 1 e y = 1"
+  resposta: [0, 1, 2]
+  explicacao: |
+    det [[2, 4], [1, 2]] = 4 − 4 = 0. A primeira equação é o dobro da segunda: são a mesma reta, então qualquer ponto dela é solução (infinitas soluções, por exemplo x = 1, y = 1 ou x = 3, y = 0). Cramer exige dividir por det(A), que é zero. x = 1, y = 1 é **uma** das soluções, não a única.
+  fonte: "OpenStax, Algebra and Trigonometry 2e, capítulo Systems of Equations and Inequalities, seções Systems of Linear Equations: Two Variables (dependent systems) e Solving Systems with Cramer's Rule"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T08-012
+  objetivo: O3
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Se a matriz quadrada A tem determinante diferente de zero, o sistema A·x = b tem:
+  alternativas:
+    - "Exatamente uma solução, para qualquer b"
+    - "Nenhuma solução"
+    - "Infinitas soluções"
+    - "Solução apenas quando b = 0"
+  resposta: 0
+  explicacao: |
+    det(A) ≠ 0 ⇔ A tem inversa ⇒ x = A⁻¹·b existe e é única, seja qual for b. Os casos "nenhuma" e "infinitas" só acontecem com det(A) = 0. Num circuito bem montado (todos os nós com caminho ao terra), a matriz G tem det ≠ 0 e as tensões são únicas.
+  fonte: "3Blue1Brown, Essence of Linear Algebra, Inverse matrices, column space and null space; OpenStax, Algebra and Trigonometry 2e, seção Solving Systems with Inverses"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T08-013
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 4
+  bloom: aplicar
+  enunciado: |
+    Uma fonte de 12 V em série com 2 kΩ alimenta o nó 1. Do nó 1 ao terra há 2 kΩ; entre os nós 1 e 2 há 1 kΩ; do nó 2 ao terra há 1 kΩ. Converta a fonte em equivalente de Norton, monte G·v = i e calcule v2. Responda em V.
+  resposta: {valor: 2, unidade: "V", tolerancia: 0.001}
+  explicacao: |
+    Norton: 12 V/2 kΩ = 6 mA injetados no nó 1, com 2 kΩ (0,5 mS) do nó 1 ao terra. G = [[0,5 + 0,5 + 1, −1], [−1, 1 + 1]] = [[2, −1], [−1, 2]] mS; i = [6, 0] mA. det = 3; v1 = 6·2/3 = 4 V; v2 = (2·0 + 1·6)/3 = 2 V. Conferência: no nó 2, entra (4 − 2)/1 kΩ = 2 mA e sai 2 V/1 kΩ = 2 mA ✔. Esquecer a condutância da própria fonte (0,5 mS) na diagonal é o erro mais comum.
+  fonte: "Boylestad, Introdução à Análise de Circuitos, capítulo Métodos de análise e tópicos selecionados (CC), seções Conversões de fontes e Análise nodal (abordagem padronizada)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T08-014
+  objetivo: O4
+  tipo: unica
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Na matriz de condutâncias G da análise nodal, qual é o elemento G₁₂ (linha do nó 1, coluna do nó 2), se entre esses nós há apenas o resistor R2?
+  alternativas:
+    - "−1/R2"
+    - "+1/R2"
+    - "R2"
+    - "A soma das condutâncias ligadas ao nó 1"
+  resposta: 0
+  explicacao: |
+    Na KCL do nó 1, a corrente por R2 é (v1 − v2)/R2: o coeficiente de v2 é −1/R2. Por isso, fora da diagonal fica o **negativo** da condutância entre os nós, e G é simétrica (G₂₁ = G₁₂). A soma das condutâncias ligadas ao nó 1 é o elemento da diagonal, G₁₁.
+  fonte: "Boylestad, Introdução à Análise de Circuitos, capítulo Métodos de análise e tópicos selecionados (CC), seção Análise nodal (abordagem padronizada)"
+  origem: ia
+  revisao: rascunho

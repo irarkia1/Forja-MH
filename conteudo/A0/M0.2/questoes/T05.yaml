@@ -1,0 +1,210 @@
+- id: Q-M0.2.T05-001
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    A tensão num capacitor segue v(t) = 12 − 7·e^(−t/2) V, com t em segundos. Qual é o valor final de v quando t → ∞? Responda em V.
+  resposta: {valor: 12, unidade: "V", tolerancia: 0.001}
+  explicacao: |
+    Quando t → ∞, e^(−t/2) → 0, então v → 12 − 7·0 = 12 V. O valor inicial é v(0) = 12 − 7 = 5 V: o capacitor sai de 5 V e tende a 12 V. Quem responde 5 calculou o valor em t = 0.
+  fonte: "OpenStax, Calculus Volume 1, capítulo Applications of Derivatives, seção Limits at Infinity and Asymptotes"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T05-002
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Calcule lim_{x→2} (x² − 4)/(x − 2).
+  resposta: {valor: 4, unidade: "valor", tolerancia: 0.001}
+  explicacao: |
+    Substituir direto dá 0/0, uma indeterminação — não significa que o limite não exista. Fatore: (x² − 4) = (x − 2)(x + 2); para x ≠ 2, a fração vale x + 2, que tende a 4. Conferência numérica: x = 2,001 dá 4,001.
+  fonte: "OpenStax, Calculus Volume 1, capítulo Limits, seção The Limit Laws (evaluating limits of the form 0/0)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T05-003
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    O ganho de um amplificador realimentado é G(A) = A/(1 + A·β), em que A é o ganho do amp-op sem realimentação e β = 0,1 é a fração da saída realimentada. Qual é o limite de G quando A → ∞?
+  resposta: {valor: 10, unidade: "V/V", tolerancia: 0.001}
+  explicacao: |
+    Divida numerador e denominador por A: G = 1/(1/A + β). Quando A → ∞, 1/A → 0 e G → 1/β = 1/0,1 = 10. Com A = 100 000 (típico), G = 9,999. É por isso que o ganho de um circuito com amp-op depende só dos resistores que definem β. Quem responde ∞ olhou só o numerador.
+  fonte: "OpenStax, Calculus Volume 1, capítulo Applications of Derivatives, seção Limits at Infinity and Asymptotes"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T05-004
+  objetivo: O2
+  tipo: unica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Qual é a derivada de f(t) = 3t² + 5t − 8?
+  alternativas:
+    - "6t + 5"
+    - "6t + 5 − 8"
+    - "3t + 5"
+    - "t³ + 2,5t² − 8t"
+  resposta: 0
+  explicacao: |
+    Regra da potência termo a termo: (3t²)' = 3·2t = 6t; (5t)' = 5; (−8)' = 0 (constante não varia). f'(t) = 6t + 5. "t³ + 2,5t² − 8t" é a antiderivada (integral), o caminho inverso.
+  fonte: "OpenStax, Calculus Volume 1, capítulo Derivatives, seção Differentiation Rules"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T05-005
+  objetivo: O2
+  tipo: multipla
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Marque as derivadas que estão **corretas** (ω e τ são constantes; ângulos em radianos).
+  alternativas:
+    - "d/dt [sen(ωt)] = ω·cos(ωt)"
+    - "d/dx [ln x] = 1/x"
+    - "d/dt [e^(−t/τ)] = e^(−t/τ)"
+    - "d/dx [cos x] = sen x"
+  resposta: [0, 1]
+  explicacao: |
+    Pela regra da cadeia, (sen(ωt))' = cos(ωt)·ω. (ln x)' = 1/x. Para a exponencial, a cadeia também multiplica pela derivada do expoente: (e^(−t/τ))' = −(1/τ)·e^(−t/τ) — esquecer o fator −1/τ é o erro mais comum. E (cos x)' = −sen x: falta o sinal.
+  fonte: "OpenStax, Calculus Volume 1, capítulo Derivatives, seções Derivatives of Trigonometric Functions, The Chain Rule e Derivatives of Exponential and Logarithmic Functions"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T05-006
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Seja f(x) = x³·ln x. Calcule f'(e), em que e ≈ 2,718 é a base do logaritmo natural. Responda com 2 casas decimais.
+  resposta: {valor: 29.56, unidade: "valor", tolerancia: 0.002}
+  explicacao: |
+    Regra do produto: f'(x) = (x³)'·ln x + x³·(ln x)' = 3x²·ln x + x³·(1/x) = 3x²·ln x + x². Em x = e, ln e = 1: f'(e) = 3e² + e² = 4e² ≈ 4 × 7,389 ≈ 29,56. Quem faz (x³)'·(ln x)' = 3x²·(1/x) = 3x obtém 8,15 — o produto das derivadas não é a derivada do produto.
+  fonte: "OpenStax, Calculus Volume 1, capítulo Derivatives, seções Differentiation Rules (product rule) e Derivatives of Exponential and Logarithmic Functions"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T05-007
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 4
+  bloom: aplicar
+  enunciado: |
+    Seja f(x) = x/(x² + 1). Calcule f'(2). Responda com 2 casas decimais.
+  resposta: {valor: -0.12, unidade: "valor", tolerancia: 0.001}
+  explicacao: |
+    Regra do quociente: f'(x) = [1·(x² + 1) − x·2x]/(x² + 1)² = (1 − x²)/(x² + 1)². Em x = 2: (1 − 4)/(5²) = −3/25 = −0,12. O sinal negativo indica que a função já está decrescendo em x = 2 (o máximo é em x = 1, onde 1 − x² = 0). Quem inverte a ordem do numerador obtém +0,12.
+  fonte: "OpenStax, Calculus Volume 1, capítulo Derivatives, seção Differentiation Rules (quotient rule)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T05-008
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um capacitor de 10 µF recebe uma tensão que sobe linearmente de 0 a 5 V em 1 ms. Qual é a corrente no capacitor durante a rampa (i = C·dv/dt)? Responda em mA.
+  resposta: {valor: 50, unidade: "mA", tolerancia: 0.001}
+  explicacao: |
+    dv/dt = 5 V/1 ms = 5000 V/s (constante numa rampa). i = C·dv/dt = 10 × 10⁻⁶ F × 5000 V/s = 0,05 A = 50 mA. Depois que a rampa termina e a tensão fica parada em 5 V, dv/dt = 0 e a corrente cai a zero. Quem calcula C·V = 50 µC achou a carga, não a corrente.
+  fonte: "OpenStax, Calculus Volume 1, capítulo Derivatives, seção Derivatives as Rates of Change; Horowitz & Hill, The Art of Electronics, 3ª ed., capítulo 1 (Foundations), seção sobre capacitores"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T05-009
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    A bobina de um relé (L = 100 mH) conduz 0,2 A. Um transistor corta essa corrente, que cai linearmente a zero em 10 µs. Qual é o módulo da tensão induzida na bobina (v = L·di/dt)? Responda em V.
+  resposta: {valor: 2000, unidade: "V", tolerancia: 0.001}
+  explicacao: |
+    |di/dt| = 0,2 A/10 × 10⁻⁶ s = 20 000 A/s. |v| = L·|di/dt| = 0,1 × 20 000 = 2000 V. Esse pico aparece sobre o transistor e o destrói — por isso todo relé ou motor acionado por transistor leva um diodo de roda livre, que dá um caminho para a corrente e limita a tensão.
+  fonte: "OpenStax, Calculus Volume 1, capítulo Derivatives, seção Derivatives as Rates of Change; Horowitz & Hill, The Art of Electronics, 3ª ed., capítulo 1 (Foundations), seção sobre indutores"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T05-010
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um amp-op deve reproduzir uma senoide de 10 V de pico em 20 kHz. Qual é a taxa máxima de variação da tensão (|dv/dt| máximo) desse sinal? Responda em V/µs, com 2 casas decimais.
+  resposta: {valor: 1.26, unidade: "V/µs", tolerancia: 0.005}
+  explicacao: |
+    v = Vp·sen(2πft) ⇒ dv/dt = 2πf·Vp·cos(2πft), cujo máximo (na passagem por zero) é 2πf·Vp = 2π × 20 000 × 10 ≈ 1,257 × 10⁶ V/s = 1,26 V/µs. Um amp-op com slew rate menor que isso distorce a senoide, que vira quase um triângulo. Quem esquece o 2π obtém 0,2 V/µs.
+  fonte: "OpenStax, Calculus Volume 1, capítulo Derivatives, seções Derivatives of Trigonometric Functions e The Chain Rule"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T05-011
+  objetivo: O3
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: num capacitor ideal alimentado por uma tensão senoidal, a corrente é máxima no instante em que a tensão está no seu pico.
+  resposta: false
+  explicacao: |
+    i = C·dv/dt depende da **inclinação** da tensão. No pico, a senoide tem tangente horizontal (dv/dt = 0), então a corrente é zero; a corrente é máxima quando a tensão passa por zero, onde a inclinação é maior. Por isso a corrente no capacitor fica 90° adiantada em relação à tensão.
+  fonte: "OpenStax, Calculus Volume 1, capítulo Derivatives, seção Derivatives of Trigonometric Functions; All About Circuits, Volume II: AC, capítulo Reactance and Impedance — Capacitive"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T05-012
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Uma fonte de 12 V com resistência interna de 4 Ω alimenta uma carga R. A potência na carga é P(R) = 144·R/(R + 4)². Usando a derivada, encontre o valor máximo de P. Responda em W.
+  resposta: {valor: 9, unidade: "W", tolerancia: 0.001}
+  explicacao: |
+    Pela regra do quociente, P'(R) = 144·[(R + 4)² − 2R(R + 4)]/(R + 4)⁴ = 144·(4 − R)/(R + 4)³. P' = 0 ⇒ R = 4 Ω; P' > 0 antes e < 0 depois, então é um máximo. P(4) = 144 × 4/64 = 9 W = E²/(4r). É o teorema da máxima transferência de potência: carga igual à resistência interna.
+  fonte: "OpenStax, Calculus Volume 1, capítulo Applications of Derivatives, seção Maxima and Minima"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T05-013
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    A corrente de um diodo segue I = Is·e^(V/V_T), com V_T = 26 mV. Linearizando em torno do ponto de operação I = 2 mA, qual é a resistência para pequenos sinais r_d = dV/dI? Responda em Ω.
+  resposta: {valor: 13, unidade: "Ω", tolerancia: 0.001}
+  explicacao: |
+    dI/dV = Is·e^(V/V_T)·(1/V_T) = I/V_T (a exponencial é a própria corrente). Logo r_d = dV/dI = V_T/I = 26 mV/2 mA = 13 Ω. Para pequenas variações em torno de 2 mA, o diodo se comporta como um resistor de 13 Ω. Quem calcula V/I com a tensão inteira do diodo (≈ 0,65 V/2 mA = 325 Ω) achou a resistência "estática", não a dinâmica.
+  fonte: "OpenStax, Calculus Volume 1, capítulo Applications of Derivatives, seção Linear Approximations and Differentials"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T05-014
+  objetivo: O4
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Num ponto de máximo local de uma função derivável (fora das extremidades do intervalo), quanto vale a derivada?
+  alternativas:
+    - "Zero"
+    - "Um valor positivo máximo"
+    - "Um valor negativo"
+    - "Infinito"
+  resposta: 0
+  explicacao: |
+    No topo de uma "montanha" lisa, a reta tangente é horizontal: f'(x) = 0 (antes a função sobe, f' > 0; depois desce, f' < 0). A recíproca não vale sempre: f(x) = x³ tem f'(0) = 0 sem ser máximo nem mínimo, por isso é preciso conferir o sinal de f' ou de f''.
+  fonte: "OpenStax, Calculus Volume 1, capítulo Applications of Derivatives, seção Maxima and Minima (Fermat's theorem)"
+  origem: ia
+  revisao: rascunho

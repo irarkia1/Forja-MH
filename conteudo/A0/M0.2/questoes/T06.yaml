@@ -1,0 +1,205 @@
+- id: Q-M0.2.T06-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Qual é a integral indefinida ∫ 3x² dx?
+  alternativas:
+    - "x³ + C"
+    - "6x + C"
+    - "3x³ + C"
+    - "x³/3 + C"
+  resposta: 0
+  explicacao: |
+    Regra da potência ao contrário: ∫ xⁿ dx = xⁿ⁺¹/(n + 1). ∫ 3x² dx = 3·x³/3 = x³ + C. Conferência: (x³)' = 3x² ✔. "6x" é a derivada; "3x³" esqueceu de dividir por 3; "x³/3" é a integral de x², sem o 3.
+  fonte: "OpenStax, Calculus Volume 1, capítulo Applications of Derivatives, seção Antiderivatives; Paul's Online Math Notes, Calculus I, Indefinite Integrals"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T06-002
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Calcule a integral definida ∫₀² (3x² + 2x) dx.
+  resposta: {valor: 12, unidade: "valor", tolerancia: 0.001}
+  explicacao: |
+    Antiderivada: F(x) = x³ + x². Pelo Teorema Fundamental do Cálculo: F(2) − F(0) = (8 + 4) − 0 = 12. Quem integra só até a antiderivada e não subtrai F(0) acerta aqui por sorte (F(0) = 0); com limites que não começam em zero, esquecer F(a) é o erro clássico.
+  fonte: "OpenStax, Calculus Volume 1, capítulo Integration, seção The Fundamental Theorem of Calculus"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T06-003
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Calcule ∫₀¹ e^(2x) dx. Responda com 2 casas decimais.
+  resposta: {valor: 3.19, unidade: "valor", tolerancia: 0.003}
+  explicacao: |
+    ∫ e^(2x) dx = e^(2x)/2 + C (divida pela constante do expoente). [e^(2x)/2]₀¹ = (e² − e⁰)/2 = (7,389 − 1)/2 ≈ 3,19. Quem esquece o 1/2 obtém 6,39; quem esquece o e⁰ = 1 obtém 3,69.
+  fonte: "OpenStax, Calculus Volume 1, capítulo Integration, seção Integrals Involving Exponential and Logarithmic Functions"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T06-004
+  objetivo: O1
+  tipo: vf
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Verdadeiro ou falso: se F é uma antiderivada de f (isto é, F' = f) e f é contínua em [a, b], então ∫ₐᵇ f(x) dx = F(b) − F(a).
+  resposta: true
+  explicacao: |
+    É o Teorema Fundamental do Cálculo: a área acumulada sob f entre a e b é a variação da antiderivada. É ele que transforma um problema de "somar infinitas fatias" numa conta de duas substituições.
+  fonte: "OpenStax, Calculus Volume 1, capítulo Integration, seção The Fundamental Theorem of Calculus; 3Blue1Brown, Essence of Calculus, Integration and the fundamental theorem of calculus"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T06-005
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um capacitor de 1 µF, inicialmente descarregado, recebe uma corrente constante de 2 mA durante 5 ms. Qual é a tensão no capacitor no fim desse intervalo? Responda em V.
+  resposta: {valor: 10, unidade: "V", tolerancia: 0.001}
+  explicacao: |
+    q = ∫ i dt = 2 mA × 5 ms = 10 µC (a área de um retângulo). v = q/C = 10 µC/1 µF = 10 V. Com corrente constante, a tensão sobe numa rampa linear de 2 V/ms. Quem calcula I·t·C (10⁻¹¹) multiplicou pela capacitância em vez de dividir.
+  fonte: "OpenStax, Calculus Volume 1, capítulo Integration, seção Integration Formulas and the Net Change Theorem"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T06-006
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    A corrente de carga de um capacitor é i(t) = 10·e^(−t/τ) mA, com τ = 1 ms. Qual é a carga total que passa pelo circuito de t = 0 até t → ∞? Responda em µC.
+  resposta: {valor: 10, unidade: "µC", tolerancia: 0.001}
+  explicacao: |
+    q = ∫₀^∞ 10·e^(−t/τ) dt = 10 mA·[−τ·e^(−t/τ)]₀^∞ = 10 mA × (0 + τ) = 10 mA × 1 ms = 10 µC. A área sob uma exponencial decrescente é igual à de um retângulo de altura I0 e largura τ. Se o capacitor é de 1 µF, ele termina com 10 V.
+  fonte: "OpenStax, Calculus Volume 1, capítulo Integration, seção Integrals Involving Exponential and Logarithmic Functions; OpenStax, Calculus Volume 2, capítulo Techniques of Integration, seção Improper Integrals"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T06-007
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um nó IoT consome 0,5 W durante 2 h por dia (rádio ligado) e 0,05 W nas outras 22 h. Qual é a energia consumida por dia? Responda em Wh, com 1 casa decimal.
+  resposta: {valor: 2.1, unidade: "Wh", tolerancia: 0.001}
+  explicacao: |
+    E = ∫ p dt é a área sob o gráfico de potência × tempo, aqui feita de dois retângulos: 0,5 W × 2 h + 0,05 W × 22 h = 1,0 + 1,1 = 2,1 Wh. Repare que o modo "de espera", com potência 10 vezes menor, gasta mais energia que o rádio, por durar muito mais — por isso o consumo em sono domina a autonomia de uma bateria.
+  fonte: "OpenStax, Calculus Volume 1, capítulo Integration, seção Integration Formulas and the Net Change Theorem"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T06-008
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Um capacitor de 100 µF carregado a 10 V descarrega por um resistor de 1 kΩ. A potência no resistor é p(t) = (V²/R)·e^(−2t/τ), com τ = RC. Calcule a energia total dissipada, E = ∫₀^∞ p(t) dt. Responda em mJ.
+  resposta: {valor: 5, unidade: "mJ", tolerancia: 0.001}
+  explicacao: |
+    τ = 1 kΩ × 100 µF = 0,1 s. ∫₀^∞ e^(−2t/τ) dt = τ/2 = 0,05 s. E = (100 V²/1000 Ω) × 0,05 s = 0,1 W × 0,05 s = 5 mJ. É exatamente a energia que estava no capacitor: ½·C·V² = ½ × 10⁻⁴ × 100 = 5 mJ — e não depende de R. Quem usa τ em vez de τ/2 obtém 10 mJ (esqueceu o 2 do expoente, que vem de v²).
+  fonte: "OpenStax, Calculus Volume 1, capítulo Integration, seção Integrals Involving Exponential and Logarithmic Functions; OpenStax, Calculus Volume 2, seção Improper Integrals"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T06-009
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Um sinal PWM alterna entre 0 V e 5 V com ciclo de trabalho de 30 %. Qual é o seu valor médio? Responda em V.
+  resposta: {valor: 1.5, unidade: "V", tolerancia: 0.001}
+  explicacao: |
+    Média = (1/T)·∫₀ᵀ v dt = (1/T)·(5 V × 0,3·T) = 0,3 × 5 = 1,5 V. É essa média que um filtro RC passa-baixas extrai do PWM (um "DAC" barato) e que define a velocidade de um motor DC.
+  fonte: "OpenStax, Calculus Volume 1, capítulo Integration, seção The Fundamental Theorem of Calculus (average value of a function)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T06-010
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um PWM de 12 V com ciclo de trabalho de 25 % alimenta um resistor de aquecimento. Qual é o valor eficaz (RMS) da tensão? Responda em V.
+  resposta: {valor: 6, unidade: "V", tolerancia: 0.001}
+  explicacao: |
+    V_rms = √[(1/T)·∫₀ᵀ v² dt] = √[(1/T)·144·0,25·T] = √36 = 6 V (em geral, V·√D). O valor **médio** é 3 V, mas é o RMS que define o aquecimento: P = 36/R, um quarto da potência com 12 V contínuos. Usar a média (3 V) subestimaria a potência pela metade (9/R).
+  fonte: "All About Circuits, Volume II: AC, capítulo Basic AC Theory, seção Measurements of AC Magnitude; OpenStax, Calculus Volume 1, seção The Fundamental Theorem of Calculus"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T06-011
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Um sinal é v(t) = 3 + 4·sen(ωt) V (um nível contínuo de 3 V mais uma senoide de 4 V de pico). Qual é o seu valor eficaz (RMS) calculado num período inteiro? Responda em V, com 2 casas decimais.
+  resposta: {valor: 4.12, unidade: "V", tolerancia: 0.003}
+  explicacao: |
+    v² = 9 + 24·sen ωt + 16·sen² ωt. Médias num período: 9 → 9; 24·sen ωt → 0; 16·sen² ωt → 16/2 = 8. Média de v² = 17 ⇒ V_rms = √17 ≈ 4,12 V. Regra: V_rms² = V_DC² + (Vp/√2)². Somar 3 + 4/√2 = 5,83 V é errado: os quadrados é que se somam.
+  fonte: "OpenStax, Calculus Volume 1, capítulo Integration, seção The Fundamental Theorem of Calculus; All About Circuits, Volume II: AC, capítulo Basic AC Theory, seção Measurements of AC Magnitude"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T06-012
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um medidor amostra a potência de uma carga a cada 1 s e obtém, em sequência: 0, 2, 4, 4 e 2 W. Usando a regra dos trapézios, estime a energia consumida entre a primeira e a última amostra. Responda em J.
+  resposta: {valor: 11, unidade: "J", tolerancia: 0.001}
+  explicacao: |
+    Trapézios com h = 1 s: E ≈ h·[(y₀ + y₄)/2 + y₁ + y₂ + y₃] = 1 × [(0 + 2)/2 + 2 + 4 + 4] = 1 + 10 = 11 J. As extremidades entram com peso 1/2. Somar todas as amostras com peso 1 (12 J) é a regra dos retângulos, que aqui superestima.
+  fonte: "OpenStax, Calculus Volume 2, capítulo Techniques of Integration, seção Numerical Integration (trapezoidal rule)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T06-013
+  objetivo: O4
+  tipo: multipla
+  dificuldade: 3
+  bloom: avaliar
+  enunciado: |
+    Marque as integrais indefinidas que estão **corretas** (τ e ω são constantes positivas).
+  alternativas:
+    - "∫ 2x/(x² + 1) dx = ln(x² + 1) + C"
+    - "∫ e^(−t/τ) dt = −τ·e^(−t/τ) + C"
+    - "∫ cos(ωt) dt = ω·sen(ωt) + C"
+    - "∫ sen(2t) dt = −cos(2t) + C"
+  resposta: [0, 1]
+  explicacao: |
+    Com u = x² + 1, du = 2x dx e a integral vira ∫ du/u = ln u. Com u = −t/τ, dt = −τ du, e ∫ eᵘ·(−τ) du = −τ·eᵘ. Nas outras duas, o fator da substituição foi aplicado ao contrário: ∫ cos(ωt) dt = sen(ωt)/ω e ∫ sen(2t) dt = −cos(2t)/2. Derivar a resposta denuncia o erro: (ω·sen ωt)' = ω²·cos ωt.
+  fonte: "OpenStax, Calculus Volume 1, capítulo Integration, seção Substitution; Paul's Online Math Notes, Calculus I, Substitution Rule for Indefinite Integrals"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T06-014
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Calcule ∫₀^(1 ms) 5·e^(−t/τ) dt com τ = 0,5 ms, usando a substituição u = −t/τ. Responda em V·ms, com 2 casas decimais (o integrando está em V e o tempo em ms).
+  resposta: {valor: 2.16, unidade: "V·ms", tolerancia: 0.003}
+  explicacao: |
+    Antiderivada: −5τ·e^(−t/τ). Entre 0 e 1 ms: 5τ·(1 − e^(−1/0,5)) = 5 × 0,5 × (1 − e⁻²) = 2,5 × 0,8647 ≈ 2,16 V·ms. Dividido pela duração (1 ms), dá o valor médio do sinal no intervalo: 2,16 V. Quem esquece o fator τ obtém 4,32.
+  fonte: "OpenStax, Calculus Volume 1, capítulo Integration, seções Substitution e Integrals Involving Exponential and Logarithmic Functions"
+  origem: ia
+  revisao: rascunho

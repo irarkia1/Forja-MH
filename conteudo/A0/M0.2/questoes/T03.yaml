@@ -1,0 +1,215 @@
+- id: Q-M0.2.T03-001
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Converta 60° para radianos. Responda em rad, com 2 casas decimais.
+  resposta: {valor: 1.05, unidade: "rad", tolerancia: 0.005}
+  explicacao: |
+    rad = graus × π/180 = 60 × π/180 = π/3 ≈ 1,047 ≈ 1,05 rad. Quem multiplica por 180/π (3438) aplicou a conversão ao contrário. Referência: 1 rad ≈ 57,3°, então 60° tem que dar um pouco mais que 1 rad.
+  fonte: "OpenStax, Algebra and Trigonometry 2e, capítulo The Unit Circle: Sine and Cosine Functions, seção Angles"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T03-002
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Uma carga consome potência ativa P = 3 kW e potência reativa Q = 4 kvar. No triângulo de potências, P é o cateto adjacente e Q o cateto oposto ao ângulo φ. Qual é o ângulo φ? Responda em graus, com 1 casa decimal.
+  resposta: {valor: 53.1, unidade: "°", tolerancia: 0.002}
+  explicacao: |
+    tan φ = oposto/adjacente = Q/P = 4/3 ⇒ φ = arctan(4/3) ≈ 53,13°. A hipotenusa é a potência aparente S = √(3² + 4²) = 5 kVA, e o fator de potência é cos φ = 3/5 = 0,6. Quem calcula arctan(3/4) = 36,9° trocou os catetos.
+  fonte: "OpenStax, Algebra and Trigonometry 2e, capítulo The Unit Circle: Sine and Cosine Functions, seção Right Triangle Trigonometry; All About Circuits, Volume II: AC, capítulo Power Factor"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T03-003
+  objetivo: O1
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Sem calculadora, usando o círculo trigonométrico: quanto vale sen 150°?
+  alternativas:
+    - "1/2"
+    - "−1/2"
+    - "√3/2"
+    - "−√3/2"
+  resposta: 0
+  explicacao: |
+    150° está no 2º quadrante, onde o seno é positivo, e sen(180° − θ) = sen θ: sen 150° = sen 30° = 1/2. −1/2 erra o sinal (seria sen 210° ou sen 330°); −√3/2 é cos 150°, e √3/2 é sen 60°.
+  fonte: "OpenStax, Algebra and Trigonometry 2e, capítulo The Unit Circle: Sine and Cosine Functions, seção Unit Circle: Sine and Cosine Functions"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T03-004
+  objetivo: O1
+  tipo: vf
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Verdadeiro ou falso: para qualquer ângulo θ, cos(−θ) = cos θ e sen(−θ) = −sen θ.
+  resposta: true
+  explicacao: |
+    No círculo trigonométrico, o ângulo −θ é o reflexo de θ em relação ao eixo x: a coordenada x (cosseno) não muda e a y (seno) troca de sinal. O cosseno é uma função par e o seno, ímpar.
+  fonte: "OpenStax, Algebra and Trigonometry 2e, capítulo The Unit Circle: Sine and Cosine Functions, seção The Other Trigonometric Functions (even and odd functions)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T03-005
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Qual é o período da tensão da rede elétrica brasileira, de 60 Hz? Responda em ms, com 2 casas decimais.
+  resposta: {valor: 16.67, unidade: "ms", tolerancia: 0.002}
+  explicacao: |
+    T = 1/f = 1/60 s ≈ 0,016 67 s = 16,67 ms. Em cada período a tensão passa duas vezes por zero (a cada 8,33 ms) — é o que um detector de passagem por zero usa para disparar um TRIAC no momento certo.
+  fonte: "All About Circuits, Volume II: AC, capítulo Basic AC Theory, seção AC Waveforms"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T03-006
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um sinal é descrito por v(t) = 10·sen(2000π·t + π/6) V, com t em segundos. Qual é a frequência do sinal? Responda em Hz.
+  resposta: {valor: 1000, unidade: "Hz", tolerancia: 0.001}
+  explicacao: |
+    O número que multiplica t é a frequência angular: ω = 2000π rad/s. f = ω/(2π) = 2000π/(2π) = 1000 Hz. 10 é a amplitude (V de pico) e π/6 = 30° é a fase inicial. Quem responde 2000π ≈ 6283 Hz confundiu ω com f.
+  fonte: "OpenStax, Algebra and Trigonometry 2e, capítulo Periodic Functions, seção Graphs of the Sine and Cosine Functions"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T03-007
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Na tela de um osciloscópio, um ciclo completo de uma senoide ocupa 5 divisões horizontais, com a base de tempo em 0,5 ms/div. Qual é a frequência angular ω do sinal? Responda em rad/s, sem casas decimais.
+  resposta: {valor: 2513, unidade: "rad/s", tolerancia: 0.002}
+  explicacao: |
+    T = 5 div × 0,5 ms/div = 2,5 ms ⇒ f = 1/T = 400 Hz ⇒ ω = 2π·f = 2π × 400 ≈ 2513 rad/s. Quem responde 400 parou na frequência em Hz; quem responde 2,5 parou no período.
+  fonte: "All About Circuits, Volume II: AC, capítulo Basic AC Theory, seção AC Waveforms; OpenStax, Algebra and Trigonometry 2e, seção Graphs of the Sine and Cosine Functions"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T03-008
+  objetivo: O2
+  tipo: unica
+  dificuldade: 2
+  bloom: analisar
+  enunciado: |
+    Para ligar uma senoide num ADC que só aceita tensões positivas, um circuito soma um nível contínuo: v(t) = 5 + 2·sen(ωt) V. Entre quais valores v(t) varia?
+  alternativas:
+    - "De 3 V a 7 V"
+    - "De −2 V a 2 V"
+    - "De 0 V a 7 V"
+    - "De 5 V a 7 V"
+  resposta: 0
+  explicacao: |
+    sen(ωt) varia de −1 a +1, então 2·sen(ωt) varia de −2 a +2. Somando o offset de 5 V, v vai de 3 V a 7 V, com valor médio 5 V e 4 V de pico a pico. −2 a 2 V ignora o offset; "5 a 7 V" esquece a metade negativa da senoide.
+  fonte: "OpenStax, Algebra and Trigonometry 2e, capítulo Periodic Functions, seção Graphs of the Sine and Cosine Functions (vertical shift)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T03-009
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Duas senoides de 100 Hz passam por zero subindo com 1 ms de diferença. Qual é a defasagem entre elas? Responda em graus.
+  resposta: {valor: 36, unidade: "°", tolerancia: 0.002}
+  explicacao: |
+    T = 1/100 Hz = 10 ms. Δφ = 360° × Δt/T = 360° × 1/10 = 36°. Equivalente em radianos: ω·Δt = 2π × 100 × 0,001 ≈ 0,628 rad. Quem responde 0,36° usou Δt/T com T em segundos e Δt em ms.
+  fonte: "All About Circuits, Volume II: AC, capítulo Basic AC Theory, seção AC Phase"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T03-010
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 4
+  bloom: aplicar
+  enunciado: |
+    A soma 5·sen(ωt) + 12·cos(ωt) pode ser escrita como C·sen(ωt + φ). Quanto vale φ? Responda em graus, com 1 casa decimal.
+  resposta: {valor: 67.4, unidade: "°", tolerancia: 0.002}
+  explicacao: |
+    Expandindo C·sen(ωt + φ) = C·cos φ·sen ωt + C·sen φ·cos ωt e comparando: C·cos φ = 5 e C·sen φ = 12. Logo C = √(25 + 144) = 13 e tan φ = 12/5 ⇒ φ = arctan(2,4) ≈ 67,38°. Como os dois coeficientes são positivos, φ está no 1º quadrante. Quem usa arctan(5/12) = 22,6° trocou seno com cosseno.
+  fonte: "OpenStax, Algebra and Trigonometry 2e, capítulo Trigonometric Identities and Equations, seção Sum and Difference Identities"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T03-011
+  objetivo: O3
+  tipo: unica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Considere v1(t) = 4·sen(ωt + 30°) e v2(t) = 4·sen(ωt − 45°), de mesma frequência. Qual é a relação de fase entre elas?
+  alternativas:
+    - "v1 está adiantada de 75° em relação a v2"
+    - "v1 está atrasada de 75° em relação a v2"
+    - "v1 está adiantada de 15° em relação a v2"
+    - "As duas estão em fase, porque têm a mesma amplitude"
+  resposta: 0
+  explicacao: |
+    Δφ = φ1 − φ2 = 30° − (−45°) = 75°. Fase maior significa que v1 chega a cada ponto (zero, pico) antes de v2: v1 está adiantada 75°. Somar 30° + (−45°) = −15° é o erro de somar em vez de subtrair. Amplitude não tem nada a ver com fase.
+  fonte: "All About Circuits, Volume II: AC, capítulo Basic AC Theory, seção AC Phase"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T03-012
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    A tensão nominal de uma tomada é 127 V (valor eficaz). Qual é a tensão de pico? Responda em V, com 1 casa decimal.
+  resposta: {valor: 179.6, unidade: "V", tolerancia: 0.002}
+  explicacao: |
+    Para senoide, Vp = √2·Vrms = 1,4142 × 127 ≈ 179,6 V. O 127 V das tomadas é o valor eficaz (o que dissipa a mesma potência que 127 V contínuos num resistor). Quem divide por √2 (89,8 V) inverteu a relação.
+  fonte: "All About Circuits, Volume II: AC, capítulo Basic AC Theory, seção Measurements of AC Magnitude"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T03-013
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um aquecedor resistivo de 1000 W funciona numa rede de 220 V (eficaz). Qual é o valor de **pico** da corrente? Responda em A, com 2 casas decimais.
+  resposta: {valor: 6.43, unidade: "A", tolerancia: 0.002}
+  explicacao: |
+    A potência nominal usa valores eficazes: Irms = P/Vrms = 1000/220 ≈ 4,545 A. Para senoide, Ip = √2·Irms ≈ 1,4142 × 4,545 ≈ 6,43 A. Quem responde 4,55 A parou no valor eficaz; quem calcula 1000/311 = 3,21 A misturou pico de tensão com potência média.
+  fonte: "All About Circuits, Volume II: AC, capítulo Basic AC Theory, seção Measurements of AC Magnitude"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T03-014
+  objetivo: O4
+  tipo: multipla
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Marque as afirmações corretas sobre os valores de uma senoide de amplitude Vp.
+  alternativas:
+    - "O valor médio de uma senoide pura, calculado num período completo, é zero"
+    - "Um multímetro true RMS, na escala AC, mostra Vp/√2 para essa senoide"
+    - "A tensão de pico de uma rede de 220 V é 220 V"
+    - "O valor médio de uma senoide retificada em onda completa é Vp/√2"
+  resposta: [0, 1]
+  explicacao: |
+    A metade positiva cancela a negativa, então a média num período é zero. O true RMS mede o valor eficaz, que para senoide é Vp/√2 ≈ 0,707·Vp. A rede de 220 V tem 220 V eficazes e ≈ 311 V de pico. O valor médio da onda completa retificada é 2·Vp/π ≈ 0,637·Vp, diferente do RMS (0,707·Vp) — confundir os dois é exatamente o erro dos multímetros que não são true RMS diante de ondas não senoidais.
+  fonte: "All About Circuits, Volume II: AC, capítulo Basic AC Theory, seção Measurements of AC Magnitude"
+  origem: ia
+  revisao: rascunho

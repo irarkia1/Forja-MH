@@ -1,0 +1,245 @@
+- id: Q-M0.2.T12-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Em que situação a saída de uma porta XOR de duas entradas vale 1?
+  alternativas:
+    - "Quando as duas entradas são diferentes"
+    - "Quando as duas entradas são iguais"
+    - "Quando pelo menos uma entrada vale 1"
+    - "Quando as duas entradas valem 1"
+  resposta: 0
+  explicacao: |
+    XOR ("ou exclusivo") é 1 em 01 e 10 e 0 em 00 e 11: detecta diferença. "Iguais" descreve o XNOR; "pelo menos uma em 1" é o OR (que também dá 1 em 11); "as duas em 1" é o AND. O XOR é a soma de dois bits sem o vai-um.
+  fonte: "Floyd, Sistemas Digitais: fundamentos e aplicações, capítulo Portas lógicas (portas exclusive-OR e exclusive-NOR)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T12-002
+  objetivo: O1
+  tipo: vf
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Verdadeiro ou falso: uma porta NAND de duas entradas só tem saída 0 quando as duas entradas valem 1.
+  resposta: true
+  explicacao: |
+    NAND é o AND invertido. O AND só dá 1 em 11; logo o NAND só dá 0 em 11 e dá 1 nas outras três combinações. É a porta básica do 74HC00 e a mais barata de fazer em CMOS.
+  fonte: "Floyd, Sistemas Digitais: fundamentos e aplicações, capítulo Portas lógicas (a porta NAND)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T12-003
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Monte a tabela-verdade de F = A·B + C (três entradas). Em quantas das 8 linhas F vale 1?
+  resposta: {valor: 5, unidade: "linhas", tolerancia: 0}
+  explicacao: |
+    F = 1 sempre que C = 1 (4 linhas: 001, 011, 101, 111) e também quando C = 0 mas A·B = 1 (a linha 110). Total: 5. Quem responde 4 esqueceu a linha 110; quem responde 6 contou 111 duas vezes (ela já está entre as de C = 1).
+  fonte: "Tocci, Widmer e Moss, Sistemas Digitais: princípios e aplicações, capítulo Descrevendo circuitos lógicos (avaliando saídas de circuitos lógicos)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T12-004
+  objetivo: O1
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um circuito calcula Y = (A ⊕ B)·C'. Para qual combinação de entradas Y vale 1?
+  alternativas:
+    - "A = 1, B = 0, C = 0"
+    - "A = 1, B = 1, C = 0"
+    - "A = 1, B = 0, C = 1"
+    - "A = 0, B = 0, C = 0"
+  resposta: 0
+  explicacao: |
+    Y = 1 exige A ⊕ B = 1 (A ≠ B) **e** C' = 1 (C = 0). Só A = 1, B = 0, C = 0 cumpre as duas. Com A = B = 1 o XOR dá 0; com C = 1 o C' dá 0; com A = B = 0 o XOR dá 0.
+  fonte: "Tocci, Widmer e Moss, Sistemas Digitais: princípios e aplicações, capítulo Descrevendo circuitos lógicos"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T12-005
+  objetivo: O2
+  tipo: unica
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Pelas leis de De Morgan, a expressão (A·B)' é equivalente a:
+  alternativas:
+    - "A' + B'"
+    - "A'·B'"
+    - "A + B"
+    - "(A + B)'"
+  resposta: 0
+  explicacao: |
+    "Quebre a barra e troque o operador": a barra se distribui em cada variável e o AND vira OR, (A·B)' = A' + B'. A'·B' é o erro de quebrar a barra sem trocar o operador — e é igual a (A + B)', a outra lei de De Morgan, que é 1 só em 00, enquanto (A·B)' é 1 em 00, 01 e 10.
+  fonte: "Floyd, Sistemas Digitais: fundamentos e aplicações, capítulo Álgebra booleana e simplificação lógica (teoremas de DeMorgan)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T12-006
+  objetivo: O2
+  tipo: unica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Simplifique F = A·B + A·B' + A'·B.
+  alternativas:
+    - "A + B"
+    - "A·B"
+    - "A ⊕ B"
+    - "1"
+  resposta: 0
+  explicacao: |
+    A·B + A·B' = A·(B + B') = A·1 = A. Sobra F = A + A'·B, que pela regra A + A'B = A + B dá A + B. Conferência: F só vale 0 quando nenhum dos três termos é 1, isto é, em A = B = 0 — exatamente o OR. A ⊕ B seria 0 em 11, mas o termo A·B torna F = 1 ali.
+  fonte: "Floyd, Sistemas Digitais: fundamentos e aplicações, capítulo Álgebra booleana e simplificação lógica (regras da álgebra booleana, simplificação)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T12-007
+  objetivo: O2
+  tipo: multipla
+  dificuldade: 3
+  bloom: avaliar
+  enunciado: |
+    Marque as identidades que são **verdadeiras** na álgebra de Boole.
+  alternativas:
+    - "A·(A + B) = A"
+    - "A + 1 = 1"
+    - "A·A' = 1"
+    - "(A + B)' = A'·B'"
+  resposta: [0, 1, 3]
+  explicacao: |
+    A·(A + B) = A·A + A·B = A + A·B = A (absorção). A + 1 = 1 (elemento nulo do OR: se uma entrada é 1, o OR é 1). (A + B)' = A'·B' é De Morgan. Já A·A' = 0, não 1: uma variável e seu complemento nunca valem 1 ao mesmo tempo (é A + A' que vale 1).
+  fonte: "Harris e Harris, Digital Design and Computer Architecture, capítulo Combinational Logic Design, seção Boolean Algebra"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T12-008
+  objetivo: O2
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Simplifique F = A·B·C + A·B·C'.
+  alternativas:
+    - "A·B"
+    - "A·B·C"
+    - "C"
+    - "A + B"
+  resposta: 0
+  explicacao: |
+    Ponha A·B em evidência: A·B·(C + C') = A·B·1 = A·B. Os dois termos diferem só em C, e quando uma variável aparece "normal num termo e barrada no outro", ela some. É exatamente o que um grupo de 2 células faz no mapa de Karnaugh.
+  fonte: "Floyd, Sistemas Digitais: fundamentos e aplicações, capítulo Álgebra booleana e simplificação lógica (regras da álgebra booleana)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T12-009
+  objetivo: O3
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Uma função de três entradas A, B, C vale 1 só nas linhas ABC = 001 e ABC = 110 da tabela-verdade. Qual é a sua soma de produtos canônica?
+  alternativas:
+    - "A'·B'·C + A·B·C'"
+    - "A·B·C' + A'·B'·C'"
+    - "(A + B + C')·(A' + B' + C)"
+    - "A'·B'·C·A·B·C'"
+  resposta: 0
+  explicacao: |
+    Cada linha em 1 vira um mintermo: a variável aparece barrada se vale 0 e normal se vale 1. 001 → A'·B'·C; 110 → A·B·C'. Depois some (OR) os mintermos. Os dois mintermos não são vizinhos (diferem nas três variáveis), então essa já é a forma mais simples. O produto dos dois termos daria sempre 0.
+  fonte: "Tocci, Widmer e Moss, Sistemas Digitais: princípios e aplicações, capítulo Circuitos lógicos combinacionais (projetando circuitos lógicos combinacionais)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T12-010
+  objetivo: O3
+  tipo: unica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Simplifique pelo mapa de Karnaugh a função de quatro variáveis F(A, B, C, D) = Σm(0, 2, 8, 10), em que A é o bit mais significativo do índice do mintermo.
+  alternativas:
+    - "B'·D'"
+    - "A'·B'"
+    - "B'·C'·D'"
+    - "A'·D'"
+  resposta: 0
+  explicacao: |
+    Os mintermos são 0000, 0010, 1000 e 1010: os quatro cantos do mapa, que são vizinhos porque as bordas se dobram. Nos quatro, B = 0 e D = 0; A e C variam e somem. F = B'·D'. A'·B' cobriria 0, 1, 2, 3 (inclui 1 e 3, que valem 0); B'·C'·D' cobre só 0 e 8.
+  fonte: "Floyd, Sistemas Digitais: fundamentos e aplicações, capítulo Álgebra booleana e simplificação lógica (mapa de Karnaugh de 4 variáveis)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T12-011
+  objetivo: O3
+  tipo: unica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Simplifique pelo mapa de Karnaugh F(A, B, C, D) = Σm(1, 3, 5, 7, 13, 15), em que A é o bit mais significativo.
+  alternativas:
+    - "A'·D + B·D"
+    - "D"
+    - "A'·D"
+    - "B·D + A'·B'·D"
+  resposta: 0
+  explicacao: |
+    1, 3, 5, 7 = 0001, 0011, 0101, 0111: A = 0 e D = 1 fixos ⇒ grupo de 4 A'·D. 5, 7, 13, 15 = 0101, 0111, 1101, 1111: B = 1 e D = 1 fixos ⇒ grupo de 4 B·D (5 e 7 entram nos dois grupos, o que é permitido). F = A'·D + B·D. "D" cobriria também 9 e 11, que valem 0; "A'·D" deixa 13 e 15 de fora; o termo A'·B'·D é menor que o necessário (grupo de 2 onde cabia um de 4).
+  fonte: "Harris e Harris, Digital Design and Computer Architecture, capítulo Combinational Logic Design, seção Karnaugh Maps"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T12-012
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Em C, com `uint8_t r = 0xA5;`, qual é o valor decimal de `(r & 0x0F) | 0x30`?
+  resposta: {valor: 53, unidade: "valor", tolerancia: 0}
+  explicacao: |
+    0xA5 = 1010 0101. AND com 0x0F (0000 1111) mantém só o nibble baixo: 0000 0101 = 0x05 (AND com 0 apaga, com 1 mantém). OR com 0x30 (0011 0000) liga os bits 4 e 5: 0011 0101 = 0x35 = 53 — que, aliás, é o código ASCII do caractere '5'.
+  fonte: "Harris e Harris, Digital Design and Computer Architecture, capítulo Combinational Logic Design, seção Boolean Algebra; Floyd, Sistemas Digitais, capítulo Portas lógicas"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T12-013
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Qual é o número mínimo de portas NAND de 2 entradas para implementar uma porta OR de 2 entradas?
+  resposta: {valor: 3, unidade: "portas", tolerancia: 0}
+  explicacao: |
+    Por De Morgan, A + B = (A'·B')'. Dois NANDs com as entradas juntas fazem A' e B'; um terceiro NAND junta os dois: (A'·B')' = A + B. Total: 3. O AND só com NAND precisa de 2 (NAND seguido de inversor); o NOT, de 1.
+  fonte: "Floyd, Sistemas Digitais: fundamentos e aplicações, capítulo Análise de lógica combinacional (a propriedade universal das portas NAND e NOR)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T12-014
+  objetivo: O4
+  tipo: unica
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Num firmware em C, você precisa saber se os bits 3 **e** 5 do registrador `reg` (`uint8_t`) estão **ambos** ligados. Qual expressão faz isso corretamente?
+  alternativas:
+    - "`(reg & 0x28) == 0x28`"
+    - "`(reg & 0x28) != 0`"
+    - "`(reg | 0x28) == 0x28`"
+    - "`reg & 0x28 == 0x28`"
+  resposta: 0
+  explicacao: |
+    A máscara dos bits 3 e 5 é 0010 1000 = 0x28. `reg & 0x28` apaga todos os outros bits; o resultado só é 0x28 se os dois estiverem em 1. `!= 0` é verdadeiro se **algum** deles estiver ligado (o "OU" em vez do "E"). `(reg | 0x28) == 0x28` testa se os outros bits estão em 0. Sem parênteses, `==` tem precedência maior que `&`: a última vira `reg & (0x28 == 0x28)` = `reg & 1`, que testa o bit 0.
+  fonte: "Kernighan & Ritchie, The C Programming Language, 2ª ed., seções 2.9 (Bitwise Operators) e 2.12 (Precedence and Order of Evaluation)"
+  origem: ia
+  revisao: rascunho

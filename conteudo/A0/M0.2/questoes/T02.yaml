@@ -1,0 +1,215 @@
+- id: Q-M0.2.T02-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    No gráfico da corrente I (eixo vertical) em função da tensão V (eixo horizontal) de um resistor ôhmico, a curva é uma reta pela origem. O que a inclinação dessa reta representa?
+  alternativas:
+    - "1/R, a condutância"
+    - "R, a resistência"
+    - "A potência dissipada"
+    - "A tensão em que o resistor queima"
+  resposta: 0
+  explicacao: |
+    I = (1/R)·V é uma função linear y = m·x com m = 1/R. Quanto mais inclinada a reta, menor a resistência. Se os eixos forem trocados (V no eixo vertical, I no horizontal), aí sim a inclinação é R. A potência não é inclinação: é o produto V·I de um ponto.
+  fonte: "OpenStax, Algebra and Trigonometry 2e, capítulo Linear Functions (seção Linear Functions, inclinação e intercepto)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T02-002
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    A tensão nos terminais de uma bateria segue V = E − r·I. Você mediu V = 11,5 V com I = 0,5 A e V = 10,0 V com I = 2,0 A. Qual é a resistência interna r? Responda em Ω.
+  resposta: {valor: 1, unidade: "Ω", tolerancia: 0.01}
+  explicacao: |
+    É uma função afim de I com inclinação −r: inclinação = ΔV/ΔI = (10,0 − 11,5)/(2,0 − 0,5) = −1,5/1,5 = −1 V/A ⇒ r = 1 Ω. O intercepto é E = 11,5 + 1 × 0,5 = 12 V (a tensão em aberto). Quem divide uma tensão por uma corrente de um só ponto (11,5/0,5 = 23 Ω) calcula a resistência da carga, não a interna.
+  fonte: "OpenStax, Algebra and Trigonometry 2e, capítulo Linear Functions (seções Linear Functions e Modeling with Linear Functions)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T02-003
+  objetivo: O1
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: num resistor fixo, se a tensão aplicada dobra, a potência dissipada (P = V²/R) também dobra.
+  resposta: false
+  explicacao: |
+    P é uma função quadrática de V: P(2V) = (2V)²/R = 4·V²/R. Dobrar a tensão **quadruplica** a potência. É por isso que um resistor de 1/4 W que trabalha folgado em 5 V pode queimar em 10 V.
+  fonte: "OpenStax, Algebra and Trigonometry 2e, capítulo Polynomial and Rational Functions (seção Power Functions and Polynomial Functions)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T02-004
+  objetivo: O1
+  tipo: unica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    O tempo para um capacitor, carregado a partir de 0 V por uma fonte Vf, chegar à tensão v é t = τ·ln(Vf/(Vf − v)). Para quais valores de v essa expressão dá um tempo real e finito?
+  alternativas:
+    - "0 ≤ v < Vf"
+    - "0 ≤ v ≤ Vf"
+    - "v > Vf"
+    - "Qualquer valor real de v"
+  resposta: 0
+  explicacao: |
+    O logaritmo só existe para argumento positivo, e o tempo deve ser ≥ 0: é preciso Vf/(Vf − v) ≥ 1, o que exige 0 ≤ v < Vf. Em v = Vf o denominador zera (t → ∞): fisicamente, a exponencial se aproxima de Vf mas nunca chega. Para v > Vf o argumento fica negativo: um capacitor carregado por Vf nunca ultrapassa Vf.
+  fonte: "OpenStax, Algebra and Trigonometry 2e, capítulo Functions (seção Domain and Range) e capítulo Exponential and Logarithmic Functions (seção Logarithmic Functions)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T02-005
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Num capacitor em descarga, v(t) = V0·e^(−t/τ). Que porcentagem da tensão inicial ainda resta depois de t = τ? Responda em %, com 1 casa decimal.
+  resposta: {valor: 36.8, unidade: "%", tolerancia: 0.01}
+  explicacao: |
+    Em t = τ, v/V0 = e^(−1) ≈ 0,368 = 36,8 %. O complemento, 63,2 %, é quanto um capacitor em carga já subiu depois de uma constante de tempo. Os dois números (63 % e 37 %) valem a pena decorar.
+  fonte: "OpenStax, Algebra and Trigonometry 2e, capítulo Exponential and Logarithmic Functions (seção Exponential and Logarithmic Models)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T02-006
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um capacitor inicialmente descarregado é carregado por uma fonte de 12 V através de um resistor, com τ = 2 ms. Usando v(t) = 12·(1 − e^(−t/τ)), qual é a tensão em t = 3 ms? Responda em V, com 2 casas decimais.
+  resposta: {valor: 9.32, unidade: "V", tolerancia: 0.005}
+  explicacao: |
+    t/τ = 3/2 = 1,5. e^(−1,5) ≈ 0,2231. v = 12 × (1 − 0,2231) = 12 × 0,7769 ≈ 9,32 V. Quem esquece o "1 −" calcula 2,68 V, que é a descarga (ou o quanto ainda falta carregar).
+  fonte: "OpenStax, Algebra and Trigonometry 2e, capítulo Exponential and Logarithmic Functions (seção Exponential Functions)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T02-007
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um capacitor de 100 µF carregado a 9 V é ligado a um resistor de 47 kΩ e começa a descarregar. Qual é a tensão no capacitor 10 s depois? Responda em V, com 2 casas decimais.
+  resposta: {valor: 1.07, unidade: "V", tolerancia: 0.01}
+  explicacao: |
+    τ = R·C = 47 × 10³ × 100 × 10⁻⁶ = 4,7 s. t/τ = 10/4,7 ≈ 2,128. v = 9·e^(−2,128) ≈ 9 × 0,1191 ≈ 1,07 V. Conferência: 10 s é pouco mais de 2τ, e em 2τ sobram 13,5 % (1,22 V) — o resultado tem que ser um pouco menor que isso.
+  fonte: "OpenStax, Algebra and Trigonometry 2e, capítulo Exponential and Logarithmic Functions (seção Exponential and Logarithmic Models)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T02-008
+  objetivo: O3
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Qual destas propriedades dos logaritmos é verdadeira para a, b > 0?
+  alternativas:
+    - "ln(a·b) = ln a + ln b"
+    - "ln(a + b) = ln a · ln b"
+    - "ln(a/b) = ln a / ln b"
+    - "ln(aⁿ) = (ln a)ⁿ"
+  resposta: 0
+  explicacao: |
+    O logaritmo transforma produto em soma: ln(a·b) = ln a + ln b (consequência de e^x · e^y = e^(x+y)). As outras são erros comuns: ln(a/b) = ln a − ln b; ln(aⁿ) = n·ln a; e não há regra simples para ln(a + b). É essa propriedade que faz os ganhos em dB se somarem.
+  fonte: "OpenStax, Algebra and Trigonometry 2e, capítulo Exponential and Logarithmic Functions (seção Logarithmic Properties)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T02-009
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Sua calculadora só tem ln e log₁₀. Usando a troca de base, calcule log₂(1000). Responda com 2 casas decimais.
+  resposta: {valor: 9.97, unidade: "valor", tolerancia: 0.002}
+  explicacao: |
+    log₂(1000) = ln 1000 / ln 2 = 6,908 / 0,6931 ≈ 9,97 (ou log 1000 / log 2 = 3 / 0,30103 ≈ 9,97). Interpretação: 2⁹ = 512 < 1000 < 1024 = 2¹⁰, então são precisos 10 bits para contar até 1000. Quem responde 500 dividiu 1000 por 2.
+  fonte: "OpenStax, Algebra and Trigonometry 2e, capítulo Exponential and Logarithmic Functions (seção Logarithmic Properties, change-of-base formula)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T02-010
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    O pino de reset de um microcontrolador tem um RC de 10 kΩ e 100 nF, que carrega a partir de 0 V até 5 V. O chip sai do reset quando o pino passa de 3,3 V. Quanto tempo isso leva? Responda em ms, com 2 casas decimais.
+  resposta: {valor: 1.08, unidade: "ms", tolerancia: 0.01}
+  explicacao: |
+    τ = 10 kΩ × 100 nF = 1 ms. De 3,3 = 5·(1 − e^(−t/τ)): e^(−t/τ) = 1 − 3,3/5 = 0,34 ⇒ −t/τ = ln 0,34 ⇒ t = τ·ln(1/0,34) = 1 ms × ln(2,941) ≈ 1,08 ms. Quem usa log₁₀ no lugar de ln obtém 0,47 ms; quem esquece o "1 −" chega a ln(5/3,3) = 0,42 ms.
+  fonte: "OpenStax, Algebra and Trigonometry 2e, capítulo Exponential and Logarithmic Functions (seção Exponential and Logarithmic Equations)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T02-011
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Você mediu um capacitor descarregando por um resistor: ele caiu de 5,0 V para 2,0 V em 3,0 s. Supondo descarga exponencial v = V0·e^(−t/τ), qual é a constante de tempo τ? Responda em s, com 2 casas decimais.
+  resposta: {valor: 3.27, unidade: "s", tolerancia: 0.005}
+  explicacao: |
+    2,0 = 5,0·e^(−3/τ) ⇒ e^(−3/τ) = 0,4 ⇒ −3/τ = ln 0,4 ⇒ τ = −3/ln 0,4 = 3/ln 2,5 = 3/0,9163 ≈ 3,27 s. Com R conhecido, isso mede C: se R = 100 kΩ, C = τ/R ≈ 32,7 µF — um jeito de medir um capacitor com um osciloscópio. Quem usa a regra linear (3 V caíram em 3 s) não chega a um τ.
+  fonte: "OpenStax, Algebra and Trigonometry 2e, capítulo Exponential and Logarithmic Functions (seções Exponential and Logarithmic Equations e Exponential and Logarithmic Models)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T02-012
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um pré-amplificador de microfone recebe 50 mV e entrega 2,5 V (mesma impedância de referência). Qual é o ganho de tensão em dB? Responda em dB, com 1 casa decimal.
+  resposta: {valor: 34.0, unidade: "dB", tolerancia: 0.005}
+  explicacao: |
+    Razão de tensão: 2,5/0,05 = 50. G = 20·log(50) = 20 × 1,699 ≈ 34,0 dB. Usar 10·log (17 dB) é o erro de tratar uma razão de tensão como razão de potência; o 20 vem de P ∝ V².
+  fonte: "All About Circuits, Volume III: Semiconductors, capítulo Amplifiers and Active Devices, seção Decibels"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T02-013
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um módulo de rádio LoRa transmite com 0,5 W. Quanto é isso em dBm? Responda em dBm, com 1 casa decimal.
+  resposta: {valor: 27.0, unidade: "dBm", tolerancia: 0.005}
+  explicacao: |
+    dBm compara com 1 mW: P = 10·log(500 mW / 1 mW) = 10·log(500) = 10 × 2,699 ≈ 27,0 dBm. Conferência: 30 dBm = 1 W e "−3 dB" é metade da potência, então 0,5 W ≈ 27 dBm. Quem usa 20·log obtém 54 dBm; quem esquece que a referência é 1 mW calcula −3 dBW (que é o mesmo valor em outra referência).
+  fonte: "All About Circuits, Volume III: Semiconductors, capítulo Amplifiers and Active Devices, seção Decibels"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T02-014
+  objetivo: O4
+  tipo: multipla
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Marque as afirmações corretas sobre decibéis.
+  alternativas:
+    - "Uma queda de 3 dB na tensão corresponde a multiplicá-la por cerca de 0,707"
+    - "Um ganho de 20 dB em tensão multiplica a tensão por 20"
+    - "Somar ganhos em dB de estágios em cascata equivale a multiplicar as razões lineares"
+    - "0 dBm corresponde a uma potência de 0 W"
+  resposta: [0, 2]
+  explicacao: |
+    10^(−3/20) ≈ 0,708 ≈ 1/√2: é o ponto de corte dos filtros. Como log(a·b) = log a + log b, ganhos em cascata em dB se somam. Já 20 dB em tensão é 10^(20/20) = 10 vezes, não 20. E 0 dBm é 1 mW (log 1 = 0); 0 W nem tem representação em dBm (seria −∞).
+  fonte: "All About Circuits, Volume III: Semiconductors, capítulo Amplifiers and Active Devices, seção Decibels; OpenStax, Algebra and Trigonometry 2e, seção Logarithmic Properties"
+  origem: ia
+  revisao: rascunho

@@ -1,0 +1,220 @@
+- id: Q-M0.2.T01-001
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Uma corrente de 2,2 mA passa por um resistor de 4,7 kΩ. Qual é a tensão sobre o resistor? Responda em V, com 2 casas decimais.
+  resposta: {valor: 10.34, unidade: "V", tolerancia: 0.01}
+  explicacao: |
+    V = R · I = (4,7 × 10³ Ω) × (2,2 × 10⁻³ A) = 4,7 × 2,2 × 10⁰ = 10,34 V. Os prefixos k (10³) e m (10⁻³) se cancelam: é o atalho "mA × kΩ = V". Quem responde 10 340 ou 0,01034 esqueceu um dos prefixos.
+  fonte: "OpenStax, Algebra and Trigonometry 2e, capítulo Prerequisites, seção Exponents and Scientific Notation; BIPM, SI Brochure (prefixos do SI)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T01-002
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Qual é a constante de tempo τ = R·C de um resistor de 3,3 kΩ com um capacitor de 4,7 nF? Responda em µs, com 2 casas decimais.
+  resposta: {valor: 15.51, unidade: "µs", tolerancia: 0.01}
+  explicacao: |
+    Separe mantissas e expoentes: (3,3 × 10³) × (4,7 × 10⁻⁹) = 15,51 × 10⁻⁶ s = 15,51 µs. Mantissas: 3,3 × 4,7 = 15,51; expoentes: 3 + (−9) = −6, que é o micro. Quem responde 15,51 ms somou os expoentes errado (3 − 9 = −6, não −3).
+  fonte: "OpenStax, Algebra and Trigonometry 2e, capítulo Prerequisites, seção Exponents and Scientific Notation"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T01-003
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Quanto vale √(16 × 10⁻⁶)?
+  alternativas:
+    - "4 × 10⁻³"
+    - "4 × 10⁻⁶"
+    - "8 × 10⁻³"
+    - "4 × 10⁻¹²"
+  resposta: 0
+  explicacao: |
+    √(a·b) = √a · √b: √16 = 4 e √(10⁻⁶) = 10⁻³ (metade do expoente, que é par). Resultado: 4 × 10⁻³. "4 × 10⁻⁶" tirou a raiz só da mantissa; "8 × 10⁻³" dividiu 16 por 2 em vez de tirar a raiz; "4 × 10⁻¹²" dobrou o expoente, como se fosse elevar ao quadrado.
+  fonte: "OpenStax, Algebra and Trigonometry 2e, capítulo Prerequisites, seção Radicals and Rational Exponents"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T01-004
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um circuito LC tem L = 10 µH e C = 100 nF. Calcule a frequência de ressonância f = 1 / (2π√(LC)). Responda em kHz, com 1 casa decimal.
+  resposta: {valor: 159.2, unidade: "kHz", tolerancia: 0.01}
+  explicacao: |
+    LC = (10 × 10⁻⁶) × (100 × 10⁻⁹) = 1000 × 10⁻¹⁵ = 10⁻¹². √(10⁻¹²) = 10⁻⁶ (expoente par, basta dividir por 2). 2π × 10⁻⁶ = 6,283 × 10⁻⁶ s. f = 1 / 6,283 × 10⁻⁶ ≈ 159 155 Hz ≈ 159,2 kHz. O erro mais comum é esquecer a raiz (daria 1/(2π × 10⁻¹²), um absurdo de 10¹¹ Hz) — a conferência de ordem de grandeza pega isso.
+  fonte: "OpenStax, Algebra and Trigonometry 2e, capítulo Prerequisites, seções Exponents and Scientific Notation e Radicals and Rational Exponents"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T01-005
+  objetivo: O2
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    A potência dissipada num resistor é P = V²/R. Isolando R, obtém-se:
+  alternativas:
+    - "R = V²/P"
+    - "R = P/V²"
+    - "R = P·V²"
+    - "R = √(P/V)"
+  resposta: 0
+  explicacao: |
+    Multiplique os dois lados por R: P·R = V². Divida por P: R = V²/P. Conferência dimensional: V²/W = V²/(V·A) = V/A = Ω. "P/V²" é o inverso (daria siemens, a condutância); as outras nem têm unidade de ohm.
+  fonte: "Paul's Online Math Notes, Algebra, Solving Equations and Inequalities, seção Solving Equations with More Than One Variable"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T01-006
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um divisor de tensão Vout = Vin · R2/(R1 + R2) deve baixar Vin = 5,0 V para Vout = 3,3 V, com R1 = 10 kΩ. Qual deve ser R2? Responda em kΩ, com 2 casas decimais.
+  resposta: {valor: 19.41, unidade: "kΩ", tolerancia: 0.01}
+  explicacao: |
+    Vout·(R1 + R2) = Vin·R2 ⇒ Vout·R1 = (Vin − Vout)·R2 ⇒ R2 = R1 · Vout/(Vin − Vout) = 10 kΩ × 3,3/1,7 ≈ 19,41 kΩ. Conferência: 5 × 19,41/29,41 ≈ 3,30 V. Quem usa Vin no denominador (10 × 3,3/5 = 6,6 kΩ) confundiu a fórmula com uma regra de três.
+  fonte: "Paul's Online Math Notes, Algebra, Solving Equations and Inequalities, seção Solving Equations with More Than One Variable"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T01-007
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 4
+  bloom: aplicar
+  enunciado: |
+    Você precisa de uma resistência equivalente de 680 Ω e tem um resistor de 1 kΩ. Que resistor R2 deve ser colocado em paralelo com ele? Responda em Ω, sem casas decimais.
+  resposta: {valor: 2125, unidade: "Ω", tolerancia: 0.01}
+  explicacao: |
+    1/680 = 1/1000 + 1/R2 ⇒ 1/R2 = 1/680 − 1/1000 = (1000 − 680)/(680 × 1000) = 320/680 000 ⇒ R2 = 680 000/320 = 2125 Ω. Atalho: R2 = Req·R1/(R1 − Req). Quem faz 1000 − 680 = 320 Ω tratou o paralelo como série; repare que 320 Ω em paralelo com 1 kΩ daria só 242 Ω.
+  fonte: "OpenStax, Algebra and Trigonometry 2e, capítulo Prerequisites, seção Rational Expressions"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T01-008
+  objetivo: O2
+  tipo: unica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    A frequência de ressonância de um circuito LC é f = 1 / (2π√(LC)). Isolando C, obtém-se:
+  alternativas:
+    - "C = 1 / (4π²·f²·L)"
+    - "C = 1 / (2π·f·L)"
+    - "C = 4π²·f²·L"
+    - "C = 1 / (4π²·f·L²)"
+  resposta: 0
+  explicacao: |
+    Inverta os dois lados: 2π√(LC) = 1/f ⇒ √(LC) = 1/(2πf). Eleve ao quadrado: LC = 1/(4π²f²). Divida por L: C = 1/(4π²f²L). "1/(2πfL)" esqueceu de elevar ao quadrado; "4π²f²L" esqueceu de inverter; a outra elevou ao quadrado a grandeza errada.
+  fonte: "Paul's Online Math Notes, Algebra, Solving Equations and Inequalities, seção Solving Equations with More Than One Variable"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T01-009
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Ao aplicar Kirchhoff num circuito, você chega a 5 − 1000·I = 2 + 500·I (I em ampères). Quanto vale I? Responda em mA.
+  resposta: {valor: 2, unidade: "mA", tolerancia: 0.01}
+  explicacao: |
+    Junte os termos com I de um lado e os números do outro: 5 − 2 = 500·I + 1000·I ⇒ 3 = 1500·I ⇒ I = 3/1500 = 0,002 A = 2 mA. Quem chega a 6 mA subtraiu 1000 − 500 em vez de somar, ao passar o termo para o outro lado sem trocar o sinal.
+  fonte: "OpenStax, Algebra and Trigonometry 2e, capítulo Equations and Inequalities, seção Linear Equations in One Variable"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T01-010
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Uma fonte de 12 V com resistência interna de 2 Ω alimenta uma carga R. A potência na carga é P = 144·R/(R + 2)². Há dois valores de R que fazem a carga receber 16 W. Qual é o maior deles? Responda em Ω.
+  resposta: {valor: 4, unidade: "Ω", tolerancia: 0.01}
+  explicacao: |
+    144R/(R + 2)² = 16 ⇒ 9R = (R + 2)² = R² + 4R + 4 ⇒ R² − 5R + 4 = 0. Δ = 25 − 16 = 9 ⇒ R = (5 ± 3)/2 ⇒ R = 4 Ω ou R = 1 Ω. Conferência com 4 Ω: I = 12/6 = 2 A, P = 2² × 4 = 16 W ✔; com 1 Ω: I = 4 A, P = 16 W ✔. As duas raízes são válidas, e a pergunta pede a maior.
+  fonte: "OpenStax, Algebra and Trigonometry 2e, capítulo Equations and Inequalities, seção Quadratic Equations"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T01-011
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um sensor de temperatura analógico tem saída linear V = a·T + b. A 25 °C ele fornece 0,750 V e a 100 °C fornece 1,500 V. Quanto vale o termo b (a tensão que ele daria a 0 °C)? Responda em V, com 2 casas decimais.
+  resposta: {valor: 0.5, unidade: "V", tolerancia: 0.01}
+  explicacao: |
+    Sistema: 0,750 = 25a + b e 1,500 = 100a + b. Subtraindo a primeira da segunda (eliminação): 0,750 = 75a ⇒ a = 0,01 V/°C = 10 mV/°C. Substituindo: b = 0,750 − 25 × 0,01 = 0,50 V. No firmware: T = (V − 0,50)/0,01. (São os números de um sensor do tipo TMP36.)
+  fonte: "OpenStax, Algebra and Trigonometry 2e, capítulo Systems of Equations and Inequalities, seção Systems of Linear Equations: Two Variables"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T01-012
+  objetivo: O4
+  tipo: vf
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Verdadeiro ou falso: o produto de uma resistência (em ohms) por uma capacitância (em farads) tem unidade de segundo.
+  resposta: true
+  explicacao: |
+    Ω = V/A e F = C/V = A·s/V. Multiplicando: (V/A) × (A·s/V) = s. Por isso τ = R·C é um tempo, e 10 kΩ × 100 µF = 1 s.
+  fonte: "BIPM, SI Brochure, 9ª ed., unidades derivadas coerentes (ohm, farad)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T01-013
+  objetivo: O4
+  tipo: unica
+  dificuldade: 2
+  bloom: avaliar
+  enunciado: |
+    Um colega anotou quatro fórmulas. Qual delas está **dimensionalmente errada** (os dois lados não têm a mesma unidade)?
+  alternativas:
+    - "I = V·R, para a corrente num resistor"
+    - "τ = L/R, para a constante de tempo de um circuito RL"
+    - "E = C·V²/2, para a energia num capacitor"
+    - "P = V·I, para a potência"
+  resposta: 0
+  explicacao: |
+    V·R tem unidade V·Ω = V²/A, que não é ampère: a lei de Ohm correta é I = V/R. As outras fecham: H/Ω = (V·s/A)/(V/A) = s; F·V² = (A·s/V)·V² = V·A·s = J; V·A = W. A análise dimensional não prova que uma fórmula está certa, mas prova quando ela está errada.
+  fonte: "BIPM, SI Brochure, 9ª ed., unidades derivadas coerentes; OpenStax, Algebra and Trigonometry 2e, capítulo Equations and Inequalities, seção Models and Applications"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T01-014
+  objetivo: O4
+  tipo: multipla
+  dificuldade: 3
+  bloom: avaliar
+  enunciado: |
+    Um aluno entregou estes resultados. Usando estimativa de ordem de grandeza, marque os que **certamente estão errados** (provavelmente por um prefixo trocado).
+  alternativas:
+    - "Corrente de 15 A num LED indicador alimentado por 5 V através de 330 Ω"
+    - "Constante de tempo de 1 ms com 10 kΩ e 100 nF"
+    - "Energia de 50 J armazenada num capacitor de 100 µF carregado a 5 V"
+    - "Potência de cerca de 76 mW num resistor de 330 Ω com 5 V aplicados"
+  resposta: [0, 2]
+  explicacao: |
+    Estimando: o LED tem no máximo ~5 V/300 Ω ≈ 17 mA, nunca 15 A (erro de 1000×). A energia é ½·C·V² = ½ × 10⁻⁴ × 25 ≈ 1,25 × 10⁻³ J = 1,25 mJ, e não 50 J. Já 10⁴ × 10⁻⁷ = 10⁻³ s = 1 ms está certo, e 25/330 ≈ 0,076 W = 76 mW também.
+  fonte: "OpenStax, Algebra and Trigonometry 2e, capítulo Prerequisites, seção Exponents and Scientific Notation"
+  origem: ia
+  revisao: rascunho

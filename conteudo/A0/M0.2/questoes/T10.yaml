@@ -1,0 +1,210 @@
+- id: Q-M0.2.T10-001
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Quantos algarismos significativos tem o valor 0,004700 A?
+  resposta: {valor: 4, unidade: "algarismos", tolerancia: 0}
+  explicacao: |
+    Os zeros à esquerda (0,00) só posicionam a vírgula e não contam. Contam o 4, o 7 e os dois zeros finais depois da vírgula, que afirmam que a medida foi feita até o milionésimo: 4 algarismos. Em notação científica fica claro: 4,700 × 10⁻³ A. Quem responde 2 descartou os zeros finais, que neste caso carregam informação.
+  fonte: "Taylor, An Introduction to Error Analysis, 2ª ed., capítulo How to Report and Use Uncertainties (significant figures)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T10-002
+  objetivo: O1
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um resistor medido em 2,34 kΩ conduz uma corrente medida em 1,2 mA. Como deve ser escrita a tensão calculada V = R·I, respeitando os algarismos significativos?
+  alternativas:
+    - "2,8 V"
+    - "2,808 V"
+    - "2,81 V"
+    - "3 V"
+  resposta: 0
+  explicacao: |
+    2,34 × 1,2 = 2,808. Em multiplicação, o resultado fica com o número de algarismos significativos do fator menos preciso: 1,2 mA tem 2, então V = 2,8 V. "2,808 V" copia a calculadora e sugere uma precisão que os dados não têm; "2,81 V" usa os 3 algarismos do resistor; "3 V" joga fora informação.
+  fonte: "Taylor, An Introduction to Error Analysis, 2ª ed., capítulo How to Report and Use Uncertainties"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T10-003
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Três quedas de tensão medidas numa malha são 12,1 V, 0,256 V e 3,47 V. Qual é a soma, escrita com o número correto de casas decimais? Responda em V.
+  resposta: {valor: 15.8, unidade: "V", tolerancia: 0.001}
+  explicacao: |
+    12,1 + 0,256 + 3,47 = 15,826 V. Em somas, vale o número de **casas decimais** da parcela menos precisa: 12,1 tem só uma casa (incerteza no décimo de volt), então o resultado é 15,8 V. Escrever 15,826 V ou 15,83 V afirma conhecer centésimos que a primeira medida não tem.
+  fonte: "Taylor, An Introduction to Error Analysis, 2ª ed., capítulo How to Report and Use Uncertainties"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T10-004
+  objetivo: O1
+  tipo: vf
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Verdadeiro ou falso: pela regra de arredondamento "meio para o par" (quando o dígito descartado é exatamente 5 seguido só de zeros, arredonda-se para o algarismo par mais próximo), o valor 2,345 arredondado para duas casas decimais fica 2,34.
+  resposta: true
+  explicacao: |
+    O dígito descartado é 5 seguido de nada (zeros). O algarismo a conservar é o 4, que já é par: fica 2,34. Já 2,355 viraria 2,36 (o 5 é ímpar, sobe para 6), e 2,3451 viraria 2,35 (há algo além do 5). Essa regra é usada em metrologia porque não puxa os resultados sistematicamente para cima. Cuidado: em `float`, 2,345 é guardado como um valor um pouco acima (2,34500000000000019…) e o `round` do Python dá 2,35.
+  fonte: "Taylor, An Introduction to Error Analysis, 2ª ed., capítulo How to Report and Use Uncertainties; ABNT NBR 5891, Regras de arredondamento na numeração decimal"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T10-005
+  objetivo: O2
+  tipo: unica
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Você mede várias vezes uma referência de 5,000 V e obtém 5,102; 5,101; 5,103; 5,102 V. Como classificar esse instrumento?
+  alternativas:
+    - "Preciso, mas pouco exato"
+    - "Exato, mas pouco preciso"
+    - "Exato e preciso"
+    - "Nem exato nem preciso"
+  resposta: 0
+  explicacao: |
+    As leituras concordam entre si em ±1 mV (alta precisão, pouco erro aleatório), mas estão todas cerca de 0,1 V acima do valor verdadeiro (baixa exatidão, erro sistemático de +2 %). É o caso típico de um instrumento descalibrado: a média de mais leituras não corrige; a calibração sim.
+  fonte: "JCGM 200, Vocabulário Internacional de Metrologia (exatidão e precisão de medição); Taylor, An Introduction to Error Analysis, 2ª ed., capítulo Statistical Analysis of Random Uncertainties"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T10-006
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um ADC calibrado de forma grosseira leu 4,85 V numa referência de 5,00 V. Qual é o erro relativo, com sinal (medido − referência, dividido pela referência)? Responda em %.
+  resposta: {valor: -3, unidade: "%", tolerancia: 0.001}
+  explicacao: |
+    Erro absoluto = 4,85 − 5,00 = −0,15 V. Erro relativo = −0,15/5,00 = −0,03 = −3 %. O sinal negativo diz que o instrumento lê **abaixo** do valor verdadeiro. Dividir pelo valor medido (−3,09 %) é um erro comum; o padrão é dividir pela referência.
+  fonte: "Taylor, An Introduction to Error Analysis, 2ª ed., capítulo How to Report and Use Uncertainties (fractional uncertainties); JCGM 200, VIM (erro de medição)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T10-007
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Um divisor de tensão com dois resistores de 1 MΩ está ligado em 10 V. Você mede o ponto médio com um multímetro de 10 MΩ de resistência de entrada. Que tensão o multímetro mostra? Responda em V, com 2 casas decimais.
+  resposta: {valor: 4.76, unidade: "V", tolerancia: 0.002}
+  explicacao: |
+    O multímetro fica em paralelo com o resistor de baixo: 1 MΩ ∥ 10 MΩ = 10/11 MΩ ≈ 0,909 MΩ. V = 10 × 0,909/(1 + 0,909) ≈ 4,76 V, em vez dos 5 V esperados (−4,8 %). É um erro **sistemático** (efeito de carga): repetir a medição mil vezes dá sempre 4,76 V. Com resistores de 10 kΩ, o mesmo multímetro erraria só 0,05 %.
+  fonte: "Taylor, An Introduction to Error Analysis, 2ª ed., capítulo Preliminary Description of Error Analysis (systematic errors); JCGM 200, VIM (erro sistemático de medição)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T10-008
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um multímetro mostra 12,34 V na escala de 20 V, cuja resolução é 0,01 V. A especificação é ±(0,5 % da leitura + 2 dígitos). Qual é o limite da incerteza dessa leitura? Responda em V, com 3 casas decimais.
+  resposta: {valor: 0.082, unidade: "V", tolerancia: 0.01}
+  explicacao: |
+    0,5 % da leitura = 0,005 × 12,34 = 0,0617 V. 2 dígitos = 2 × 0,01 V (resolução da escala usada) = 0,02 V. Total: ±0,0817 V ≈ ±0,082 V. Quem esquece os dígitos obtém 0,062 V; quem toma "2 dígitos" como 2 V (ou 2 %) confundiu o significado de "dígito" na especificação.
+  fonte: "JCGM 100:2008 (GUM), Type B evaluation of standard uncertainty; manual de especificações do multímetro (accuracy: ±(% of reading + digits))"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T10-009
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um resistor tem valor nominal 1 kΩ com tolerância de ±1 %, e você não tem nenhuma outra informação (distribuição retangular). Qual é a incerteza padrão tipo B, u = a/√3? Responda em Ω, com 1 casa decimal.
+  resposta: {valor: 5.8, unidade: "Ω", tolerancia: 0.01}
+  explicacao: |
+    O limite é a = 1 % de 1000 Ω = 10 Ω. Para uma distribuição retangular (qualquer valor entre −a e +a igualmente provável), o desvio padrão é a/√3 = 10/1,732 ≈ 5,8 Ω. Usar o limite inteiro (10 Ω) como se fosse um desvio padrão superestima a incerteza; dividir por 2 ou por 3 não tem base.
+  fonte: "JCGM 100:2008 (GUM), Type B evaluation of standard uncertainty (rectangular distribution); NIST Technical Note 1297"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T10-010
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Você fez 10 leituras repetidas de uma tensão e obteve um desvio padrão amostral s = 12 mV. Qual é a incerteza padrão tipo A da média, u = s/√N? Responda em mV, com 1 casa decimal.
+  resposta: {valor: 3.8, unidade: "mV", tolerancia: 0.01}
+  explicacao: |
+    u_A = s/√N = 12/√10 ≈ 12/3,162 ≈ 3,8 mV. s descreve a dispersão de **uma** leitura; a média de 10 é mais confiável por um fator √10. Responder 12 mV é usar a incerteza de uma leitura isolada; 1,2 mV dividiu por N em vez de √N.
+  fonte: "JCGM 100:2008 (GUM), Type A evaluation of standard uncertainty; Taylor, An Introduction to Error Analysis, 2ª ed., capítulo Statistical Analysis of Random Uncertainties (standard deviation of the mean)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T10-011
+  objetivo: O3
+  tipo: multipla
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Pelo GUM, quais destas fontes de informação levam a uma avaliação de incerteza **tipo B**?
+  alternativas:
+    - "A especificação de exatidão no manual do multímetro"
+    - "O certificado de calibração do instrumento"
+    - "O desvio padrão de 20 leituras repetidas feitas por você"
+    - "A resolução do display do instrumento"
+  resposta: [0, 1, 3]
+  explicacao: |
+    Tipo A é a avaliação por análise estatística de uma série de observações — as 20 leituras repetidas. Tipo B é qualquer outro meio: especificações do fabricante, certificados de calibração, resolução, tolerâncias, dados de manuais. As duas são incertezas padrão e se combinam do mesmo jeito (em quadratura).
+  fonte: "JCGM 100:2008 (GUM), Type A evaluation of standard uncertainty e Type B evaluation of standard uncertainty"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T10-012
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Duas tensões medidas independentemente são V1 = (5,00 ± 0,03) V e V2 = (3,00 ± 0,04) V (incertezas padrão). Qual é a incerteza padrão da diferença V1 − V2? Responda em V, com 2 casas decimais.
+  resposta: {valor: 0.05, unidade: "V", tolerancia: 0.01}
+  explicacao: |
+    Em soma ou subtração, as incertezas **absolutas** se combinam em quadratura: u = √(0,03² + 0,04²) = √(0,0009 + 0,0016) = √0,0025 = 0,05 V. Subtrair as incertezas (0,01 V) é o erro clássico — incertezas nunca se cancelam. Somar direto (0,07 V) é a estimativa de pior caso.
+  fonte: "Taylor, An Introduction to Error Analysis, 2ª ed., capítulo Propagation of Uncertainties (independent uncertainties in a sum)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T10-013
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Para calcular a potência de uma carga, você mediu V = (5,00 ± 0,05) V e I = (0,200 ± 0,004) A, incertezas padrão independentes. Qual é a incerteza padrão de P = V·I? Responda em W, com 3 casas decimais.
+  resposta: {valor: 0.022, unidade: "W", tolerancia: 0.02}
+  explicacao: |
+    P = 1,000 W. Num produto, combinam-se as incertezas **relativas** em quadratura: V tem 0,05/5,00 = 1 % e I tem 0,004/0,200 = 2 % ⇒ √(1² + 2²) % = 2,24 % ⇒ u_P = 0,0224 W ≈ 0,022 W. O resultado é P = (1,000 ± 0,022) W, ou ± 0,045 W com k = 2. Somar as relativas daria 3 % (0,030 W), o pior caso.
+  fonte: "Taylor, An Introduction to Error Analysis, 2ª ed., capítulo Propagation of Uncertainties (products and quotients); JCGM 100:2008 (GUM), Determining combined standard uncertainty"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T10-014
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    A potência num resistor é calculada por P = V²/R, com V = (10,0 ± 0,1) V e R = (100 ± 2) Ω (incertezas padrão independentes). Qual é a incerteza **expandida** de P para k = 2? Responda em mW, com 1 casa decimal.
+  resposta: {valor: 56.6, unidade: "mW", tolerancia: 0.01}
+  explicacao: |
+    P = 100/100 = 1,000 W. Relativas: V entra ao quadrado, então contribui 2 × (0,1/10,0) = 2 %; R contribui 2/100 = 2 %. u_P/P = √(2² + 2²) % = 2,83 % ⇒ u_P = 28,3 mW. Expandida: U = 2 × 28,3 ≈ 56,6 mW ⇒ P = (1,00 ± 0,06) W (k = 2). Quem esquece o expoente 2 da tensão chega a 2 × √(1² + 2²) % = 44,7 mW.
+  fonte: "Taylor, An Introduction to Error Analysis, 2ª ed., capítulo Propagation of Uncertainties (uncertainty in a power); JCGM 100:2008 (GUM), Determining expanded uncertainty"
+  origem: ia
+  revisao: rascunho

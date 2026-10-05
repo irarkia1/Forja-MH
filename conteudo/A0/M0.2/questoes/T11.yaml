@@ -1,0 +1,215 @@
+- id: Q-M0.2.T11-001
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Qual é o valor decimal do número binário sem sinal 1011 0110₂?
+  resposta: {valor: 182, unidade: "valor", tolerancia: 0}
+  explicacao: |
+    Some os pesos dos bits em 1: 128 + 32 + 16 + 4 + 2 = 182. Em hexadecimal, agrupando de 4 em 4: 1011 = B e 0110 = 6, então 0xB6 = 11 × 16 + 6 = 182, a mesma coisa.
+  fonte: "Floyd, Sistemas Digitais: fundamentos e aplicações, capítulo Sistemas de numeração, operações e códigos (conversão binário-decimal)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T11-002
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Um registrador de configuração recebe o valor 0x3F. Quais são os 8 bits escritos nele?
+  alternativas:
+    - "0011 1111"
+    - "1111 0011"
+    - "0011 0111"
+    - "0011 1110"
+  resposta: 0
+  explicacao: |
+    Cada dígito hexadecimal vale exatamente 4 bits: 3 = 0011 e F = 1111, na mesma ordem. Resultado: 0011 1111 (os 6 bits menos significativos ligados). "1111 0011" inverteu a ordem dos nibbles; "0011 0111" leu F como 7; "0011 1110" é 0x3E.
+  fonte: "Floyd, Sistemas Digitais: fundamentos e aplicações, capítulo Sistemas de numeração, operações e códigos (números hexadecimais)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T11-003
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Qual é o valor decimal de 0x2A7?
+  resposta: {valor: 679, unidade: "valor", tolerancia: 0}
+  explicacao: |
+    Posições de um número hexadecimal: 16² = 256, 16¹ = 16, 16⁰ = 1. A = 10. 0x2A7 = 2 × 256 + 10 × 16 + 7 = 512 + 160 + 7 = 679. Quem responde 2107 juntou os dígitos 2, 10 e 7 como se fossem decimais.
+  fonte: "Tocci, Widmer e Moss, Sistemas Digitais: princípios e aplicações, capítulo Sistemas de numeração e códigos (sistema hexadecimal)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T11-004
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Qual é o valor decimal do número binário 101,011₂? Responda com 3 casas decimais.
+  resposta: {valor: 5.375, unidade: "valor", tolerancia: 0.001}
+  explicacao: |
+    Parte inteira: 101₂ = 4 + 1 = 5. Parte fracionária: os pesos depois da vírgula são 2⁻¹ = 0,5, 2⁻² = 0,25 e 2⁻³ = 0,125; 0,011₂ = 0,25 + 0,125 = 0,375. Total: 5,375. Quem responde 5,3 leu a parte fracionária "011" como o inteiro 3.
+  fonte: "Floyd, Sistemas Digitais: fundamentos e aplicações, capítulo Sistemas de numeração, operações e códigos (números binários fracionários)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T11-005
+  objetivo: O2
+  tipo: vf
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Verdadeiro ou falso: uma variável `int8_t` (8 bits em complemento de 2) guarda valores de −128 até +128.
+  resposta: false
+  explicacao: |
+    A faixa é −128 … +127. Com 8 bits há 256 combinações: 128 negativas (−1 a −128) e 128 "não negativas" (0 a 127). O zero ocupa um lugar do lado positivo, por isso o maior positivo é 127. Somar 1 a 127 num `int8_t` não cabe.
+  fonte: "cppreference.com, Fixed width integer types; Harris e Harris, Digital Design and Computer Architecture, capítulo 1, seção Number Systems (Signed Binary Numbers)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T11-006
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um sensor devolve o byte 0xF6, que o datasheet diz ser um inteiro com sinal em complemento de 2 (`int8_t`). Qual é o valor decimal?
+  resposta: {valor: -10, unidade: "valor", tolerancia: 0}
+  explicacao: |
+    0xF6 = 246 sem sinal. O MSB é 1, então o valor com sinal é 246 − 256 = −10. Conferindo pelo método "inverte e soma 1": 1111 0110 → 0000 1001 → 0000 1010 = 10, logo era −10. Quem responde −118 leu como sinal-magnitude (MSB = sinal, 111 0110 = 118), que não é como os processadores guardam inteiros.
+  fonte: "Floyd, Sistemas Digitais: fundamentos e aplicações, capítulo Sistemas de numeração, operações e códigos (números com sinal, complemento de 2)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T11-007
+  objetivo: O2
+  tipo: unica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Qual é a representação de −45 num `int8_t` (complemento de 2)?
+  alternativas:
+    - "0xD3"
+    - "0xD2"
+    - "0xAD"
+    - "0x2D"
+  resposta: 0
+  explicacao: |
+    45 = 0010 1101 (0x2D). Inverta os bits: 1101 0010 (0xD2, o complemento de 1). Some 1: 1101 0011 = 0xD3. Conferindo pelo peso negativo do MSB: −128 + 64 + 16 + 2 + 1 = −45 ✔. 0xAD é sinal-magnitude (1 no MSB + 45 no resto); 0x2D é +45.
+  fonte: "Tocci, Widmer e Moss, Sistemas Digitais: princípios e aplicações, capítulo Aritmética digital (representação de números com sinal)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T11-008
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Um sensor de temperatura entrega dois bytes, primeiro o mais significativo: 0xFF e depois 0x38. Juntos, eles formam um `int16_t` em complemento de 2, em que 1 LSB vale 0,01 °C. Qual é a temperatura? Responda em °C, com 2 casas decimais.
+  resposta: {valor: -2, unidade: "°C", tolerancia: 0.001}
+  explicacao: |
+    Junte os bytes: 0xFF38 = 65 336 sem sinal. O MSB é 1, então o valor com sinal é 65 336 − 65 536 = −200. Aplicando a escala: −200 × 0,01 °C = −2,00 °C. Quem guarda em `uint16_t` obtém 653,36 °C; quem trata cada byte separadamente erra também. Em C: `int16_t raw = (int16_t)((b[0] << 8) | b[1]);`.
+  fonte: "Harris e Harris, Digital Design and Computer Architecture, capítulo 1, seção Number Systems (Signed Binary Numbers); cppreference.com, Fixed width integer types"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T11-009
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Some em binário, sem sinal: 0110 1100₂ + 0101 1010₂. Dê o resultado em decimal.
+  resposta: {valor: 198, unidade: "valor", tolerancia: 0}
+  explicacao: |
+    0110 1100 = 108 e 0101 1010 = 90; a soma binária dá 1100 0110 = 128 + 64 + 4 + 2 = 198, que cabe em 8 bits (≤ 255), sem vai-um para fora. Fazer a soma coluna a coluna e conferir em decimal é o melhor treino: 0 + 0 = 0, 1 + 0 = 1, 1 + 1 = 0 e vai 1, 1 + 1 + 1 = 1 e vai 1.
+  fonte: "Floyd, Sistemas Digitais: fundamentos e aplicações, capítulo Sistemas de numeração, operações e códigos (adição binária)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T11-010
+  objetivo: O3
+  tipo: multipla
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Um processador de 8 bits soma 100 + 50 (0x64 + 0x32). Marque as afirmações corretas sobre o resultado.
+  alternativas:
+    - "O resultado de 8 bits é 0x96"
+    - "O flag de overflow (V) fica em 1"
+    - "O flag de carry (C) fica em 1"
+    - "Lido como `int8_t`, o resultado vale +150"
+  resposta: [0, 1]
+  explicacao: |
+    0110 0100 + 0011 0010 = 1001 0110 = 0x96 (150). Não sai vai-um do MSB, então C = 0: como número sem sinal, 150 está certo. Mas como número com sinal, dois positivos deram MSB = 1, ou seja −106 (150 − 256): é overflow, V = 1. +150 não existe num `int8_t`, cujo máximo é 127.
+  fonte: "Harris e Harris, Digital Design and Computer Architecture, capítulo 1, seção Number Systems (overflow); Tocci, Widmer e Moss, Sistemas Digitais, capítulo Aritmética digital"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T11-011
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Calcule (uint8_t)(0x30 − 0x50), isto é, a subtração em 8 bits sem sinal feita como soma do complemento de 2. Dê o resultado em decimal (sem sinal).
+  resposta: {valor: 224, unidade: "valor", tolerancia: 0}
+  explicacao: |
+    −0x50 em complemento de 2: ~0101 0000 + 1 = 1011 0000 = 0xB0. 0x30 + 0xB0 = 0xE0 = 224. Conferindo: 48 − 80 = −32 e −32 + 256 = 224. Lido como `int8_t`, 0xE0 é exatamente −32 — a mesma soma serve para os dois tipos, só a interpretação muda.
+  fonte: "Floyd, Sistemas Digitais: fundamentos e aplicações, capítulo Sistemas de numeração, operações e códigos (operações aritméticas com números com sinal)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T11-012
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um ADC de 12 bits com Vref = 3,3 V leu o código 2048. Usando V = N · Vref / 2ⁿ, qual é a tensão de entrada? Responda em V, com 3 casas decimais.
+  resposta: {valor: 1.65, unidade: "V", tolerancia: 0.001}
+  explicacao: |
+    2¹² = 4096. V = 2048 × 3,3 / 4096 = 0,5 × 3,3 = 1,650 V: metade do código máximo é metade da referência. 1 LSB = 3,3/4096 ≈ 0,806 mV. Quem divide por 12 (o número de bits) em vez de 2¹² chega a um absurdo de 563 V.
+  fonte: "Tocci, Widmer e Moss, Sistemas Digitais: princípios e aplicações, capítulo Interface com o mundo analógico (conversão analógico-digital, resolução)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T11-013
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 4
+  bloom: aplicar
+  enunciado: |
+    Um filtro digital guarda os coeficientes em formato Q15 (`int16_t`, valor = inteiro / 2¹⁵). Qual é o valor real do coeficiente 0xC000? Responda com 2 casas decimais.
+  resposta: {valor: -0.5, unidade: "valor", tolerancia: 0.001}
+  explicacao: |
+    Primeiro leia como `int16_t`: 0xC000 = 49 152 sem sinal, MSB = 1 ⇒ 49 152 − 65 536 = −16 384. Depois aplique a escala Q15: −16 384 / 32 768 = −0,5. Quem esquece o sinal obtém +1,5, que nem cabe na faixa do Q15 (−1 a quase +1).
+  fonte: "Harris e Harris, Digital Design and Computer Architecture, capítulo Digital Building Blocks, seção Fixed-Point Number Systems"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T11-014
+  objetivo: O4
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    O registrador de segundos de um RTC guarda o valor em BCD (um dígito decimal por nibble). Ele contém 0x59. Quantos segundos isso representa?
+  alternativas:
+    - "59 s"
+    - "89 s"
+    - "95 s"
+    - "5,9 s"
+  resposta: 0
+  explicacao: |
+    Em BCD, cada nibble é um dígito decimal: nibble alto 5 (dezenas) e nibble baixo 9 (unidades) ⇒ 59 s. 89 é o valor de 0x59 lido como binário puro — o defeito clássico de quem esquece a conversão. Em C: `seg = (r >> 4) * 10 + (r & 0x0F);`.
+  fonte: "Floyd, Sistemas Digitais: fundamentos e aplicações, capítulo Sistemas de numeração, operações e códigos (código BCD); datasheet DS3231, Timekeeping Registers"
+  origem: ia
+  revisao: rascunho

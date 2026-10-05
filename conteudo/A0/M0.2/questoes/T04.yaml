@@ -1,0 +1,220 @@
+- id: Q-M0.2.T04-001
+  objetivo: O1
+  tipo: vf
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Verdadeiro ou falso: na notação usada em eletrônica, a unidade imaginária se chama j (para não confundir com a corrente i) e vale j² = −1.
+  resposta: true
+  explicacao: |
+    j é definido por j² = −1. Engenheiros usam j porque i (ou I) já é a corrente. Consequências úteis: j³ = −j, j⁴ = 1 e 1/j = −j.
+  fonte: "OpenStax, Algebra and Trigonometry 2e, capítulo Equations and Inequalities, seção Complex Numbers; All About Circuits, Volume II: AC, capítulo Complex Numbers"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T04-002
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Calcule o produto (2 + j3)·(4 − j). Qual é a parte imaginária do resultado?
+  resposta: {valor: 10, unidade: "valor", tolerancia: 0.001}
+  explicacao: |
+    Distributiva: 2·4 + 2·(−j) + j3·4 + j3·(−j) = 8 − j2 + j12 − j²·3. Como j² = −1, −j²·3 = +3. Resultado: (8 + 3) + j(12 − 2) = 11 + j10. Parte imaginária: 10. Quem esquece que j² = −1 obtém 5 + j10 (a parte imaginária coincide, mas a real sai errada); quem multiplica "parte por parte" obtém 8 − j3.
+  fonte: "OpenStax, Algebra and Trigonometry 2e, capítulo Equations and Inequalities, seção Complex Numbers (multiplying complex numbers)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T04-003
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Quanto vale (3 + j4)·(3 − j4)?
+  alternativas:
+    - "25"
+    - "−7"
+    - "9 − j16"
+    - "25 − j24"
+  resposta: 0
+  explicacao: |
+    Um número vezes o seu conjugado dá sempre um real: (a + jb)(a − jb) = a² − j²b² = a² + b² = 9 + 16 = 25 = |z|². −7 vem de fazer 9 − 16, esquecendo que −j² = +1. É esse truque que permite dividir complexos.
+  fonte: "OpenStax, Algebra and Trigonometry 2e, capítulo Equations and Inequalities, seção Complex Numbers (complex conjugates)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T04-004
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Calcule (10 + j5)/(1 + j2) na forma retangular. Qual é a parte real do resultado?
+  resposta: {valor: 4, unidade: "valor", tolerancia: 0.001}
+  explicacao: |
+    Multiplique em cima e embaixo pelo conjugado do denominador, 1 − j2: denominador (1 + j2)(1 − j2) = 1 + 4 = 5; numerador (10 + j5)(1 − j2) = 10 − j20 + j5 − j²10 = 20 − j15. Resultado: (20 − j15)/5 = 4 − j3. Dividir parte por parte (10/1 + j·5/2 = 10 + j2,5) é o erro clássico.
+  fonte: "OpenStax, Algebra and Trigonometry 2e, capítulo Equations and Inequalities, seção Complex Numbers (dividing complex numbers)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T04-005
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Qual é o módulo da impedância Z = 6 − j8 Ω? Responda em Ω.
+  resposta: {valor: 10, unidade: "Ω", tolerancia: 0.001}
+  explicacao: |
+    |Z| = √(6² + (−8)²) = √(36 + 64) = √100 = 10 Ω. O sinal da parte imaginária não muda o módulo (ele entra ao quadrado). Quem soma 6 + 8 = 14 Ω somou as partes como se fossem resistores em série: as componentes real e imaginária são perpendiculares.
+  fonte: "OpenStax, Algebra and Trigonometry 2e, capítulo Further Applications of Trigonometry, seção Polar Form of Complex Numbers"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T04-006
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Qual é o ângulo do número complexo z = −3 + j4, medido a partir do eixo real positivo, no intervalo de −180° a 180°? Responda em graus, com 1 casa decimal.
+  resposta: {valor: 126.9, unidade: "°", tolerancia: 0.002}
+  explicacao: |
+    O ponto (−3, 4) está no 2º quadrante. arctan(4/(−3)) = −53,1° aponta para o 4º quadrante, que está errado; some 180°: −53,1° + 180° = 126,87° ≈ 126,9°. `math.atan2(4, -3)` em Python já devolve esse valor. Conferência: cos(126,9°) ≈ −0,6 e 5 × (−0,6) = −3 ✔.
+  fonte: "OpenStax, Algebra and Trigonometry 2e, capítulo Further Applications of Trigonometry, seção Polar Form of Complex Numbers"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T04-007
+  objetivo: O2
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Converta o fasor 10∠−30° para a forma retangular.
+  alternativas:
+    - "8,66 − j5"
+    - "5 − j8,66"
+    - "8,66 + j5"
+    - "−8,66 + j5"
+  resposta: 0
+  explicacao: |
+    a = r·cos θ = 10·cos(−30°) = 8,66; b = r·sen θ = 10·sen(−30°) = −5. Resultado: 8,66 − j5 (4º quadrante, como o ângulo indica). "5 − j8,66" trocou seno e cosseno (seria 10∠−60°); "8,66 + j5" perdeu o sinal do ângulo.
+  fonte: "OpenStax, Algebra and Trigonometry 2e, capítulo Further Applications of Trigonometry, seção Polar Form of Complex Numbers (converting from polar to rectangular form)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T04-008
+  objetivo: O3
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Quanto vale o produto (4∠20°)·(3∠−50°)?
+  alternativas:
+    - "12∠−30°"
+    - "7∠−30°"
+    - "12∠−1000°"
+    - "1,33∠70°"
+  resposta: 0
+  explicacao: |
+    Na forma polar, multiplicam-se os módulos e **somam-se** os ângulos: 4 × 3 = 12 e 20° + (−50°) = −30°. "7∠−30°" somou os módulos; "12∠−1000°" multiplicou os ângulos; "1,33∠70°" é a divisão (4/3 e 20° − (−50°)).
+  fonte: "OpenStax, Algebra and Trigonometry 2e, capítulo Further Applications of Trigonometry, seção Polar Form of Complex Numbers (products of complex numbers in polar form)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T04-009
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 4
+  bloom: aplicar
+  enunciado: |
+    Calcule (1 + j)⁶ e dê a parte imaginária do resultado.
+  resposta: {valor: -8, unidade: "valor", tolerancia: 0.001}
+  explicacao: |
+    Na polar: 1 + j = √2∠45°. Pelo teorema de De Moivre, (√2∠45°)⁶ = (√2)⁶∠(6 × 45°) = 8∠270°. 270° aponta para baixo no eixo imaginário: 8∠270° = 8·cos 270° + j·8·sen 270° = 0 − j8. Parte imaginária: −8. Conferência: (1 + j)² = 2j, e (2j)³ = 8j³ = −8j ✔.
+  fonte: "OpenStax, Algebra and Trigonometry 2e, capítulo Further Applications of Trigonometry, seção Polar Form of Complex Numbers (De Moivre's Theorem)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T04-010
+  objetivo: O3
+  tipo: unica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Pela fórmula de Euler, e^(jθ) = cos θ + j·sen θ. Quanto vale e^(jπ/2)?
+  alternativas:
+    - "j"
+    - "1"
+    - "−1"
+    - "−j"
+  resposta: 0
+  explicacao: |
+    cos(π/2) = 0 e sen(π/2) = 1, então e^(jπ/2) = 0 + j·1 = j. Interpretação: multiplicar por e^(jπ/2) = j gira um fasor 90° no sentido anti-horário — é por isso que a tensão no indutor (Z = jωL) fica 90° adiantada da corrente. e^(j0) = 1, e^(jπ) = −1 e e^(j3π/2) = −j.
+  fonte: "OpenStax, Algebra and Trigonometry 2e, capítulo Further Applications of Trigonometry, seção Polar Form of Complex Numbers; 3Blue1Brown, e^(iπ) in 3.14 minutes, using dynamics"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T04-011
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Qual é a reatância de um indutor de 10 mH em 1 kHz (X_L = ωL)? Responda em Ω, com 1 casa decimal.
+  resposta: {valor: 62.8, unidade: "Ω", tolerancia: 0.002}
+  explicacao: |
+    ω = 2π·f = 2π × 1000 ≈ 6283 rad/s. X_L = ωL = 6283 × 0,010 ≈ 62,8 Ω, e a impedância é Z_L = j62,8 Ω. Quem usa f no lugar de ω (1000 × 0,01 = 10 Ω) esqueceu o 2π.
+  fonte: "All About Circuits, Volume II: AC, capítulo Reactance and Impedance — Inductive (inductive reactance)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T04-012
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um resistor de 1 kΩ está em série com um capacitor de 100 nF. Qual é o módulo da impedância em 1 kHz? Responda em Ω, sem casas decimais.
+  resposta: {valor: 1880, unidade: "Ω", tolerancia: 0.002}
+  explicacao: |
+    X_C = 1/(ωC) = 1/(2π × 1000 × 100 × 10⁻⁹) ≈ 1591,5 Ω. Z = 1000 − j1591,5 Ω. |Z| = √(1000² + 1591,5²) ≈ 1879,6 Ω ≈ 1880 Ω. Somar 1000 + 1591,5 = 2591,5 Ω é o erro de tratar a reatância como resistência: as duas estão a 90° uma da outra.
+  fonte: "All About Circuits, Volume II: AC, capítulo Reactance and Impedance — R, L, and C (series R, L, and C)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T04-013
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 4
+  bloom: aplicar
+  enunciado: |
+    Um resistor de 100 Ω está em **paralelo** com um indutor de 10 mH. Qual é o módulo da impedância do conjunto em 1 kHz? Responda em Ω, com 1 casa decimal.
+  resposta: {valor: 53.2, unidade: "Ω", tolerancia: 0.003}
+  explicacao: |
+    Z_L = jωL = j62,83 Ω. Paralelo: Z = Z_R·Z_L/(Z_R + Z_L) = (100 × j62,83)/(100 + j62,83). Numerador: 6283∠90°; denominador: √(100² + 62,83²)∠arctan(0,6283) = 118,1∠32,1°. Z = 6283/118,1 ∠(90° − 32,1°) ≈ 53,2∠57,9° Ω. Usar o "produto sobre soma" com os módulos (100 × 62,83/162,83 = 38,6 Ω) é errado: a soma do denominador é complexa.
+  fonte: "All About Circuits, Volume II: AC, capítulo Reactance and Impedance — R, L, and C (parallel R, L, and C)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.2.T04-014
+  objetivo: O4
+  tipo: unica
+  dificuldade: 2
+  bloom: lembrar
+  enunciado: |
+    Qual é a impedância complexa de um capacitor ideal de capacitância C, numa frequência angular ω?
+  alternativas:
+    - "−j/(ωC)"
+    - "jωC"
+    - "j/(ωC)"
+    - "1/(ωC), sem parte imaginária"
+  resposta: 0
+  explicacao: |
+    Z_C = 1/(jωC); como 1/j = −j, Z_C = −j/(ωC) = (1/ωC)∠−90°: a tensão no capacitor fica 90° atrasada da corrente. jωC é a admitância (o inverso da impedância); j/(ωC) teria comportamento indutivo; 1/(ωC) é só o módulo (a reatância).
+  fonte: "All About Circuits, Volume II: AC, capítulo Reactance and Impedance — Capacitive"
+  origem: ia
+  revisao: rascunho
