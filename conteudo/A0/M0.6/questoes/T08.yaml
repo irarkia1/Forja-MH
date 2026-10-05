@@ -1,0 +1,424 @@
+- id: Q-M0.6.T08-001
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Qual número este programa C++ imprime?
+    ```cpp
+    #include <cstdio>
+
+    int main()
+    {
+        int x = 5;
+        int& r = x;
+        r = 8;
+        std::printf("%d\n", x);
+        return 0;
+    }
+    ```
+  resposta: {valor: 8, unidade: "valor", tolerancia: 0}
+  explicacao: |
+    Uma referência é outro nome para o mesmo objeto: `r = 8` escreve em `x`. Diferente de um ponteiro, não há `*` nem `&` no uso, a referência precisa ser inicializada e não pode passar a se referir a outro objeto.
+  fonte: "Bjarne Stroustrup, A Tour of C++, 3ª ed., cap. 1 (The Basics: pointers, arrays, and references); cppreference.com, Reference declaration"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T08-002
+  objetivo: O1
+  tipo: unica
+  dificuldade: 2
+  bloom: analisar
+  enunciado: |
+    Dada a classe abaixo, qual linha **não compila**?
+    ```cpp
+    class Led {
+    public:
+        explicit Led(int pino) : pino_(pino) {}
+        void liga() { aceso_ = true; }
+        bool aceso() const { return aceso_; }
+    private:
+        int pino_;
+        bool aceso_ = false;
+    };
+    ```
+  alternativas:
+    - "`Led a(5); a.liga();`"
+    - "`const Led b(6); bool x = b.aceso();`"
+    - "`const Led c(7); c.liga();`"
+    - "`Led d(8); bool y = d.aceso();`"
+  resposta: 2
+  explicacao: |
+    Num objeto `const`, só se podem chamar métodos marcados `const` (que prometem não alterar o objeto). `liga()` não é `const` e altera `aceso_`: o g++ recusa com `passing 'const Led' as 'this' argument discards qualifiers`. `aceso()` é `const` e pode ser chamado em qualquer objeto; métodos não `const` podem ser chamados em objetos comuns.
+  fonte: "cppreference.com, Member functions (const-qualified member functions); Bjarne Stroustrup, A Tour of C++, 3ª ed., cap. 5 (Classes)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T08-003
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Qual número este programa C++ imprime?
+    ```cpp
+    #include <cstdio>
+
+    class Contador {
+    public:
+        explicit Contador(int inicio) : n_(inicio) {}
+        void soma(int v) { n_ += v; }
+        int valor() const { return n_; }
+    private:
+        int n_;
+    };
+
+    int main()
+    {
+        Contador c(10);
+        c.soma(5);
+        c.soma(-3);
+        std::printf("%d\n", c.valor());
+        return 0;
+    }
+    ```
+  resposta: {valor: 12, unidade: "valor", tolerancia: 0}
+  explicacao: |
+    O construtor inicializa `n_` com 10 pela lista de inicialização; as duas chamadas de `soma` levam o valor a 15 e depois a 12. `n_` é privado: fora da classe, só se chega a ele pelos métodos — é o encapsulamento que impede outro código de corromper o estado.
+  fonte: "Bjarne Stroustrup, A Tour of C++, 3ª ed., cap. 5 (Classes); cppreference.com, Constructors and member initializer lists"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T08-004
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Qual número este programa C++ imprime?
+    ```cpp
+    #include <cstdio>
+
+    void por_valor(int x) { x *= 2; }
+    void por_ref(int& x) { x *= 2; }
+
+    int main()
+    {
+        int a = 3;
+        por_valor(a);
+        por_ref(a);
+        por_ref(a);
+        std::printf("%d\n", a);
+        return 0;
+    }
+    ```
+  resposta: {valor: 12, unidade: "valor", tolerancia: 0}
+  explicacao: |
+    `por_valor` dobra uma cópia e não altera `a`. `por_ref` recebe uma referência e dobra o próprio `a`: 3 → 6 → 12. Repare que a chamada `por_ref(a)` é escrita igual à por valor — quem lê só a chamada não sabe que `a` muda. Por isso as diretrizes recomendam `const T&` para parâmetros só de leitura e reservar `T&` para quando a alteração é a intenção.
+  fonte: "C++ Core Guidelines, F.16 e F.17 (in e in-out parameters); cppreference.com, Reference declaration"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T08-005
+  objetivo: O2
+  tipo: unica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    O que este programa C++ imprime (ignore as quebras de linha e compare só a sequência de marcas)?
+    ```cpp
+    #include <cstdio>
+
+    struct Log {
+        const char* n;
+        explicit Log(const char* s) : n(s) { std::printf("+%s ", n); }
+        ~Log() { std::printf("-%s ", n); }
+    };
+
+    int main()
+    {
+        Log a("A");
+        {
+            Log b("B");
+        }
+        Log c("C");
+        std::printf("\n");
+        return 0;
+    }
+    ```
+  alternativas:
+    - "`+A +B -B +C -C -A`"
+    - "`+A +B +C -A -B -C`"
+    - "`+A +B -B +C -A -C`"
+    - "`+A +B +C -C -B -A`"
+  resposta: 0
+  explicacao: |
+    `b` vive só dentro do bloco interno: é destruído no `}` dele, antes de `c` ser criado. No fim do `main`, os objetos que restam são destruídos na ordem **inversa** da construção: primeiro `c`, depois `a`. Essa regra (o último a nascer é o primeiro a morrer) é o que torna o RAII previsível.
+  fonte: "cppreference.com, Destructors (sequência de destruição) e Storage duration (automatic); Bjarne Stroustrup, A Tour of C++, 3ª ed., cap. 6 (Essential Operations)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T08-006
+  objetivo: O2
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: em C++, o destrutor de um objeto local é chamado automaticamente quando a execução sai do escopo dele, inclusive por um `return` antecipado no meio da função.
+  resposta: true
+  explicacao: |
+    Ao sair de um escopo por qualquer caminho normal (fim do bloco, `return`, `break`, `continue`), os objetos automáticos daquele escopo são destruídos. É a base do RAII: ponha a liberação do recurso no destrutor e ela nunca é esquecida, mesmo quando alguém acrescenta um `return` no meio da função anos depois.
+  fonte: "C++ Core Guidelines, R.1 (Manage resources automatically using resource handles and RAII); cppreference.com, RAII"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T08-007
+  objetivo: O2
+  tipo: unica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    O que este programa C++ imprime?
+    ```cpp
+    #include <cstdio>
+
+    struct Trava {
+        Trava()  { std::printf("T"); }
+        ~Trava() { std::printf("L"); }
+    };
+
+    int f(int x)
+    {
+        Trava t;
+        if (x < 0)
+            return -1;
+        std::printf("X");
+        return x;
+    }
+
+    int main()
+    {
+        f(-1);
+        f(2);
+        std::printf("\n");
+        return 0;
+    }
+    ```
+  alternativas:
+    - "`TLTXL`"
+    - "`TTXL`"
+    - "`TXLTXL`"
+    - "`TLTLX`"
+  resposta: 0
+  explicacao: |
+    Em `f(-1)`, `t` é construído (T) e o `return -1` sai da função, destruindo `t` (L) — sem imprimir X. Em `f(2)`: T, depois X, e o L no `return` final. Resultado: TLTXL. Se `Trava` desligasse interrupções no construtor e as religasse no destrutor, nenhum caminho de saída esqueceria de religá-las.
+  fonte: "cppreference.com, RAII e Destructors; C++ Core Guidelines, R.1"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T08-008
+  objetivo: O2
+  tipo: unica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    O que este programa C++ imprime? (O g++ compila, com o aviso `-Wreorder`.)
+    ```cpp
+    #include <cstdio>
+
+    struct M {
+        const char* n;
+        explicit M(const char* s) : n(s) { std::printf("+%s", n); }
+        ~M() { std::printf("-%s", n); }
+    };
+
+    struct Placa {
+        M uart;
+        M led;
+        Placa() : led("L"), uart("U") {}
+    };
+
+    int main()
+    {
+        {
+            Placa p;
+        }
+        std::printf("\n");
+        return 0;
+    }
+    ```
+  alternativas:
+    - "`+L+U-U-L`"
+    - "`+U+L-L-U`"
+    - "`+L+U-L-U`"
+    - "`+U+L-U-L`"
+  resposta: 1
+  explicacao: |
+    Os membros são construídos na ordem em que estão **declarados** na classe (`uart`, depois `led`), seja qual for a ordem escrita na lista de inicialização — por isso o aviso `-Wreorder`. A destruição é na ordem inversa: `led`, depois `uart`. Se um membro dependesse do outro já construído (um driver que usa a UART), confiar na ordem da lista seria um defeito.
+  fonte: "cppreference.com, Constructors and member initializer lists (Initialization order); C++ Core Guidelines, C.47 (Define and initialize member variables in the order of member declaration)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T08-009
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Qual número este programa C++ imprime? (O valor é calculado pelo compilador.)
+    ```cpp
+    #include <cstdint>
+    #include <cstdio>
+
+    constexpr std::uint32_t divisor_uart(std::uint32_t clk, std::uint32_t baud)
+    {
+        return (clk + baud / 2) / baud;
+    }
+
+    constexpr std::uint32_t DIV = divisor_uart(16000000, 115200);
+    static_assert(DIV > 0 && DIV < 4096, "divisor fora da faixa");
+
+    int main()
+    {
+        std::printf("%u\n", (unsigned)DIV);
+        return 0;
+    }
+    ```
+  resposta: {valor: 139, unidade: "valor", tolerancia: 0}
+  explicacao: |
+    (16 000 000 + 57 600) / 115 200 = 16 057 600 / 115 200 = 139,38…, e a divisão inteira dá 139 (somar metade do divisor antes de dividir arredonda para o inteiro mais próximo). Como a função é `constexpr` e os argumentos são constantes, o resultado é calculado na compilação e o `static_assert` é verificado antes de gerar o firmware.
+  fonte: "cppreference.com, constexpr specifier e static_assert declaration; C++ Core Guidelines, Con.5"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T08-010
+  objetivo: O3
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Com `enum class Modo : std::uint8_t { Lento, Rapido };` e a variável `Modo m = Modo::Lento;` já declarados, qual linha **não compila**?
+  alternativas:
+    - "`Modo n = Modo::Rapido;`"
+    - "`auto v = static_cast<std::uint8_t>(Modo::Rapido);`"
+    - "`bool lento = (m == Modo::Lento);`"
+    - "`int x = Modo::Rapido;`"
+  resposta: 3
+  explicacao: |
+    Um `enum class` não converte implicitamente para inteiro: `int x = Modo::Rapido;` é erro. Isso evita misturar por engano modos com números ou com enumeradores de outro tipo. Quando o número é necessário (para escrever num registrador), a conversão fica explícita com `static_cast`. Comparar valores do mesmo `enum class` é permitido.
+  fonte: "cppreference.com, Enumeration declaration (scoped enumerations); C++ Core Guidelines, Enum.3"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T08-011
+  objetivo: O3
+  tipo: unica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    O que este programa C++ imprime?
+    ```cpp
+    #include <array>
+    #include <cstdint>
+    #include <cstdio>
+
+    template <typename T, std::size_t N>
+    constexpr std::size_t bytes(const std::array<T, N>&)
+    {
+        return N * sizeof(T);
+    }
+
+    int main()
+    {
+        std::array<std::uint16_t, 8> a{};
+        std::printf("%zu %zu\n", a.size(), bytes(a));
+        return 0;
+    }
+    ```
+  alternativas:
+    - "`8 16`"
+    - "`8 8`"
+    - "`16 16`"
+    - "`2 16`"
+  resposta: 0
+  explicacao: |
+    `a.size()` é o número de elementos (8). O template deduz `T = uint16_t` e `N = 8` a partir do tipo do argumento — o tamanho faz parte do tipo de `std::array`, que não decai para ponteiro como um array C — e devolve 8 × 2 = 16 bytes. Tudo é resolvido na compilação, sem heap.
+  fonte: "cppreference.com, std::array e Template argument deduction; Bjarne Stroustrup, A Tour of C++, 3ª ed., cap. 7 (Templates)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T08-012
+  objetivo: O4
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Quais opções do g++ desligam o suporte a exceções e a informação de tipo em tempo de execução (RTTI), como é comum em firmware C++?
+  alternativas:
+    - "`-fno-exceptions -fno-rtti`"
+    - "`-O0 -g`"
+    - "`-Wall -Wextra`"
+    - "`-std=c++17 -static`"
+  resposta: 0
+  explicacao: |
+    `-fno-exceptions` proíbe `throw`/`try` e dispensa as tabelas de desempilhamento; `-fno-rtti` remove a informação de tipo usada por `dynamic_cast` e `typeid`. As outras opções controlam otimização e depuração, avisos, versão da linguagem e o tipo de ligação.
+  fonte: "Manual do GCC (gcc.gnu.org), Options Controlling C++ Dialect (-fno-rtti) e Code Gen Options (-fexceptions)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T08-013
+  objetivo: O4
+  tipo: multipla
+  dificuldade: 3
+  bloom: avaliar
+  enunciado: |
+    Num microcontrolador com 64 KB de flash, 8 KB de RAM e sem heap planejada, quais recursos de C++ devem ser **evitados** no firmware? Marque todos os corretos.
+  alternativas:
+    - "`std::vector<uint8_t>` crescendo com `push_back` a cada byte recebido pela UART"
+    - "`std::cout` para mensagens de log"
+    - "`std::array<uint8_t, 64>` como buffer de recepção"
+    - "Funções `constexpr` para calcular divisores de clock"
+  resposta: [0, 1]
+  explicacao: |
+    `std::vector` aloca e realoca na heap conforme cresce (fragmentação, falha em campo). `<iostream>` traz uma quantidade enorme de código (locales, formatação) e usa heap — não cabe num orçamento de 64 KB. `std::array` é um array de tamanho fixo, sem heap e sem custo extra. `constexpr` é calculado na compilação: custo zero em tempo de execução.
+  fonte: "Elecia White, Making Embedded Systems (1ª ed.), cap. 8 (Doing More with Less); cppreference.com, std::vector e std::array"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T08-014
+  objetivo: O4
+  tipo: unica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Numa plataforma x86-64 Linux comum (g++), o que este programa imprime?
+    ```cpp
+    #include <cstdio>
+
+    struct A {
+        int x;
+        void f() {}
+    };
+
+    struct B {
+        int x;
+        virtual void f() {}
+    };
+
+    int main()
+    {
+        std::printf("%zu %zu\n", sizeof(A), sizeof(B));
+        return 0;
+    }
+    ```
+  alternativas:
+    - "`4 4`"
+    - "`4 8`"
+    - "`4 16`"
+    - "`8 16`"
+  resposta: 2
+  explicacao: |
+    Métodos comuns não ocupam espaço no objeto: `A` tem só o `int` (4 bytes) — custo zero. Uma função `virtual` faz cada objeto carregar um ponteiro escondido para a tabela virtual (8 bytes no x86-64), e o objeto passa a ter alinhamento 8: 8 + 4 + 4 de padding = 16. Num Cortex-M o ponteiro tem 4 bytes, mas o custo existe em cada objeto, além da chamada indireta. Use `virtual` quando precisar de polimorfismo, não por hábito.
+  fonte: "Bjarne Stroustrup, A Tour of C++, 3ª ed., cap. 5 (Classes: virtual functions); cppreference.com, virtual function specifier"
+  origem: ia
+  revisao: rascunho

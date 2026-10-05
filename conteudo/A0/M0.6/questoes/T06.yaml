@@ -1,0 +1,314 @@
+- id: Q-M0.6.T06-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Qual opção do gcc para o processo logo **depois do pré-processamento**, mostrando o código com os `#include` já substituídos e as macros expandidas?
+  alternativas:
+    - "`-E`"
+    - "`-S`"
+    - "`-c`"
+    - "`-g`"
+  resposta: 0
+  explicacao: |
+    `-E` roda só o pré-processador (o resultado vai para a saída padrão ou para o arquivo de `-o`). `-S` vai até o assembly (`.s`), `-c` até o arquivo objeto (`.o`), sem ligar. `-g` não para em etapa nenhuma: acrescenta informação de depuração.
+  fonte: "Manual do GCC (gcc.gnu.org), Overall Options"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T06-002
+  objetivo: O1
+  tipo: unica
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Qual destas tarefas é feita pelo **pré-processador**?
+  alternativas:
+    - "Verificar se os argumentos de uma chamada têm os tipos dos parâmetros"
+    - "Substituir cada `#include` pelo conteúdo do arquivo e expandir as macros"
+    - "Descobrir em qual arquivo objeto está definida uma função chamada em outro arquivo"
+    - "Traduzir o assembly em código de máquina"
+  resposta: 1
+  explicacao: |
+    O pré-processador trabalha com texto: inclui arquivos, expande macros, resolve `#if`/`#ifdef` e remove comentários, sem entender tipos. A verificação de tipos é do **compilador**; achar a definição de um símbolo em outro arquivo objeto é do **linker**; traduzir assembly em código de máquina é do **montador** (assembler).
+  fonte: "Kernighan & Ritchie, The C Programming Language, 2ª ed., seção 4.11 (The C Preprocessor); Manual do GCC, Overall Options"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T06-003
+  objetivo: O1
+  tipo: unica
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    O comando `nm sensor.o` mostra, entre outras, a linha:
+    ```
+                     U adc_le_canal
+    ```
+    O que ela significa?
+  alternativas:
+    - "`adc_le_canal` é uma variável não inicializada (`.bss`) definida em `sensor.c`"
+    - "`adc_le_canal` é uma função `static`, visível só em `sensor.c`"
+    - "`sensor.c` usa `adc_le_canal`, mas não a define: o linker terá de encontrá-la em outro arquivo objeto ou biblioteca"
+    - "`adc_le_canal` foi removida pelo otimizador por não ser usada"
+  resposta: 2
+  explicacao: |
+    No `nm`, `U` (*undefined*) marca um símbolo referenciado no arquivo e não definido nele — por isso não tem endereço. Se nenhum outro `.o` ou biblioteca o definir, o link falha com `undefined reference to 'adc_le_canal'`. Uma variável em `.bss` aparece como `B` (ou `b`, se `static`); uma função `static` aparece como `t` minúsculo.
+  fonte: "Manual do GNU binutils, nm (tipos de símbolo)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T06-004
+  objetivo: O1
+  tipo: vf
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Verdadeiro ou falso: `gcc -c sensor.c` gera o arquivo objeto `sensor.o` sem chamar o linker, e por isso funciona mesmo que `sensor.c` não tenha a função `main`.
+  resposta: true
+  explicacao: |
+    Com `-c`, o gcc pré-processa, compila e monta, mas não liga. Um arquivo objeto pode ter símbolos indefinidos e não precisa de `main`; quem exige um `main` (e resolve todos os símbolos) é o link, feito depois com `gcc main.o sensor.o -o app`.
+  fonte: "Manual do GCC, Overall Options (-c)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T06-005
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Qual número este programa imprime?
+    ```c
+    #include <stdio.h>
+
+    #define QUAD(x) x * x
+
+    int main(void)
+    {
+        printf("%d\n", QUAD(1 + 2));
+        return 0;
+    }
+    ```
+  resposta: {valor: 5, unidade: "valor", tolerancia: 0}
+  explicacao: |
+    A macro substitui **texto**: `QUAD(1 + 2)` vira `1 + 2 * 1 + 2`, e a multiplicação vem antes da soma: 1 + 2 + 2 = 5. Com parênteses em cada parâmetro e na expressão, `#define QUAD(x) ((x) * (x))`, o resultado seria 9. Veja a expansão com `gcc -E`.
+  fonte: "The C Preprocessor (gcc.gnu.org), seção Macros: Operator Precedence Problems; Kernighan & Ritchie, The C Programming Language, 2ª ed., seção 4.11.2 (Macro Substitution)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T06-006
+  objetivo: O2
+  tipo: unica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    O que este programa imprime?
+    ```c
+    #include <stdio.h>
+
+    #define MAX(a, b) ((a) > (b) ? (a) : (b))
+
+    int main(void)
+    {
+        int i = 5, j = 3;
+        int m = MAX(i++, j);
+        printf("%d %d\n", m, i);
+        return 0;
+    }
+    ```
+  alternativas:
+    - "`5 6`"
+    - "`6 7`"
+    - "`6 6`"
+    - "`5 7`"
+  resposta: 1
+  explicacao: |
+    A expansão é `((i++) > (j) ? (i++) : (j))`. A condição usa `i` = 5 (5 > 3, verdadeiro) e incrementa `i` para 6. Como a condição foi verdadeira, avalia-se `(i++)` de novo: o valor é 6 e `i` vai para 7. Há um ponto de sequência depois da condição do `?:`, então o resultado é definido — e surpreendente. Com uma função `static inline`, o argumento seria avaliado uma vez (resultado `5 6`).
+  fonte: "The C Preprocessor (gcc.gnu.org), seção Macros: Duplication of Side Effects; Kernighan & Ritchie, The C Programming Language, 2ª ed., seção 4.11.2 (Macro Substitution)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T06-007
+  objetivo: O2
+  tipo: unica
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Para que serve o padrão abaixo num arquivo `sensor.h`?
+    ```c
+    #ifndef SENSOR_H
+    #define SENSOR_H
+    /* ... declarações ... */
+    #endif
+    ```
+  alternativas:
+    - "Impedir que o conteúdo do header seja processado duas vezes na mesma unidade de tradução, se ele for incluído mais de uma vez (direta ou indiretamente)"
+    - "Impedir que duas unidades de tradução diferentes incluam o mesmo header"
+    - "Fazer o compilador gerar o código do header uma única vez para o programa inteiro"
+    - "Tornar `static` todas as funções declaradas no header"
+  resposta: 0
+  explicacao: |
+    É o *include guard*: na primeira inclusão, `SENSOR_H` ainda não existe, então o conteúdo entra e a macro é definida; nas inclusões seguintes **na mesma unidade de tradução**, o conteúdo é pulado, evitando redefinição de tipos. Cada `.c` é pré-processado separadamente, então todos os que incluem `sensor.h` recebem o conteúdo — por isso o guard não resolve variáveis definidas no header.
+  fonte: "The C Preprocessor (gcc.gnu.org), seção Header Files: Once-Only Headers; Kernighan & Ritchie, The C Programming Language, 2ª ed., seção 4.11.3 (Conditional Inclusion)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T06-008
+  objetivo: O2
+  tipo: multipla
+  dificuldade: 3
+  bloom: avaliar
+  enunciado: |
+    Você vai trocar a macro `#define QUAD(x) ((x) * (x))` por `static inline int32_t quad(int32_t x) { return x * x; }` num header. Quais são vantagens reais da função inline? Marque todas as corretas.
+  alternativas:
+    - "O argumento é avaliado uma única vez, então `quad(i++)` incrementa `i` só uma vez"
+    - "O compilador verifica e converte o tipo do argumento, como em qualquer função"
+    - "A função inline pode ser usada em `#if` para compilação condicional"
+    - "A função inline garante que nunca haverá chamada de função, mesmo com `-O0`"
+  resposta: [0, 1]
+  explicacao: |
+    Uma função `static inline` é uma função de verdade: tem tipos verificados, avalia cada argumento uma vez e aparece no depurador; com otimização, o compilador costuma expandi-la no local e o custo fica igual ao da macro. Mas `inline` é só uma sugestão (com `-O0`, o gcc normalmente faz a chamada), e o pré-processador não conhece funções — `#if` só entende macros e constantes inteiras.
+  fonte: "cppreference.com, inline function specifier; The C Preprocessor (gcc.gnu.org), seção Macros: Duplication of Side Effects; Jens Gustedt, Modern C, cap. 17 (Function-like macros)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T06-009
+  objetivo: O3
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    A variável `uint32_t sensor_erros` precisa ser lida por `main.c` e alterada por `sensor.c`. Qual organização é correta?
+  alternativas:
+    - "`sensor.h`: `uint32_t sensor_erros = 0;` — e os dois `.c` incluem o header"
+    - "`sensor.h`: `extern uint32_t sensor_erros;` — `sensor.c`: `uint32_t sensor_erros = 0;` — os dois `.c` incluem o header"
+    - "`sensor.h`: `static uint32_t sensor_erros;` — e os dois `.c` incluem o header"
+    - "`main.c` e `sensor.c`: cada um com a linha `uint32_t sensor_erros = 0;`"
+  resposta: 1
+  explicacao: |
+    O header traz a **declaração** (`extern`: "existe, com este tipo, definida em outro lugar"), e exatamente um `.c` traz a **definição**, que reserva a memória. Definir no header ou nos dois `.c` gera duas definições e o erro `multiple definition` no link. `static` no header cria uma variável **separada** e privada em cada `.c` — compila, mas `main.c` nunca vê as alterações de `sensor.c`.
+  fonte: "Kernighan & Ritchie, The C Programming Language, 2ª ed., seções 4.3 (External Variables) e 4.5 (Header Files)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T06-010
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Os dois arquivos abaixo são compilados juntos com `gcc contador.c main.c -o app`. Qual número o programa imprime?
+    ```c
+    /* contador.c */
+    static int contador = 0;
+
+    void incrementa(void)
+    {
+        contador++;
+    }
+    ```
+    ```c
+    /* main.c */
+    #include <stdio.h>
+
+    static int contador = 10;
+    void incrementa(void);
+
+    int main(void)
+    {
+        incrementa();
+        incrementa();
+        printf("%d\n", contador);
+        return 0;
+    }
+    ```
+  resposta: {valor: 10, unidade: "valor", tolerancia: 0}
+  explicacao: |
+    `static` no escopo de arquivo dá **linkage interna**: cada arquivo tem a sua própria variável `contador`, invisível para o outro, e o link não acusa conflito. `incrementa` altera o `contador` de `contador.c` (que vai a 2); o `main` imprime o seu, que continua 10. Sem os dois `static`, o link falharia com `multiple definition of 'contador'`.
+  fonte: "Kernighan & Ritchie, The C Programming Language, 2ª ed., seção 4.6 (Static Variables); cppreference.com, Storage-class specifiers (linkage)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T06-011
+  objetivo: O3
+  tipo: unica
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    O arquivo `config.h` tem include guard e contém a linha `int modo_debug = 0;`. Ele é incluído por `main.c` e por `uart.c`, compilados com `gcc main.c uart.c -o app` (gcc 14). O que acontece?
+  alternativas:
+    - "Compila e liga; o include guard garante uma única `modo_debug` no programa"
+    - "Compila e liga; cada arquivo fica com a sua cópia de `modo_debug`"
+    - "Cada arquivo compila, mas o link falha com `multiple definition of 'modo_debug'`"
+    - "A compilação de `uart.c` falha com `redefinition of 'modo_debug'`"
+  resposta: 2
+  explicacao: |
+    O include guard só evita a repetição **dentro** de uma unidade de tradução. `main.c` e `uart.c` são pré-processados separadamente e cada um recebe a definição `int modo_debug = 0;` — cada `.o` define o símbolo, e o linker encontra duas definições externas do mesmo nome. Não há `redefinition` na compilação porque, em cada arquivo, a linha aparece uma vez só. A correção: `extern int modo_debug;` no header e a definição num único `.c`.
+  fonte: "Kernighan & Ritchie, The C Programming Language, 2ª ed., seções 4.4 (Scope Rules) e 4.5 (Header Files); Manual do GCC, Code Gen Options (-fno-common, padrão desde o GCC 10)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T06-012
+  objetivo: O4
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    O projeto tem `main.c` e `sensor.c`; a função `sensor_le` está definida em `sensor.c` e declarada em `sensor.h`. O comando `gcc -Wall main.c -o app` termina com:
+    ```
+    /usr/bin/ld: /tmp/ccARiNTP.o: in function `main':
+    main.c:(.text+0x9): undefined reference to `sensor_le'
+    collect2: error: ld returned 1 exit status
+    ```
+    Qual é a causa?
+  alternativas:
+    - "Falta o `#include \"sensor.h\"` em `main.c`"
+    - "`sensor.c` não foi passado ao gcc, então nenhum arquivo objeto define `sensor_le`"
+    - "Falta o include guard em `sensor.h`"
+    - "Falta a opção `-lm`"
+  resposta: 1
+  explicacao: |
+    O erro vem do linker (`ld`), não do compilador: `main.c` compilou (a declaração existe), mas na hora de ligar nenhum objeto define `sensor_le`. O comando correto é `gcc -Wall main.c sensor.c -o app`. A falta do `#include` geraria um **erro de compilação** de declaração implícita; o include guard não tem relação com símbolos; `-lm` traz a biblioteca matemática (`sqrt`, `sin`…).
+  fonte: "Manual do GCC, Overall Options e Options for Linking; Kernighan & Ritchie, The C Programming Language, 2ª ed., seção 4.5 (Header Files)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T06-013
+  objetivo: O4
+  tipo: multipla
+  dificuldade: 3
+  bloom: avaliar
+  enunciado: |
+    No PC, durante o desenvolvimento e os testes, você quer que o compilador e o programa denunciem o máximo de defeitos possível. Quais conjuntos de flags ajudam nisso? Marque todos os corretos.
+  alternativas:
+    - "`-Wall -Wextra -Werror`"
+    - "`-g -fsanitize=address,undefined`"
+    - "`-w`"
+    - "`-O3 -s`"
+  resposta: [0, 1]
+  explicacao: |
+    `-Wall -Wextra` ligam os avisos mais úteis e `-Werror` impede que eles sejam ignorados. `-fsanitize=address,undefined` instrumenta o programa para parar em acessos inválidos de memória e comportamento indefinido, e `-g` faz os relatórios mostrarem arquivo e linha. `-w` **desliga** todos os avisos; `-s` remove os símbolos e `-O3` não denuncia nada (pode até mudar o sintoma de um UB).
+  fonte: "Manual do GCC, Options to Request or Suppress Warnings, Program Instrumentation Options e Options for Debugging Your Program"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T06-014
+  objetivo: O4
+  tipo: unica
+  dificuldade: 3
+  bloom: avaliar
+  enunciado: |
+    Um firmware para um microcontrolador com flash apertada não cabe por poucos KB. Qual combinação de flags do gcc tende a reduzir o código gerado sem mudar o comportamento do programa?
+  alternativas:
+    - "`-O0 -g`"
+    - "`-O3 -funroll-loops`"
+    - "`-Os -ffunction-sections -fdata-sections -Wl,--gc-sections`"
+    - "`-O2 -fsanitize=address`"
+  resposta: 2
+  explicacao: |
+    `-Os` otimiza para tamanho. `-ffunction-sections -fdata-sections` põe cada função e cada variável na sua própria seção, e `-Wl,--gc-sections` faz o linker descartar as seções que ninguém referencia (funções de biblioteca não usadas, por exemplo). `-O0` gera o código maior; `-O3` e o desenrolamento de laços trocam tamanho por velocidade; o AddressSanitizer acrescenta instrumentação e nem existe para o microcontrolador. (`-g` não aumenta o código gravado na flash, só o arquivo.)
+  fonte: "Manual do GCC, Options That Control Optimization (-Os, -ffunction-sections, -fdata-sections); Manual do GNU ld, Options (--gc-sections)"
+  origem: ia
+  revisao: rascunho

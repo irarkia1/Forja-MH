@@ -1,0 +1,312 @@
+- id: Q-M0.6.T10-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Num arquivo de testes do Unity com cinco funções de teste chamadas por `RUN_TEST`, quando a função `setUp` é executada?
+  alternativas:
+    - "Uma única vez, antes do primeiro teste"
+    - "Antes de cada um dos testes"
+    - "Só antes dos testes que falharam na execução anterior"
+    - "Depois de cada teste, para limpar o estado"
+  resposta: 1
+  explicacao: |
+    O Unity chama `setUp` antes de **cada** teste e `tearDown` depois de cada um. Assim todo teste começa de um estado conhecido (por exemplo, um buffer recém-inicializado), independente da ordem e do que os outros testes fizeram. Limpar depois do teste é o papel do `tearDown`.
+  fonte: "ThrowTheSwitch, Unity — docs/UnityGettingStartedGuide.md; James Grenning, Test Driven Development for Embedded C, cap. 2 (Choosing a Unit Test Harness)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T10-002
+  objetivo: O1
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    No teste abaixo, `bc_retira` devolveu o valor 41 em `v`. Que mensagem o Unity mostra para a asserção?
+    ```c
+    TEST_ASSERT_EQUAL_UINT8(42, v);
+    ```
+  alternativas:
+    - "`FAIL: Expected 41 Was 42`"
+    - "`FAIL: Expected 42 Was 41`"
+    - "`FAIL: 42 != 41`"
+    - "`PASS`"
+  resposta: 1
+  explicacao: |
+    Nas macros `TEST_ASSERT_EQUAL_*` do Unity, o **primeiro** argumento é o valor esperado e o segundo o obtido: a mensagem diz `Expected 42 Was 41`, precedida de `arquivo:linha:nome_do_teste:`. Inverter a ordem dos argumentos não muda se o teste passa ou falha, mas torna a mensagem enganosa — ela diria que o esperado era 41.
+  fonte: "ThrowTheSwitch, Unity — docs/UnityAssertionsReference.md"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T10-003
+  objetivo: O1
+  tipo: unica
+  dificuldade: 3
+  bloom: entender
+  enunciado: |
+    Um teste do Unity tem três asserções, e a **primeira** falha. O que acontece em seguida?
+  alternativas:
+    - "As outras duas asserções do mesmo teste ainda são avaliadas, e o teste conta três falhas"
+    - "O programa de testes inteiro é abortado, e os testes seguintes não rodam"
+    - "O restante daquele teste é pulado, o `tearDown` roda e os próximos testes executam normalmente"
+    - "O Unity repete o teste até ele passar"
+  resposta: 2
+  explicacao: |
+    Ao falhar, a asserção registra a mensagem e o Unity salta para o fim do teste (por `setjmp`/`longjmp`, na configuração padrão): o resto daquele teste não roda e ele conta como **uma** falha. Em seguida o `tearDown` é chamado e o próximo teste começa com um novo `setUp`. Por isso convém pôr a verificação mais importante primeiro e manter os testes pequenos.
+  fonte: "ThrowTheSwitch, Unity — docs/UnityGettingStartedGuide.md e docs/UnityConfigurationGuide.md (UNITY_EXCLUDE_SETJMP_H)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T10-004
+  objetivo: O1
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: num programa de testes do Unity cujo `main` termina com `return UNITY_END();`, o código de saída é diferente de zero quando algum teste falha, e é isso que permite ao CTest, ao Make e ao CI detectar a falha.
+  resposta: true
+  explicacao: |
+    `UNITY_END()` imprime o resumo (`N Tests F Failures I Ignored`) e devolve o número de falhas. Retornado pelo `main`, ele vira o código de saída do processo: 0 se tudo passou. O `add_test` do CMake e os sistemas de CI consideram falha qualquer código de saída diferente de zero.
+  fonte: "ThrowTheSwitch, Unity — docs/UnityGettingStartedGuide.md; documentação do CMake, add_test"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T10-005
+  objetivo: O2
+  tipo: multipla
+  dificuldade: 2
+  bloom: avaliar
+  enunciado: |
+    Você está escrevendo os testes de uma biblioteca de buffer circular que **recusa** novos bytes quando está cheia. Quais casos de teste são importantes para pegar defeitos? Marque todos os corretos.
+  alternativas:
+    - "Encher até a capacidade, retirar alguns e colocar de novo, conferindo a ordem de saída (volta do índice)"
+    - "Colocar num buffer cheio deve devolver `false` e não alterar os bytes que já estavam lá"
+    - "Testar só colocar e retirar um elemento, porque os casos de borda raramente acontecem em campo"
+    - "Conferir diretamente os campos internos da struct (`b.inicio`, `b.quantidade`) depois de cada operação, em vez de usar as funções da API"
+  resposta: [0, 1]
+  explicacao: |
+    Defeitos de buffer circular moram nas bordas: a volta do índice (esquecer o `% capacidade`) e o comportamento no cheio e no vazio. Esses casos acontecem sim em campo — um pico de bytes na UART enche o buffer. Testar pelos campos internos amarra o teste à implementação: ele quebra a cada refatoração, mesmo com o comportamento correto. Teste o comportamento pela interface pública.
+  fonte: "James Grenning, Test Driven Development for Embedded C, cap. 3 (Starting a C Module) e 4 (Testing Your Way to Done)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T10-006
+  objetivo: O2
+  tipo: unica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    O que este programa imprime?
+    ```c
+    #include <stdbool.h>
+    #include <stdint.h>
+    #include <stdio.h>
+
+    #define CAP 4u
+    static uint8_t dados[CAP];
+    static unsigned inicio = 0, qtd = 0;
+
+    static bool coloca(uint8_t v)
+    {
+        if (qtd == CAP)
+            return false;
+        dados[(inicio + qtd) % CAP] = v;
+        qtd++;
+        return true;
+    }
+
+    static bool retira(uint8_t *v)
+    {
+        if (qtd == 0)
+            return false;
+        *v = dados[inicio];
+        inicio = (inicio + 1) % CAP;
+        qtd--;
+        return true;
+    }
+
+    int main(void)
+    {
+        uint8_t v;
+        for (uint8_t i = 1; i <= 5; i++)
+            coloca(i);
+        retira(&v);
+        retira(&v);
+        coloca(6);
+        coloca(7);
+        while (retira(&v))
+            printf("%u ", (unsigned)v);
+        printf("\n");
+        return 0;
+    }
+    ```
+  alternativas:
+    - "`3 4 6 7`"
+    - "`3 4 5 6`"
+    - "`6 7 3 4`"
+    - "`1 2 6 7`"
+  resposta: 0
+  explicacao: |
+    O buffer aceita 1, 2, 3 e 4; o 5 é recusado (cheio). As duas retiradas tiram os mais antigos, 1 e 2, e `inicio` passa a 2. O 6 e o 7 são gravados nas posições (2 + 2) % 4 = 0 e (2 + 3) % 4 = 1 — o índice deu a volta. A drenagem segue a ordem de chegada: 3, 4, 6, 7. Mostrar `6 7 3 4` seria ler o array na ordem física, não na ordem da fila.
+  fonte: "James Grenning, Test Driven Development for Embedded C, cap. 4 (Testing Your Way to Done); Elecia White, Making Embedded Systems (1ª ed.), cap. 6 (Communicating with Peripherals: circular buffers)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T10-007
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Uma implementação de buffer circular sem contador usa só dois índices, `cabeca` e `cauda`, num array de N = 8 posições. Ela considera o buffer **vazio** quando `cabeca == cauda` e **cheio** quando `(cauda + 1) % N == cabeca`. Quantos elementos cabem nele, no máximo?
+  resposta: {valor: 7, unidade: "elementos", tolerancia: 0}
+  explicacao: |
+    Se o buffer pudesse guardar 8 elementos, depois de enchê-lo a cauda voltaria a ser igual à cabeça — o mesmo estado do vazio. Para distinguir os dois, essa técnica deixa sempre uma posição livre: cabem N − 1 = 7. A alternativa é guardar a quantidade (ou um sinalizador de cheio), que permite usar as N posições.
+  fonte: "Elecia White, Making Embedded Systems (1ª ed.), cap. 6 (Communicating with Peripherals: circular buffers)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T10-008
+  objetivo: O2
+  tipo: unica
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Na função abaixo, de um buffer circular de capacidade 4, falta o `% b->capacidade` na atualização do índice. Qual teste **revela** esse defeito?
+    ```c
+    bool bc_retira(bc_t *b, uint8_t *saida)
+    {
+        if (b->quantidade == 0u)
+            return false;
+        *saida = b->dados[b->inicio];
+        b->inicio = b->inicio + 1u;      /* deveria ser (b->inicio + 1u) % b->capacidade */
+        b->quantidade--;
+        return true;
+    }
+    ```
+  alternativas:
+    - "Um buffer novo está vazio"
+    - "Colocar um byte e retirá-lo devolve o mesmo byte"
+    - "Colocar num buffer cheio devolve `false`"
+    - "Encher, retirar dois, colocar mais dois e retirar tudo, conferindo a ordem"
+  resposta: 3
+  explicacao: |
+    O defeito só se manifesta quando `inicio` passa do último índice. Nos três primeiros testes, `inicio` vai no máximo a 1 e tudo funciona. No último, depois de 4 retiradas o `inicio` vale 4: a quinta e a sexta retiradas leem `dados[4]` e `dados[5]`, **além do fim do array** (comportamento indefinido): os valores lidos não batem com 3, 4 e os novos, e o AddressSanitizer acusa o acesso. É por isso que a volta do índice precisa de um teste próprio.
+  fonte: "James Grenning, Test Driven Development for Embedded C, cap. 4 (Testing Your Way to Done)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T10-009
+  objetivo: O3
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Qual é a ordem do ciclo do TDD (Test-Driven Development)?
+  alternativas:
+    - "Escrever todo o código, escrever os testes, corrigir o que falhar"
+    - "Escrever um teste que falha (vermelho), escrever o mínimo de código para passar (verde), melhorar o código mantendo os testes verdes (refatorar)"
+    - "Refatorar o código, escrever os testes, depurar no GDB"
+    - "Escrever o código, medir a cobertura, escrever testes só para as linhas não cobertas"
+  resposta: 1
+  explicacao: |
+    TDD é um ciclo curto e repetido: um teste pequeno para o próximo comportamento, vê-lo falhar, o código mínimo para passar e a refatoração com a rede de segurança dos testes. Escrever os testes depois do código (ou só para cobrir linhas) é outra prática — útil, mas não é TDD, e tende a produzir testes que confirmam o que o código já faz.
+  fonte: "James Grenning, Test Driven Development for Embedded C, cap. 1 (Test-Driven Development)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T10-010
+  objetivo: O3
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um módulo `pisca.c` decide quando ligar e desligar um LED e chama `gpio_escreve(pino, nivel)`, declarada em `gpio.h`. No firmware, `gpio_stm32.c` implementa essa função escrevendo no registrador. Como testar a lógica de `pisca.c` no PC?
+  alternativas:
+    - "Não é possível: código que controla pinos só pode ser testado na placa"
+    - "Compilar `pisca.c` para o PC junto com o `gpio_stm32.c`, porque o PC também tem endereços de memória"
+    - "No alvo de testes, ligar `pisca.c` com um `gpio_fake.c` que implementa `gpio_escreve` guardando as chamadas numa variável que o teste consulta"
+    - "Copiar o código de `pisca.c` para dentro do arquivo de teste e trocar as chamadas de GPIO por `printf`"
+  resposta: 2
+  explicacao: |
+    É a substituição no link: o mesmo `gpio.h`, duas implementações. O teste liga com o dublê (*fake*), que registra o pino e o nível pedidos; o firmware liga com a versão real. O `gpio_stm32.c` no PC escreveria em endereços que não existem no processo (segfault). Copiar o código para o teste faz você testar uma cópia, não o módulo de verdade.
+  fonte: "James Grenning, Test Driven Development for Embedded C, cap. 7 (Introducing Test Doubles) e 8 (Spying on the Hardware)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T10-011
+  objetivo: O3
+  tipo: unica
+  dificuldade: 3
+  bloom: avaliar
+  enunciado: |
+    No TDD, por que é importante **ver o teste novo falhar** antes de escrever o código que o faz passar?
+  alternativas:
+    - "Porque o Unity só registra testes que falharam pelo menos uma vez"
+    - "Porque isso confirma que o teste realmente verifica o comportamento novo; um teste que passa sem o código pode estar errado (asserção que nunca falha, teste não registrado no `RUN_TEST`)"
+    - "Porque a cobertura do gcov só conta linhas executadas em testes que falharam"
+    - "Porque o compilador otimiza melhor o código escrito depois de um teste vermelho"
+  resposta: 1
+  explicacao: |
+    O vermelho é o teste do teste: se ele passa antes de o código existir, algo está errado — a asserção compara a coisa errada, o valor esperado coincide por acaso com o estado inicial ou o teste nem foi incluído no `main`. Ver a falha com a mensagem certa (`Expected 3 Was 0`) prova que o teste é capaz de detectar o defeito que se propõe a detectar.
+  fonte: "James Grenning, Test Driven Development for Embedded C, cap. 1 (Test-Driven Development) e 3 (Starting a C Module)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T10-012
+  objetivo: O4
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Qual sequência gera a cobertura de `buffer_circular.c` com gcov?
+  alternativas:
+    - "Compilar e ligar com `--coverage` (e `-O0`), rodar o executável de testes e depois rodar `gcov` sobre o arquivo-fonte"
+    - "Rodar `gcov testes` sem recompilar, porque o gcov lê o executável"
+    - "Compilar com `-g`, abrir no GDB e usar o comando `coverage`"
+    - "Compilar com `-fsanitize=address` e ler o relatório do AddressSanitizer"
+  resposta: 0
+  explicacao: |
+    `--coverage` instrumenta o código (gera os `.gcno` na compilação) e liga a biblioteca de cobertura; ao **rodar** os testes, os contadores são gravados nos `.gcda`; o `gcov` junta os dois e produz o resumo e o arquivo `.gcov` anotado. Sem recompilar com a instrumentação não há o que medir; o GDB não tem comando de cobertura; o AddressSanitizer procura erros de memória, não mede cobertura.
+  fonte: "Manual do GCC, gcov—a Test Coverage Program (Introduction to gcov e Invoking gcov) e Instrumentation Options (--coverage)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T10-013
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    O arquivo abaixo é compilado com `--coverage -O0`, e os únicos testes chamam `classifica(50)` e `classifica(-5)`. Que porcentagem o `gcov -b` mostra em **Taken at least once** (desvios tomados pelo menos uma vez)?
+    ```c
+    int classifica(int t)
+    {
+        if (t < 0)
+            return -1;
+        if (t > 100)
+            return 1;
+        return 0;
+    }
+    ```
+  resposta: {valor: 75, unidade: "%", tolerancia: 0}
+  explicacao: |
+    Cada `if` tem dois desvios (verdadeiro e falso): 4 no total. `t < 0` foi verdadeiro (−5) e falso (50); `t > 100` foi avaliado só com 50 e deu falso — o lado verdadeiro nunca ocorreu. 3 de 4 = 75 %. A cobertura de linhas também não chega a 100 % (5 de 6: o `return 1;` aparece com `#####` no `.gcov`). Falta um teste com t > 100 — e, para as bordas, com 0, 100 e 101.
+  fonte: "Manual do GCC, gcov—a Test Coverage Program (Invoking gcov: -b, --branch-probabilities)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T10-014
+  objetivo: O4
+  tipo: vf
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: se os testes de uma biblioteca atingem 100 % de cobertura de linhas e de desvios, a biblioteca está livre de defeitos.
+  resposta: false
+  explicacao: |
+    Cobertura mede o que foi **executado**, não o que foi **verificado**: um teste sem asserções úteis cobre linhas sem conferir nada. Também não mostra casos que o código nem trata (uma borda esquecida não tem `if` para ficar descoberto) nem problemas de concorrência e temporização. Ela é ótima para achar o que não foi testado, não para provar que o código está certo.
+  fonte: "Manual do GCC, gcov—a Test Coverage Program (Introduction to gcov); James Grenning, Test Driven Development for Embedded C, cap. 4 (Testing Your Way to Done)"
+  origem: ia
+  revisao: rascunho

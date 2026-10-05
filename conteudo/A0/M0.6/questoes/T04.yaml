@@ -1,0 +1,411 @@
+- id: Q-M0.6.T04-001
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Qual número este programa imprime?
+    ```c
+    #include <stdio.h>
+
+    struct ponto {
+        int x;
+        int y;
+    };
+
+    int main(void)
+    {
+        struct ponto a = {3, 4};
+        struct ponto *p = &a;
+        p->y = 10;
+        printf("%d\n", a.x + a.y);
+        return 0;
+    }
+    ```
+  resposta: {valor: 13, unidade: "valor", tolerancia: 0}
+  explicacao: |
+    `p` aponta para `a`, e `p->y` é o mesmo que `(*p).y`: altera o campo `y` do próprio `a` para 10. `a.x` continua 3. 3 + 10 = 13. Quem responde 7 achou que `p` trabalhava numa cópia.
+  fonte: "Kernighan & Ritchie, The C Programming Language, 2ª ed., seção 6.4 (Pointers to Structures)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T04-002
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Qual número este programa imprime?
+    ```c
+    #include <stdio.h>
+
+    struct ponto {
+        int x;
+        int y;
+    };
+
+    int main(void)
+    {
+        struct ponto a = {3, 4};
+        struct ponto b = a;
+        b.x = 99;
+        printf("%d\n", a.x);
+        return 0;
+    }
+    ```
+  resposta: {valor: 3, unidade: "valor", tolerancia: 0}
+  explicacao: |
+    Atribuir uma struct a outra **copia** todos os campos: `b` é um objeto independente. Mudar `b.x` não afeta `a.x`, que continua 3. (Arrays não podem ser atribuídos assim, mas structs podem — inclusive structs que contêm arrays.)
+  fonte: "Kernighan & Ritchie, The C Programming Language, 2ª ed., seção 6.2 (Structures and Functions)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T04-003
+  objetivo: O1
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    O que este programa imprime?
+    ```c
+    #include <stdio.h>
+    #include <stdint.h>
+
+    struct uart_cfg {
+        uint32_t baud;
+        uint8_t  bits;
+        char     paridade;
+        uint8_t  stop;
+    };
+
+    int main(void)
+    {
+        struct uart_cfg c = { .baud = 9600, .stop = 2 };
+        printf("%u %u %d %u\n", (unsigned)c.baud, (unsigned)c.bits,
+               c.paridade, (unsigned)c.stop);
+        return 0;
+    }
+    ```
+  alternativas:
+    - "`9600 0 0 2`"
+    - "`9600 8 78 1`"
+    - "`9600 2 0 0`"
+    - "`9600 0 0 0`"
+  resposta: 0
+  explicacao: |
+    Com inicializadores designados, cada valor vai para o campo nomeado (`.stop = 2`), independentemente da ordem. Os campos não citados (`bits` e `paridade`) são inicializados com **zero**, como objetos estáticos — não ganham valores "típicos" como 8 ou 'N'. Sem os nomes (`{9600, 2}`), o 2 iria para `bits`.
+  fonte: "cppreference.com, Struct and union initialization (designated initializers); Jens Gustedt, Modern C, cap. 6 (Derived data types)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T04-004
+  objetivo: O1
+  tipo: unica
+  dificuldade: 2
+  bloom: avaliar
+  enunciado: |
+    Uma função só precisa **ler** uma struct `leitura_t` de 200 bytes para imprimi-la, num microcontrolador com pouca pilha. Qual protótipo é o mais adequado?
+  alternativas:
+    - "`void imprime(leitura_t l);`"
+    - "`void imprime(leitura_t *l);`"
+    - "`void imprime(const leitura_t *l);`"
+    - "`void imprime(leitura_t l[200]);`"
+  resposta: 2
+  explicacao: |
+    Passar por valor copia os 200 bytes na pilha a cada chamada. Um ponteiro passa só o endereço (4 bytes num Cortex-M); com `const`, a função promete — e o compilador garante — que não vai alterar a struct, o que documenta a intenção e permite chamá-la com dados constantes. `leitura_t *` sem `const` funciona, mas não comunica nem protege nada. `leitura_t l[200]` é um ponteiro para um array de structs, outra coisa.
+  fonte: "Kernighan & Ritchie, The C Programming Language, 2ª ed., seção 6.2 (Structures and Functions); cppreference.com, const type qualifier"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T04-005
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Numa plataforma x86-64 Linux comum (gcc), qual número este programa imprime?
+    ```c
+    #include <stdio.h>
+    #include <stdint.h>
+
+    struct s {
+        uint8_t  a;
+        uint32_t b;
+        uint8_t  c;
+    };
+
+    int main(void)
+    {
+        printf("%zu\n", sizeof(struct s));
+        return 0;
+    }
+    ```
+  resposta: {valor: 12, unidade: "bytes", tolerancia: 0}
+  explicacao: |
+    `b` precisa começar num endereço múltiplo de 4: depois de `a` (offset 0) entram 3 bytes de padding e `b` fica no offset 4. `c` fica no offset 8. O tamanho total precisa ser múltiplo do maior alinhamento (4) para que um array de structs continue alinhado: mais 3 bytes no fim → 12. A soma dos campos (6) não é o tamanho da struct. Reordenando para `b, a, c`, cai para 8.
+  fonte: "cppreference.com, Struct declaration (alinhamento e padding); Jens Gustedt, Modern C, cap. 12 (The C memory model)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T04-006
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Numa plataforma x86-64 Linux comum (gcc), qual número este programa imprime?
+    ```c
+    #include <stdio.h>
+    #include <stdint.h>
+
+    struct pacote {
+        uint8_t  tipo;
+        uint16_t comprimento;
+        uint8_t  seq;
+        uint32_t crc;
+    };
+
+    int main(void)
+    {
+        printf("%zu\n", sizeof(struct pacote));
+        return 0;
+    }
+    ```
+  resposta: {valor: 12, unidade: "bytes", tolerancia: 0}
+  explicacao: |
+    `tipo` no offset 0; `comprimento` (alinhamento 2) vai para o offset 2, depois de 1 byte de padding; `seq` fica no offset 4; `crc` (alinhamento 4) precisa de offset múltiplo de 4: 3 bytes de padding e offset 8. Total: 8 + 4 = 12, que já é múltiplo de 4. Os dados somam 8 bytes; os outros 4 são padding.
+  fonte: "cppreference.com, Struct declaration (alinhamento e padding) e offsetof"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T04-007
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Numa plataforma x86-64 Linux comum (gcc), onde `double` tem 8 bytes e alinhamento 8, qual número este programa imprime?
+    ```c
+    #include <stdio.h>
+    #include <stdint.h>
+    #include <stddef.h>
+
+    struct medida {
+        char     tipo;
+        double   valor;
+        uint16_t id;
+    };
+
+    int main(void)
+    {
+        printf("%zu\n", offsetof(struct medida, id));
+        return 0;
+    }
+    ```
+  resposta: {valor: 16, unidade: "bytes", tolerancia: 0}
+  explicacao: |
+    `tipo` ocupa o offset 0; `valor` precisa de offset múltiplo de 8: 7 bytes de padding e offset 8, ocupando de 8 a 15. `id` vem logo depois, no offset 16. (O `sizeof` da struct é 24, com 6 bytes de padding no fim.) Reordenando para `valor, id, tipo`, a struct cai para 16 bytes.
+  fonte: "cppreference.com, offsetof e Struct declaration; Jens Gustedt, Modern C, cap. 12 (The C memory model)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T04-008
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Numa plataforma x86-64 Linux comum (gcc), qual número este programa imprime?
+    ```c
+    #include <stdio.h>
+    #include <stdint.h>
+
+    struct item {
+        uint32_t id;
+        uint8_t  flag;
+    };
+
+    int main(void)
+    {
+        struct item lista[10];
+        printf("%zu\n", sizeof(lista));
+        return 0;
+    }
+    ```
+  resposta: {valor: 80, unidade: "bytes", tolerancia: 0}
+  explicacao: |
+    Cada `struct item` tem 5 bytes de dados, mas o tamanho precisa ser múltiplo do alinhamento de `id` (4) para que `lista[1].id` também fique alinhado: 3 bytes de padding no **fim**, total 8. O array tem 10 × 8 = 80 bytes. Quem responde 50 esqueceu o padding final, que só fica evidente em arrays.
+  fonte: "cppreference.com, Struct declaration (alinhamento e padding) e Array declaration"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T04-009
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Numa plataforma x86-64 Linux comum (gcc), qual número este programa imprime?
+    ```c
+    #include <stdio.h>
+    #include <stdint.h>
+
+    union valor {
+        uint32_t u32;
+        uint16_t u16;
+        uint8_t  b[4];
+    };
+
+    int main(void)
+    {
+        printf("%zu\n", sizeof(union valor));
+        return 0;
+    }
+    ```
+  resposta: {valor: 4, unidade: "bytes", tolerancia: 0}
+  explicacao: |
+    Numa union, todos os membros começam no mesmo endereço e se sobrepõem; o tamanho é o do maior membro (4 bytes de `u32` e de `b[4]`), arredondado para o alinhamento. Uma struct com os mesmos campos teria 4 + 2 + 4 = 10 bytes de dados, mais padding.
+  fonte: "Kernighan & Ritchie, The C Programming Language, 2ª ed., seção 6.8 (Unions); cppreference.com, Union declaration"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T04-010
+  objetivo: O3
+  tipo: unica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    O que este programa imprime num PC x86-64?
+    ```c
+    #include <stdio.h>
+    #include <stdint.h>
+
+    union palavra {
+        uint32_t u32;
+        uint8_t  b[4];
+    };
+
+    int main(void)
+    {
+        union palavra w;
+        w.u32 = 0x11223344u;
+        printf("%02x %02x\n", w.b[0], w.b[3]);
+        return 0;
+    }
+    ```
+  alternativas:
+    - "`11 44`"
+    - "`44 11`"
+    - "`11 22`"
+    - "`33 44`"
+  resposta: 1
+  explicacao: |
+    O x86 é **little-endian**: o byte menos significativo (0x44) fica no menor endereço, `b[0]`, e o mais significativo (0x11) em `b[3]`. Num processador big-endian, a saída seria `11 44`. Em C, ler um membro da union diferente do último escrito reinterpreta os bytes (o gcc documenta isso); em C++ é comportamento indefinido.
+  fonte: "cppreference.com, Union declaration (type punning); Kernighan & Ritchie, The C Programming Language, 2ª ed., seção 6.8 (Unions)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T04-011
+  objetivo: O3
+  tipo: unica
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Um protocolo exige enviar um `uint16_t v` em **big-endian** (byte mais significativo primeiro) num buffer `uint8_t buf[2]`. O mesmo código vai rodar num ESP32 (little-endian) e num processador big-endian. Qual trecho produz o resultado certo nas duas CPUs?
+  alternativas:
+    - "`memcpy(buf, &v, 2);`"
+    - "`buf[0] = (uint8_t)(v & 0xFFu); buf[1] = (uint8_t)(v >> 8);`"
+    - "`*(uint16_t *)buf = v;`"
+    - "`buf[0] = (uint8_t)(v >> 8); buf[1] = (uint8_t)(v & 0xFFu);`"
+  resposta: 3
+  explicacao: |
+    Deslocamentos e máscaras trabalham com o **valor**, não com a ordem dos bytes na memória: `v >> 8` é sempre o byte alto, em qualquer CPU. Assim `buf[0]` recebe o byte alto e `buf[1]` o baixo — big-endian em qualquer lugar. `memcpy` e a escrita por ponteiro copiam a representação da memória, que muda com a endianness da CPU (a escrita por ponteiro ainda pode falhar se `buf` estiver desalinhado). O outro trecho com deslocamentos monta little-endian.
+  fonte: "Elecia White, Making Embedded Systems (1ª ed.), cap. 6 (Communicating with Peripherals); Jens Gustedt, Modern C, cap. 12 (The C memory model)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T04-012
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Qual número este programa imprime?
+    ```c
+    #include <stdio.h>
+
+    enum estado { PARADO, ACELERANDO = 5, CRUZEIRO, FREANDO };
+
+    int main(void)
+    {
+        printf("%d\n", PARADO + CRUZEIRO + FREANDO);
+        return 0;
+    }
+    ```
+  resposta: {valor: 13, unidade: "valor", tolerancia: 0}
+  explicacao: |
+    O primeiro enumerador sem valor vale 0 (`PARADO`). `ACELERANDO` foi fixado em 5, e cada um dos seguintes vale o anterior + 1: `CRUZEIRO` = 6, `FREANDO` = 7. 0 + 6 + 7 = 13. Quem responde 3 (0 + 1 + 2) ignorou o `= 5`.
+  fonte: "Kernighan & Ritchie, The C Programming Language, 2ª ed., seção 2.3 (Constants: enumeration constants); cppreference.com, Enumerations"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T04-013
+  objetivo: O4
+  tipo: vf
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Verdadeiro ou falso: em C, quando nenhum valor é atribuído explicitamente, o primeiro enumerador de um `enum` vale 0.
+  resposta: true
+  explicacao: |
+    Os enumeradores começam em 0 e cada um vale o anterior mais 1, a menos que se atribua um valor. É comum reservar o 0 para o estado inicial ou para "sem erro" (`ERR_OK = 0`), deixando isso explícito no código.
+  fonte: "Kernighan & Ritchie, The C Programming Language, 2ª ed., seção 2.3 (Constants)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T04-014
+  objetivo: O4
+  tipo: unica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    O que este programa imprime?
+    ```c
+    #include <stdio.h>
+
+    typedef enum { DESLIGADO, LIGANDO, LIGADO, FALHA } estado_t;
+    typedef enum { EV_BOTAO, EV_PRONTO, EV_ERRO } evento_t;
+
+    static estado_t transicao(estado_t s, evento_t e)
+    {
+        switch (s) {
+        case DESLIGADO: return (e == EV_BOTAO) ? LIGANDO : DESLIGADO;
+        case LIGANDO:   return (e == EV_PRONTO) ? LIGADO : (e == EV_ERRO) ? FALHA : LIGANDO;
+        case LIGADO:    return (e == EV_BOTAO) ? DESLIGADO : (e == EV_ERRO) ? FALHA : LIGADO;
+        case FALHA:     return (e == EV_BOTAO) ? DESLIGADO : FALHA;
+        default:        return FALHA;
+        }
+    }
+
+    int main(void)
+    {
+        const char *nome[] = {"DESLIGADO", "LIGANDO", "LIGADO", "FALHA"};
+        evento_t ev[] = {EV_PRONTO, EV_BOTAO, EV_ERRO, EV_BOTAO, EV_BOTAO, EV_PRONTO};
+        estado_t s = DESLIGADO;
+        for (int i = 0; i < 6; i++)
+            s = transicao(s, ev[i]);
+        printf("%s\n", nome[s]);
+        return 0;
+    }
+    ```
+  alternativas:
+    - "`LIGADO`"
+    - "`FALHA`"
+    - "`LIGANDO`"
+    - "`DESLIGADO`"
+  resposta: 0
+  explicacao: |
+    Acompanhe estado a estado: DESLIGADO + PRONTO → DESLIGADO (o evento é ignorado); + BOTÃO → LIGANDO; + ERRO → FALHA; + BOTÃO → DESLIGADO (o botão "rearma"); + BOTÃO → LIGANDO; + PRONTO → LIGADO. Quem para em FALHA esqueceu que o botão tira a máquina desse estado. Desenhar o diagrama de estados antes de rastrear evita esse tipo de erro.
+  fonte: "Elecia White, Making Embedded Systems (1ª ed.), cap. 5 (Managing the Flow of Activity: state machines); Kernighan & Ritchie, The C Programming Language, 2ª ed., seção 3.4 (Switch)"
+  origem: ia
+  revisao: rascunho

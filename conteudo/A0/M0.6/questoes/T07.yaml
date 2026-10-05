@@ -1,0 +1,288 @@
+- id: Q-M0.6.T07-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Ao rodar `make`, você recebe `Makefile:5: *** missing separator.  Stop.` A linha 5 é a receita `gcc -c main.c -o main.o`. Qual é a causa mais provável?
+  alternativas:
+    - "A receita começa com espaços em vez de um caractere TAB"
+    - "Falta um ponto e vírgula no fim da receita"
+    - "O alvo da regra não tem extensão `.o`"
+    - "O gcc não está instalado"
+  resposta: 0
+  explicacao: |
+    No Make, cada linha de receita precisa começar com um TAB. Editores que trocam TAB por espaços produzem exatamente esse erro. Receitas não terminam em `;`, o nome do alvo é livre, e um gcc ausente daria outro erro (`gcc: command not found`) ao executar a receita.
+  fonte: "GNU Make Manual, seção Rule Syntax (Writing Rules) e cap. 2 (An Introduction to Makefiles)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T07-002
+  objetivo: O1
+  tipo: unica
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Um Makefile define, nesta ordem, os alvos `clean`, `app`, `main.o` e `sensor.o`. O que acontece ao digitar só `make`, sem argumentos?
+  alternativas:
+    - "O Make constrói `app`, porque é o único alvo que gera um executável"
+    - "O Make executa o primeiro alvo do arquivo: `clean`"
+    - "O Make constrói todos os alvos, na ordem em que aparecem"
+    - "O Make procura um alvo chamado `all` e, sem ele, para com erro"
+  resposta: 1
+  explicacao: |
+    Sem argumentos, o Make constrói o **primeiro alvo** do Makefile (o *default goal*). Aqui seria `clean` — que apagaria os arquivos em vez de compilar. Por isso a convenção é pôr `all:` (ou o executável) como primeira regra.
+  fonte: "GNU Make Manual, cap. 2 (An Introduction to Makefiles: How make Processes a Makefile)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T07-003
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Com o Makefile abaixo, o projeto acabou de ser compilado por completo. Você edita **apenas** `sensor.c` e roda `make`. Quantos comandos (linhas de receita) o Make executa?
+    ```make
+    CC = gcc
+    CFLAGS = -Wall
+
+    app: main.o sensor.o
+    	$(CC) $^ -o $@
+
+    main.o: main.c sensor.h
+    	$(CC) $(CFLAGS) -c $< -o $@
+
+    sensor.o: sensor.c sensor.h
+    	$(CC) $(CFLAGS) -c $< -o $@
+    ```
+  resposta: {valor: 2, unidade: "comandos", tolerancia: 0}
+  explicacao: |
+    `sensor.c` ficou mais novo que `sensor.o`: o Make recompila `sensor.o` (1). Agora `sensor.o` é mais novo que `app`, que é religado (2). `main.o` não depende de `sensor.c` e não é refeito. É a grande vantagem de compilar por partes: só o necessário é refeito.
+  fonte: "GNU Make Manual, cap. 2 (An Introduction to Makefiles: How make Processes a Makefile)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T07-004
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Neste Makefile os headers **não** aparecem nas dependências, embora `main.c` e `sensor.c` façam `#include "sensor.h"`. O projeto acabou de ser compilado por completo. Você muda o valor de uma constante em `sensor.h` e roda `make`. Quantos comandos o Make executa?
+    ```make
+    CC = gcc
+    CFLAGS = -Wall
+
+    app: main.o sensor.o
+    	$(CC) $^ -o $@
+
+    main.o: main.c
+    	$(CC) $(CFLAGS) -c $< -o $@
+
+    sensor.o: sensor.c
+    	$(CC) $(CFLAGS) -c $< -o $@
+    ```
+  resposta: {valor: 0, unidade: "comandos", tolerancia: 0}
+  explicacao: |
+    O Make só conhece as dependências que estão escritas: nenhuma regra cita `sensor.h`, então nenhum alvo fica desatualizado e ele responde `'app' is up to date`. O executável continua com o valor antigo da constante — um defeito silencioso que "some" com `make clean`. A solução é listar os headers ou gerá-los automaticamente com `-MMD -MP` e `-include $(OBJS:.o=.d)`.
+  fonte: "GNU Make Manual, seção Generating Prerequisites Automatically; Manual do GCC, Preprocessor Options (-MMD, -MP)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T07-005
+  objetivo: O2
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Com `CC = gcc`, como o Make expande a receita desta regra?
+    ```make
+    app: main.o sensor.o filtro.o
+    	$(CC) $^ -o $@
+    ```
+  alternativas:
+    - "`gcc main.o -o app`"
+    - "`gcc main.o sensor.o filtro.o -o app`"
+    - "`gcc app -o main.o sensor.o filtro.o`"
+    - "`gcc main.o sensor.o filtro.o -o main.o`"
+  resposta: 1
+  explicacao: |
+    `$^` é a lista de **todos** os pré-requisitos e `$@` é o **alvo**. Por isso a receita vira `gcc main.o sensor.o filtro.o -o app`. `$<` seria só o primeiro pré-requisito (`main.o`).
+  fonte: "GNU Make Manual, seção Automatic Variables"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T07-006
+  objetivo: O2
+  tipo: unica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Com `CC = gcc` e `CFLAGS = -Wall`, qual comando o Make executa para construir `main.o` com esta regra de padrão?
+    ```make
+    %.o: %.c sensor.h
+    	$(CC) $(CFLAGS) -c $< -o $@
+    ```
+  alternativas:
+    - "`gcc -Wall -c main.c sensor.h -o main.o`"
+    - "`gcc -Wall -c main.c -o main.o`"
+    - "`gcc -Wall -c sensor.h -o main.o`"
+    - "`gcc -Wall -c %.c -o %.o`"
+  resposta: 1
+  explicacao: |
+    Para o alvo `main.o`, o `%` vale `main`: os pré-requisitos são `main.c` e `sensor.h`. `$<` é só o **primeiro** (`main.c`) e `$@` é o alvo (`main.o`). O header entra como dependência (refaz o `.o` se mudar), mas não na linha de comando. Se a receita usasse `$^`, o header seria passado ao gcc.
+  fonte: "GNU Make Manual, seções Defining and Redefining Pattern Rules e Automatic Variables"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T07-007
+  objetivo: O2
+  tipo: vf
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: declarar `.PHONY: clean` faz `make clean` executar a receita mesmo que exista, na pasta, um arquivo chamado `clean`.
+  resposta: true
+  explicacao: |
+    Sem `.PHONY`, o Make trata `clean` como um arquivo: se ele existe e não tem pré-requisitos, está "atualizado" e a receita não roda (`'clean' is up to date`). Um alvo *phony* não é um arquivo e é sempre executado quando pedido. O mesmo vale para `all` e `test`.
+  fonte: "GNU Make Manual, seção Phony Targets"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T07-008
+  objetivo: O2
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Qual é o valor de `OBJS` depois destas linhas de um Makefile?
+    ```make
+    SRCS := main.c sensor.c filtro.c
+    OBJS := $(SRCS:.c=.o)
+    ```
+  alternativas:
+    - "`main.c sensor.c filtro.c .o`"
+    - "`main.o sensor.o filtro.o`"
+    - "`main.c.o sensor.c.o filtro.c.o`"
+    - "`.o`"
+  resposta: 1
+  explicacao: |
+    `$(VAR:a=b)` é uma referência de substituição: troca o sufixo `a` por `b` no fim de cada palavra da variável. Assim a lista de objetos acompanha a de fontes automaticamente. `:=` expande o valor uma vez, na definição.
+  fonte: "GNU Make Manual, seção Substitution References (How to Use Variables)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T07-009
+  objetivo: O3
+  tipo: unica
+  dificuldade: 2
+  bloom: lembrar
+  enunciado: |
+    Num `CMakeLists.txt`, qual comando declara que o projeto produz um **executável** chamado `app` a partir de `src/main.c`?
+  alternativas:
+    - "`add_library(app src/main.c)`"
+    - "`project(app src/main.c)`"
+    - "`add_executable(app src/main.c)`"
+    - "`target_link_libraries(app src/main.c)`"
+  resposta: 2
+  explicacao: |
+    `add_executable` cria um alvo executável com as fontes listadas. `add_library` cria uma biblioteca; `project` dá nome ao projeto e escolhe as linguagens; `target_link_libraries` liga bibliotecas a um alvo que já existe.
+  fonte: "CMake Tutorial (cmake.org), Step 1: A Basic Starting Point; documentação do CMake, add_executable"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T07-010
+  objetivo: O3
+  tipo: unica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    O projeto tem a biblioteca `sensor` (fonte em `src/sensor.c`, header em `include/sensor.h`) e o executável `app`, cujo `main.c` faz `#include "sensor.h"`. Qual trecho faz `app` compilar e ligar **sem** repetir o caminho `include/` no alvo `app`?
+  alternativas:
+    - "`target_include_directories(sensor PRIVATE include)` e `target_link_libraries(app PRIVATE sensor)`"
+    - "`target_include_directories(sensor PUBLIC include)` e `target_link_libraries(app PRIVATE sensor)`"
+    - "`target_include_directories(sensor PUBLIC include)` e nenhuma ligação entre `app` e `sensor`"
+    - "`target_link_libraries(app PRIVATE include)`"
+  resposta: 1
+  explicacao: |
+    Com `PUBLIC`, o diretório de include faz parte dos requisitos de uso da biblioteca: vale para ela e para todo alvo que se liga a ela. Ao ligar `app` a `sensor`, `app` herda o `include/`. Com `PRIVATE`, o caminho vale só para compilar a própria biblioteca e `main.c` falha com `sensor.h: No such file or directory`. Sem ligar os alvos, nada é herdado (e o link falharia).
+  fonte: "CMake Tutorial (cmake.org), Step 3: Adding Usage Requirements for a Library; cmake-buildsystem(7), Transitive Usage Requirements"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T07-011
+  objetivo: O3
+  tipo: multipla
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    O alvo `app` usa `sqrt` (da biblioteca matemática) e você quer os avisos `-Wall -Wextra` só nele. Quais linhas do `CMakeLists.txt` fazem isso corretamente? Marque todas as corretas.
+  alternativas:
+    - "`target_link_libraries(app PRIVATE m)`"
+    - "`target_compile_options(app PRIVATE -Wall -Wextra)`"
+    - "`set(CMAKE_C_FLAGS \"-lm\")`"
+    - "`add_executable(app src/main.c -lm)`"
+  resposta: [0, 1]
+  explicacao: |
+    `target_link_libraries(app PRIVATE m)` faz o CMake acrescentar `-lm` no lugar certo da linha de link (depois dos objetos). `target_compile_options` aplica as flags só ao alvo `app`. `CMAKE_C_FLAGS` vale para todos os alvos e entra na linha de link **antes** dos objetos: no Ubuntu, o resultado é `undefined reference to 'sqrt'`. Em `add_executable`, tudo o que vem depois do nome é tratado como arquivo-fonte: `-lm` vira um "arquivo" inexistente e a configuração falha.
+  fonte: "Documentação do CMake, target_link_libraries, target_compile_options e add_executable"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T07-012
+  objetivo: O4
+  tipo: unica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Na raiz de um projeto CMake, qual sequência configura e compila tudo numa pasta separada `build/`, sem gerar arquivos no meio dos fontes?
+  alternativas:
+    - "`cmake .` e depois `make`"
+    - "`cmake -S . -B build` e depois `cmake --build build`"
+    - "`make -C build` e depois `cmake -S . -B build`"
+    - "`cmake --build .` e depois `cmake -S build -B .`"
+  resposta: 1
+  explicacao: |
+    `-S` aponta a pasta dos fontes (onde está o `CMakeLists.txt`) e `-B` a pasta do build, criada se não existir. `cmake --build build` chama o gerador escolhido (make ou ninja). `cmake .` na raiz funciona, mas espalha `CMakeCache.txt`, `CMakeFiles/` e Makefiles entre os fontes (build *in-source*). As outras sequências invertem as pastas ou compilam antes de configurar.
+  fonte: "Documentação do CMake, cmake(1) (Generate a Project Buildsystem; Build a Project)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T07-013
+  objetivo: O4
+  tipo: unica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Um teste usa `assert(media(v, 3) == 20);` e está registrado com `add_test`. Com `-DCMAKE_BUILD_TYPE=Debug`, o `ctest` acusa falha (*Subprocess aborted*). Você reconfigura com `-DCMAKE_BUILD_TYPE=Release`, sem mudar o código, e o `ctest` passa a dizer `100% tests passed`. Por quê?
+  alternativas:
+    - "Em Release, o gcc otimiza `media` e corrige o defeito"
+    - "Em Release, o CMake passa `-DNDEBUG`, e o `assert` é removido pelo pré-processador: o teste não verifica mais nada"
+    - "Em Release, o `ctest` ignora testes que abortam"
+    - "Em Release, o `add_test` só é registrado se o teste já passou em Debug"
+  resposta: 1
+  explicacao: |
+    As flags padrão do gcc no CMake são `-O3 -DNDEBUG` para Release. Com `NDEBUG` definido, `<assert.h>` transforma `assert(...)` em nada: a verificação desaparece e o programa termina com código 0. O defeito continua lá. Testes devem rodar numa configuração sem `NDEBUG` ou usar um framework de testes (T10), cujas asserções não dependem dessa macro.
+  fonte: "Documentação do CMake, CMAKE_BUILD_TYPE e CMAKE_<LANG>_FLAGS_<CONFIG>; cppreference.com, assert"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T07-014
+  objetivo: O4
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Você criou o executável `testes` com `add_executable(testes tests/teste_buffer.c)`, mas `ctest --test-dir build` responde `No tests were found!!!`. O que falta no `CMakeLists.txt`?
+  alternativas:
+    - "`enable_testing()` e `add_test(NAME testes COMMAND testes)`"
+    - "`target_link_libraries(testes PRIVATE ctest)`"
+    - "`set(CMAKE_BUILD_TYPE Test)`"
+    - "Nada: o ctest só encontra testes depois de `make install`"
+  resposta: 0
+  explicacao: |
+    O CTest só roda o que foi registrado: `enable_testing()` ativa o suporte a testes no diretório e `add_test` diz qual comando executar e que um código de saída diferente de zero significa falha. Não existe biblioteca `ctest` para ligar, nem tipo de build `Test`, e a instalação não tem relação com os testes.
+  fonte: "CMake Tutorial (cmake.org), Step 5: Installing and Testing; documentação do CMake, enable_testing e add_test"
+  origem: ia
+  revisao: rascunho

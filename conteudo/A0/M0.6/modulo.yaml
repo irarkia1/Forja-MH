@@ -1,53 +1,154 @@
 id: M0.6
 ato: A0
 nome: "Programação C/C++"
+missao: "Aprenda a língua das máquinas antes de acordá-las na Vila da Forja: cada ponteiro errado é uma faísca no lugar errado."
 horas: 180
 trilha: firmware
 ordem: 6
 requer: ["M0.1"]
 tags_chefe: []
+# Ordem didática: C básico → GDB logo em seguida (o depurador acompanha você nos ponteiros, na memória e em todo o resto) → ponteiros → memória → structs → bits (já com tipos, ponteiros e structs para montar registradores) → pré-processador, compilação e link (projetos com vários arquivos) → Make/CMake (que automatizam exatamente essa compilação) → C++ para embarcados (só depois de dominar o C por baixo) → estilo e MISRA C (revisão crítica de tudo) → testes unitários, o laboratório de elite que junta o módulo.
 topicos:
   - id: M0.6.T01
     nome: "C: tipos, controle de fluxo, funções"
     tipo: comum
     peso: 1
-  - id: M0.6.T02
-    nome: "Ponteiros e arrays"
-    tipo: comum
-    peso: 1
-  - id: M0.6.T03
-    nome: "Memória: pilha, heap, estático, `volatile`, `const`"
-    tipo: comum
-    peso: 1
-  - id: M0.6.T04
-    nome: "Structs, unions, enums"
-    tipo: comum
-    peso: 1
-  - id: M0.6.T05
-    nome: "Operações bit a bit e máscaras"
-    tipo: comum
-    peso: 1
-  - id: M0.6.T06
-    nome: "Pré-processador, compilação e link"
-    tipo: comum
-    peso: 1
-  - id: M0.6.T07
-    nome: "Make e CMake"
-    tipo: comum
-    peso: 1
-  - id: M0.6.T08
-    nome: "C++ para embarcados (classes, RAII, templates leves, o que evitar)"
-    tipo: comum
-    peso: 1
+    objetivos:
+      - id: O1
+        texto: "Compilar e executar programas C no terminal com gcc e as flags de aviso (-Wall -Wextra), interpretando erros e avisos do compilador"
+      - id: O2
+        texto: "Escolher tipos inteiros de largura fixa (stdint.h) e prever o resultado de expressões com divisão inteira, conversões, promoção de inteiros e estouro sem sinal"
+      - id: O3
+        texto: "Prever a saída de programas com if/else, switch, for, while, do-while, break e continue"
+      - id: O4
+        texto: "Escrever funções com protótipo, parâmetros passados por valor e valor de retorno, e distinguir o estouro sem sinal (definido) do estouro com sinal (comportamento indefinido)"
   - id: M0.6.T09
     nome: "Depuração com GDB"
     tipo: comum
     peso: 1
-  - id: M0.6.T10
-    nome: "Testes unitários em C"
-    tipo: elite
-    peso: 2
+    objetivos:
+      - id: O1
+        texto: "Compilar com informação de depuração (-g -O0) e controlar a execução no GDB com break, run, next, step, continue e finish"
+      - id: O2
+        texto: "Inspecionar o estado do programa com print, display, info locals, backtrace e frame"
+      - id: O3
+        texto: "Usar watchpoints e o comando x para descobrir quem altera uma variável e examinar memória em hexadecimal"
+      - id: O4
+        texto: "Localizar a causa de um segfault a partir de um core dump ou da execução no GDB, e combinar o GDB com AddressSanitizer"
+  - id: M0.6.T02
+    nome: "Ponteiros e arrays"
+    tipo: comum
+    peso: 1
+    objetivos:
+      - id: O1
+        texto: "Declarar, inicializar e desreferenciar ponteiros, e usá-los para que uma função altere variáveis de quem a chamou"
+      - id: O2
+        texto: "Prever o resultado da aritmética de ponteiros e da relação entre arrays e ponteiros (indexação, decaimento, sizeof)"
+      - id: O3
+        texto: "Manipular strings C (terminador nulo, strlen × sizeof, cópia segura com tamanho limitado)"
+      - id: O4
+        texto: "Ler declarações com const e ponteiros, e identificar erros clássicos: ponteiro nulo, não inicializado, pendurado e acesso fora do array"
+  - id: M0.6.T03
+    nome: "Memória: pilha, heap, estático, `volatile`, `const`"
+    tipo: comum
+    peso: 1
+    objetivos:
+      - id: O1
+        texto: "Classificar onde cada variável vive (pilha, heap, estático; .text, .rodata, .data, .bss) e qual é o seu tempo de vida"
+      - id: O2
+        texto: "Prever o comportamento de variáveis locais static, globais e automáticas, e da inicialização padrão de cada uma"
+      - id: O3
+        texto: "Usar malloc/free corretamente e justificar por que firmware de microcontrolador costuma evitar a heap"
+      - id: O4
+        texto: "Explicar quando usar volatile (registradores mapeados em memória, variáveis alteradas por interrupção) e const, e o que cada um garante e não garante"
+  - id: M0.6.T04
+    nome: "Structs, unions, enums"
+    tipo: comum
+    peso: 1
+    objetivos:
+      - id: O1
+        texto: "Definir e usar structs, typedef, inicializadores designados e ponteiros para struct (operador ->)"
+      - id: O2
+        texto: "Calcular o tamanho, o alinhamento e o padding de uma struct e reordenar campos para reduzi-los"
+      - id: O3
+        texto: "Usar unions para ver os mesmos bytes de formas diferentes e determinar a endianness de uma plataforma"
+      - id: O4
+        texto: "Usar enums para estados e códigos de erro e modelar uma máquina de estados com switch"
+  - id: M0.6.T05
+    nome: "Operações bit a bit e máscaras"
+    tipo: comum
+    peso: 1
+    objetivos:
+      - id: O1
+        texto: "Calcular o resultado de &, |, ^, ~, << e >> em binário e hexadecimal"
+      - id: O2
+        texto: "Ligar, desligar, inverter e testar bits de um registrador com máscaras (x |= 1u << n, x &= ~(1u << n))"
+      - id: O3
+        texto: "Extrair e escrever campos de vários bits num registrador com deslocamento e máscara (read-modify-write)"
+      - id: O4
+        texto: "Evitar as armadilhas de deslocamento (largura, sinal, promoção) e justificar por que não usar bitfields para mapear registradores"
+  - id: M0.6.T06
+    nome: "Pré-processador, compilação e link"
+    tipo: comum
+    peso: 1
+    objetivos:
+      - id: O1
+        texto: "Descrever as etapas de pré-processamento, compilação, montagem e link e gerar a saída de cada uma com gcc (-E, -S, -c)"
+      - id: O2
+        texto: "Escrever macros com parênteses corretos, include guards e compilação condicional, e escolher entre macro, função inline e constante"
+      - id: O3
+        texto: "Organizar um programa em várias unidades de tradução com .h e .c, controlando linkage com static e extern"
+      - id: O4
+        texto: "Interpretar erros do linker (undefined reference, multiple definition) e escolher flags de compilação (-Wall -Wextra -Werror -O2 -g -fsanitize)"
+  - id: M0.6.T07
+    nome: "Make e CMake"
+    tipo: comum
+    peso: 1
+    objetivos:
+      - id: O1
+        texto: "Escrever um Makefile com alvos, dependências, receitas e variáveis (CC, CFLAGS) e prever quais arquivos são recompilados"
+      - id: O2
+        texto: "Usar variáveis automáticas ($@, $<, $^), regras de padrão e alvos .PHONY (all, clean)"
+      - id: O3
+        texto: "Escrever um CMakeLists.txt com add_executable, add_library, target_include_directories e target_link_libraries"
+      - id: O4
+        texto: "Configurar e compilar um projeto CMake fora da árvore de fontes, escolhendo o tipo de build (Debug/Release) e integrando os testes com CTest"
+  - id: M0.6.T08
+    nome: "C++ para embarcados (classes, RAII, templates leves, o que evitar)"
+    tipo: comum
+    peso: 1
+    objetivos:
+      - id: O1
+        texto: "Escrever classes com construtor, destrutor, membros privados e métodos const, e usar referências no lugar de ponteiros quando o objeto sempre existe"
+      - id: O2
+        texto: "Aplicar RAII para garantir a liberação de recursos e prever a ordem de construção e destruição de objetos"
+      - id: O3
+        texto: "Usar constexpr, enum class, std::array e templates simples para obter verificação em tempo de compilação sem custo em tempo de execução"
+      - id: O4
+        texto: "Justificar o que evitar em microcontroladores (exceções, RTTI, alocação dinâmica, iostream) e as flags que desligam esses recursos"
   - id: M0.6.T11
     nome: "Estilo, MISRA C (visão geral)"
     tipo: comum
     peso: 1
+    objetivos:
+      - id: O1
+        texto: "Aplicar um estilo consistente (nomes, formatação automática com clang-format, comentários úteis) a um código C"
+      - id: O2
+        texto: "Explicar o que é o MISRA C, a diferença entre diretrizes obrigatórias, requeridas e consultivas e como funciona um desvio documentado"
+      - id: O3
+        texto: "Identificar violações típicas das regras MISRA (goto, recursão, variáveis não inicializadas, conversões implícitas entre tipos essenciais, switch sem default)"
+      - id: O4
+        texto: "Rodar análise estática com cppcheck e clang-tidy e interpretar os alertas"
+  - id: M0.6.T10
+    nome: "Testes unitários em C"
+    tipo: elite
+    peso: 2
+    objetivos:
+      - id: O1
+        texto: "Escrever testes unitários com o Unity (setUp, tearDown, asserções TEST_ASSERT_*) e ler o relatório de falhas"
+      - id: O2
+        texto: "Projetar casos de teste de uma biblioteca de buffer circular cobrindo vazio, cheio, volta do índice e erros"
+      - id: O3
+        texto: "Aplicar o ciclo do TDD (vermelho, verde, refatorar) e isolar o código de hardware atrás de uma interface para testá-lo no PC"
+      - id: O4
+        texto: "Medir a cobertura de linhas e de desvios com gcov e publicar o projeto no GitHub com testes passando e README"

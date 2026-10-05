@@ -1,0 +1,292 @@
+- id: Q-M0.6.T09-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Você vai depurar `sensor.c` no GDB e quer ver nomes de variáveis, linhas do código-fonte e uma execução que segue a ordem das linhas que você escreveu. Como compilar?
+  alternativas:
+    - "`gcc -g -O0 sensor.c -o sensor`"
+    - "`gcc -O2 sensor.c -o sensor`"
+    - "`gcc -s -O0 sensor.c -o sensor`"
+    - "`gcc -Wall sensor.c -o sensor`"
+  resposta: 0
+  explicacao: |
+    `-g` grava a informação de depuração (nomes, tipos e a tabela instrução → linha); `-O0` desliga a otimização, para que cada linha vire código na ordem escrita e nenhuma variável seja eliminada. `-O2` reordena e elimina código (aparece `<optimized out>`), `-s` remove os símbolos e `-Wall` só liga avisos — nenhum deles inclui a informação de depuração.
+  fonte: "Manual do GCC (gcc.gnu.org), Options for Debugging Your Program (-g, -Og); Debugging with GDB, seção Compiling for Debugging"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T09-002
+  objetivo: O1
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    O GDB está parado na linha abaixo, dentro do `main`:
+    ```
+    12	    r = calcula_media(buf, n);
+    ```
+    Você quer parar na primeira linha **dentro** de `calcula_media` para acompanhar o cálculo. Qual comando usar?
+  alternativas:
+    - "`next`"
+    - "`step`"
+    - "`finish`"
+    - "`continue`"
+  resposta: 1
+  explicacao: |
+    `step` executa a linha atual entrando nas funções chamadas por ela. `next` executaria `calcula_media` inteira e pararia na linha 13. `finish` roda até a função **atual** (o `main`) retornar. `continue` segue até o próximo ponto de parada, que pode nem existir.
+  fonte: "Debugging with GDB, seção Continuing and Stepping: step, next, finish"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T09-003
+  objetivo: O1
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Você entrou com `step` numa função longa, já viu o que queria nas primeiras linhas e agora quer que ela termine de executar e voltar a quem a chamou, vendo o valor que ela devolveu. Qual comando faz isso?
+  alternativas:
+    - "`next`"
+    - "`until`"
+    - "`finish`"
+    - "`backtrace`"
+  resposta: 2
+  explicacao: |
+    `finish` roda até a função atual retornar, para no chamador e mostra `Value returned is $1 = …`. `next` avança só uma linha; `until` sem argumento serve para sair de um laço; `backtrace` só mostra a pilha de chamadas, sem executar nada.
+  fonte: "Debugging with GDB, seção Continuing and Stepping: finish"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T09-004
+  objetivo: O1
+  tipo: vf
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: depois de `break 25` e `run`, quando o GDB para e mostra a linha 25, essa linha **ainda não** foi executada.
+  resposta: true
+  explicacao: |
+    O ponto de parada fica no início do código da linha: a linha mostrada é a próxima a executar. Por isso, para ver o efeito de uma atribuição da linha 25, você dá `next` e só então usa `print`.
+  fonte: "Debugging with GDB, seção Setting Breakpoints"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T09-005
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    O programa `soma.c` foi compilado com `gcc -g -O0`. A linha 7 é `soma += i;`.
+    ```c
+    #include <stdio.h>
+
+    int main(void)
+    {
+        int soma = 0;
+        for (int i = 1; i <= 10; i++) {
+            soma += i;
+        }
+        printf("%d\n", soma);
+        return 0;
+    }
+    ```
+    No GDB você digita `break 7 if i == 4`, depois `run` e, quando ele para, `print soma`. Qual valor aparece?
+  resposta: {valor: 6, unidade: "valor", tolerancia: 0}
+  explicacao: |
+    O GDB para **antes** de executar a linha 7 na volta em que `i` vale 4. Até ali foram somados 1, 2 e 3: `soma` = 6. Quem responde 10 imaginou que a linha já tinha sido executada com i = 4. (Se você rodar o programa sem o GDB, ele imprime 55; a pergunta é sobre o `print` dentro do GDB.)
+  fonte: "Debugging with GDB, seções Break Conditions e Examining Data"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T09-006
+  objetivo: O2
+  tipo: unica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    O programa travou e o GDB mostra:
+    ```
+    (gdb) bt
+    #0  divide (a=10, b=0) at calc.c:4
+    #1  0x0000555555555171 in media (v=0x7fffffffdc10, n=0) at calc.c:9
+    #2  0x00005555555551c2 in main () at calc.c:15
+    ```
+    Você quer ver as variáveis **locais** da função que chamou `divide`. Qual sequência usar?
+  alternativas:
+    - "`frame 1` e depois `info locals`"
+    - "`frame 0` e depois `info locals`"
+    - "`frame 2` e depois `info args`"
+    - "`up 2` e depois `print v`"
+  resposta: 0
+  explicacao: |
+    No `bt`, `#0` é onde o programa está (`divide`) e `#1` é quem chamou (`media`). `frame 1` seleciona o quadro de `media`; `info locals` passa a mostrar as variáveis dele. `frame 0` é a própria `divide`; `frame 2` e `up 2` levam ao `main`. Repare também que `media` recebeu `n=0`: a causa provável da divisão por zero está no chamador.
+  fonte: "Debugging with GDB, seções Backtraces e Selecting a Frame"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T09-007
+  objetivo: O2
+  tipo: unica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    No GDB, a variável `unsigned char c` vale 255. O que o comando `print/x c` mostra?
+  alternativas:
+    - "`$1 = 255`"
+    - "`$1 = 0xff`"
+    - "`$1 = 11111111`"
+    - "`$1 = 0377`"
+  resposta: 1
+  explicacao: |
+    O sufixo `/x` escolhe o formato hexadecimal: 255 = 0xff. `/t` daria binário (11111111), `/o` octal (0377) e `print` sem formato mostraria o valor decimal com o caractere (`255 '\377'`). `$1` é o número do resultado, que você pode reutilizar em expressões.
+  fonte: "Debugging with GDB, seção Output Formats"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T09-008
+  objetivo: O2
+  tipo: unica
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Você vai dar vários `next` dentro de um laço e quer ver o valor de `i` e de `soma` automaticamente **a cada parada**, sem digitar `print` toda vez. O que usar?
+  alternativas:
+    - "`watch i` e `watch soma`"
+    - "`info locals` uma única vez"
+    - "`display i` e `display soma`"
+    - "`print i` e `print soma` com o sufixo `/a`"
+  resposta: 2
+  explicacao: |
+    `display` cadastra uma expressão que o GDB mostra sempre que o programa para (`undisplay` remove). `watch` faz o programa **parar** quando o valor muda — útil para achar quem altera a variável, mas não é o que se pediu. `info locals` mostra as locais só naquele momento. `/a` é o formato de endereço.
+  fonte: "Debugging with GDB, seção Automatic Display"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T09-009
+  objetivo: O3
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    A variável global `limite_alarme` muda de valor em algum ponto do programa e você não sabe onde. Qual comando faz o GDB parar exatamente quando o valor dela mudar, mostrando o valor antigo e o novo?
+  alternativas:
+    - "`break limite_alarme`"
+    - "`display limite_alarme`"
+    - "`watch limite_alarme`"
+    - "`x/xw &limite_alarme`"
+  resposta: 2
+  explicacao: |
+    `watch` cria um watchpoint: o programa para quando o valor da expressão muda e o GDB mostra `Old value`, `New value` e a linha responsável. `break` recebe uma função ou linha, não uma variável. `display` só mostra o valor nas paradas que já iam acontecer; `x` examina a memória uma vez.
+  fonte: "Debugging with GDB, seção Setting Watchpoints"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T09-010
+  objetivo: O3
+  tipo: unica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Num PC x86-64, o programa tem `int v = 0x11223344;`. Parado depois dessa linha, você digita `x/4xb &v`. Quais bytes aparecem, na ordem mostrada?
+  alternativas:
+    - "`0x11 0x22 0x33 0x44`"
+    - "`0x44 0x33 0x22 0x11`"
+    - "`0x1122 0x3344`"
+    - "`0x11223344`"
+  resposta: 1
+  explicacao: |
+    `x/4xb` mostra 4 unidades de 1 byte (`b`) em hexadecimal (`x`), a partir do endereço de `v`, em endereços crescentes. O x86 é **little-endian**: o byte menos significativo (0x44) fica no menor endereço. `0x11223344` seria a saída de `x/xw &v`, que lê uma palavra de 4 bytes e a mostra já montada.
+  fonte: "Debugging with GDB, seção Examining Memory"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T09-011
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    O programa abaixo foi compilado com `gcc -g -O0`. No GDB você faz `break main`, `run`, `watch contador` e depois digita `continue` repetidamente até o programa terminar. Quantas vezes o GDB para por causa do watchpoint?
+    ```c
+    #include <stdio.h>
+
+    int contador = 0;
+
+    int main(void)
+    {
+        for (int i = 0; i < 6; i++) {
+            if (i % 3 == 0)
+                contador = contador + 1;
+            else
+                contador = contador * 1;
+        }
+        printf("%d\n", contador);
+        return 0;
+    }
+    ```
+  resposta: {valor: 2, unidade: "paradas", tolerancia: 0}
+  explicacao: |
+    O `watch` para quando o **valor** muda, não a cada escrita. `contador` só muda quando `i % 3 == 0`, ou seja, em i = 0 e i = 3 (0 → 1 e 1 → 2). Nas outras quatro voltas, `contador * 1` grava o mesmo valor e o GDB não para. Quem responde 6 contou escritas; quem responde 4 contou as voltas do `else`.
+  fonte: "Debugging with GDB, seção Setting Watchpoints"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T09-012
+  objetivo: O4
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Rodando no GDB, o programa termina com `Program received signal SIGSEGV, Segmentation fault.` Qual é o primeiro comando para descobrir em que função e linha a falha aconteceu e por qual cadeia de chamadas se chegou lá?
+  alternativas:
+    - "`run`"
+    - "`backtrace`"
+    - "`info breakpoints`"
+    - "`step`"
+  resposta: 1
+  explicacao: |
+    `backtrace` (`bt`) mostra a pilha de chamadas a partir do ponto da falha: `#0` é a função e a linha onde o acesso inválido ocorreu, com os argumentos, e as linhas seguintes mostram quem a chamou. `run` reiniciaria o programa; `step` não tem o que executar depois de um SIGSEGV; `info breakpoints` só lista pontos de parada.
+  fonte: "Debugging with GDB, seção Backtraces"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T09-013
+  objetivo: O4
+  tipo: unica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    No Ubuntu, você quer que o programa `coletor` grave um core dump na pasta atual quando der segfault, para analisá-lo depois. Qual sequência funciona?
+  alternativas:
+    - "Rodar `./coletor` e, depois do erro, `gdb core`"
+    - "`ulimit -c unlimited`, `sudo sysctl -w kernel.core_pattern=core.%e.%p`, rodar `./coletor` e abrir com `gdb ./coletor core.coletor.<pid>`"
+    - "Compilar com `-fsanitize=address` e abrir o arquivo `.o` no GDB"
+    - "`ulimit -c 0`, rodar `./coletor` e abrir com `gdb -c ./coletor`"
+  resposta: 1
+  explicacao: |
+    `ulimit -c unlimited` tira o limite de tamanho do core (o padrão costuma ser 0, que impede a gravação). No Ubuntu, o `core_pattern` padrão manda o core para o apport; trocá-lo por `core.%e.%p` grava `core.<programa>.<pid>` na pasta atual. O GDB precisa do **executável** (com `-g`) e do core: `gdb ./coletor core.coletor.<pid>`, e então `bt`. `ulimit -c 0` faz o contrário (desliga o core).
+  fonte: "Debugging with GDB, seção Commands to Specify Files: core; manual do Linux core(5) (core_pattern)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T09-014
+  objetivo: O4
+  tipo: multipla
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Um programa escreve um elemento além do fim de um array local (`for (i = 0; i <= 4; i++) v[i] = …` com `int v[4]`). Ele **não** dá segfault, mas outra variável local aparece com valor estranho. Quais recursos ajudam a encontrar a linha culpada? Marque todos os corretos.
+  alternativas:
+    - "Compilar com `-g -fsanitize=address` e rodar: o AddressSanitizer acusa `stack-buffer-overflow` com a linha"
+    - "No GDB, um `watch` na variável que aparece com valor estranho, para parar na escrita que a altera"
+    - "Compilar com `-O3`, porque o otimizador corrige o acesso fora do array"
+    - "Remover a informação de depuração com `strip` para o GDB ler a memória diretamente"
+  resposta: [0, 1]
+  explicacao: |
+    Escrever fora do array é comportamento indefinido e muitas vezes não dá segfault: o valor cai na memória vizinha da pilha. O AddressSanitizer coloca "zonas proibidas" ao redor de cada array e para no primeiro acesso indevido, mostrando a linha. O `watch` na variável corrompida para exatamente na instrução que a altera. `-O3` não corrige nada (pode até mudar o sintoma), e `strip` só tira os nomes e as linhas de que o GDB precisa.
+  fonte: "Manual do GCC, Program Instrumentation Options (-fsanitize=address); documentação do AddressSanitizer (github.com/google/sanitizers); Debugging with GDB, seção Setting Watchpoints"
+  origem: ia
+  revisao: rascunho

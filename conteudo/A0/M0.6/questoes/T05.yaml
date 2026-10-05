@@ -1,0 +1,333 @@
+- id: Q-M0.6.T05-001
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Qual número (em decimal) este programa imprime?
+    ```c
+    #include <stdio.h>
+
+    int main(void)
+    {
+        printf("%d\n", 0x3C & 0x0F);
+        return 0;
+    }
+    ```
+  resposta: {valor: 12, unidade: "valor", tolerancia: 0}
+  explicacao: |
+    0x3C = 0011 1100 e 0x0F = 0000 1111. O E bit a bit mantém só os bits que são 1 nos dois: 0000 1100 = 0x0C = 12. A máscara 0x0F "isola" o nibble baixo.
+  fonte: "Kernighan & Ritchie, The C Programming Language, 2ª ed., seção 2.9 (Bitwise Operators)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T05-002
+  objetivo: O1
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    O que este programa imprime?
+    ```c
+    #include <stdio.h>
+
+    int main(void)
+    {
+        unsigned v = 0xA5;
+        printf("%02X %02X %02X\n", v | 0x0F, v ^ 0xFF, v >> 4);
+        return 0;
+    }
+    ```
+  alternativas:
+    - "`AF 5A 0A`"
+    - "`A5 5A 0A`"
+    - "`AF A5 50`"
+    - "`0F 5A 0A`"
+  resposta: 0
+  explicacao: |
+    0xA5 = 1010 0101. OU com 0000 1111 liga o nibble baixo: 1010 1111 = AF. XOR com 1111 1111 inverte os 8 bits: 0101 1010 = 5A. Deslocar 4 à direita descarta o nibble baixo: 0000 1010 = 0A. (`%02X` imprime pelo menos 2 dígitos hexadecimais maiúsculos.)
+  fonte: "Kernighan & Ritchie, The C Programming Language, 2ª ed., seção 2.9 (Bitwise Operators)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T05-003
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Qual número (em decimal) este programa imprime?
+    ```c
+    #include <stdio.h>
+
+    int main(void)
+    {
+        unsigned m = (1u << 4) | (1u << 1);
+        printf("%u\n", m);
+        return 0;
+    }
+    ```
+  resposta: {valor: 18, unidade: "valor", tolerancia: 0}
+  explicacao: |
+    `1u << 4` = 16 (bit 4) e `1u << 1` = 2 (bit 1). O OU junta os dois bits: 1 0010 em binário = 16 + 2 = 18. É assim que se monta uma máscara com vários bits.
+  fonte: "Kernighan & Ritchie, The C Programming Language, 2ª ed., seção 2.9 (Bitwise Operators)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T05-004
+  objetivo: O1
+  tipo: vf
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: em C, as expressões `6 & 3` e `6 && 3` têm o mesmo valor.
+  resposta: false
+  explicacao: |
+    `&` opera bit a bit: 110 & 011 = 010 = 2. `&&` é o E **lógico**: os dois operandos são diferentes de zero, então o resultado é 1. Trocar um pelo outro num teste de bits é um erro comum: `if (reg && MASCARA)` é verdadeiro sempre que `reg` não for zero, qualquer que seja o bit.
+  fonte: "Kernighan & Ritchie, The C Programming Language, 2ª ed., seções 2.6 (Relational and Logical Operators) e 2.9 (Bitwise Operators)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T05-005
+  objetivo: O2
+  tipo: unica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Qual linha liga o bit 5 do registrador `reg` **sem alterar** os outros bits?
+  alternativas:
+    - "`reg = (1u << 5);`"
+    - "`reg &= (1u << 5);`"
+    - "`reg |= (1u << 5);`"
+    - "`reg ^= (1u << 5);`"
+  resposta: 2
+  explicacao: |
+    OU com uma máscara que só tem o bit 5 põe esse bit em 1 e mantém os demais (x | 0 = x). Atribuir direto apaga todos os outros bits; o E com a máscara apaga todos os outros e mantém só o bit 5 como estava; o XOR **inverte** o bit 5 (desligaria se já estivesse ligado).
+  fonte: "Elecia White, Making Embedded Systems (1ª ed.), cap. 4 (Outputs, Inputs, and Timers); Kernighan & Ritchie, The C Programming Language, 2ª ed., seção 2.9 (Bitwise Operators)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T05-006
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Qual número (em decimal) este programa imprime?
+    ```c
+    #include <stdio.h>
+    #include <stdint.h>
+
+    int main(void)
+    {
+        uint8_t r = 0xFF;
+        r &= ~(1u << 3);
+        r ^= (1u << 0);
+        printf("%u\n", (unsigned)r);
+        return 0;
+    }
+    ```
+  resposta: {valor: 246, unidade: "valor", tolerancia: 0}
+  explicacao: |
+    `~(1u << 3)` tem todos os bits em 1, menos o bit 3; o E apaga o bit 3: 0xFF → 0xF7 (1111 0111). O XOR com o bit 0 inverte-o: 0xF7 → 0xF6 (1111 0110) = 246. O resultado de 32 bits é reduzido a 8 bits ao ser guardado em `r`, o que aqui não perde nada.
+  fonte: "Kernighan & Ritchie, The C Programming Language, 2ª ed., seção 2.9 (Bitwise Operators)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T05-007
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Qual número este programa imprime?
+    ```c
+    #include <stdio.h>
+    #include <stdint.h>
+
+    int main(void)
+    {
+        uint8_t r = 0xA6;
+        int n = 0;
+        for (int i = 0; i < 8; i++)
+            if (r & (1u << i))
+                n++;
+        printf("%d\n", n);
+        return 0;
+    }
+    ```
+  resposta: {valor: 4, unidade: "bits", tolerancia: 0}
+  explicacao: |
+    O laço testa cada bit de 0 a 7 com a máscara `1u << i` e conta os que estão em 1. 0xA6 = 1010 0110: bits 1, 2, 5 e 7 ligados — 4 bits. O teste `if (r & mascara)` funciona porque o resultado é diferente de zero quando o bit está em 1 (vale a própria máscara, não necessariamente 1).
+  fonte: "Kernighan & Ritchie, The C Programming Language, 2ª ed., seção 2.10 (Assignment Operators and Expressions: a função bitcount)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T05-008
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Este programa compila com o aviso `suggest parentheses around comparison in operand of '&'`. Qual número ele imprime?
+    ```c
+    #include <stdio.h>
+    #include <stdint.h>
+
+    int main(void)
+    {
+        uint8_t reg = 0x80;
+        int a = reg & 0x80 == 0x80;
+        int b = (reg & 0x80) == 0x80;
+        printf("%d\n", a * 10 + b);
+        return 0;
+    }
+    ```
+  resposta: {valor: 1, unidade: "valor", tolerancia: 0}
+  explicacao: |
+    `==` tem precedência **maior** que `&`. Sem parênteses, `reg & 0x80 == 0x80` é `reg & (0x80 == 0x80)` = `0x80 & 1` = 0, então `a` = 0. Com parênteses, `(0x80 & 0x80) == 0x80` é verdadeiro: `b` = 1. Resultado: 0 × 10 + 1 = 1. Quem responde 11 leu as duas expressões como iguais.
+  fonte: "Kernighan & Ritchie, The C Programming Language, 2ª ed., seção 2.12 (Precedence and Order of Evaluation)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T05-009
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    O campo `MODO` ocupa os bits 4 a 6 de um registrador de 8 bits. Qual valor do campo este programa imprime?
+    ```c
+    #include <stdio.h>
+    #include <stdint.h>
+
+    int main(void)
+    {
+        uint8_t reg = 0xB5;
+        unsigned modo = (reg >> 4) & 0x7u;
+        printf("%u\n", modo);
+        return 0;
+    }
+    ```
+  resposta: {valor: 3, unidade: "valor", tolerancia: 0}
+  explicacao: |
+    0xB5 = 1011 0101. Deslocando 4 à direita, os bits 4 a 7 descem para 0 a 3: 0000 1011. A máscara 0x7 (111) fica só com os 3 bits do campo: 011 = 3. Sem a máscara, o bit 7 entraria no resultado (1011 = 11).
+  fonte: "Elecia White, Making Embedded Systems (1ª ed.), cap. 4 (Outputs, Inputs, and Timers); Kernighan & Ritchie, The C Programming Language, 2ª ed., seção 2.9 (Bitwise Operators: getbits)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T05-010
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    O programa escreve o valor 5 no campo dos bits 4 a 6, sem alterar os outros bits. Qual número (em decimal) ele imprime?
+    ```c
+    #include <stdio.h>
+    #include <stdint.h>
+
+    int main(void)
+    {
+        uint8_t reg = 0xB5;
+        reg = (uint8_t)((reg & ~(0x7u << 4)) | (5u << 4));
+        printf("%u\n", (unsigned)reg);
+        return 0;
+    }
+    ```
+  resposta: {valor: 213, unidade: "valor", tolerancia: 0}
+  explicacao: |
+    A máscara do campo é 0x7 << 4 = 0111 0000 (0x70). `reg & ~0x70` zera os bits 4 a 6: 1011 0101 → 1000 0101 (0x85). Depois o OU com 5 << 4 = 0101 0000 (0x50) escreve o campo: 1101 0101 = 0xD5 = 213. O bit 7 e o nibble baixo não mudaram — é o padrão read-modify-write.
+  fonte: "Elecia White, Making Embedded Systems (1ª ed.), cap. 4 (Outputs, Inputs, and Timers)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T05-011
+  objetivo: O3
+  tipo: unica
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    No STM32, o registrador `GPIOA_MODER` tem 2 bits por pino (pino *p* nos bits 2p e 2p+1): 00 = entrada, 01 = saída, 10 = função alternativa, 11 = analógico. Você não sabe o modo atual do pino 5. Qual linha coloca o pino 5 em modo **saída** sem alterar os outros pinos?
+  alternativas:
+    - "`GPIOA_MODER |= (1u << 5);`"
+    - "`GPIOA_MODER |= (1u << 10);`"
+    - "`GPIOA_MODER = (1u << 10);`"
+    - "`GPIOA_MODER = (GPIOA_MODER & ~(3u << 10)) | (1u << 10);`"
+  resposta: 3
+  explicacao: |
+    O campo do pino 5 está nos bits 10 e 11. É preciso **zerar** os dois bits (`& ~(3u << 10)`) e só então escrever 01 (`| (1u << 10)`). Só o OU no bit 10 dá 01 se o campo valia 00, mas dá 11 (analógico) se ele valia 10 ou 11. A atribuição direta zera os campos de todos os outros pinos. `1u << 5` mexe no bit 5, que pertence ao pino 2.
+  fonte: "ST, RM0090 Reference Manual (STM32F4), cap. General-purpose I/Os (GPIO), registrador GPIOx_MODER; Elecia White, Making Embedded Systems (1ª ed.), cap. 4 (Outputs, Inputs, and Timers)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T05-012
+  objetivo: O4
+  tipo: unica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    O que este programa imprime num PC x86-64?
+    ```c
+    #include <stdio.h>
+    #include <stdint.h>
+
+    int main(void)
+    {
+        uint8_t x = 0x0F;
+        if (~x == 0xF0)
+            printf("igual\n");
+        else
+            printf("diferente\n");
+        return 0;
+    }
+    ```
+  alternativas:
+    - "`igual`"
+    - "`diferente`"
+    - "Nada: comparar um `uint8_t` com `int` não compila"
+    - "Depende do valor indefinido de `~x`"
+  resposta: 1
+  explicacao: |
+    Antes do `~`, o `uint8_t` é promovido a `int` (32 bits): 0x0000000F. O `~` inverte os 32 bits: 0xFFFFFFF0, que é o `int` −16 — diferente de 0xF0 (240). Não há nada indefinido; é a promoção de inteiros. Para comparar em 8 bits, converta: `(uint8_t)~x == 0xF0` é verdadeiro. Com `-Wextra`, o gcc avisa: `comparison of promoted bitwise complement of an unsigned value with constant`.
+  fonte: "cppreference.com, Implicit conversions (Integer promotions) e Arithmetic operators (Bitwise logic)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T05-013
+  objetivo: O4
+  tipo: unica
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    O mesmo código precisa compilar corretamente num AVR (`int` de 16 bits) e num STM32 (`int` de 32 bits). Qual expressão produz, nas duas plataformas, uma máscara `uint32_t` com só o bit 20 ligado, sem comportamento indefinido?
+  alternativas:
+    - "`1 << 20`"
+    - "`1u << 20`"
+    - "`(uint32_t)(1 << 20)`"
+    - "`1UL << 20`"
+  resposta: 3
+  explicacao: |
+    O tipo do deslocamento é o do operando da esquerda (já promovido). No AVR, `1` e `1u` têm 16 bits: deslocar 20 posições é ≥ à largura do tipo, comportamento indefinido. Converter depois (`(uint32_t)(1 << 20)`) não ajuda: o deslocamento já foi feito em 16 bits. `1UL` é `unsigned long`, que tem pelo menos 32 bits em qualquer plataforma. `(uint32_t)1 << 20` também funcionaria.
+  fonte: "cppreference.com, Arithmetic operators (Shift operators: comportamento indefinido quando o deslocamento é maior ou igual à largura); Jens Gustedt, Modern C, cap. 5 (Basic values and data)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T05-014
+  objetivo: O4
+  tipo: multipla
+  dificuldade: 3
+  bloom: avaliar
+  enunciado: |
+    Por que guias de firmware recomendam **não** mapear registradores de periféricos com bitfields (`struct { unsigned en : 1; unsigned modo : 3; }`) e usar máscaras e deslocamentos? Marque todas as razões corretas.
+  alternativas:
+    - "A ordem dos bits e a disposição dos campos na unidade de armazenamento são definidas pela implementação e podem mudar entre compiladores"
+    - "O compilador pode acessar o registrador com uma largura (8, 16 ou 32 bits) diferente da exigida pelo periférico"
+    - "Bitfields não podem ser declarados `volatile`"
+    - "Bitfields sempre ocupam mais memória do que as mesmas informações guardadas com máscaras"
+  resposta: [0, 1]
+  explicacao: |
+    A norma deixa por conta da implementação a ordem dos campos (do bit menos ou do mais significativo), se um campo atravessa unidades e qual unidade é usada; o código pode funcionar num compilador e falhar em outro. Além disso, a largura do acesso não é garantida, e muitos periféricos só aceitam acessos de 32 bits. Bitfields podem ser `volatile` e costumam economizar memória — por isso são aceitáveis para dados internos, mas não para registradores e protocolos.
+  fonte: "Kernighan & Ritchie, The C Programming Language, 2ª ed., seção 6.9 (Bit-fields); cppreference.com, Bit-field"
+  origem: ia
+  revisao: rascunho

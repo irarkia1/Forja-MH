@@ -1,0 +1,372 @@
+- id: Q-M0.6.T01-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Qual comando compila `sensor.c` gerando um executável chamado `sensor`, com os avisos de `-Wall` e `-Wextra` ligados?
+  alternativas:
+    - "`gcc -Wall -Wextra sensor.c -o sensor`"
+    - "`gcc -Wall -Wextra sensor.c`"
+    - "`gcc -Wall -Wextra -c sensor.c -o sensor`"
+    - "`gcc -Wall -Wextra sensor -o sensor.c`"
+  resposta: 0
+  explicacao: |
+    `-o` dá o nome do arquivo de saída. Sem `-o`, o gcc gera `a.out`. Com `-c`, ele só compila até o arquivo objeto (não liga, então não sai um executável — no T06 você verá isso). Inverter os nomes faz o gcc procurar um arquivo de entrada `sensor` que não existe e, pior, usar `sensor.c` como nome de saída.
+  fonte: "Manual do GCC (gcc.gnu.org), Overall Options (-o, -c); Jens Gustedt, Modern C, cap. 1 (Getting started)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T01-002
+  objetivo: O1
+  tipo: unica
+  dificuldade: 2
+  bloom: analisar
+  enunciado: |
+    Compilado com `gcc -std=c11 -Wall`, este programa gera o aviso `suggest parentheses around assignment used as truth value`, mas o executável é criado. O que ele imprime?
+    ```c
+    #include <stdio.h>
+
+    int main(void)
+    {
+        int x = 0;
+        if (x = 5)
+            printf("cinco\n");
+        else
+            printf("outro\n");
+        printf("%d\n", x);
+        return 0;
+    }
+    ```
+  alternativas:
+    - "`outro 0`"
+    - "`cinco 5`"
+    - "`cinco 0`"
+    - "`outro 5`"
+  resposta: 1
+  explicacao: |
+    `x = 5` é uma **atribuição**, não uma comparação: guarda 5 em `x` e a expressão vale 5, que é diferente de zero e portanto verdadeira. Imprime "cinco" e depois o novo valor de `x`, 5. O aviso do `-Wall` existe justamente para pegar esse erro de digitação de `==`.
+  fonte: "Kernighan & Ritchie, The C Programming Language, 2ª ed., seções 2.10 (Assignment Operators and Expressions) e 3.2 (If-Else); Manual do GCC, Options to Request or Suppress Warnings (-Wparentheses)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T01-003
+  objetivo: O1
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: quando o gcc mostra apenas avisos (warnings) e nenhum erro, e nenhuma opção como `-Werror` está ligada, o executável é gerado normalmente.
+  resposta: true
+  explicacao: |
+    Avisos não interrompem a compilação; só erros interrompem. Por isso é fácil ignorar um aviso que aponta um defeito real (atribuição no lugar de comparação, comparação entre com e sem sinal, `switch` sem `break`). Com `-Werror`, todo aviso vira erro e o executável não sai — uma boa prática em projetos sérios.
+  fonte: "Manual do GCC (gcc.gnu.org), Options to Request or Suppress Warnings (-Werror)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T01-004
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Qual número este programa imprime?
+    ```c
+    #include <stdio.h>
+
+    int main(void)
+    {
+        printf("%d\n", 17 / 5 + 17 % 5);
+        return 0;
+    }
+    ```
+  resposta: {valor: 5, unidade: "valor", tolerancia: 0}
+  explicacao: |
+    Entre inteiros, `/` é a divisão inteira: 17 / 5 = 3 (a parte fracionária é descartada). `%` é o resto: 17 % 5 = 2. 3 + 2 = 5. Quem pensa em 3,4 + 2 esqueceu que os dois operandos são `int`.
+  fonte: "Kernighan & Ritchie, The C Programming Language, 2ª ed., seção 2.5 (Arithmetic Operators)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T01-005
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Qual número este programa imprime?
+    ```c
+    #include <stdio.h>
+    #include <stdint.h>
+
+    int main(void)
+    {
+        uint8_t a = 200;
+        uint8_t b = 100;
+        uint8_t s = a + b;
+        printf("%d\n", s);
+        return 0;
+    }
+    ```
+  resposta: {valor: 44, unidade: "valor", tolerancia: 0}
+  explicacao: |
+    A conta `a + b` é feita em `int` (promoção de inteiros) e vale 300. Ao guardar em `uint8_t`, que só vai de 0 a 255, o valor é reduzido módulo 256: 300 − 256 = 44. Essa conversão para tipo sem sinal é definida pela norma. Quem responde 300 esqueceu o tipo do destino; quem responde 255 imaginou que o valor "satura".
+  fonte: "cppreference.com, Implicit conversions (Integer promotions; Integer conversions); Jens Gustedt, Modern C, cap. 5 (Basic values and data)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T01-006
+  objetivo: O2
+  tipo: unica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    O que este programa imprime?
+    ```c
+    #include <stdio.h>
+
+    int main(void)
+    {
+        int a = -1;
+        unsigned int b = 1;
+        if (a < b)
+            printf("menor\n");
+        else
+            printf("maior ou igual\n");
+        return 0;
+    }
+    ```
+  alternativas:
+    - "`menor`"
+    - "`maior ou igual`"
+    - "Nada: o programa não compila"
+    - "Depende de o `int` ter 16 ou 32 bits"
+  resposta: 1
+  explicacao: |
+    Pelas conversões aritméticas usuais, quando se compara `int` com `unsigned int`, o `int` é convertido para `unsigned`. −1 vira o maior valor sem sinal (4 294 967 295 com 32 bits, 65 535 com 16) — maior que 1 em qualquer largura. O programa compila; com `-Wextra` o gcc avisa `comparison of integer expressions of different signedness`.
+  fonte: "Kernighan & Ritchie, The C Programming Language, 2ª ed., seção 2.7 (Type Conversions); cppreference.com, Implicit conversions (Usual arithmetic conversions)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T01-007
+  objetivo: O2
+  tipo: unica
+  dificuldade: 2
+  bloom: avaliar
+  enunciado: |
+    Você escreve uma biblioteca que vai rodar num AVR (ATmega328P), num STM32 e num ESP32 e precisa guardar a leitura de um registrador de 16 bits sem sinal, com exatamente 16 bits em todas as plataformas. Qual tipo usar?
+  alternativas:
+    - "`int`"
+    - "`unsigned short`"
+    - "`uint16_t`"
+    - "`long`"
+  resposta: 2
+  explicacao: |
+    `uint16_t` (de `<stdint.h>`) tem exatamente 16 bits, sem sinal, onde quer que exista. `int` tem 16 bits no AVR e 32 no STM32 e no ESP32, e tem sinal. `unsigned short` costuma ter 16 bits, mas a norma só garante "pelo menos 16". `long` tem pelo menos 32 bits e sinal.
+  fonte: "cppreference.com, Fixed width integer types; Elecia White, Making Embedded Systems (1ª ed.), cap. 4 (Outputs, Inputs, and Timers)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T01-008
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Qual número este programa imprime?
+    ```c
+    #include <stdio.h>
+
+    int main(void)
+    {
+        int n = 0;
+        for (int i = 0; i < 10; i += 3)
+            n++;
+        printf("%d\n", n);
+        return 0;
+    }
+    ```
+  resposta: {valor: 4, unidade: "voltas", tolerancia: 0}
+  explicacao: |
+    `i` assume 0, 3, 6 e 9; no passo seguinte vale 12 e a condição `i < 10` falha. São 4 voltas. Quem responde 3 esqueceu o 0; quem responde 10/3 ≈ 3,3 tentou dividir em vez de contar.
+  fonte: "Kernighan & Ritchie, The C Programming Language, 2ª ed., seção 3.5 (Loops - While and For)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T01-009
+  objetivo: O3
+  tipo: unica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    O que este programa imprime?
+    ```c
+    #include <stdio.h>
+
+    int main(void)
+    {
+        int estado = 1;
+        switch (estado) {
+        case 0:
+            printf("A");
+        case 1:
+            printf("B");
+        case 2:
+            printf("C");
+            break;
+        default:
+            printf("D");
+        }
+        printf("\n");
+        return 0;
+    }
+    ```
+  alternativas:
+    - "`B`"
+    - "`BC`"
+    - "`BCD`"
+    - "`ABC`"
+  resposta: 1
+  explicacao: |
+    O `switch` salta para `case 1` e imprime B. Como não há `break`, a execução **continua** no `case 2` (fall-through) e imprime C; o `break` ali sai do `switch` antes do `default`. O `case 0` não é executado porque o salto foi direto para o `case 1`. Com `-Wextra`, o gcc avisa `this statement may fall through`.
+  fonte: "Kernighan & Ritchie, The C Programming Language, 2ª ed., seção 3.4 (Switch)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T01-010
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Qual número este programa imprime?
+    ```c
+    #include <stdio.h>
+
+    int main(void)
+    {
+        int soma = 0;
+        for (int i = 1; i <= 6; i++) {
+            if (i == 2)
+                continue;
+            if (i == 5)
+                break;
+            soma += i;
+        }
+        printf("%d\n", soma);
+        return 0;
+    }
+    ```
+  resposta: {valor: 8, unidade: "valor", tolerancia: 0}
+  explicacao: |
+    i = 1 soma 1; i = 2 é pulado pelo `continue`; i = 3 e i = 4 somam 3 e 4; em i = 5 o `break` encerra o laço, e 5 e 6 nunca entram. 1 + 3 + 4 = 8. Quem responde 19 (1+3+4+5+6) tratou `break` como `continue`.
+  fonte: "Kernighan & Ritchie, The C Programming Language, 2ª ed., seção 3.7 (Break and Continue)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T01-011
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Qual número este programa imprime?
+    ```c
+    #include <stdio.h>
+
+    void dobra(int x)
+    {
+        x = x * 2;
+    }
+
+    int main(void)
+    {
+        int v = 21;
+        dobra(v);
+        printf("%d\n", v);
+        return 0;
+    }
+    ```
+  resposta: {valor: 21, unidade: "valor", tolerancia: 0}
+  explicacao: |
+    Em C, argumentos são passados **por valor**: `dobra` recebe uma cópia de `v` e dobra a cópia, que deixa de existir quando a função retorna. O `v` do `main` continua 21. Para a função alterar a variável de quem chamou, ela precisa receber o endereço (`int *`) — assunto do T02.
+  fonte: "Kernighan & Ritchie, The C Programming Language, 2ª ed., seção 1.8 (Arguments - Call by Value)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T01-012
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um firmware guarda o tempo em milissegundos num contador `uint32_t` que volta a zero depois do valor máximo. A última leitura foi feita pouco antes da volta e a atual, pouco depois. Qual número este programa imprime?
+    ```c
+    #include <stdio.h>
+    #include <stdint.h>
+
+    int main(void)
+    {
+        uint32_t antes = 4294967290u;
+        uint32_t agora = 5u;
+        uint32_t passou = agora - antes;
+        printf("%u\n", (unsigned)passou);
+        return 0;
+    }
+    ```
+  resposta: {valor: 11, unidade: "ms", tolerancia: 0}
+  explicacao: |
+    A subtração sem sinal é feita módulo 2³² e é bem definida: 5 − 4 294 967 290 = −4 294 967 285 ≡ 11 (mod 4 294 967 296). De 4 294 967 290 até o máximo (4 294 967 295) são 5 ms, mais 1 para voltar a 0 e mais 5 até chegar a 5: 11 ms. É por isso que `agora - antes` com `uint32_t` mede intervalos corretamente mesmo atravessando a volta do contador.
+  fonte: "cppreference.com, Arithmetic operators (Overflows: unsigned integer arithmetic is modulo 2^N); Jens Gustedt, Modern C, cap. 5 (Basic values and data)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T01-013
+  objetivo: O4
+  tipo: unica
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Num PC x86-64 com `int` de 32 bits, qual destas linhas tem **comportamento indefinido** (undefined behavior)? (Suponha `#include <limits.h>` e `#include <stdint.h>`.)
+  alternativas:
+    - "`unsigned int u = UINT_MAX; u = u + 1;`"
+    - "`int x = INT_MAX; x = x + 1;`"
+    - "`uint8_t b = 255; b = b + 1;`"
+    - "`int q = -7 / 2;`"
+  resposta: 1
+  explicacao: |
+    Estouro de inteiro **com sinal** é UB: `INT_MAX + 1` não tem resultado definido e o otimizador pode assumir que nunca acontece. Estouro **sem sinal** é definido (módulo 2ⁿ): `u` vira 0. No `uint8_t`, a conta `b + 1` é feita em `int` (vale 256, sem estouro) e a conversão de volta para `uint8_t` é definida: 0. `-7 / 2` é definido desde o C99: trunca em direção a zero, −3.
+  fonte: "cppreference.com, Undefined behavior e Arithmetic operators (Overflows); Jens Gustedt, Modern C, cap. 5 (Basic values and data)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T01-014
+  objetivo: O2
+  tipo: unica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    O que este programa imprime num PC x86-64 Linux?
+    ```c
+    #include <stdio.h>
+    #include <stdint.h>
+
+    int main(void)
+    {
+        int8_t c = -1;
+        uint8_t u = (uint8_t)c;
+        uint32_t w = (uint32_t)c;
+        printf("%u %u\n", (unsigned)u, (unsigned)w);
+        return 0;
+    }
+    ```
+  alternativas:
+    - "`255 255`"
+    - "`-1 -1`"
+    - "`255 4294967295`"
+    - "`1 1`"
+  resposta: 2
+  explicacao: |
+    Converter um valor negativo para um tipo sem sinal é definido: soma-se 2ⁿ até caber. Para 8 bits, −1 + 256 = 255; para 32 bits, −1 + 4 294 967 296 = 4 294 967 295. O mesmo −1 vira números diferentes conforme a largura do destino. Quem responde 255 nos dois pensou em "copiar o byte"; mas a conversão é feita pelo **valor** (−1), não pelos bits de `c`.
+  fonte: "cppreference.com, Implicit conversions (Integer conversions); Kernighan & Ritchie, The C Programming Language, 2ª ed., seção 2.7 (Type Conversions)"
+  origem: ia
+  revisao: rascunho

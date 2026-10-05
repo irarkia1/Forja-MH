@@ -1,0 +1,293 @@
+- id: Q-M0.6.T03-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Num arquivo C, fora de qualquer função, está declarado `int contador_global = 5;`. Em que seção da memória essa variável fica?
+  alternativas:
+    - "`.bss`"
+    - "`.data`"
+    - "Na pilha"
+    - "Na heap"
+  resposta: 1
+  explicacao: |
+    Variáveis globais (e `static`) com valor inicial diferente de zero ficam em `.data`: o valor 5 precisa ser gravado no executável (na flash, num microcontrolador) e copiado para a RAM na partida. `.bss` guarda as globais sem inicializador ou zeradas. A pilha é para variáveis locais; a heap, para o que vem de `malloc`.
+  fonte: "Elecia White, Making Embedded Systems (1ª ed.), cap. 8 (Doing More with Less); Jens Gustedt, Modern C, cap. 13 (Storage)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T03-002
+  objetivo: O1
+  tipo: multipla
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Todas estas declarações estão fora de qualquer função. Quais delas vão para a seção `.bss`? Marque todas as corretas.
+  alternativas:
+    - "`static int amostras;`"
+    - "`int tabela[100];`"
+    - "`int limite = 3;`"
+    - "`const char msg[] = \"oi\";`"
+  resposta: [0, 1]
+  explicacao: |
+    `.bss` recebe os objetos de duração estática **sem** inicializador (ou inicializados com zero): `amostras` e `tabela` começam zerados e ocupam só RAM, sem gastar espaço no executável. `limite = 3` tem valor inicial ≠ 0 e vai para `.data`. `msg` é `const` e vai para `.rodata` (só leitura, na flash de um microcontrolador).
+  fonte: "Elecia White, Making Embedded Systems (1ª ed.), cap. 8 (Doing More with Less); manual do GNU binutils, size"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T03-003
+  objetivo: O1
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    O comando `size sensor.o` mostra as colunas `text`, `data` e `bss`. Você acrescenta ao arquivo, fora das funções, a linha `static uint8_t buffer[1024];` e recompila. O que acontece na saída do `size`?
+  alternativas:
+    - "`text` aumenta 1024, porque o array vira código"
+    - "`data` aumenta 1024, porque o array é uma variável global"
+    - "`bss` aumenta 1024 e `data` não muda"
+    - "Nada muda, porque o array só ocupa memória quando a função que o usa é chamada"
+  resposta: 2
+  explicacao: |
+    Sem inicializador, o array é zerado na partida e vai para `.bss`: ocupa 1024 bytes de RAM, mas o arquivo não precisa guardar valores iniciais. Se fosse `static uint8_t buffer[1024] = {1};`, iria para `.data` e os 1024 bytes de valor inicial passariam a ocupar espaço no executável (e na flash). Objetos `static` existem durante todo o programa, chamada ou não.
+  fonte: "manual do GNU binutils, size; Elecia White, Making Embedded Systems (1ª ed.), cap. 8 (Doing More with Less)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T03-004
+  objetivo: O1
+  tipo: unica
+  dificuldade: 3
+  bloom: avaliar
+  enunciado: |
+    Num microcontrolador com 256 KB de flash e 32 KB de RAM, você precisa de uma tabela global de 512 valores de seno, que nunca muda durante a execução. Qual declaração economiza RAM e por quê?
+  alternativas:
+    - "`uint16_t seno[512] = { ... };`, porque variáveis globais ficam na flash"
+    - "`const uint16_t seno[512] = { ... };`, porque vai para `.rodata`, que fica na flash e não é copiada para a RAM"
+    - "Declarar a tabela como local na função que a usa, porque a pilha não conta como RAM"
+    - "`static uint16_t seno[512] = { ... };`, porque `static` coloca o dado na flash"
+  resposta: 1
+  explicacao: |
+    Sem `const`, a tabela vai para `.data`: os valores iniciais ficam na flash **e** são copiados para a RAM na partida (1 KB de RAM gasto à toa). Com `const`, o compilador coloca a tabela em `.rodata`, lida direto da flash. `static` só muda a visibilidade do nome (continua em `.data`). Uma local inicializada é recriada na pilha (que é RAM) a cada chamada.
+  fonte: "Elecia White, Making Embedded Systems (1ª ed.), cap. 8 (Doing More with Less); cppreference.com, const type qualifier"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T03-005
+  objetivo: O2
+  tipo: vf
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Verdadeiro ou falso: em C, uma variável global declarada sem inicializador (por exemplo, `int erros;` fora das funções) começa com o valor zero.
+  resposta: true
+  explicacao: |
+    Objetos de duração estática (globais e locais `static`) sem inicializador são inicializados com zero antes do `main` — no microcontrolador, o código de partida zera a `.bss`. Isso **não** vale para variáveis locais comuns (automáticas), cujo valor é indeterminado até a primeira atribuição.
+  fonte: "Kernighan & Ritchie, The C Programming Language, 2ª ed., seção 4.9 (Initialization); cppreference.com, Initialization (implicit initialization)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T03-006
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Qual número este programa imprime?
+    ```c
+    #include <stdio.h>
+
+    int conta(void)
+    {
+        static int n = 0;
+        n++;
+        return n;
+    }
+
+    int main(void)
+    {
+        conta();
+        conta();
+        printf("%d\n", conta());
+        return 0;
+    }
+    ```
+  resposta: {valor: 3, unidade: "valor", tolerancia: 0}
+  explicacao: |
+    Uma local `static` é inicializada **uma única vez** (antes do `main`) e mantém o valor entre as chamadas. As três chamadas levam `n` a 1, 2 e 3; a terceira devolve 3. Sem `static`, `n` seria recriada e zerada a cada chamada e o programa imprimiria 1.
+  fonte: "Kernighan & Ritchie, The C Programming Language, 2ª ed., seção 4.6 (Static Variables)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T03-007
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Qual número este programa imprime?
+    ```c
+    #include <stdio.h>
+
+    int f(void)
+    {
+        static int s = 10;
+        int a = 10;
+        s += 5;
+        a += 5;
+        return s + a;
+    }
+
+    int main(void)
+    {
+        f();
+        f();
+        printf("%d\n", f());
+        return 0;
+    }
+    ```
+  resposta: {valor: 40, unidade: "valor", tolerancia: 0}
+  explicacao: |
+    `s` é estática: começa em 10 uma única vez e acumula 15, 20, 25 nas três chamadas. `a` é automática: é recriada com 10 a cada chamada e sempre chega a 15. Na terceira chamada: 25 + 15 = 40. Quem responde 30 tratou `s` como automática; quem responde 50, `a` como estática.
+  fonte: "Kernighan & Ritchie, The C Programming Language, 2ª ed., seções 4.6 (Static Variables) e 4.9 (Initialization)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T03-008
+  objetivo: O2
+  tipo: unica
+  dificuldade: 3
+  bloom: avaliar
+  enunciado: |
+    O que se pode afirmar sobre o valor impresso por este programa?
+    ```c
+    #include <stdio.h>
+
+    int main(void)
+    {
+        int leitura;
+        printf("%d\n", leitura);
+        return 0;
+    }
+    ```
+  alternativas:
+    - "Sempre imprime 0, porque o C zera as variáveis ao declará-las"
+    - "Não há valor garantido: `leitura` é automática e não foi inicializada; lê-la é um defeito (comportamento indefinido), e o resultado pode mudar com o compilador e a otimização"
+    - "Sempre imprime o mesmo número aleatório, que pode ser usado como semente de números aleatórios"
+    - "Não compila, porque o C exige inicializar toda variável"
+  resposta: 1
+  explicacao: |
+    Variáveis locais comuns não são inicializadas: o valor é indeterminado e usá-lo é comportamento indefinido. O programa compila (com `-Wall` o gcc avisa `'leitura' is used uninitialized`) e pode imprimir 0, lixo ou valores diferentes com `-O0` e `-O2`. Só objetos de duração estática começam zerados. Inicialize toda variável na declaração — é também uma regra do MISRA C (T11).
+  fonte: "cppreference.com, Initialization e Undefined behavior; Kernighan & Ritchie, The C Programming Language, 2ª ed., seção 4.9 (Initialization)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T03-009
+  objetivo: O3
+  tipo: unica
+  dificuldade: 2
+  bloom: avaliar
+  enunciado: |
+    Qual trecho usa `malloc` e `free` corretamente?
+  alternativas:
+    - "`uint8_t *b = malloc(n); b[0] = 1; free(b); free(b);`"
+    - "`uint8_t *b = malloc(n); if (b == NULL) return -1; b[0] = 1; free(b); b = NULL;`"
+    - "`uint8_t *b = malloc(n); free(b); b[0] = 1;`"
+    - "`uint8_t *b = malloc(n); b[n] = 1; free(b);`"
+  resposta: 1
+  explicacao: |
+    O certo testa o retorno (o `malloc` devolve `NULL` quando falta memória), usa só os índices 0 a n−1, libera uma única vez e zera o ponteiro para evitar uso posterior. Os outros trechos têm, respectivamente, *double free*, *use after free* e escrita fora do bloco (`b[n]` é um além do fim) — todos comportamento indefinido, que o AddressSanitizer acusa.
+  fonte: "cppreference.com, malloc e free; Jens Gustedt, Modern C, cap. 13 (Storage)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T03-010
+  objetivo: O3
+  tipo: unica
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Por que normas de codificação para firmware (como o MISRA C) e muitos times de embarcados evitam `malloc`/`free` em microcontroladores?
+  alternativas:
+    - "Porque `malloc` não existe nas bibliotecas C para microcontroladores"
+    - "Porque a memória da heap fica na flash e é lenta para escrever"
+    - "Porque a fragmentação e o tempo variável de alocação tornam a falha imprevisível, e ela pode aparecer só depois de horas em campo, sem como se recuperar"
+    - "Porque `free` apaga a memória da flash e desgasta o chip"
+  resposta: 2
+  explicacao: |
+    Bibliotecas como a newlib têm `malloc`, e a heap fica na RAM. O problema é a previsibilidade: com alocações e liberações de tamanhos variados, a memória livre se fragmenta e um pedido pode falhar mesmo com espaço total suficiente; o tempo de `malloc` varia; e, num sistema sem sistema operacional, uma falha de alocação em campo é difícil de tratar. A alternativa é alocação estática (buffers de tamanho fixo, pools).
+  fonte: "Elecia White, Making Embedded Systems (1ª ed.), cap. 8 (Doing More with Less); MISRA C:2012, Rule 21.3"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T03-011
+  objetivo: O3
+  tipo: multipla
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Em cada trecho, `p` é um `char *`. Quais trechos contêm um **erro de gerenciamento de memória**? Marque todos os corretos.
+  alternativas:
+    - "`p = malloc(10); free(p); free(p);`"
+    - "`p = calloc(10, 1); free(p); p = NULL; free(p);`"
+    - "`p = malloc(10); p = malloc(20); free(p);`"
+    - "`p = malloc(10); p[10] = 0; free(p);`"
+  resposta: [0, 2, 3]
+  explicacao: |
+    Liberar duas vezes o mesmo bloco é *double free* (UB). Reatribuir `p` sem liberar o primeiro bloco perde o único ponteiro para ele: vazamento de 10 bytes. `p[10]` escreve um byte além dos 10 alocados (índices válidos: 0 a 9). Já `free(NULL)` é explicitamente permitido pela norma e não faz nada — por isso zerar o ponteiro depois do `free` torna o segundo `free` inofensivo.
+  fonte: "cppreference.com, free (\"If ptr is a null pointer, the function does nothing\") e malloc; documentação do AddressSanitizer (github.com/google/sanitizers)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T03-012
+  objetivo: O4
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Num firmware, em qual destas variáveis o qualificador `volatile` é **necessário**?
+  alternativas:
+    - "No índice `i` de um laço `for` que percorre um array local"
+    - "Numa flag global `dado_pronto` que a interrupção da UART põe em 1 e o laço principal testa"
+    - "Numa tabela `const` de calibração gravada na flash"
+    - "No parâmetro `n` de uma função que calcula uma média"
+  resposta: 1
+  explicacao: |
+    A flag é alterada por algo que o compilador não vê no fluxo do laço principal (a interrupção). Sem `volatile`, com otimização, o compilador pode ler a flag uma única vez e transformar `while (!dado_pronto) {}` num laço infinito. Os demais objetos só mudam pelo próprio código que o compilador está analisando (ou nunca mudam), e `volatile` só atrapalharia a otimização.
+  fonte: "cppreference.com, volatile type qualifier; Elecia White, Making Embedded Systems (1ª ed.), cap. 5 (Managing the Flow of Activity), parte sobre interrupções"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T03-013
+  objetivo: O4
+  tipo: vf
+  dificuldade: 3
+  bloom: avaliar
+  enunciado: |
+    Verdadeiro ou falso: declarar como `volatile uint32_t contador;` uma variável incrementada tanto pelo laço principal quanto por uma interrupção garante que `contador++` no laço principal seja uma operação atômica, sem risco de perder incrementos.
+  resposta: false
+  explicacao: |
+    `volatile` só obriga o compilador a fazer cada leitura e escrita de verdade. `contador++` continua sendo ler, somar e escrever: se a interrupção ocorrer entre a leitura e a escrita, o incremento dela é sobrescrito e se perde. Para isso é preciso desligar a interrupção durante a operação (seção crítica), usar operações atômicas (`<stdatomic.h>`, instruções do processador) ou reorganizar o código para que só um lado escreva.
+  fonte: "cppreference.com, volatile type qualifier (volatile não é sincronização); Elecia White, Making Embedded Systems (1ª ed.), cap. 5 (Managing the Flow of Activity)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T03-014
+  objetivo: O4
+  tipo: unica
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    O manual de referência de um microcontrolador diz que existe um registrador de **status**, só de leitura, de 32 bits, no endereço `0x40000000`, cujos bits mudam sozinhos conforme o estado do periférico. Qual definição descreve esse registrador corretamente em C?
+  alternativas:
+    - "`#define STATUS (*(const uint32_t *)0x40000000u)`"
+    - "`#define STATUS (*(volatile const uint32_t *)0x40000000u)`"
+    - "`volatile uint32_t STATUS = 0x40000000u;`"
+    - "`const uint32_t *STATUS = 0x40000000;`"
+  resposta: 1
+  explicacao: |
+    Converte-se o endereço fixo num ponteiro e desreferencia-se: `STATUS` passa a ser o próprio registrador. `volatile` obriga a ler o hardware a cada uso (os bits mudam sozinhos); `const` faz o compilador recusar escritas acidentais. Sem `volatile`, um laço de espera pode ler o valor uma vez só. Declarar uma variável com o valor 0x40000000 cria uma variável na RAM, não acessa o registrador; e atribuir um inteiro a um ponteiro sem conversão explícita é erro de tipo.
+  fonte: "cppreference.com, volatile type qualifier e const type qualifier; Elecia White, Making Embedded Systems (1ª ed.), cap. 4 (Outputs, Inputs, and Timers)"
+  origem: ia
+  revisao: rascunho

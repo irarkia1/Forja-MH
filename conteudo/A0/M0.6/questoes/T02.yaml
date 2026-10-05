@@ -1,0 +1,374 @@
+- id: Q-M0.6.T02-001
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Qual número este programa imprime?
+    ```c
+    #include <stdio.h>
+
+    int main(void)
+    {
+        int x = 10;
+        int *p = &x;
+        *p = 20;
+        printf("%d\n", x);
+        return 0;
+    }
+    ```
+  resposta: {valor: 20, unidade: "valor", tolerancia: 0}
+  explicacao: |
+    `p` guarda o endereço de `x`; `*p = 20` escreve **no objeto apontado**, que é o próprio `x`. Não existe uma cópia: `x` e `*p` são o mesmo lugar na memória.
+  fonte: "Kernighan & Ritchie, The C Programming Language, 2ª ed., seção 5.1 (Pointers and Addresses)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T02-002
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Qual número este programa imprime?
+    ```c
+    #include <stdio.h>
+
+    void troca(int *a, int *b)
+    {
+        int t = *a;
+        *a = *b;
+        *b = t;
+    }
+
+    int main(void)
+    {
+        int a = 3, b = 7;
+        troca(&a, &b);
+        printf("%d\n", a * 10 + b);
+        return 0;
+    }
+    ```
+  resposta: {valor: 73, unidade: "valor", tolerancia: 0}
+  explicacao: |
+    `troca` recebe os **endereços** de `a` e `b` e troca os valores guardados neles: depois da chamada, a = 7 e b = 3, e o programa imprime 7 × 10 + 3 = 73. Se `troca` recebesse `int a, int b` (por valor), trocaria só as cópias e o resultado seria 37.
+  fonte: "Kernighan & Ritchie, The C Programming Language, 2ª ed., seção 5.2 (Pointers and Function Arguments)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T02-003
+  objetivo: O1
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Uma biblioteca tem a função `bool le_sensor(uint16_t *saida);`, que devolve `true` em caso de sucesso e escreve a leitura em `*saida`. Qual uso é correto?
+  alternativas:
+    - "`uint16_t valor; if (le_sensor(&valor)) { /* usa valor */ }`"
+    - "`uint16_t valor; if (le_sensor(valor)) { /* usa valor */ }`"
+    - "`uint16_t *valor; if (le_sensor(valor)) { /* usa *valor */ }`"
+    - "`uint16_t valor; if (le_sensor(*valor)) { /* usa valor */ }`"
+  resposta: 0
+  explicacao: |
+    A função precisa de um endereço onde escrever: `&valor` aponta para uma variável que existe. Passar `valor` entrega um número, não um endereço (o gcc avisa/recusa a conversão de inteiro para ponteiro); `*valor` não faz sentido para um inteiro e não compila. Declarar `uint16_t *valor;` sem inicializar compila, mas a função escreve num endereço aleatório — comportamento indefinido.
+  fonte: "Kernighan & Ritchie, The C Programming Language, 2ª ed., seção 5.2 (Pointers and Function Arguments); Jens Gustedt, Modern C, cap. 11 (Pointers)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T02-004
+  objetivo: O2
+  tipo: vf
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Verdadeiro ou falso: em C, para um array `v` e um inteiro `i`, a expressão `v[i]` é, por definição, equivalente a `*(v + i)`.
+  resposta: true
+  explicacao: |
+    A norma define o operador `[]` em termos de soma de ponteiro e desreferência: `v[i]` é `*(v + i)`. Como `v` decai para um ponteiro para `v[0]`, `v + i` aponta para o elemento `i`. É por isso que ponteiros também podem ser indexados (`p[2]`).
+  fonte: "Kernighan & Ritchie, The C Programming Language, 2ª ed., seção 5.3 (Pointers and Arrays)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T02-005
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Quantos bytes separam os dois endereços? Qual número este programa imprime?
+    ```c
+    #include <stdio.h>
+    #include <stdint.h>
+
+    int main(void)
+    {
+        uint32_t v[4] = {0};
+        uint32_t *p = &v[0];
+        uint32_t *q = p + 3;
+        printf("%d\n", (int)((char *)q - (char *)p));
+        return 0;
+    }
+    ```
+  resposta: {valor: 12, unidade: "bytes", tolerancia: 0}
+  explicacao: |
+    Somar 3 a um `uint32_t *` avança 3 **elementos**, ou seja, 3 × 4 = 12 bytes. A conversão para `char *` antes da subtração faz a diferença ser contada em bytes. Sem as conversões, `q - p` daria 3 (diferença em elementos). Quem responde 3 confundiu as duas contagens.
+  fonte: "Kernighan & Ritchie, The C Programming Language, 2ª ed., seção 5.4 (Address Arithmetic)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T02-006
+  objetivo: O2
+  tipo: unica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    O que este programa imprime num PC x86-64 Linux (gcc)?
+    ```c
+    #include <stdio.h>
+
+    void f(int v[10])
+    {
+        printf("%zu\n", sizeof(v));
+    }
+
+    int main(void)
+    {
+        int a[10];
+        printf("%zu ", sizeof(a));
+        f(a);
+        return 0;
+    }
+    ```
+  alternativas:
+    - "`40 40`"
+    - "`10 10`"
+    - "`40 8`"
+    - "`8 8`"
+  resposta: 2
+  explicacao: |
+    No `main`, `a` é um array de 10 `int` de 4 bytes: `sizeof(a)` = 40. Um parâmetro declarado como `int v[10]` é, na verdade, um `int *` (o array decai ao ser passado), e `sizeof` de um ponteiro no x86-64 é 8 — o `10` da declaração é ignorado. O gcc avisa: `'sizeof' on array function parameter 'v' will return size of 'int *'`. Por isso funções C recebem o tamanho como parâmetro separado.
+  fonte: "cppreference.com, Array declaration (Array to pointer conversion) e Function declaration (parameter adjustment); Jens Gustedt, Modern C, cap. 6 (Derived data types)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T02-007
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Qual número este programa imprime?
+    ```c
+    #include <stdio.h>
+
+    int main(void)
+    {
+        int v[] = {10, 20, 30, 40, 50};
+        int *p = v + 1;
+        p += 2;
+        printf("%d\n", *p + p[-1] + (int)(p - v));
+        return 0;
+    }
+    ```
+  resposta: {valor: 73, unidade: "valor", tolerancia: 0}
+  explicacao: |
+    `p` começa em `v + 1` e avança mais 2: aponta para `v[3]`. `*p` = 40; `p[-1]` = `*(p - 1)` = `v[2]` = 30; `p - v` = 3 (diferença em elementos). 40 + 30 + 3 = 73. Índice negativo num ponteiro é válido enquanto o resultado continuar dentro do array.
+  fonte: "Kernighan & Ritchie, The C Programming Language, 2ª ed., seções 5.3 (Pointers and Arrays) e 5.4 (Address Arithmetic)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T02-008
+  objetivo: O2
+  tipo: unica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    O que este programa imprime?
+    ```c
+    #include <stdio.h>
+
+    int main(void)
+    {
+        int v[] = {5, 10, 15};
+        int *p = v;
+        int a = *p++;
+        int b = (*p)++;
+        printf("%d %d %d %d\n", a, b, v[0], v[1]);
+        return 0;
+    }
+    ```
+  alternativas:
+    - "`5 10 5 11`"
+    - "`6 11 6 11`"
+    - "`5 10 5 10`"
+    - "`5 11 5 11`"
+  resposta: 0
+  explicacao: |
+    `*p++` é `*(p++)`: lê `v[0]` (5) e depois avança o **ponteiro**, que passa a apontar para `v[1]`; o array não muda. `(*p)++` incrementa o **valor** apontado (`v[1]` vai de 10 para 11), mas o pós-incremento devolve o valor antigo: `b` = 10. Resultado: a = 5, b = 10, v[0] = 5, v[1] = 11.
+  fonte: "Kernighan & Ritchie, The C Programming Language, 2ª ed., seções 5.1 (Pointers and Addresses) e 5.5 (Character Pointers and Functions)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T02-009
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Qual número este programa imprime?
+    ```c
+    #include <stdio.h>
+
+    int main(void)
+    {
+        char s[] = "LED";
+        printf("%zu\n", sizeof(s));
+        return 0;
+    }
+    ```
+  resposta: {valor: 4, unidade: "bytes", tolerancia: 0}
+  explicacao: |
+    O array é dimensionado pelo literal, que inclui o terminador nulo: 'L', 'E', 'D' e '\0' — 4 bytes. `strlen(s)` daria 3, porque não conta o '\0'.
+  fonte: "Kernighan & Ritchie, The C Programming Language, 2ª ed., seções 1.9 (Character Arrays) e 5.5 (Character Pointers and Functions)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T02-010
+  objetivo: O3
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    O que este programa imprime?
+    ```c
+    #include <stdio.h>
+    #include <string.h>
+
+    int main(void)
+    {
+        char buf[16] = "sensor";
+        printf("%zu %zu\n", strlen(buf), sizeof(buf));
+        return 0;
+    }
+    ```
+  alternativas:
+    - "`6 16`"
+    - "`7 16`"
+    - "`16 16`"
+    - "`6 7`"
+  resposta: 0
+  explicacao: |
+    `strlen` conta os caracteres até o '\0', sem incluí-lo: "sensor" tem 6. `sizeof` mede o array declarado: 16 bytes (os 9 que sobram depois do '\0' são zerados pela inicialização). Quem responde 7 contou o terminador no `strlen`.
+  fonte: "cppreference.com, strlen; Kernighan & Ritchie, The C Programming Language, 2ª ed., seção 5.5 (Character Pointers and Functions)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T02-011
+  objetivo: O3
+  tipo: unica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    O que este programa imprime? (O gcc avisa `output truncated`, mas compila.)
+    ```c
+    #include <stdio.h>
+    #include <string.h>
+
+    int main(void)
+    {
+        char d[4];
+        int n = snprintf(d, sizeof d, "%s", "ABCDEF");
+        printf("%s %zu %d\n", d, strlen(d), n);
+        return 0;
+    }
+    ```
+  alternativas:
+    - "`ABCD 4 4`"
+    - "`ABC 3 6`"
+    - "`ABCDEF 6 6`"
+    - "`ABC 3 3`"
+  resposta: 1
+  explicacao: |
+    `snprintf` escreve no máximo `sizeof d - 1` = 3 caracteres e **sempre** termina com '\0': `d` vale "ABC" (strlen 3). O valor devolvido é o número de caracteres que a string completa **teria** (6): se ele for ≥ ao tamanho do buffer, houve truncamento. `strncpy(d, "ABCDEF", sizeof d)` copiaria "ABCD" sem '\0' — por isso se prefere `snprintf`.
+  fonte: "cppreference.com, printf, fprintf, sprintf, snprintf (valor de retorno); Jens Gustedt, Modern C, cap. 8 (C library functions)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T02-012
+  objetivo: O4
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Dentro de uma função, `buf` e `outro` são arrays de `uint8_t` e você declarou `const uint8_t *p = buf;`. Qual linha o compilador **recusa**?
+  alternativas:
+    - "`p++;`"
+    - "`uint8_t x = *p;`"
+    - "`*p = 0;`"
+    - "`p = outro;`"
+  resposta: 2
+  explicacao: |
+    Lendo da direita para a esquerda: `p` é um ponteiro para `const uint8_t`. O objeto apontado não pode ser alterado **através de `p`**, então `*p = 0` é erro (`assignment of read-only location`). O ponteiro em si não é constante: pode avançar (`p++`) e apontar para outro buffer. Ler `*p` é sempre permitido.
+  fonte: "cppreference.com, const type qualifier e Pointer declaration; Jens Gustedt, Modern C, cap. 11 (Pointers)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T02-013
+  objetivo: O4
+  tipo: multipla
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Considere as declarações:
+    ```c
+    int x = 1, y = 2;
+    const int *a = &x;
+    int *const b = &x;
+    ```
+    Quais linhas o compilador **recusa**? Marque todas as corretas.
+  alternativas:
+    - "`a = &y;`"
+    - "`*a = 5;`"
+    - "`b = &y;`"
+    - "`*b = 5;`"
+  resposta: [1, 2]
+  explicacao: |
+    `a` é ponteiro para `const int`: pode passar a apontar para `y`, mas não pode alterar o valor apontado (`*a = 5` é erro). `b` é ponteiro **constante** para `int`: o valor apontado pode mudar (`*b = 5` vale), mas o ponteiro não pode ser reapontado (`b = &y` é erro). Regra prática: o `const` qualifica o que está imediatamente à sua esquerda (ou à direita, se ele for o primeiro).
+  fonte: "cppreference.com, Pointer declaration (Pointers to const e const pointers) e const type qualifier"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T02-014
+  objetivo: O4
+  tipo: unica
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    O que se pode afirmar sobre este programa?
+    ```c
+    #include <stdio.h>
+
+    int *cria(void)
+    {
+        int v = 42;
+        return &v;
+    }
+
+    int main(void)
+    {
+        int *p = cria();
+        printf("%d\n", *p);
+        return 0;
+    }
+    ```
+  alternativas:
+    - "Imprime 42 sempre, porque o valor continua na memória até ser sobrescrito"
+    - "Não compila, porque não se pode devolver um endereço"
+    - "Imprime 0, porque variáveis locais são zeradas ao sair da função"
+    - "Tem comportamento indefinido: `v` deixa de existir quando `cria` retorna e `p` fica pendurado"
+  resposta: 3
+  explicacao: |
+    `v` é automática: vive na pilha só enquanto `cria` executa. O endereço devolvido aponta para um objeto que não existe mais (ponteiro pendurado) e desreferenciá-lo é UB. Compila, com o aviso `function returns address of local variable`. Na prática, o gcc 14 chega a devolver `NULL` no lugar do endereço e o programa dá segfault; outro compilador pode imprimir 42 por acaso. Se o valor precisa sobreviver, use `static`, um parâmetro de saída ou a heap (T03).
+  fonte: "cppreference.com, Storage duration (automatic) e Undefined behavior; Kernighan & Ritchie, The C Programming Language, 2ª ed., seção 4.4 (Scope Rules)"
+  origem: ia
+  revisao: rascunho

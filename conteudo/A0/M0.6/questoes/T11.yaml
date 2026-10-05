@@ -1,0 +1,264 @@
+- id: Q-M0.6.T11-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Num firmware em C, o módulo `sensor` tem uma função pública que lê a temperatura, uma constante com o número máximo de canais e um tipo para a leitura. Qual conjunto de nomes segue a convenção usada neste módulo (prefixo do módulo, macros em maiúsculas, sufixo `_t` em tipos, unidade no nome)?
+  alternativas:
+    - "`LerTemp()`, `maxCanais`, `struct Leitura`"
+    - "`sensor_le_temp_dC()`, `SENSOR_MAX_CANAIS`, `sensor_leitura_t`"
+    - "`le()`, `MAX`, `leitura`"
+    - "`SENSOR_LE_TEMP()`, `sensor_max_canais`, `SENSOR_LEITURA`"
+  resposta: 1
+  explicacao: |
+    O prefixo `sensor_` evita colisões entre módulos (C não tem namespaces) e diz de onde a função vem; o sufixo `_dC` diz a unidade (décimos de °C). Constantes e macros em maiúsculas com o prefixo do módulo e tipos com `_t` são convenções comuns em firmware (BARR-C, código de fabricantes). Nomes genéricos como `le()` e `MAX` colidem com facilidade; maiúsculas em função sugerem uma macro.
+  fonte: "Michael Barr, Embedded C Coding Standard (BARR-C:2018), regras de módulos, tipos e funções"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T11-002
+  objetivo: O1
+  tipo: unica
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Qual é o papel do `clang-format` num projeto de firmware em equipe?
+  alternativas:
+    - "Encontrar ponteiros nulos e vazamentos de memória sem executar o programa"
+    - "Formatar automaticamente o código (indentação, espaços, quebras de linha, chaves) seguindo as regras do arquivo `.clang-format` do repositório"
+    - "Verificar se o código obedece às regras MISRA C"
+    - "Compilar o código para o microcontrolador com otimização para tamanho"
+  resposta: 1
+  explicacao: |
+    O `clang-format` só cuida da **forma**: reescreve o arquivo (`clang-format -i`) conforme o estilo configurado. Com ele, ninguém discute indentação em revisão e os diffs mostram só mudanças reais. Encontrar defeitos e violações MISRA é trabalho de analisadores estáticos (cppcheck, clang-tidy); compilar é trabalho do compilador.
+  fonte: "Documentação do clang-format (clang.llvm.org/docs/ClangFormat.html e ClangFormatStyleOptions.html)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T11-003
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: avaliar
+  enunciado: |
+    Qual destes comentários acrescenta informação que o código sozinho não dá?
+  alternativas:
+    - "`i++; /* incrementa i */`"
+    - "`delay_ms(2); /* espera 2 ms */`"
+    - "`delay_ms(2); /* t_conv >= 1,5 ms (datasheet do sensor, tabela 3): 2 ms dá margem */`"
+    - "`return 0; /* retorna zero */`"
+  resposta: 2
+  explicacao: |
+    Um bom comentário explica **por que** o código é assim: aqui, a origem do número (datasheet) e o motivo da margem. Quem for mudar o atraso sabe o limite. Os outros repetem o que a linha já diz — não ajudam e ficam errados quando o código muda.
+  fonte: "Michael Barr, Embedded C Coding Standard (BARR-C:2018), regras de comentários; Jens Gustedt, Modern C, cap. 9 (Style)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T11-004
+  objetivo: O2
+  tipo: vf
+  dificuldade: 2
+  bloom: lembrar
+  enunciado: |
+    Verdadeiro ou falso: no MISRA C:2012, uma diretriz da categoria *Mandatory* pode ser violada desde que exista um registro de desvio aprovado.
+  resposta: false
+  explicacao: |
+    *Mandatory* é a categoria que **não** admite desvio: o código conforme nunca a viola. Desvios formais (documentados, justificados e aprovados) são previstos para as diretrizes *Required*. As *Advisory* são recomendações que podem deixar de ser seguidas com menos formalidade, mas a decisão deve ser consciente.
+  fonte: "MISRA C:2012 (3ª ed.), seção sobre a classificação das diretrizes (mandatory, required, advisory); MISRA Compliance:2020"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T11-005
+  objetivo: O2
+  tipo: unica
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    No MISRA C:2012, o que caracteriza uma diretriz da categoria *Required*?
+  alternativas:
+    - "Nunca pode ser violada, em nenhuma circunstância"
+    - "É só uma sugestão de estilo, que cada programador segue se quiser"
+    - "O código deve obedecê-la, mas uma violação é aceitável quando coberta por um desvio formal documentado e aprovado"
+    - "Só se aplica a código C++"
+  resposta: 2
+  explicacao: |
+    *Required* é o "deve" com saída controlada: violações só com desvio formal (o quê, onde, por que é necessário, por que é seguro, quem aprovou). Exemplo típico em firmware: acessar registradores por endereço fixo. "Nunca pode ser violada" descreve *Mandatory*; "sugestão" se aproxima de *Advisory*, que ainda assim pede decisão consciente. O MISRA C é para C (o MISRA C++ é outro documento).
+  fonte: "MISRA C:2012 (3ª ed.), seção sobre a classificação das diretrizes; MISRA Compliance:2020 (deviations)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T11-006
+  objetivo: O2
+  tipo: unica
+  dificuldade: 3
+  bloom: entender
+  enunciado: |
+    No MISRA C:2012, qual é a diferença entre uma **regra** (*rule*) e uma **diretiva** (*directive*)?
+  alternativas:
+    - "Regras são obrigatórias e diretivas são opcionais"
+    - "Regras valem para C99 e diretivas para C90"
+    - "A conformidade com uma regra pode ser avaliada só pelo código-fonte; a de uma diretiva depende também de informação externa, como projeto, requisitos, documentação ou processo"
+    - "Diretivas tratam só do pré-processador (`#define`, `#include`) e regras tratam do resto da linguagem"
+  resposta: 2
+  explicacao: |
+    Uma regra descreve algo verificável no código (ex.: "não use `goto`"), muitas vezes por ferramenta. Uma diretiva não pode ser totalmente verificada só pelo código — por exemplo, a Dir 4.1 (minimizar falhas em tempo de execução) depende de análise e testes. A obrigatoriedade é dada pela **categoria** (mandatory/required/advisory), que existe para regras e diretivas. Há regras sobre o pré-processador (série 20) e diretivas sobre outros assuntos.
+  fonte: "MISRA C:2012 (3ª ed.), seção introdutória das diretrizes (rules e directives)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T11-007
+  objetivo: O2
+  tipo: unica
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Qual é o principal objetivo do MISRA C?
+  alternativas:
+    - "Definir a indentação e o nome das variáveis em projetos automotivos"
+    - "Substituir o compilador por uma versão certificada do gcc"
+    - "Definir um subconjunto do C que evita comportamento indefinido, construções que mudam entre compiladores e práticas propensas a erro, para sistemas críticos"
+    - "Proibir o uso de C em sistemas críticos, exigindo Ada ou Rust"
+  resposta: 2
+  explicacao: |
+    O MISRA C restringe a linguagem: proíbe ou limita o que a norma deixa indefinido ou definido pela implementação (estouro com sinal, deslocamentos inválidos, conversões implícitas arriscadas) e construções propensas a erro (`goto`, recursão, heap), de modo que o código fique previsível e analisável. Não trata de indentação nem é um compilador, e foi criado justamente para permitir o uso seguro de C.
+  fonte: "MISRA C:2012 (3ª ed.), cap. de introdução e escopo; Elecia White, Making Embedded Systems (1ª ed.), cap. 2 (Creating a System Architecture)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T11-008
+  objetivo: O3
+  tipo: multipla
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Quais trechos violam alguma regra do MISRA C:2012? Marque todos os corretos.
+  alternativas:
+    - "`if (erro != 0u) { goto falha; }`"
+    - "`uint32_t fat(uint32_t n) { return (n == 0u) ? 1u : n * fat(n - 1u); }`"
+    - "`switch (estado) { case 0: liga(); break; case 1: desliga(); break; }`"
+    - "`for (uint8_t i = 0u; i < 10u; i++) { soma += v[i]; }`"
+  resposta: [0, 1, 2]
+  explicacao: |
+    `goto` viola a Regra 15.1 (Advisory). A função que chama a si mesma viola a 17.2 (Required: sem recursão — o uso de pilha fica imprevisível). O `switch` sem `default` viola a 16.4 (Required). O laço `for` com chaves, constantes com sufixo `u` e índice sem sinal não viola nenhuma das regras citadas.
+  fonte: "MISRA C:2012 (3ª ed.), Rules 15.1, 16.4 e 17.2"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T11-009
+  objetivo: O3
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    A Regra 15.6 do MISRA C:2012 exige que o corpo de `if`, `else`, `for`, `while` e `do` seja um bloco entre chaves. Qual versão de `if (temp > LIMITE) alarme = 1u;` obedece à regra?
+  alternativas:
+    - "`if (temp > LIMITE) alarme = 1u;` em uma única linha, porque é curto"
+    - "`if (temp > LIMITE) { alarme = 1u; }`"
+    - "`if (temp > LIMITE)` com `alarme = 1u;` indentado na linha de baixo"
+    - "`(temp > LIMITE) && (alarme = 1u);`"
+  resposta: 1
+  explicacao: |
+    Só a versão com chaves forma um bloco. Sem chaves, acrescentar uma segunda linha indentada "dentro" do `if` faz com que ela execute sempre — foi o padrão do famoso defeito "goto fail" da Apple. Indentação não muda o significado em C. A versão com `&&` usa o resultado de uma atribuição dentro de uma expressão, o que viola outras regras (13.4) e esconde a intenção.
+  fonte: "MISRA C:2012 (3ª ed.), Rules 15.6 e 13.4; Michael Barr, Embedded C Coding Standard (BARR-C:2018), regras de comandos (braces)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T11-010
+  objetivo: O3
+  tipo: unica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Com `int16_t t = le_temperatura();` já declarado, qual linha viola a Regra 10.3 do MISRA C:2012 (não atribuir uma expressão a um objeto de tipo essencial mais estreito ou de outra categoria)?
+  alternativas:
+    - "`uint16_t u = t;`"
+    - "`uint16_t u = (uint16_t)t;`"
+    - "`int16_t d = t;`"
+    - "`uint8_t k = 5u;`"
+  resposta: 0
+  explicacao: |
+    `t` é essencialmente **com sinal**; atribuí-lo a um `uint16_t` sem conversão é uma mudança implícita de categoria (com sinal → sem sinal): −5 viraria 65531 sem ninguém perceber. Com o cast explícito, a conversão deixa de ser implícita — a 10.3 é atendida e quem escreveu teve de pensar nos negativos. As outras atribuições mantêm a categoria e cabem no destino.
+  fonte: "MISRA C:2012 (3ª ed.), Rule 10.3 e seção sobre o modelo de tipos essenciais (essential type model)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T11-011
+  objetivo: O3
+  tipo: multipla
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Quais regras do MISRA C:2012 esta função viola? Marque todas as corretas.
+    ```c
+    uint8_t calcula(uint8_t n)
+    {
+        uint8_t r;
+        if (n == 0u) return 1u;
+        r = n * calcula(n - 1u);
+        return r;
+    }
+    ```
+  alternativas:
+    - "Rule 17.2: a função chama a si mesma (recursão)"
+    - "Rule 15.6: o corpo do `if` não está entre chaves"
+    - "Rule 9.1: `r` é lida antes de receber valor"
+    - "Rule 21.3: uso de funções de alocação dinâmica"
+  resposta: [0, 1]
+  explicacao: |
+    `calcula` chama `calcula` (17.2) e o `if` tem corpo sem chaves (15.6); o addon `misra` do cppcheck acusa as duas (e também a 15.5, Advisory, pelos dois `return`). `r` só é lida no `return r`, depois de receber o resultado da multiplicação, então a 9.1 não é violada. Não há `malloc`, `calloc`, `realloc` nem `free` (21.3).
+  fonte: "MISRA C:2012 (3ª ed.), Rules 9.1, 15.6, 17.2 e 21.3; cppcheck, addon misra"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T11-012
+  objetivo: O4
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Qual comando roda o cppcheck com todas as categorias de verificação ligadas (além de erros: warning, style, performance, portability) nos arquivos da pasta `src/`, usando os headers de `include/` e o padrão C11?
+  alternativas:
+    - "`cppcheck --enable=all --std=c11 -Iinclude src/`"
+    - "`cppcheck -Wall -Wextra src/*.c`"
+    - "`gcc --cppcheck -Iinclude src/*.c`"
+    - "`cppcheck --fix src/`"
+  resposta: 0
+  explicacao: |
+    Por padrão, o cppcheck mostra só erros; `--enable=all` liga as outras categorias, `--std=c11` escolhe o padrão e `-I` indica onde estão os headers do projeto. Ele aceita uma pasta e analisa os arquivos dentro dela. `-Wall -Wextra` são opções do gcc; o gcc não tem `--cppcheck`; e o cppcheck aponta problemas, mas não os corrige.
+  fonte: "Cppcheck Manual (cppcheck.sourceforge.io), Getting started e Severities"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T11-013
+  objetivo: O4
+  tipo: unica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Num projeto CMake com vários diretórios de include e macros definidas por alvo, o `clang-tidy` rodado sozinho (`clang-tidy src/sensor.c`) reclama que não encontra `sensor.h`. Qual é a forma correta de dar a ele as flags de compilação de cada arquivo?
+  alternativas:
+    - "Configurar com `-DCMAKE_EXPORT_COMPILE_COMMANDS=ON` e rodar `clang-tidy -p build src/sensor.c`, que lê o `build/compile_commands.json`"
+    - "Copiar todos os headers para a pasta `src/`"
+    - "Rodar `clang-format` antes do `clang-tidy`"
+    - "Trocar `#include \"sensor.h\"` por `#include <sensor.h>`"
+  resposta: 0
+  explicacao: |
+    O `clang-tidy` analisa o código como um compilador e precisa das mesmas flags (`-I`, `-D`, `-std`). O CMake grava, para cada arquivo, o comando de compilação exato em `compile_commands.json`, e `-p build` aponta onde ele está. Para um arquivo solto, as flags podem vir depois de `--` (`clang-tidy x.c -- -std=c11 -Iinclude`). Copiar headers ou trocar aspas por `<>` não informa as macros nem os outros caminhos; o `clang-format` só formata.
+  fonte: "Documentação do clang-tidy (clang.llvm.org/extra/clang-tidy), seção de uso com compilation database; documentação do CMake, CMAKE_EXPORT_COMPILE_COMMANDS"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.6.T11-014
+  objetivo: O4
+  tipo: vf
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Verdadeiro ou falso: se o addon `misra` do cppcheck não reporta nenhuma violação num arquivo, esse arquivo está em conformidade com o MISRA C:2012.
+  resposta: false
+  explicacao: |
+    Ferramentas gratuitas cobrem só parte das regras (algumas são *undecidable* — impossíveis de verificar de forma completa automaticamente), e as diretivas dependem de documentação, projeto e processo. Por exemplo, o addon do cppcheck pode não acusar uma atribuição implícita de `int16_t` para `uint16_t` (Regra 10.3). Conformidade exige ferramenta adequada, revisão, registro de desvios e o processo descrito no *MISRA Compliance*. Um relatório limpo é um bom sinal, não uma certificação.
+  fonte: "MISRA C:2012 (3ª ed.), seção sobre decidability; MISRA Compliance:2020; Cppcheck Manual, Addons (misra)"
+  origem: ia
+  revisao: rascunho
