@@ -238,3 +238,12 @@ describe('chefes', () => {
     expect(pontosOraculo([{ correta: true, conf: 3 }, { correta: false, conf: 3 }, { correta: false, conf: 1 }])).toBe(1);
   });
 });
+
+import { titulo } from '../src';
+describe('títulos', () => {
+  it('por horas válidas', () => {
+    expect(titulo(0)).toEqual({ nome: 'Aprendiz', proximo: { nome: 'Técnico', horas: 1000 } });
+    expect(titulo(4500).nome).toBe('Engenheiro');
+    expect(titulo(10000)).toEqual({ nome: 'Mestre da Forja', proximo: null });
+  });
+});

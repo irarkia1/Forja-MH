@@ -4,6 +4,7 @@ import {
   energiaMaxima,
   nv,
   pontosGastos,
+  titulo,
   aplicarHoras,
   custoProximoNivel,
   ganharXp,
@@ -95,6 +96,7 @@ export function resumo(ctx: Contexto, uid: number) {
   const energia = um<{ energia: number }>(ctx.db, 'SELECT energia FROM personagem WHERE usuario_id = :uid', { uid })?.energia ?? 0;
   return {
     nivel: e.nivel,
+    titulo: titulo(horas),
     faixa: e.faixa + 1,
     xpFaixa: e.xpFaixa,
     xpProximo: custoProximoNivel(e),

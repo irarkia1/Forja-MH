@@ -12,6 +12,7 @@ export function hud(): { el: HTMLElement; destruir: () => void } {
       h('a.logo', { href: '#/mundo', title: 'Mapa' }, 'FORJA M&H'),
       h('div.grupo', { title: `XP total: ${p.xpTotal.toLocaleString('pt-BR')}` },
         h('span.pixel', { style: 'font-size:11px' }, `Nv ${p.nivel}`),
+        h('span.mudo', { title: p.titulo.proximo ? `Próximo título: ${p.titulo.proximo.nome} com ${p.titulo.proximo.horas.toLocaleString('pt-BR')} h` : 'Título máximo' }, p.titulo.nome),
         barra('xp', p.xpFaixa / p.xpProximo, 'Experiência'),
         h('span.mudo', {}, `${p.xpFaixa.toLocaleString('pt-BR')}/${p.xpProximo.toLocaleString('pt-BR')}`),
       ),

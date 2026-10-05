@@ -3,6 +3,7 @@ import { h, num, pct } from '../ui';
 import type { Navegar } from './mapa';
 
 interface Painel {
+  personagem: { titulo: { nome: string; proximo: { nome: string; horas: number } | null } };
   horas: { total: number; meta: number; semana: number; metaSemana: number; media8: number; semanasBase: number; previsao: string | null; sequenciaDias: number };
   semanas: { inicio: string; horas: number }[];
   atos: { id: string; nome: string; horasPlanejadas: number; horasReais: number; modulos: number; vencidos: number; topicos: number; derrotados: number; consolidados: number; dominados: number }[];
@@ -132,7 +133,7 @@ export async function telaPainel(nav: Navegar) {
         h('div.heroi-valor', {}, num(p.horas.total), h('span', {}, ` / ${p.horas.meta.toLocaleString('pt-BR')} h`)),
         h('div.medidor', { role: 'progressbar', 'aria-valuenow': Math.round((p.horas.total / p.horas.meta) * 100), 'aria-valuemin': 0, 'aria-valuemax': 100 },
           h('i', { style: `width:${Math.max(0.3, (p.horas.total / p.horas.meta) * 100)}%` })),
-        h('div.mudo', {}, `${pct(p.horas.total / p.horas.meta)} da jornada`),
+        h('div.mudo', {}, `${pct(p.horas.total / p.horas.meta)} da jornada · título: ${p.personagem.titulo.nome}${p.personagem.titulo.proximo ? ` (${p.personagem.titulo.proximo.nome} com ${p.personagem.titulo.proximo.horas.toLocaleString('pt-BR')} h)` : ''}`),
       ),
       h('section.tiles', {},
         tile('Esta semana', `${num(p.horas.semana)} h`, `meta ${p.horas.metaSemana} h · ${pct(p.horas.semana / p.horas.metaSemana)}`),

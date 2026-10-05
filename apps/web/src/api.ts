@@ -34,6 +34,7 @@ export const api = {
 
 export interface Personagem {
   nivel: number;
+  titulo: { nome: string; proximo: { nome: string; horas: number } | null };
   faixa: number;
   xpFaixa: number;
   xpProximo: number;

@@ -82,3 +82,21 @@ export function nivelEsperado(horas: number): number {
   }
   return cacheNivelEsperado[Math.min(h, cacheNivelEsperado.length - 1)]!;
 }
+
+// Títulos por horas válidas (PERSONAGEM-E-SKILLS.md).
+export const TITULOS: readonly { horas: number; nome: string }[] = [
+  { horas: 0, nome: 'Aprendiz' },
+  { horas: 1000, nome: 'Técnico' },
+  { horas: 2500, nome: 'Projetista' },
+  { horas: 4500, nome: 'Engenheiro' },
+  { horas: 6500, nome: 'Sênior' },
+  { horas: 8000, nome: 'Especialista' },
+  { horas: 10000, nome: 'Mestre da Forja' },
+];
+
+export function titulo(horas: number): { nome: string; proximo: { nome: string; horas: number } | null } {
+  let i = 0;
+  while (i + 1 < TITULOS.length && horas >= TITULOS[i + 1]!.horas) i++;
+  const proximo = TITULOS[i + 1];
+  return { nome: TITULOS[i]!.nome, proximo: proximo ? { nome: proximo.nome, horas: proximo.horas } : null };
+}
