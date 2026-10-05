@@ -19,6 +19,7 @@ import { um } from './db';
 import * as provas from './servicos/provas';
 import * as skills from './servicos/skills';
 import * as chefes from './servicos/chefes';
+import { painel } from './servicos/painel';
 
 const COOKIE = 'forja_sessao';
 
@@ -165,6 +166,7 @@ export async function criarApp(o: OpcoesApp): Promise<{ app: FastifyInstance; ct
       a.post('/api/admin/zerar', async (req) => admin.zerarProgresso(ctx, req.usuarioId));
     });
 
+    r.get('/api/painel', async (req) => painel(ctx, req.usuarioId));
     r.get('/api/skills', async (req) => skills.listar(ctx, req.usuarioId));
     r.post('/api/skills/:id/evoluir', async (req) => skills.evoluir(ctx, req.usuarioId, Id.parse(req.params).id));
     r.post('/api/tentativas/:id/skill', async (req) => {

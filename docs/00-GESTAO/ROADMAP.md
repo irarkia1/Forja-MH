@@ -42,9 +42,9 @@ Dois trilhos andando juntos. O do **sistema** é curto e vem primeiro; o do
 - [x] Mais de 30 fantasmas pendentes bloqueia inimigos novos
 
 ### F5 — Acompanhamento e publicação
-- [ ] Painel: horas, ritmo, previsão de término, taxa de acerto e de ajuda
-- [ ] Backup diário do banco
-- [ ] Publicar em `meh-eng.com/estudos`
+- [x] Painel: horas, ritmo, previsão de término, taxa de acerto e de ajuda (2026-10-05)
+- [x] Backup diário do banco
+- [x] Publicado em `planejamento.meh-eng.com/forja/` (D022)
 
 ### F6 — Contínuo
 - [ ] Gerador de questões com Claude + fila de revisão humana

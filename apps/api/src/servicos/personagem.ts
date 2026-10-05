@@ -13,6 +13,7 @@ import {
 } from '@forja/regras';
 import { exec, um } from '../db';
 import type { Contexto } from '../contexto';
+import { inicioDaSemana } from '../tempo';
 import { niveis as niveisSkill } from './skills';
 
 interface LinhaPersonagem {
@@ -84,7 +85,8 @@ export function salvarPosicao(ctx: Contexto, uid: number, posicao: unknown): voi
 export function resumo(ctx: Contexto, uid: number) {
   const e = ler(ctx, uid);
   const horas = horasValidas(ctx, uid);
-  const seteDias = new Date(ctx.agora().getTime() - 7 * 86_400_000).toISOString();
+  const fuso = um<{ fuso: string }>(ctx.db, 'SELECT fuso FROM usuario WHERE id = :uid', { uid })?.fuso ?? 'America/Sao_Paulo';
+  const seteDias = inicioDaSemana(ctx.agora(), fuso).toISOString(); // semana de segunda a domingo
   const semana = um<{ s: number }>(ctx.db, `SELECT COALESCE(SUM(segundos_validos), 0) AS s FROM sessao_estudo WHERE usuario_id = :uid AND inicio >= :desde`, {
     uid, desde: seteDias,
   });

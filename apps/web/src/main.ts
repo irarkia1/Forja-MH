@@ -9,6 +9,7 @@ import { telaLuta } from './telas/luta';
 import { telaFase, telaMundo, type Navegar } from './telas/mapa';
 import { telaAdmin } from './telas/admin';
 import { telaSkills } from './telas/skills';
+import { telaPainel } from './telas/painel';
 
 try {
   const tema = localStorage.getItem('forja-tema');
@@ -65,6 +66,9 @@ async function rotear(): Promise<void> {
         break;
       case 'estudo':
         tela = await telaEstudo(partes[1]!, nav);
+        break;
+      case 'painel':
+        tela = await telaPainel(nav);
         break;
       case 'skills':
         tela = await telaSkills(nav);

@@ -2,6 +2,13 @@
 
 Formato: data · o que mudou · onde.
 
+## 2026-10-05 — Painel de acompanhamento
+- 📊 Painel: horas totais, semana, ritmo (8 semanas), previsão de término,
+  sequência, horas por semana (gráfico com meta e tooltip), progresso por ato,
+  horas por trilha, qualidade (faixas do BALANCEAMENTO), pontos fracos e horas
+  reais × planejadas. Cor dos gráficos validada nos dois temas.
+- "Horas na semana" passa a ser a semana de segunda a domingo em todo lugar.
+
 ## 2026-10-03 — F2: 20 variantes de chefe
 - 18 jogáveis: Guardião, Hidra, Golem, Traiçoeiro, Lich, Cronomante, Enxame,
   Colosso, Arquivista, Fúria, Purista, Feynman, Mímico, Bancada, Dragão,

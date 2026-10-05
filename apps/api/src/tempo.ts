@@ -11,3 +11,11 @@ export function inicioDoDia(agora: Date, fuso: string): Date {
 }
 
 export const DIA_MS = 86_400_000;
+
+// Segunda-feira 00:00 (no fuso do usuário) da semana de `d`.
+export function inicioDaSemana(d: Date, fuso: string): Date {
+  const dia = inicioDoDia(d, fuso);
+  const nome = new Intl.DateTimeFormat('en-US', { timeZone: fuso, weekday: 'short' }).format(d);
+  const recuo = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].indexOf(nome);
+  return new Date(dia.getTime() - Math.max(0, recuo) * DIA_MS);
+}

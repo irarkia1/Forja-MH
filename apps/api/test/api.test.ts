@@ -506,3 +506,18 @@ describe('admin zera mesmo com skills usadas', () => {
     expect((await chamar('POST', '/api/admin/zerar')).status).toBe(200);
   });
 });
+
+describe('painel', () => {
+  it('horas por semana, média, sequência e progresso por ato', async () => {
+    await estudar('M0.1.T01', 3600);
+    andar(86_400);
+    await estudar('M0.1.T01', 3600);
+    const p = (await chamar('GET', '/api/painel')).json;
+    expect(p.semanas).toHaveLength(26);
+    expect(p.semanas.reduce((s: number, x: any) => s + x.horas, 0)).toBeCloseTo(2, 1);
+    expect(p.horas.sequenciaDias).toBe(2);
+    expect(p.atos[0]).toMatchObject({ id: 'A0', topicos: 3, derrotados: 0 });
+    expect(p.trilhas[0]).toMatchObject({ trilha: 'base' });
+    expect(p.qualidade.combates).toBe(0);
+  });
+});
