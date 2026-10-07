@@ -1,0 +1,252 @@
+- id: Q-M1.3.T07-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    O núcleo do ESP32-C3 implementa a ISA RV32IMC. O que a letra **M** indica?
+  alternativas:
+    - "Modo de máquina (machine mode)"
+    - "Instruções de multiplicação e divisão inteiras"
+    - "Suporte a múltiplos núcleos"
+    - "Memória protegida (MPU)"
+  resposta: 1
+  explicacao: |
+    No nome da ISA, cada letra depois da base é uma extensão: M = multiplicação e divisão inteiras (`mul`, `mulh`, `div`, `rem`), A = atômicas, F/D = ponto flutuante, C = comprimidas. Sem M, `a * b` vira chamada de uma rotina de software. O modo de máquina existe em qualquer RISC-V e não aparece no nome.
+  fonte: "The RISC-V Instruction Set Manual, Volume I: Unprivileged ISA, capítulos Introduction e \"M\" Standard Extension for Integer Multiplication and Division"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T07-002
+  objetivo: O1
+  tipo: multipla
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    O GD32VF103 usa um núcleo RV32IMAC. Quais recursos essa ISA inclui?
+  alternativas:
+    - "Instruções atômicas"
+    - "Instruções comprimidas de 16 bits"
+    - "Ponto flutuante de precisão simples em hardware"
+    - "Multiplicação e divisão inteiras em hardware"
+  resposta: [0, 1, 3]
+  explicacao: |
+    RV32IMAC = base inteira de 32 bits (I) + multiplicação/divisão (M) + atômicas (A) + comprimidas (C). Não há F nem D: operações com `float` são feitas por rotinas da biblioteca, em software, como num Cortex-M0+ ou M3.
+  fonte: "The RISC-V Instruction Set Manual, Volume I: Unprivileged ISA, capítulo Introduction (ISA naming); GigaDevice, GD32VF103 Datasheet (descrição do núcleo)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T07-003
+  objetivo: O1
+  tipo: vf
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Verdadeiro ou falso: um binário compilado para RV32IMAC roda sem alterações num MCU RV32EC, já que ambos são RISC-V de 32 bits.
+  resposta: false
+  explicacao: |
+    A base RV32E tem só 16 registradores (x0–x15): um binário RV32I que use x16–x31 (por exemplo a6, a7, s2–s11, t3–t6) tem instruções inválidas para ele. Além disso, RV32EC não tem M nem A: `mul`, `div` e as atômicas geram exceção de instrução ilegal. "RISC-V" não garante compatibilidade binária; o nome completo da ISA é que diz.
+  fonte: "The RISC-V Instruction Set Manual, Volume I: Unprivileged ISA, capítulo RV32E (and RV64E) Base Integer Instruction Set"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T07-004
+  objetivo: O2
+  tipo: vf
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Verdadeiro ou falso: no RISC-V, o registrador x0 (nome ABI `zero`) sempre lê 0, e escritas nele são descartadas.
+  resposta: true
+  explicacao: |
+    x0 é fixo em zero. Isso permite criar pseudoinstruções sem gastar códigos de operação: `mv a1, a0` é `addi a1, a0, 0`, `j rotulo` é `jal zero, rotulo` (descarta o endereço de retorno) e `nop` é `addi zero, zero, 0`.
+  fonte: "The RISC-V Instruction Set Manual, Volume I: Unprivileged ISA, capítulo RV32I Base Integer Instruction Set, seção Programmers' Model"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T07-005
+  objetivo: O2
+  tipo: unica
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    A pseudoinstrução `ret` do RISC-V é traduzida pelo montador em qual instrução real?
+  alternativas:
+    - "`jal zero, 0`"
+    - "`mret`"
+    - "`jalr zero, 0(ra)`"
+    - "`addi ra, ra, 4`"
+  resposta: 2
+  explicacao: |
+    `ret` salta para o endereço em `ra` (o registrador de retorno, preenchido pelo `jal ra, funcao`) e descarta o novo endereço de retorno escrevendo-o em `zero`. É o equivalente do `bx lr` do ARM. `mret` é outra coisa: o retorno de uma exceção ou interrupção em modo de máquina.
+  fonte: "The RISC-V Instruction Set Manual, Volume I: Unprivileged ISA, capítulo RISC-V Assembly Programmer's Handbook (tabela de pseudoinstruções)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T07-006
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Qual é o valor final de a1, em decimal, depois deste trecho RV32I?
+    ```asm
+    li   a0, 5
+    slli a1, a0, 3
+    add  a1, a1, a0
+    addi a1, a1, -2
+    ```
+    Responda em decimal, exato.
+  resposta: {valor: 43, unidade: "valor", tolerancia: 0}
+  explicacao: |
+    a0 = 5; `slli` desloca 3 bits: a1 = 5 × 8 = 40; a1 = 40 + 5 = 45; a1 = 45 − 2 = 43. O trecho calcula 9 × a0 − 2 sem usar `mul` — útil num RV32I sem a extensão M.
+  fonte: "The RISC-V Instruction Set Manual, Volume I: Unprivileged ISA, capítulo RV32I Base Integer Instruction Set (Integer Computational Instructions)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T07-007
+  objetivo: O2
+  tipo: multipla
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Comparando os desvios condicionais do RISC-V com os do Cortex-M, quais afirmações são corretas?
+  alternativas:
+    - "O RISC-V não tem registrador de flags; a comparação é feita dentro da própria instrução de desvio."
+    - "`blt a0, a1, rotulo` compara a0 e a1 como números com sinal e desvia se a0 < a1."
+    - "Para comparar sem sinal existe `bltu`."
+    - "Antes de um `beq` é obrigatório executar um `cmp` para atualizar as flags."
+  resposta: [0, 1, 2]
+  explicacao: |
+    Os desvios do RISC-V (`beq`, `bne`, `blt`, `bge`, `bltu`, `bgeu`) leem dois registradores e decidem na hora. Não há `cmp` nem flags; para guardar o resultado de uma comparação usa-se `slt`/`sltu`, que escreve 0 ou 1 num registrador. Sem flags, também não há estado escondido a salvar numa interrupção nem dependências implícitas entre instruções no pipeline.
+  fonte: "The RISC-V Instruction Set Manual, Volume I: Unprivileged ISA, capítulo RV32I Base Integer Instruction Set (Conditional Branches); Patterson & Waterman, The RISC-V Reader, capítulo sobre RV32I"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T07-008
+  objetivo: O3
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Em todas as instruções RV32I que escrevem um registrador (formatos R, I, U e J), em quais bits fica o campo `rd`?
+  alternativas:
+    - "Bits 6:0"
+    - "Bits 19:15"
+    - "Bits 31:25"
+    - "Bits 11:7"
+  resposta: 3
+  explicacao: |
+    O opcode fica sempre nos bits 6:0, `rd` em 11:7, `rs1` em 19:15 e `rs2` em 24:20. Manter os campos de registradores sempre no mesmo lugar permite ao hardware começar a ler o banco de registradores antes de saber qual é a instrução — e é o motivo de os imediatos dos formatos S, B e J serem "embaralhados".
+  fonte: "The RISC-V Instruction Set Manual, Volume I: Unprivileged ISA, capítulo RV32I Base Integer Instruction Set, seção Base Instruction Formats"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T07-009
+  objetivo: O3
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Codifique `add a0, a1, a2` (formato R: funct7 = 0000000, funct3 = 000, opcode = 0110011; a0 = x10, a1 = x11, a2 = x12). Qual é a instrução em hexadecimal?
+  alternativas:
+    - "0x00C5_8533"
+    - "0x00B6_0533"
+    - "0x00C5_0533"
+    - "0x0C58_5330"
+  resposta: 0
+  explicacao: |
+    Campos: funct7 0000000 | rs2 = 12 = 01100 | rs1 = 11 = 01011 | funct3 000 | rd = 10 = 01010 | opcode 0110011. Juntando: 0000 0000 1100 0101 1000 0101 0011 0011 = 0x00C5_8533. 0x00B6_0533 troca rs1 e rs2 (seria `add a0, a2, a1`). Confirmado montando com o clang para RV32.
+  fonte: "The RISC-V Instruction Set Manual, Volume I: Unprivileged ISA, capítulo RV32I Base Integer Instruction Set (Base Instruction Formats; Integer Register-Register Operations); Harris & Harris, Digital Design and Computer Architecture: RISC-V Edition, capítulo Architecture, seção Machine Language"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T07-010
+  objetivo: O3
+  tipo: unica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Um `objdump` de RV32 mostra a palavra 0xFF01_0113. Sabendo que o opcode 0010011 com funct3 = 000 é `addi` (formato I, imediato de 12 bits com sinal nos bits 31:20), qual é a instrução?
+  alternativas:
+    - "`addi sp, sp, 4080`"
+    - "`addi ra, sp, -16`"
+    - "`addi sp, sp, -16`"
+    - "`addi sp, zero, -16`"
+  resposta: 2
+  explicacao: |
+    Bits 6:0 = 0010011 (OP-IMM); 11:7 = 00010 → rd = x2 (sp); 14:12 = 000 → `addi`; 19:15 = 00010 → rs1 = sp; 31:20 = 0xFF0 → como 12 bits com sinal, 0xFF0 − 0x1000 = −16. É o prólogo que reserva 16 bytes de pilha. Ler 0xFF0 sem sinal dá 4080, o erro mais comum.
+  fonte: "The RISC-V Instruction Set Manual, Volume I: Unprivileged ISA, capítulo RV32I Base Integer Instruction Set (Integer Register-Immediate Instructions)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T07-011
+  objetivo: O3
+  tipo: unica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    O montador expande `li a0, 0x12345FFF` em um `lui` seguido de um `addi`. Lembrando que o `addi` soma um imediato de 12 bits **com sinal**, qual é a expansão correta?
+  alternativas:
+    - "`lui a0, 0x12345` e `addi a0, a0, 0xFFF`"
+    - "`lui a0, 0x12345` e `addi a0, a0, -1`"
+    - "`lui a0, 0x12346` e `addi a0, a0, 0xFFF`"
+    - "`lui a0, 0x12346` e `addi a0, a0, -1`"
+  resposta: 3
+  explicacao: |
+    Os 12 bits baixos, 0xFFF, interpretados com sinal valem −1. Para compensar, o `lui` carrega 0x12346 nos 20 bits altos (0x1234_6000) e o `addi` soma −1: 0x1234_6000 − 1 = 0x1234_5FFF. `lui 0x12345` + `addi -1` daria 0x1234_4FFF. Um `addi` com 0xFFF "positivo" não existe: o imediato só vai de −2048 a 2047. Confirmado montando com o clang para RV32 (saída `lui a0, 0x12346` / `addi a0, a0, -1`).
+  fonte: "The RISC-V Instruction Set Manual, Volume I: Unprivileged ISA, capítulos RV32I Base Integer Instruction Set (LUI, ADDI) e RISC-V Assembly Programmer's Handbook (pseudoinstrução li)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T07-012
+  objetivo: O4
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: num RISC-V que segue apenas a especificação privilegiada padrão, ao entrar numa interrupção o hardware empilha automaticamente os registradores de argumento e o endereço de retorno, como faz o Cortex-M.
+  resposta: false
+  explicacao: |
+    O hardware padrão só salva o PC em `mepc`, a causa em `mcause` e ajusta `mstatus` (desliga MIE). Salvar registradores é trabalho do software: o gcc gera esse código quando a função tem `__attribute__((interrupt))`. Alguns fabricantes acrescentam empilhamento em hardware como extensão própria (por exemplo, o PFIC dos CH32V), mas isso não é o padrão.
+  fonte: "The RISC-V Instruction Set Manual, Volume II: Privileged Architecture, capítulo Machine-Level ISA (mepc, mcause, mstatus, trap entry); Manual do GCC, RISC-V Function Attributes (interrupt)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T07-013
+  objetivo: O4
+  tipo: unica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Num RISC-V, `mtvec` = 0x4200_0101 (BASE = 0x4200_0100, modo vetorizado). No modo vetorizado, uma interrupção com causa *c* desvia para BASE + 4 × *c*. Para onde vai uma interrupção do timer de máquina (causa 7)?
+  alternativas:
+    - "0x4200_0107"
+    - "0x4200_011C"
+    - "0x4200_0101"
+    - "0x4200_0170"
+  resposta: 1
+  explicacao: |
+    Os 2 bits baixos de `mtvec` são o modo (01 = vetorizado); BASE = 0x4200_0100. Destino = 0x4200_0100 + 4 × 7 = 0x4200_0100 + 0x1C = 0x4200_011C. Ali normalmente há uma instrução `j` para o tratador. Exceções síncronas (como instrução ilegal) vão sempre para BASE, mesmo no modo vetorizado. Usar o valor de `mtvec` sem tirar o modo (0x101) é o erro comum.
+  fonte: "The RISC-V Instruction Set Manual, Volume II: Privileged Architecture, capítulo Machine-Level ISA, seção Machine Trap-Vector Base-Address Register (mtvec)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T07-014
+  objetivo: O4
+  tipo: multipla
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Sobre o tratamento de traps em modo de máquina no RISC-V, quais afirmações são corretas?
+  alternativas:
+    - "`mret` faz o PC receber o valor de `mepc` e restaura o estado de habilitação de interrupções."
+    - "Ao tratar uma exceção causada por `ecall`, o tratador precisa somar 4 a `mepc` antes do `mret`, senão o `ecall` executa de novo."
+    - "O bit mais significativo de `mcause` em 1 indica que a causa foi uma interrupção; em 0, uma exceção síncrona."
+    - "O retorno de um tratador de interrupção pode ser feito com a pseudoinstrução `ret`, como numa função comum."
+  resposta: [0, 1, 2]
+  explicacao: |
+    Numa exceção síncrona, `mepc` aponta para a própria instrução que a causou; para não repeti-la, o tratador avança `mepc` (4 bytes para `ecall`, que tem 32 bits). Numa interrupção, `mepc` já aponta para a instrução a retomar. `mcause[31]` separa interrupção de exceção. O retorno precisa ser `mret`: `ret` (`jalr zero, 0(ra)`) não restaura o modo nem o MIE e salta para o `ra` do código interrompido. Diferente do Cortex-M, onde o `bx lr` com EXC_RETURN faz esse papel.
+  fonte: "The RISC-V Instruction Set Manual, Volume II: Privileged Architecture, capítulo Machine-Level ISA (mepc, mcause, instrução MRET)"
+  origem: ia
+  revisao: rascunho

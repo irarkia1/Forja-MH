@@ -1,0 +1,235 @@
+- id: Q-M1.3.T02-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Qual destes itens faz parte da ISA de um processador, e não da sua microarquitetura?
+  alternativas:
+    - "O número de estágios do pipeline"
+    - "O tamanho da cache de instruções"
+    - "O conjunto de registradores visíveis ao programador"
+    - "O processo de fabricação do chip, em nanômetros"
+  resposta: 2
+  explicacao: |
+    A ISA é o contrato visível ao software: registradores, instruções, tipos de dados, modos de endereçamento e codificação. Pipeline e cache são escolhas de implementação (microarquitetura): dois chips com pipelines diferentes rodam o mesmo binário. O processo de fabricação nem é arquitetura, é tecnologia.
+  fonte: "Harris & Harris, Digital Design and Computer Architecture, capítulo Architecture (introdução) e capítulo Microarchitecture (introdução)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T02-002
+  objetivo: O1
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: um binário compilado para Cortex-M3 (ARMv7-M) roda num Cortex-M4 (ARMv7E-M) sem recompilar, porque a ISA do M4 contém a do M3.
+  resposta: true
+  explicacao: |
+    O ARMv7E-M é o ARMv7-M acrescido das instruções DSP (e, opcionalmente, da FPU). Tudo o que o M3 executa, o M4 também executa. O contrário não vale: um binário que usa instruções DSP ou de ponto flutuante falha num M3. É a vantagem de separar ISA e microarquitetura: o mesmo contrato, implementações diferentes.
+  fonte: "Joseph Yiu, The Definitive Guide to ARM Cortex-M3 and Cortex-M4 Processors, 3ª ed., capítulo Introduction to ARM Cortex-M Processors (versões da arquitetura)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T02-003
+  objetivo: O1
+  tipo: multipla
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    A equipe compara dois MCUs que implementam a mesma ISA ARMv7-M. Quais diferenças entre eles são decisões de **microarquitetura**, e não de ISA?
+  alternativas:
+    - "Um tem pipeline de 3 estágios e o outro, de 6."
+    - "Um tem um acelerador de leitura da flash com pré-busca e o outro não."
+    - "A codificação binária da instrução `add` é diferente nos dois."
+    - "Um tem cache de instruções e o outro não."
+  resposta: [0, 1, 3]
+  explicacao: |
+    Pipeline, aceleradores de flash e cache mudam o desempenho, mas não o que o software vê: o mesmo binário funciona nos dois. A codificação de `add` é definida pela ISA; se fosse diferente, eles não implementariam a mesma ISA e o binário de um não rodaria no outro.
+  fonte: "Harris & Harris, Digital Design and Computer Architecture, capítulo Microarchitecture (introdução); Patterson & Hennessy, Computer Organization and Design, capítulo Computer Abstractions and Technology"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T02-004
+  objetivo: O1
+  tipo: unica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Um firmware compilado com `-mcpu=cortex-m4 -mfloat-abi=hard` é gravado, por engano, num MCU com Cortex-M0+. O que acontece?
+  alternativas:
+    - "Funciona, só que mais devagar, porque todos os Cortex-M executam a mesma ISA."
+    - "Funciona, porque o M0+ emula por software as instruções que não tem."
+    - "O gravador recusa o arquivo, porque o ELF informa o núcleo de destino."
+    - "Falha: o M0+ implementa o ARMv6-M, que não tem a maioria das instruções Thumb-2 de 32 bits nem FPU, e a primeira instrução desconhecida gera HardFault."
+  resposta: 3
+  explicacao: |
+    O ARMv6-M é um subconjunto pequeno do ARMv7-M: quase só instruções de 16 bits e algumas de 32 (como `bl`). O compilador para M4 usa livremente `ldr.w`, `movw`, `it`, divisão e instruções de ponto flutuante; o M0+ não as reconhece e gera HardFault (o M0+ não tem UsageFault). O gravador apenas copia bytes para a flash, sem conferir o núcleo.
+  fonte: "Joseph Yiu, The Definitive Guide to ARM Cortex-M3 and Cortex-M4 Processors, 3ª ed., capítulo Introduction to ARM Cortex-M Processors; ARMv6-M Architecture Reference Manual, Thumb instruction set"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T02-005
+  objetivo: O2
+  tipo: vf
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Verdadeiro ou falso: numa arquitetura load/store, como ARM, RISC-V e AVR, as instruções aritméticas operam só sobre registradores, e a memória só é acessada por instruções de load e de store.
+  resposta: true
+  explicacao: |
+    É a característica central das ISAs RISC. Para somar algo que está na memória, primeiro se carrega para um registrador (`ldr`, `lw`, `ld`), depois se soma, depois se grava de volta. Isso simplifica o pipeline: cada instrução acessa a memória no máximo uma vez, num estágio fixo.
+  fonte: "Patterson & Hennessy, Computer Organization and Design, capítulo Instructions: Language of the Computer; Harris & Harris, Digital Design and Computer Architecture, capítulo Architecture"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T02-006
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    No x86, `add dword ptr [rbx], eax` soma o registrador eax a uma palavra na memória numa única instrução. Quantas instruções, no mínimo, um Cortex-M precisa para fazer o mesmo (memória apontada por r1, valor em r0)? Responda com um inteiro.
+  resposta: {valor: 3, unidade: "instruções", tolerancia: 0}
+  explicacao: |
+    O ARM é load/store: `ldr r3, [r1]` (lê), `add r3, r3, r0` (soma entre registradores) e `str r3, [r1]` (grava). São 3 instruções simples. O x86, CISC, aceita operando na memória dentro da instrução aritmética.
+  fonte: "Harris & Harris, Digital Design and Computer Architecture (edição ARM), capítulo Architecture, seção sobre x86 (Real-World Perspective); Patterson & Hennessy, Computer Organization and Design, seção sobre a ISA x86"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T02-007
+  objetivo: O2
+  tipo: multipla
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Quais características são típicas de ISAs **RISC**?
+  alternativas:
+    - "Instruções de tamanho fixo ou quase fixo (16 ou 32 bits)"
+    - "Instruções aritméticas que aceitam operandos diretamente na memória"
+    - "Banco com muitos registradores de uso geral (16 a 32)"
+    - "Instruções de tamanho variável entre 1 e 15 bytes"
+  resposta: [0, 2]
+  explicacao: |
+    RISC: tamanho fixo (decodificação simples), load/store, muitos registradores e poucos modos de endereçamento. Operandos na memória dentro de instruções aritméticas e tamanho variável de 1 a 15 bytes são características do x86, o CISC mais conhecido.
+  fonte: "Patterson & Hennessy, Computer Organization and Design, capítulo Instructions: Language of the Computer; Harris & Harris, Digital Design and Computer Architecture, capítulo Architecture"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T02-008
+  objetivo: O2
+  tipo: unica
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Os processadores x86 modernos traduzem cada instrução, já dentro do chip, em micro-operações simples, parecidas com instruções RISC, e as executam num pipeline profundo. Qual conclusão é correta?
+  alternativas:
+    - "O x86 virou uma ISA RISC; a classificação CISC ficou obsoleta para ele."
+    - "A ISA x86 continua CISC (instruções variáveis, operandos na memória), por compatibilidade; o que é RISC é a microarquitetura que a implementa."
+    - "As micro-operações tornam o código x86 mais compacto que o Thumb-2."
+    - "O compilador passa a gerar as micro-operações diretamente, sem usar a ISA x86."
+  resposta: 1
+  explicacao: |
+    É a distinção entre ISA e microarquitetura em ação. O binário continua usando a ISA x86, com instruções de 1 a 15 bytes e operandos na memória; o decodificador do chip as quebra em micro-operações que o software nunca vê. O custo é um decodificador grande e caro em energia — um dos motivos de MCUs pequenos usarem ISAs RISC.
+  fonte: "Patterson & Hennessy, Computer Organization and Design, seções sobre x86 e Fallacies and Pitfalls do capítulo Instructions: Language of the Computer; Harris & Harris, Digital Design and Computer Architecture, capítulo Microarchitecture, seção Real-World Perspective"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T02-009
+  objetivo: O3
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Qual é o modo de endereçamento do operando 5 na instrução Thumb `movs r0, #5`?
+  alternativas:
+    - "Imediato"
+    - "Relativo ao PC"
+    - "Base + deslocamento"
+    - "Indexado"
+  resposta: 0
+  explicacao: |
+    No modo imediato, a constante vem codificada dentro da própria instrução (`movs r0, #5` é 0x2005: o 05 é o valor). Não há acesso à memória de dados. O equivalente no AVR é `ldi r16, 5`.
+  fonte: "Harris & Harris, Digital Design and Computer Architecture (edição ARM), capítulo Architecture, seção Addressing Modes; ARMv7-M Architecture Reference Manual, instrução MOV (immediate)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T02-010
+  objetivo: O3
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Com r1 = 0x2000_0100, um Cortex-M executa `ldr r0, [r1, #8]`. Qual é o modo de endereçamento e qual endereço é lido?
+  alternativas:
+    - "Indexado; lê 0x2000_0120 (8 × 4 bytes) e r1 continua igual"
+    - "Base + deslocamento; lê 0x2000_0100 e depois r1 passa a 0x2000_0108"
+    - "Base + deslocamento; lê 0x2000_0108 e r1 continua igual"
+    - "Relativo ao PC; lê PC + 8"
+  resposta: 2
+  explicacao: |
+    O endereço efetivo é base (r1) + deslocamento imediato (8 bytes): 0x2000_0108. Sem `!` nem pós-incremento, r1 não muda. É o modo usado para acessar campos de structs e registradores de periférico (base do periférico + deslocamento do registrador). O deslocamento é em bytes, não em palavras.
+  fonte: "Harris & Harris, Digital Design and Computer Architecture (edição ARM), capítulo Architecture, seção Addressing Modes; ARMv7-M Architecture Reference Manual, instrução LDR (immediate)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T02-011
+  objetivo: O3
+  tipo: multipla
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Quais destas instruções do AVR usam endereçamento **relativo ao PC**?
+  alternativas:
+    - "`rjmp laco`"
+    - "`lds r18, 0x0100`"
+    - "`rcall atraso`"
+    - "`ld r19, X+`"
+  resposta: [0, 2]
+  explicacao: |
+    `rjmp` e `rcall` codificam um deslocamento de 12 bits em relação ao PC (±2 Ki palavras): o destino é PC + 1 + k. `lds` usa endereçamento direto (o endereço 0x0100 vem na segunda palavra da instrução). `ld r19, X+` é indireto por registrador com pós-incremento: lê no endereço contido em X e depois soma 1 a X.
+  fonte: "Microchip, AVR Instruction Set Manual, seções Program Memory Addressing e Data Addressing, instruções RJMP, RCALL, LDS e LD"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T02-012
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um programa RV32 tem 1000 instruções. Com a extensão C, 600 delas passam a ter versões compactas de 16 bits; as outras continuam com 32 bits. Quantos bytes o código ocupa? Responda em bytes, exato.
+  resposta: {valor: 2800, unidade: "bytes", tolerancia: 0}
+  explicacao: |
+    600 × 2 + 400 × 4 = 1200 + 1600 = 2800 bytes, contra 4000 bytes sem a extensão C: redução de 30 %. O número de instruções não muda; cada instrução compacta equivale a exatamente uma de 32 bits, só que codificada em menos bits.
+  fonte: "The RISC-V Instruction Set Manual, Volume I: Unprivileged ISA, capítulo \"C\" Standard Extension for Compressed Instructions (introdução)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T02-013
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Uma função Thumb-2 tem 24 instruções: 18 de 16 bits e 6 de 32 bits. Supondo que, no conjunto ARM clássico (todas de 32 bits), a mesma função tivesse as mesmas 24 instruções, que porcentagem do tamanho em ARM ocupa a versão Thumb-2? Responda em %, com 1 casa decimal.
+  resposta: {valor: 62.5, unidade: "%", tolerancia: 0.01}
+  explicacao: |
+    Thumb-2: 18 × 2 + 6 × 4 = 36 + 24 = 60 bytes. ARM: 24 × 4 = 96 bytes. 60 ÷ 96 = 0,625 = 62,5 %. Na prática, a versão Thumb às vezes precisa de algumas instruções a mais, o que reduz um pouco o ganho; mesmo assim o código fica bem menor, e por isso os Cortex-M executam só Thumb/Thumb-2.
+  fonte: "Joseph Yiu, The Definitive Guide to ARM Cortex-M3 and Cortex-M4 Processors, 3ª ed., capítulo Introduction to ARM Cortex-M Processors (Thumb-2 e densidade de código)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T02-014
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Um firmware RV32IMC ocupa 48 KB de flash, e 55 % das suas instruções estão na forma compacta de 16 bits. Recompilado para RV32IM (sem a extensão C), com o mesmo número de instruções, quanto ele passaria a ocupar? Responda em KB, com 1 casa decimal.
+  resposta: {valor: 66.2, unidade: "KB", tolerancia: 0.01}
+  explicacao: |
+    Com N instruções: 0,55·N × 2 + 0,45·N × 4 = 2,9·N bytes = 48 KB ⇒ N ≈ 16,55 Ki instruções. Sem a extensão C: 4·N = 48 × 4 ÷ 2,9 ≈ 66,2 KB. Num MCU de 64 KB de flash, a extensão C é a diferença entre caber e não caber.
+  fonte: "The RISC-V Instruction Set Manual, Volume I: Unprivileged ISA, capítulo \"C\" Standard Extension for Compressed Instructions (introdução)"
+  origem: ia
+  revisao: rascunho

@@ -1,45 +1,128 @@
 id: M1.3
 ato: A1
 nome: "Arquitetura de computadores e MCUs"
+missao: "Antes de acordar as máquinas da Vila da Forja, abra uma delas e olhe o coração batendo: quem sabe como a CPU busca, decodifica e executa cada instrução nunca mais fala com um microcontrolador às cegas."
 horas: 130
 trilha: firmware
 ordem: 10
 requer: ["M1.1"]
 tags_chefe: []
+# Ordem didática: CPU, ULA e registradores (a máquina vista por dentro, com flags e ciclo de busca e execução) → ISA, RISC × CISC (o contrato entre o software e esse hardware) → assembly básico logo em seguida (ler a ISA na prática, no objdump, ligando com o M0.6) → pipeline (só faz sentido depois de ler sequências de instruções: os hazards aparecem nelas) → memórias (Harvard × von Neumann, flash, SRAM, EEPROM e registradores de periférico) → barramentos e mapa de memória (como a CPU chega a cada memória e periférico, com o clock que os move) → ARM Cortex-M (modos e exceções: o núcleo concreto que o M1.4 vai programar) → startup, vetor e linker script (junta memória, mapa e exceções: o que acontece entre o reset e o main) → RISC-V por último, como segunda ISA estudada com olhos já treinados (formatos, CSRs e interrupções comparados com o Cortex-M, ponte para o ESP32-C3 do M1.6).
 topicos:
   - id: M1.3.T01
     nome: "CPU, ALU, registradores"
     tipo: comum
     peso: 1
+    objetivos:
+      - id: O1
+        texto: "Descrever os blocos de uma CPU (ULA, banco de registradores, unidade de controle, contador de programa) e identificar os registradores de uso geral e especiais do AVR e do Cortex-M"
+      - id: O2
+        texto: "Calcular o resultado e as flags N, Z, C e V de somas e subtrações de 8 e de 32 bits feitas pela ULA"
+      - id: O3
+        texto: "Seguir o ciclo de busca, decodificação e execução de um programa curto, registrando o PC, os registradores e a memória a cada instrução"
+      - id: O4
+        texto: "Aplicar a equação de desempenho (instruções × CPI ÷ frequência) para estimar o tempo de execução de trechos de código em MCUs reais"
   - id: M1.3.T02
     nome: "ISA, RISC × CISC"
     tipo: comum
     peso: 1
-  - id: M1.3.T03
-    nome: "Pipeline básico"
-    tipo: comum
-    peso: 1
-  - id: M1.3.T04
-    nome: "Memórias: Flash, SRAM, EEPROM, registradores de periférico"
-    tipo: comum
-    peso: 1
-  - id: M1.3.T05
-    nome: "Barramentos e mapa de memória"
-    tipo: comum
-    peso: 1
-  - id: M1.3.T06
-    nome: "ARM Cortex-M (modos, exceções)"
-    tipo: comum
-    peso: 1
-  - id: M1.3.T07
-    nome: "RISC-V (introdução)"
-    tipo: comum
-    peso: 1
+    objetivos:
+      - id: O1
+        texto: "Explicar o que a ISA define (registradores, instruções, tipos de dados, modos de endereçamento, codificação) e separá-la da microarquitetura que a implementa"
+      - id: O2
+        texto: "Comparar RISC e CISC (arquitetura load/store, tamanho fixo ou variável das instruções, quantidade de modos de endereçamento) usando AVR, ARM, RISC-V e x86 como exemplos"
+      - id: O3
+        texto: "Identificar os modos de endereçamento imediato, por registrador, base + deslocamento, indexado e relativo ao PC em instruções reais"
+      - id: O4
+        texto: "Calcular o tamanho de código a partir do tamanho das instruções e explicar por que os MCUs usam conjuntos compactos como Thumb-2 e a extensão C do RISC-V"
   - id: M1.3.T08
     nome: "Assembly básico"
     tipo: comum
     peso: 1
+    objetivos:
+      - id: O1
+        texto: "Ler a listagem de objdump -d (endereço, bytes de máquina, mnemônico e operandos) e relacioná-la ao código C compilado com -O0 e -O2"
+      - id: O2
+        texto: "Seguir instruções Thumb-2 de movimentação, aritmética, lógica, load/store e desvio (mov, add, sub, and, orr, lsl, ldr, str, cmp, b, bl, bx) prevendo os registradores e as flags"
+      - id: O3
+        texto: "Aplicar a convenção de chamada AAPCS (argumentos em r0–r3, retorno em r0, registradores preservados, push e pop de lr) para ler prólogos e epílogos de funções"
+      - id: O4
+        texto: "Reconhecer em assembly ARM e AVR os padrões de laço, if/else, acesso a vetor e escrita de leitura-modificação-escrita em registrador de periférico"
+  - id: M1.3.T03
+    nome: "Pipeline básico"
+    tipo: comum
+    peso: 1
+    objetivos:
+      - id: O1
+        texto: "Explicar o pipeline de 3 e de 5 estágios e calcular a latência, a vazão e o número de ciclos ideais de uma sequência de instruções"
+      - id: O2
+        texto: "Identificar hazards estruturais, de dados e de controle em sequências de instruções e as soluções (adiantamento, bolha, previsão de desvio)"
+      - id: O3
+        texto: "Calcular o CPI efetivo e o tempo de execução considerando bolhas, penalidades de desvio e wait states da flash"
+      - id: O4
+        texto: "Comparar os pipelines de MCUs reais (AVR, Cortex-M0+, Cortex-M3/M4, Cortex-M7) e explicar por que mais estágios nem sempre significam mais desempenho em tempo real"
+  - id: M1.3.T04
+    nome: "Memórias: Flash, SRAM, EEPROM, registradores de periférico"
+    tipo: comum
+    peso: 1
+    objetivos:
+      - id: O1
+        texto: "Distinguir as arquiteturas von Neumann, Harvard e Harvard modificada e explicar as consequências no AVR (PROGMEM, LPM) e no Cortex-M"
+      - id: O2
+        texto: "Comparar flash, SRAM, EEPROM e registradores quanto a volatilidade, velocidade, durabilidade, granularidade de escrita e apagamento e uso típico (.text, .data, .bss, pilha)"
+      - id: O3
+        texto: "Calcular capacidades de memória, larguras de endereço e faixas de endereços em hexadecimal"
+      - id: O4
+        texto: "Acessar registradores de periférico mapeados em memória em C (ponteiro volatile, struct de registradores, deslocamentos) e explicar os efeitos colaterais de leitura e escrita"
+  - id: M1.3.T05
+    nome: "Barramentos e mapa de memória"
+    tipo: comum
+    peso: 1
+    objetivos:
+      - id: O1
+        texto: "Explicar um barramento (endereço, dados e controle) e uma transação de leitura e escrita, e calcular a largura de banda a partir da largura e do clock"
+      - id: O2
+        texto: "Ler o mapa de memória do Cortex-M (regiões Code, SRAM, Peripheral, PPB) e de MCUs reais como o STM32F103 e o ATmega328P"
+      - id: O3
+        texto: "Descrever a hierarquia de barramentos AHB/APB e calcular as frequências SYSCLK, HCLK e PCLK geradas pelo PLL e pelos prescalers"
+      - id: O4
+        texto: "Calcular endereços de registradores (base + deslocamento) e os endereços de alias do bit-banding do Cortex-M3/M4"
+  - id: M1.3.T06
+    nome: "ARM Cortex-M (modos, exceções)"
+    tipo: comum
+    peso: 1
+    objetivos:
+      - id: O1
+        texto: "Descrever o modelo de programador do Cortex-M: R0–R15, xPSR, MSP e PSP, CONTROL e os modos Thread e Handler com níveis privilegiado e não privilegiado"
+      - id: O2
+        texto: "Explicar a entrada e a saída de uma exceção: busca do vetor, empilhamento automático do quadro, valor EXC_RETURN no LR e retorno"
+      - id: O3
+        texto: "Calcular a latência de interrupção, o tamanho do quadro empilhado e o endereço da entrada de uma exceção na tabela de vetores"
+      - id: O4
+        texto: "Distinguir as exceções de sistema (Reset, NMI, HardFault, SVCall, PendSV, SysTick) e explicar prioridades, preempção, tail-chaining e chegada tardia"
   - id: M1.3.T09
     nome: "Startup, vetor de interrupções e linker script"
     tipo: comum
     peso: 1
+    objetivos:
+      - id: O1
+        texto: "Descrever a sequência de reset do Cortex-M (SP inicial no endereço 0x0, vetor de reset no 0x4, bit Thumb) e do AVR (vetor de reset no endereço 0 com JMP)"
+      - id: O2
+        texto: "Explicar o que o código de startup faz antes do main: copiar .data da flash para a SRAM, zerar .bss, chamar SystemInit e os construtores"
+      - id: O3
+        texto: "Ler um linker script mínimo (MEMORY, SECTIONS, > RAM AT> FLASH, símbolos de início e fim de seção) e calcular o uso de flash e SRAM a partir da saída de size"
+      - id: O4
+        texto: "Montar a tabela de vetores em C (atributos section e weak, alias para Default_Handler) e calcular o deslocamento e o conteúdo de cada entrada"
+  - id: M1.3.T07
+    nome: "RISC-V (introdução)"
+    tipo: comum
+    peso: 1
+    objetivos:
+      - id: O1
+        texto: "Explicar a organização modular da ISA RISC-V (bases RV32I e RV64I, extensões M, A, F, C e Zicsr) e decodificar nomes como RV32IMAC"
+      - id: O2
+        texto: "Ler e escrever instruções RV32I básicas com os nomes ABI dos registradores (zero, ra, sp, a0–a7, t, s) e as pseudoinstruções li, mv, j e ret"
+      - id: O3
+        texto: "Codificar e decodificar instruções RV32I nos formatos R, I, S, B, U e J em binário e hexadecimal"
+      - id: O4
+        texto: "Comparar o tratamento de interrupções do RISC-V (modo de máquina, CSRs mtvec, mepc, mcause, mret) com o do Cortex-M e citar MCUs RISC-V reais"

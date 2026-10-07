@@ -1,0 +1,242 @@
+- id: Q-M1.3.T01-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Qual bloco de uma CPU guarda o endereço da próxima instrução a ser buscada na memória?
+  alternativas:
+    - "A ULA"
+    - "O banco de registradores de uso geral"
+    - "O contador de programa (PC)"
+    - "O registrador de status (flags)"
+  resposta: 2
+  explicacao: |
+    O PC (*program counter*) aponta para a próxima instrução. A cada busca ele avança o tamanho da instrução; um desvio é uma instrução que escreve um valor novo nele. A ULA calcula, os registradores de uso geral guardam operandos e o registrador de status guarda as flags N, Z, C e V.
+  fonte: "Nisan & Schocken, The Elements of Computing Systems, 2ª ed., capítulo Computer Architecture; Harris & Harris, Digital Design and Computer Architecture, capítulo Architecture"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T01-002
+  objetivo: O1
+  tipo: multipla
+  dificuldade: 2
+  bloom: lembrar
+  enunciado: |
+    Sobre os registradores da CPU AVR do ATmega328P, quais afirmações são corretas?
+  alternativas:
+    - "Há 32 registradores de uso geral de 8 bits, R0 a R31."
+    - "Os pares R27:R26, R29:R28 e R31:R30 formam os ponteiros de 16 bits X, Y e Z."
+    - "O PC tem 32 bits, como nos Cortex-M."
+    - "As flags de resultado, como Z e C, ficam no registrador SREG."
+  resposta: [0, 1, 3]
+  explicacao: |
+    O núcleo AVR tem 32 registradores de 8 bits; os seis últimos se agrupam em pares para formar X, Y e Z, usados como ponteiros. As flags (I, T, H, S, V, N, Z, C) ficam no SREG. O PC do ATmega328P tem 14 bits: a flash de 32 KB é organizada em 16 Ki palavras de 16 bits, e 2¹⁴ = 16 384.
+  fonte: "Microchip, ATmega328P datasheet, capítulo AVR CPU Core, seções General Purpose Register File e Status Register"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T01-003
+  objetivo: O1
+  tipo: vf
+  dificuldade: 2
+  bloom: lembrar
+  enunciado: |
+    Verdadeiro ou falso: no Cortex-M3/M4, R13 é o ponteiro de pilha (SP), R14 é o *link register* (LR) e R15 é o contador de programa (PC).
+  resposta: true
+  explicacao: |
+    O banco do Cortex-M tem 16 registradores de 32 bits: R0–R12 de uso geral, R13 = SP (que na verdade são dois, MSP e PSP, escolhidos pelo modo — T06), R14 = LR, que recebe o endereço de retorno numa chamada `bl`, e R15 = PC. As flags ficam à parte, no xPSR.
+  fonte: "Joseph Yiu, The Definitive Guide to ARM Cortex-M3 and Cortex-M4 Processors, 3ª ed., capítulo Architecture, seção Programmer's model; ARMv7-M Architecture Reference Manual, The ARMv7-M programmers' model"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T01-004
+  objetivo: O1
+  tipo: unica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Num Cortex-M4, logo depois de um `bl uart_envia`, o depurador mostra LR = 0x0800_0235. Qual é a interpretação correta?
+  alternativas:
+    - "A função vai retornar para 0x0800_0235, um endereço ímpar, o que indica um erro de alinhamento."
+    - "A função vai retornar para 0x0800_0234; o bit 0 em 1 indica que a execução continua no estado Thumb."
+    - "O LR guarda o endereço da própria instrução `bl`, que está em 0x0800_0235."
+    - "O bit 0 em 1 indica que a função foi chamada a partir de uma interrupção."
+  resposta: 1
+  explicacao: |
+    O `bl` grava no LR o endereço da instrução seguinte com o bit 0 ligado. Instruções Thumb ficam em endereços pares; o bit 0 de um endereço de desvio não é um endereço, é o indicador de estado Thumb, e o Cortex-M só executa Thumb. Ao retornar com `bx lr`, o PC recebe 0x0800_0234. Se o bit 0 chegar em 0, o Cortex-M gera uma falha (UsageFault/HardFault).
+  fonte: "ARMv7-M Architecture Reference Manual, descrição das instruções BL e BX (interworking); Joseph Yiu, The Definitive Guide to ARM Cortex-M3 and Cortex-M4 Processors, 3ª ed., capítulo Architecture"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T01-005
+  objetivo: O2
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Uma ULA de 8 bits soma 0x7F + 0x01. Quais são as flags depois da operação?
+  alternativas:
+    - "N = 0, Z = 0, C = 1, V = 0"
+    - "N = 1, Z = 0, C = 1, V = 1"
+    - "N = 0, Z = 1, C = 0, V = 1"
+    - "N = 1, Z = 0, C = 0, V = 1"
+  resposta: 3
+  explicacao: |
+    0x7F + 0x01 = 0x80. Sem sinal, 127 + 1 = 128 cabe em 8 bits: C = 0. Com sinal, +127 + 1 deveria dar +128, mas 0x80 é −128: dois positivos geraram um negativo, V = 1. O bit 7 do resultado está ligado (N = 1) e o resultado não é zero (Z = 0).
+  fonte: "Harris & Harris, Digital Design and Computer Architecture, capítulo Digital Building Blocks, seção Arithmetic Circuits; Microchip, ATmega328P datasheet, Status Register"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T01-006
+  objetivo: O2
+  tipo: multipla
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Num Cortex-M, r1 = 0xFFFF_FFFF e r2 = 0x0000_0001. Depois de `adds r0, r1, r2`, quais flags ficam em 1?
+  alternativas:
+    - "N"
+    - "Z"
+    - "C"
+    - "V"
+  resposta: [1, 2]
+  explicacao: |
+    A soma dá 0x1_0000_0000; os 32 bits de r0 ficam 0x0000_0000 e o vai-um sai pelo bit 31: C = 1 e Z = 1. N = 0 porque o bit 31 do resultado é 0. V = 0: com sinal, é −1 + 1 = 0, sem estouro. Esse é o caso típico de estouro sem sinal que não é estouro com sinal.
+  fonte: "ARMv7-M Architecture Reference Manual, pseudocódigo AddWithCarry e descrição do APSR; Harris & Harris, Digital Design and Computer Architecture (edição ARM), capítulo Architecture, seção sobre condition flags"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T01-007
+  objetivo: O2
+  tipo: vf
+  dificuldade: 3
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: num Cortex-M, depois de `subs r0, r1, r2` com r1 = 5 e r2 = 7, a flag C fica em 1, exatamente como fica a flag C do AVR depois de `sub` com os mesmos valores.
+  resposta: false
+  explicacao: |
+    Os dois calculam 5 − 7 = −2, mas definem C de formas opostas na subtração. O AVR põe C = 1 quando há empréstimo (5 < 7 sem sinal): C = 1. O ARM calcula A − B como A + ~B + 1 e põe C = 1 quando **não** há empréstimo; como há, C = 0. Por isso `bhs`/`bcs` no ARM significa "maior ou igual sem sinal" e o `brcs` do AVR significa "menor sem sinal".
+  fonte: "ARMv7-M Architecture Reference Manual, pseudocódigo AddWithCarry (SUB usa NOT(op2) e carry_in = 1); Microchip, AVR Instruction Set Manual, instrução SUB"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T01-008
+  objetivo: O2
+  tipo: unica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Num ATmega328P, r16 = 0x80 e r17 = 0x01. Depois de `sub r16, r17`, quais são o resultado e as flags N, Z, V e C do SREG?
+  alternativas:
+    - "r16 = 0x7F; N = 0, Z = 0, V = 1, C = 0"
+    - "r16 = 0x7F; N = 0, Z = 0, V = 0, C = 1"
+    - "r16 = 0x81; N = 1, Z = 0, V = 0, C = 0"
+    - "r16 = 0x7F; N = 1, Z = 0, V = 1, C = 1"
+  resposta: 0
+  explicacao: |
+    0x80 − 0x01 = 0x7F. Sem sinal, 128 − 1 não precisa de empréstimo: no AVR, C = 0. Com sinal, −128 − 1 deveria dar −129, que não cabe em 8 bits; o resultado 0x7F (+127) tem sinal trocado: V = 1. O bit 7 do resultado é 0 (N = 0) e o resultado não é zero (Z = 0). No AVR, S = N ⊕ V = 1 indica corretamente que −128 < 1.
+  fonte: "Microchip, AVR Instruction Set Manual, instrução SUB (equações das flags); ATmega328P datasheet, Status Register"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T01-009
+  objetivo: O3
+  tipo: vf
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: no ciclo de busca e execução, o PC é avançado durante a busca, de modo que, quando a instrução é executada, ele já aponta para a instrução seguinte.
+  resposta: true
+  explicacao: |
+    Na busca, a CPU lê a instrução no endereço do PC e já soma o tamanho dela (2 ou 4 bytes no Thumb). Se a instrução for um desvio, a execução sobrescreve esse valor. É por isso que, no Cortex-M, uma instrução que lê o PC enxerga um endereço à frente do dela (o endereço + 4, por causa do pipeline).
+  fonte: "Nisan & Schocken, The Elements of Computing Systems, 2ª ed., capítulo Computer Architecture (fetch-execute cycle); Harris & Harris, Digital Design and Computer Architecture, capítulo Microarchitecture"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T01-010
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Siga o programa Thumb abaixo num Cortex-M. Qual é o valor final de r2? Responda em decimal, exato.
+    ```asm
+    movs r0, #6
+    movs r1, #10
+    adds r2, r0, r1
+    lsls r2, r2, #1
+    subs r2, r2, r0
+    ```
+  resposta: {valor: 26, unidade: "valor", tolerancia: 0}
+  explicacao: |
+    r0 = 6, r1 = 10; r2 = 6 + 10 = 16; deslocar 1 bit à esquerda multiplica por 2: r2 = 32; r2 = 32 − 6 = 26. Faça sempre o traço numa tabela, uma linha por instrução, com os registradores que mudaram.
+  fonte: "Harris & Harris, Digital Design and Computer Architecture (edição ARM), capítulo Architecture, seções Instructions e Operands; ARMv7-M Architecture Reference Manual, instruções MOV, ADD, LSL e SUB"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T01-011
+  objetivo: O3
+  tipo: unica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um Cortex-M começa a executar em 0x0800_0100 uma sequência sem desvios. As quatro primeiras instruções têm, em ordem, 2, 2, 4 e 2 bytes. Em que endereço está a quinta instrução?
+  alternativas:
+    - "0x0800_0108"
+    - "0x0800_010A"
+    - "0x0800_0110"
+    - "0x0800_0105"
+  resposta: 1
+  explicacao: |
+    Sem desvios, o PC avança o tamanho de cada instrução: 2 + 2 + 4 + 2 = 10 bytes = 0xA. 0x0800_0100 + 0xA = 0x0800_010A. Quem conta "5 instruções × 2 bytes" esquece que o Thumb-2 mistura instruções de 16 e de 32 bits; quem soma 10 como se fosse 0x10 erra a base.
+  fonte: "ARMv7-M Architecture Reference Manual, Thumb instruction set encoding (instruções de 16 e 32 bits); Joseph Yiu, The Definitive Guide to ARM Cortex-M3 and Cortex-M4 Processors, 3ª ed., capítulo Instruction Set"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T01-012
+  objetivo: O4
+  tipo: unica
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Um trecho de firmware roda num MCU cujo clock é dobrado, sem mudar o programa compilado nem o CPI. O que acontece com o tempo de execução desse trecho?
+  alternativas:
+    - "Cai pela metade."
+    - "Fica igual, porque o número de instruções não mudou."
+    - "Cai para um quarto."
+    - "Dobra, porque o CPI aumenta junto."
+  resposta: 0
+  explicacao: |
+    Tempo = N × CPI ÷ f. Com N e CPI fixos, dobrar f divide o tempo por 2. Na prática o CPI pode piorar se a flash não acompanhar o clock (wait states, T03), mas a pergunta fixa o CPI.
+  fonte: "Patterson & Hennessy, Computer Organization and Design, capítulo Computer Abstractions and Technology, seção Performance"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T01-013
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um ATmega328P a 16 MHz executa um laço de 2000 instruções com CPI médio de 1,5. Quanto tempo leva? Responda em µs, com 1 casa decimal.
+  resposta: {valor: 187.5, unidade: "µs", tolerancia: 0.01}
+  explicacao: |
+    Ciclos = 2000 × 1,5 = 3000. Tempo = 3000 ÷ 16·10⁶ Hz = 187,5·10⁻⁶ s = 187,5 µs. Cada ciclo do AVR a 16 MHz dura 62,5 ns.
+  fonte: "Patterson & Hennessy, Computer Organization and Design, capítulo Computer Abstractions and Technology, seção Performance; Microchip, ATmega328P datasheet, Instruction Execution Timing"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T01-014
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Um filtro em `int32_t` compila para 40 000 instruções num AVR a 16 MHz (CPI médio 1,2) e para 12 000 instruções num Cortex-M0+ a 48 MHz (CPI médio 1,4). Quantas vezes o Cortex-M0+ é mais rápido? Responda com 2 casas decimais.
+  resposta: {valor: 8.57, unidade: "vezes", tolerancia: 0.01}
+  explicacao: |
+    AVR: 40 000 × 1,2 ÷ 16 MHz = 3,0 ms. Cortex-M0+: 12 000 × 1,4 ÷ 48 MHz = 0,35 ms. Razão: 3,0 ÷ 0,35 ≈ 8,57. O clock explica só 3 vezes; o resto vem de a ISA de 32 bits somar `int32_t` com uma instrução, enquanto o AVR precisa de `add` + 3 `adc`. O CPI um pouco pior do M0+ não compensa.
+  fonte: "Patterson & Hennessy, Computer Organization and Design, capítulo Computer Abstractions and Technology, seção Performance; Microchip, AVR Instruction Set Manual, instruções ADD e ADC"
+  origem: ia
+  revisao: rascunho

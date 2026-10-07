@@ -1,0 +1,235 @@
+- id: Q-M1.3.T04-001
+  objetivo: O1
+  tipo: vf
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: no AVR (arquitetura Harvard), a flash de programa e a SRAM de dados ficam em espaços de endereçamento separados, de modo que o mesmo número de endereço, como 0x0100, pode se referir a uma posição da flash ou a um byte da SRAM, dependendo da instrução usada.
+  resposta: true
+  explicacao: |
+    Na Harvard "pura" do AVR, as instruções `ld`/`st`/`lds`/`sts` acessam o espaço de dados (registradores, E/S e SRAM) e a instrução `lpm` lê o espaço de programa (flash). O endereço sozinho não diz qual memória; a instrução diz. Por isso um ponteiro C comum não alcança dados guardados na flash.
+  fonte: "Microchip, ATmega328P datasheet, capítulo AVR Memories; avr-libc, Data in Program Space"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T04-002
+  objetivo: O1
+  tipo: unica
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Num ATmega328P, o firmware declara `const char menu[] = "...";` com 200 caracteres, sem `PROGMEM`. Onde esse texto fica?
+  alternativas:
+    - "Só na flash, porque é `const`"
+    - "Só na SRAM, porque o AVR não lê dados da flash"
+    - "Só na EEPROM, que é onde o AVR guarda constantes"
+    - "Na flash (valor inicial) e também na SRAM, para onde o startup o copia no reset; para mantê-lo só na flash é preciso `PROGMEM` e lê-lo com `pgm_read_byte`"
+  resposta: 3
+  explicacao: |
+    No avr-gcc, `const` sem `PROGMEM` vai para `.data`: o valor fica gravado na flash e é copiado para a SRAM antes do `main`, porque ponteiros comuns só leem o espaço de dados. Os 200 bytes saem dos 2 KB de SRAM. Com `PROGMEM`, o texto fica só na flash e é lido com `pgm_read_byte`, que gera a instrução `lpm`. Medido com `avr-size`, a seção *data* some.
+  fonte: "avr-libc, Data in Program Space; Microchip, ATmega328P datasheet, capítulo AVR Memories"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T04-003
+  objetivo: O1
+  tipo: unica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Num Cortex-M3, `static const uint16_t tabela[512] = {...};` fica na flash e é lida com um ponteiro comum, sem nenhuma instrução especial. Ao mesmo tempo, a CPU busca instruções e acessa dados em paralelo. Qual descrição explica as duas coisas?
+  alternativas:
+    - "O Cortex-M é von Neumann puro: uma memória e um barramento, por isso a leitura é simples e paralela."
+    - "O Cortex-M é Harvard modificada: barramentos separados para instruções e dados, mas um único mapa de endereços de 4 GB visto pelo programa."
+    - "O Cortex-M é Harvard pura, como o AVR, e o compilador gera `lpm` automaticamente."
+    - "O startup copia toda a flash para a SRAM, e a CPU só lê a SRAM."
+  resposta: 1
+  explicacao: |
+    Os barramentos I-Code e D-Code (e o System) permitem busca e acesso a dados simultâneos (vantagem Harvard), mas há um só espaço de endereçamento: a flash em 0x0800_0000 (alias em 0x0000_0000) e a SRAM em 0x2000_0000 são alcançadas por qualquer `ldr`. Um von Neumann puro não teria o paralelismo; uma Harvard pura exigiria instruções separadas para ler a flash.
+  fonte: "Joseph Yiu, The Definitive Guide to ARM Cortex-M3 and Cortex-M4 Processors, 3ª ed., capítulo Memory System; Harris & Harris, Digital Design and Computer Architecture, capítulo Microarchitecture"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T04-004
+  objetivo: O2
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Qual destas memórias de um MCU perde o conteúdo quando a alimentação é cortada?
+  alternativas:
+    - "Flash"
+    - "EEPROM"
+    - "SRAM"
+    - "Os option bytes de configuração gravados na flash"
+  resposta: 2
+  explicacao: |
+    A SRAM é volátil: cada bit é um latch que só se mantém com energia. Por isso as variáveis (.data, .bss, pilha) são reconstruídas a cada reset pelo startup. Flash, EEPROM e option bytes são não voláteis.
+  fonte: "Harris & Harris, Digital Design and Computer Architecture, capítulo Digital Building Blocks, seção Memory Arrays"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T04-005
+  objetivo: O2
+  tipo: multipla
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Sobre a flash interna de MCUs como o STM32F103 e o ATmega328P, quais afirmações são corretas?
+  alternativas:
+    - "O apagamento põe todos os bits em 1 (a flash apagada lê 0xFF)."
+    - "O apagamento é feito por página ou setor inteiro, não byte a byte."
+    - "Um byte já gravado pode ser regravado com qualquer valor quantas vezes se quiser, sem apagar."
+    - "A durabilidade típica é da ordem de 10 000 ciclos de apagamento e gravação."
+  resposta: [0, 1, 3]
+  explicacao: |
+    Gravar só consegue levar bits de 1 para 0; para voltar a 1, apaga-se a página (1 ou 2 KB no STM32F103) ou o setor. O ATmega328P e o STM32F103 especificam 10 000 ciclos para a flash. Por isso regravar dados com frequência exige apagar e reescrever páginas inteiras, de preferência com nivelamento de desgaste.
+  fonte: "ST, RM0008, capítulo Embedded Flash memory; ST, datasheet do STM32F103x8/xB (Flash memory endurance); Microchip, ATmega328P datasheet, AVR Memories"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T04-006
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um ATmega328P grava um contador sempre no mesmo byte da EEPROM, a cada 10 minutos. A EEPROM suporta 100 000 ciclos de gravação. Em quantos dias esse byte chega ao limite? Responda em dias, com 1 casa decimal.
+  resposta: {valor: 694.4, unidade: "dias", tolerancia: 0.01}
+  explicacao: |
+    100 000 gravações × 10 min = 1 000 000 min. 1 000 000 ÷ 1440 min/dia ≈ 694,4 dias — menos de 2 anos para um produto que deveria durar 10. A solução é gravar menos (só ao desligar, ou quando o valor muda bastante) e espalhar as gravações por vários endereços.
+  fonte: "Microchip, ATmega328P datasheet, EEPROM Data Memory e Electrical Characteristics (EEPROM endurance); Microchip, nota AVR101: High Endurance EEPROM Storage"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T04-007
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Para não gastar a EEPROM de 1024 bytes do ATmega328P, o firmware grava um registro de 16 bytes a cada 5 minutos, avançando em rodízio por toda a EEPROM (ao chegar ao fim, volta ao começo). Cada byte suporta 100 000 gravações. Quanto tempo leva até o desgaste? Considere 1 ano = 365 dias e responda em anos, com 1 casa decimal.
+  resposta: {valor: 60.9, unidade: "anos", tolerancia: 0.01}
+  explicacao: |
+    Cabem 1024 ÷ 16 = 64 registros: cada byte é regravado uma vez a cada 64 × 5 = 320 min. Vida: 100 000 × 320 min = 32 000 000 min. 32 000 000 ÷ (60 × 24 × 365) ≈ 60,9 anos. Sem o rodízio (sempre no mesmo lugar), seriam 100 000 × 5 min ≈ 0,95 ano. É o nivelamento de desgaste.
+  fonte: "Microchip, nota AVR101: High Endurance EEPROM Storage; ATmega328P datasheet, EEPROM Data Memory"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T04-008
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    O ATmega328P tem 32 KB (32 768 bytes) de flash, organizada em palavras de 16 bits. Quantas palavras de programa ela tem? Responda com um inteiro.
+  resposta: {valor: 16384, unidade: "palavras", tolerancia: 0}
+  explicacao: |
+    32 768 bytes ÷ 2 bytes por palavra = 16 384 palavras = 2¹⁴. Por isso o PC do ATmega328P tem 14 bits e o datasheet descreve a flash como 16K × 16. Os desvios e o PC contam palavras, não bytes.
+  fonte: "Microchip, ATmega328P datasheet, capítulo AVR Memories, In-System Reprogrammable Flash Program Memory"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T04-009
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Quantos bits de endereço são necessários para endereçar, byte a byte, uma flash de 512 KiB? Responda com um inteiro.
+  resposta: {valor: 19, unidade: "bits", tolerancia: 0}
+  explicacao: |
+    512 KiB = 512 × 1024 = 524 288 = 2¹⁹ bytes → 19 bits. Atalho: 1 KiB = 2¹⁰ e 512 = 2⁹, então 2⁹ × 2¹⁰ = 2¹⁹.
+  fonte: "Harris & Harris, Digital Design and Computer Architecture, capítulo Digital Building Blocks, seção Memory Arrays"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T04-010
+  objetivo: O3
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    O STM32F103C8 tem 20 KB de SRAM começando em 0x2000_0000. Qual é o endereço do último byte da SRAM?
+  alternativas:
+    - "0x2000_5000"
+    - "0x2000_4FFF"
+    - "0x2001_FFFF"
+    - "0x2000_13FF"
+  resposta: 1
+  explicacao: |
+    20 KB = 20 × 1024 = 20 480 bytes = 0x5000. Último byte = início + tamanho − 1 = 0x2000_0000 + 0x5000 − 1 = 0x2000_4FFF. 0x2000_5000 é o primeiro endereço **depois** da SRAM — é exatamente o valor usado como topo inicial da pilha, que cresce para baixo. 0x13FF seria tratar 20 KB como 0x1400, misturando decimal e hexadecimal.
+  fonte: "ST, datasheet do STM32F103x8/xB, Memory mapping; ST, RM0008, capítulo Memory and bus architecture"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T04-011
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um STM32F103 de média densidade tem flash a partir de 0x0800_0000, dividida em páginas de 1 KB numeradas a partir de 0. Para apagar o byte em 0x0800_4C00, que número de página precisa ser apagado? Responda com um inteiro.
+  resposta: {valor: 19, unidade: "página", tolerancia: 0}
+  explicacao: |
+    Deslocamento = 0x0800_4C00 − 0x0800_0000 = 0x4C00 = 19 456 bytes. Página = 19 456 ÷ 1024 = 19 (exato: o endereço é o início da página 19). Apagar essa página apaga também os outros 1023 bytes dela — salve antes o que for preciso.
+  fonte: "ST, RM0008, capítulo Embedded Flash memory (organização em páginas); ST, PM0075 (STM32F10xxx Flash memory programming manual)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T04-012
+  objetivo: O4
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    No STM32F103, os registradores do GPIO ficam em sequência a partir da base, todos de 32 bits: CRL (0x00), CRH, IDR, ODR, BSRR, BRR, LCKR. A base do GPIOA é 0x4001_0800. Qual é o endereço de `GPIOA->BSRR`?
+  alternativas:
+    - "0x4001_0804"
+    - "0x4001_0814"
+    - "0x4001_0805"
+    - "0x4001_0810"
+  resposta: 3
+  explicacao: |
+    BSRR é o 5º registrador da lista: deslocamento 4 × 4 bytes = 0x10. Endereço = 0x4001_0800 + 0x10 = 0x4001_0810. É exatamente o que o compilador calcula com `GPIOA->BSRR` quando a struct tem um `volatile uint32_t` por registrador. 0x805 seria contar 1 byte por registrador.
+  fonte: "ST, RM0008, capítulo General-purpose and alternate-function I/Os, GPIO register map"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T04-013
+  objetivo: O4
+  tipo: multipla
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Sobre registradores de periférico mapeados em memória, quais afirmações são corretas?
+  alternativas:
+    - "Sem `volatile`, o compilador pode ler o registrador de status uma única vez e transformar `while (!(SR & RXNE));` num laço infinito."
+    - "Ler certos registradores tem efeito colateral: ler o registrador de dados da UART consome o byte recebido."
+    - "Declarar o ponteiro como `volatile` torna atômica a sequência ler-modificar-escrever de `REG |= bit;`."
+    - "Num registrador do tipo escrever-1-para-limpar, escrever 0 num bit não altera esse bit."
+  resposta: [0, 1, 3]
+  explicacao: |
+    `volatile` obriga o compilador a fazer cada acesso exatamente como escrito, mas não torna nada atômico: `REG |= bit` continua sendo `ldr`, `orr`, `str`, interrompível. Registradores têm efeitos: a leitura do DR da UART consome o dado (e o depurador pode "roubá-lo"), e em registradores de pendência como o `EXTI_PR` escrever 1 limpa e escrever 0 não faz nada.
+  fonte: "ST, RM0008, capítulos USART (registradores SR e DR) e EXTI (registrador PR, rc_w1); Elecia White, Making Embedded Systems, capítulo Outputs, Inputs, and Timers"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T04-014
+  objetivo: O4
+  tipo: unica
+  dificuldade: 4
+  bloom: aplicar
+  enunciado: |
+    No STM32F103, escrever 1 nos bits 0–15 do `GPIOx_BSRR` liga os pinos correspondentes, e escrever 1 nos bits 16–31 desliga o pino (bit − 16); zeros não alteram nada. Qual valor, escrito de uma vez em `GPIOC->BSRR`, liga PC13 e desliga PC14 sem mexer nos outros pinos?
+  alternativas:
+    - "0x0000_6000"
+    - "0x2000_4000"
+    - "0x4000_2000"
+    - "0x0000_2000"
+  resposta: 2
+  explicacao: |
+    Ligar PC13: bit 13 → 0x0000_2000. Desligar PC14: bit 14 + 16 = 30 → 0x4000_0000. Valor: 0x4000_2000. Como zeros não têm efeito, não é preciso ler o registrador: a operação é uma escrita única, atômica, imune ao problema de leitura-modificação-escrita com interrupções. 0x0000_6000 ligaria os dois pinos; 0x2000_4000 inverte os papéis (liga PC14 e desliga PC13).
+  fonte: "ST, RM0008, capítulo General-purpose and alternate-function I/Os, Port bit set/reset register (GPIOx_BSRR)"
+  origem: ia
+  revisao: rascunho

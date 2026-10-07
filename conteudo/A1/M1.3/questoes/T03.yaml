@@ -1,0 +1,233 @@
+- id: Q-M1.3.T03-001
+  objetivo: O1
+  tipo: vf
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: num pipeline ideal, cada instrução individual passa a levar menos tempo do início ao fim (latência menor) do que num processador sem pipeline.
+  resposta: false
+  explicacao: |
+    O pipeline não encurta a viagem de uma instrução: ela continua passando por todos os estágios, e os registradores entre estágios até acrescentam um pouco de atraso. O que melhora é a **vazão**: com o pipeline cheio, sai uma instrução por ciclo. É a lavanderia: cada cesto leva o mesmo tempo, mas vários estão em andamento ao mesmo tempo.
+  fonte: "Patterson & Hennessy, Computer Organization and Design, capítulo The Processor, seção An Overview of Pipelining"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T03-002
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um pipeline de 5 estágios, sem nenhum hazard, executa 100 instruções. Quantos ciclos se passam desde a busca da primeira até a conclusão da última? Responda em ciclos, exato.
+  resposta: {valor: 104, unidade: "ciclos", tolerancia: 0}
+  explicacao: |
+    k + (N − 1) = 5 + 99 = 104 ciclos: 5 ciclos para a primeira instrução atravessar o pipeline e mais 1 ciclo para cada uma das outras 99. Sem pipeline, num processador multiciclo de 5 ciclos por instrução, seriam 500.
+  fonte: "Harris & Harris, Digital Design and Computer Architecture, capítulo Microarchitecture, seção Pipelined Processor; Patterson & Hennessy, Computer Organization and Design, capítulo The Processor, seção An Overview of Pipelining"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T03-003
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um pipeline tem 5 estágios com atrasos de 150, 200, 120, 200 e 130 ps, e cada registrador de pipeline acrescenta 20 ps. Qual é o menor período de clock possível? Responda em ps, exato.
+  resposta: {valor: 220, unidade: "ps", tolerancia: 0}
+  explicacao: |
+    Todos os estágios avançam juntos no mesmo clock, então o período é ditado pelo estágio mais lento: 200 ps + 20 ps do registrador = 220 ps. Usar a média (160 ps) ou a soma (800 ps) é o erro comum; a soma seria o período de um processador de ciclo único.
+  fonte: "Harris & Harris, Digital Design and Computer Architecture, capítulo Microarchitecture, seção Pipelined Performance Analysis"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T03-004
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Um processador de ciclo único leva 800 ps por instrução. Dividido num pipeline de 5 estágios, o período de clock passa a 220 ps. Sem hazards, quantas vezes mais rápido ele executa 1000 instruções? Responda com 2 casas decimais.
+  resposta: {valor: 3.62, unidade: "vezes", tolerancia: 0.01}
+  explicacao: |
+    Ciclo único: 1000 × 800 ps = 800 ns. Pipeline: (5 + 999) × 220 ps = 1004 × 220 ps = 220,88 ns. Ganho: 800 ÷ 220,88 ≈ 3,62. Não chega a 5 porque os estágios são desiguais (o mais lento dita o clock) e porque há o custo dos registradores entre estágios.
+  fonte: "Harris & Harris, Digital Design and Computer Architecture, capítulo Microarchitecture, seção Pipelined Performance Analysis"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T03-005
+  objetivo: O2
+  tipo: unica
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Que tipo de hazard aparece nesta sequência?
+    ```asm
+    ldr  r1, [r0]
+    adds r2, r1, #1
+    ```
+  alternativas:
+    - "Hazard de controle"
+    - "Hazard estrutural"
+    - "Hazard de dados (leitura depois de escrita)"
+    - "Nenhum, porque as instruções usam registradores diferentes como destino"
+  resposta: 2
+  explicacao: |
+    O `adds` lê r1, que o `ldr` ainda está escrevendo: é uma dependência de dados do tipo leitura depois de escrita (RAW). No pipeline clássico de 5 estágios, o valor só existe no fim do estágio de memória, então mesmo com adiantamento a segunda instrução espera 1 ciclo (bolha). Hazard de controle envolve desvios; estrutural envolve disputa por um recurso de hardware.
+  fonte: "Patterson & Hennessy, Computer Organization and Design, capítulo The Processor, seção Data Hazards: Forwarding versus Stalling"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T03-006
+  objetivo: O2
+  tipo: multipla
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Quais técnicas resolvem ou reduzem **hazards de dados** num pipeline?
+  alternativas:
+    - "Adiantamento (forwarding) do resultado da ULA para a instrução seguinte"
+    - "Previsão de desvio"
+    - "Inserir uma bolha (stall) até o dado ficar pronto"
+    - "Reordenar no compilador instruções independentes entre o load e o uso"
+  resposta: [0, 2, 3]
+  explicacao: |
+    Adiantamento entrega o resultado antes de ele ser escrito no banco de registradores; a bolha atrasa a instrução dependente quando o adiantamento não basta (load seguido de uso); e o compilador pode preencher esse intervalo com trabalho útil. Previsão de desvio ataca hazards de **controle**, não de dados.
+  fonte: "Harris & Harris, Digital Design and Computer Architecture, capítulo Microarchitecture, seções Solving Data Hazards with Forwarding e Solving Data Hazards with Stalls"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T03-007
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Num pipeline clássico de 5 estágios com adiantamento completo (só o load seguido de uso imediato custa 1 bolha), quantos ciclos leva esta sequência, da primeira busca à última escrita?
+    ```asm
+    ldr  r1, [r0]
+    adds r2, r1, #1
+    ldr  r3, [r0, #4]
+    subs r4, r3, r2
+    adds r5, r4, r2
+    str  r5, [r0, #8]
+    ```
+    Responda em ciclos, exato.
+  resposta: {valor: 12, unidade: "ciclos", tolerancia: 0}
+  explicacao: |
+    Ideal: 5 + (6 − 1) = 10 ciclos. Há duas dependências de load seguido de uso imediato (`ldr r1` → `adds r2` e `ldr r3` → `subs r4`): +2 bolhas = 12 ciclos. As dependências `subs r4` → `adds r5` e `adds r5` → `str` vêm da ULA e o adiantamento resolve sem bolha.
+  fonte: "Patterson & Hennessy, Computer Organization and Design, capítulo The Processor, seção Data Hazards: Forwarding versus Stalling"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T03-008
+  objetivo: O2
+  tipo: unica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Num processador com pipeline e **uma única memória** para instruções e dados, ligada à CPU por **um único barramento**, um `ldr` chega ao estágio de acesso à memória no mesmo ciclo em que a busca precisa trazer outra instrução. Que hazard é esse e como o Cortex-M3/M4 o evita?
+  alternativas:
+    - "Hazard de controle; o Cortex-M3/M4 usa previsão de desvio dinâmica"
+    - "Hazard de dados; o Cortex-M3/M4 usa adiantamento entre a memória e a ULA"
+    - "Hazard estrutural; o Cortex-M3/M4 tem barramentos separados para buscar instruções (I-Code) e acessar dados (D-Code) na região de código, além do barramento de sistema"
+    - "Hazard estrutural; o Cortex-M3/M4 o evita executando apenas uma instrução por vez, sem pipeline"
+  resposta: 2
+  explicacao: |
+    Dois estágios disputando o mesmo recurso no mesmo ciclo é um hazard estrutural. A solução clássica é a organização Harvard: caminhos separados para instruções e dados. O Cortex-M3/M4 tem os barramentos I-Code e D-Code para a região de código e o barramento System para SRAM e periféricos, de modo que a busca e o acesso a dados podem acontecer em paralelo. O Cortex-M3/M4 tem pipeline de 3 estágios.
+  fonte: "Joseph Yiu, The Definitive Guide to ARM Cortex-M3 and Cortex-M4 Processors, 3ª ed., capítulo Memory System (bus interfaces); Harris & Harris, Digital Design and Computer Architecture, capítulo Microarchitecture, seção Hazards"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T03-009
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Num programa, 25 % das instruções são loads e 40 % deles são seguidos de uso imediato (1 ciclo de bolha cada); 15 % das instruções são desvios, dos quais 60 % são tomados, com penalidade de 2 ciclos. Não há outras perdas. Qual é o CPI efetivo? Responda com 2 casas decimais.
+  resposta: {valor: 1.28, unidade: "ciclos/instrução", tolerancia: 0.01}
+  explicacao: |
+    CPI = 1 + (0,25 × 0,40 × 1) + (0,15 × 0,60 × 2) = 1 + 0,10 + 0,18 = 1,28. Cada termo é "fração das instruções que sofrem o evento × ciclos perdidos". O 1 inicial é o CPI ideal do pipeline.
+  fonte: "Patterson & Hennessy, Computer Organization and Design, capítulo The Processor, seções Data Hazards e Control Hazards; Harris & Harris, Digital Design and Computer Architecture, capítulo Microarchitecture, seção Pipelined Performance Analysis"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T03-010
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um STM32F103 a 72 MHz executa 1 milhão de instruções com CPI efetivo de 1,28. Quanto tempo leva? Responda em ms, com 2 casas decimais.
+  resposta: {valor: 17.78, unidade: "ms", tolerancia: 0.01}
+  explicacao: |
+    Tempo = N × CPI ÷ f = 10⁶ × 1,28 ÷ 72·10⁶ Hz ≈ 0,017778 s = 17,78 ms. Com CPI ideal de 1, seriam 13,89 ms: as bolhas e penalidades custam 28 % a mais.
+  fonte: "Patterson & Hennessy, Computer Organization and Design, capítulo Computer Abstractions and Technology, seção Performance"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T03-011
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    No STM32F103, a flash precisa de 2 wait states a 72 MHz e de 1 a 48 MHz. Um laço tem CPI base de 1,25, e em 30 % das buscas o prefetch não esconde a espera (cada wait state exposto soma 1 ciclo). Quantas vezes mais rápido o laço roda a 72 MHz do que a 48 MHz? Responda com 2 casas decimais.
+  resposta: {valor: 1.26, unidade: "vezes", tolerancia: 0.01}
+  explicacao: |
+    A 72 MHz: CPI = 1,25 + 0,3 × 2 = 1,85 → 1,85 ÷ 72 MHz ≈ 25,69 ns por instrução. A 48 MHz: CPI = 1,25 + 0,3 × 1 = 1,55 → 1,55 ÷ 48 MHz ≈ 32,29 ns. Razão: 32,29 ÷ 25,69 ≈ 1,26. O clock subiu 1,5 vez, mas o desempenho só 1,26 vez: a flash não acompanha. É por isso que existem o prefetch, o ART Accelerator dos STM32F4 e a execução a partir da SRAM para rotinas críticas.
+  fonte: "ST, RM0008 (STM32F10xxx Reference Manual), seção Embedded Flash memory, Read operations (FLASH_ACR LATENCY e prefetch buffer); Patterson & Hennessy, Computer Organization and Design, seção Performance"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T03-012
+  objetivo: O4
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Quantos estágios tem o pipeline dos núcleos Cortex-M3 e Cortex-M4?
+  alternativas:
+    - "2"
+    - "3"
+    - "5"
+    - "6"
+  resposta: 1
+  explicacao: |
+    Cortex-M3 e Cortex-M4 têm pipeline de 3 estágios: busca, decodificação e execução. O Cortex-M0+ tem 2, o Cortex-M0 tem 3 e o Cortex-M7 tem 6, superescalar. O pipeline de 5 estágios é o modelo clássico dos livros (MIPS/RISC-V didático).
+  fonte: "Joseph Yiu, The Definitive Guide to ARM Cortex-M3 and Cortex-M4 Processors, 3ª ed., capítulo Technical Overview (pipeline)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T03-013
+  objetivo: O4
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: um Cortex-M7, com pipeline de 6 estágios, execução superescalar, previsão de desvio e caches, costuma ser mais rápido em média que um Cortex-M4, mas o número de ciclos de um mesmo trecho de código varia mais de uma execução para outra.
+  resposta: true
+  explicacao: |
+    Caches e previsores dependem do histórico: o mesmo código pode achar os dados na cache ou não, acertar ou errar a previsão. A média melhora, mas o pior caso fica mais distante da média e mais difícil de calcular. Para código crítico em tempo real, o M7 oferece memórias TCM (tempo de acesso fixo) e a possibilidade de travar trechos na cache.
+  fonte: "ARM, Cortex-M7 Technical Reference Manual (visão geral do pipeline e das TCM); Joseph Yiu, The Definitive Guide to ARM Cortex-M3 and Cortex-M4 Processors, 3ª ed., capítulo Introduction to ARM Cortex-M Processors"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T03-014
+  objetivo: O4
+  tipo: unica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    No ATmega328P, quase todas as instruções levam 1 ciclo, mas um desvio condicional **tomado** (como `brne` quando Z = 0) leva 2. Qual é a explicação?
+  alternativas:
+    - "O AVR busca a próxima instrução enquanto executa a atual; quando o desvio é tomado, a instrução já buscada é descartada e é preciso buscar a do destino."
+    - "O desvio precisa ler a flash duas vezes porque toda instrução de desvio tem 32 bits."
+    - "O AVR tem um pipeline de 6 estágios, e o desvio tomado esvazia todos eles."
+    - "A ULA leva dois ciclos para calcular a condição Z = 0."
+  resposta: 0
+  explicacao: |
+    O datasheet descreve um pipeline de um nível: a busca da instrução seguinte acontece em paralelo com a execução da atual. Se o desvio não é tomado, a instrução já buscada é a correta (1 ciclo). Se é tomado, ela é descartada e a do destino é buscada: 1 ciclo de penalidade. `brne` tem 16 bits; a condição é só um teste da flag Z.
+  fonte: "Microchip, ATmega328P datasheet, capítulo AVR CPU Core, seção Instruction Execution Timing; AVR Instruction Set Manual, instrução BRNE (ciclos)"
+  origem: ia
+  revisao: rascunho

@@ -1,0 +1,225 @@
+- id: Q-M1.3.T09-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Ao sair do reset, o que um Cortex-M3 lê nos endereços 0x0000_0000 e 0x0000_0004?
+  alternativas:
+    - "Em 0x0, o valor inicial do MSP; em 0x4, o endereço do Reset_Handler (vetor de reset)"
+    - "Em 0x0, a primeira instrução do programa; em 0x4, a segunda instrução"
+    - "Em 0x0, o endereço do main; em 0x4, o tamanho da tabela de vetores"
+    - "Em 0x0, o endereço do Reset_Handler; em 0x4, o valor inicial do MSP"
+  resposta: 0
+  explicacao: |
+    A tabela de vetores do Cortex-M começa com o valor inicial da pilha (posição 0) e o vetor de reset (posição 1). O hardware carrega o MSP e o PC com essas duas palavras e começa a executar o Reset_Handler. Ao contrário do AVR, a tabela não contém instruções, só endereços — e a pilha já está pronta antes da primeira instrução.
+  fonte: "Joseph Yiu, The Definitive Guide to ARM Cortex-M3 and Cortex-M4 Processors, 3ª ed., capítulo Architecture, seção Reset and reset sequence; ARMv7-M Architecture Reference Manual, Reset behavior"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T09-002
+  objetivo: O1
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: se a palavra no endereço 0x0000_0004 de um Cortex-M vale 0x0800_0145, o Reset_Handler começa no endereço 0x0800_0144.
+  resposta: true
+  explicacao: |
+    Instruções Thumb ficam em endereços pares; o bit 0 dos vetores (e de qualquer endereço usado em `bx`/`blx`) indica o estado Thumb e precisa ser 1 no Cortex-M. O endereço real é o valor com o bit 0 zerado: 0x0800_0144. O compilador e o linker põem esse bit automaticamente em endereços de funções Thumb.
+  fonte: "ARMv7-M Architecture Reference Manual, The vector table e Reset behavior; Joseph Yiu, The Definitive Guide to ARM Cortex-M3 and Cortex-M4 Processors, 3ª ed., capítulo Exceptions and Interrupts"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T09-003
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    No ATmega328P, a tabela de vetores fica no início da flash e tem 26 vetores (o reset e 25 interrupções). Cada vetor é uma instrução `jmp` de 2 palavras de 16 bits. Quantos bytes a tabela ocupa? Responda em bytes, exato.
+  resposta: {valor: 104, unidade: "bytes", tolerancia: 0}
+  explicacao: |
+    Cada `jmp` tem 2 palavras = 4 bytes. 26 × 4 = 104 bytes = 0x68. É por isso que, no `avr-objdump`, o código de inicialização do avr-libc começa em 0x68 logo depois de `__vectors`. No AVR o vetor é uma instrução que salta; no Cortex-M é só um endereço.
+  fonte: "Microchip, ATmega328P datasheet, capítulo Interrupts, tabela Reset and Interrupt Vectors in ATmega328P; AVR Instruction Set Manual, instrução JMP"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T09-004
+  objetivo: O2
+  tipo: vf
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Verdadeiro ou falso: num firmware de MCU, as variáveis globais declaradas sem inicializador (seção .bss) são zeradas pelo código de startup antes de o `main` começar.
+  resposta: true
+  explicacao: |
+    O padrão C garante que variáveis estáticas sem inicializador comecem em zero. Quem cumpre a promessa num MCU é o startup, com um laço que escreve zero de `_sbss` a `_ebss`. A SRAM, ao ligar, contém valores aleatórios; um startup escrito à mão que esquece esse laço produz bugs que somem e aparecem.
+  fonte: "GNU Binutils, manual do ld, Linker Scripts; avr-libc, Memory Sections (__do_clear_bss); ST, startup_stm32f103xb.s"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T09-005
+  objetivo: O2
+  tipo: unica
+  dificuldade: 2
+  bloom: analisar
+  enunciado: |
+    Um startup escrito à mão para um STM32 zera o .bss, mas esquece o laço que copia o .data. O firmware tem `uint32_t intervalo_ms = 500;` como variável global. O que acontece?
+  alternativas:
+    - "Nada muda: o compilador grava 500 direto na SRAM durante a gravação do firmware."
+    - "O linker detecta a falta da cópia e acusa erro."
+    - "`intervalo_ms` começa com o que estiver na SRAM ao ligar (lixo), porque o 500 ficou só na flash."
+    - "`intervalo_ms` começa com 0, porque toda a SRAM é zerada no reset."
+  resposta: 2
+  explicacao: |
+    O valor inicial 500 é gravado na flash (LMA de .data); a variável mora na SRAM (VMA). Quem leva um ao outro é o laço de cópia do startup. Sem ele, a variável tem o conteúdo aleatório da SRAM. O gravador só escreve na flash, e o hardware não zera a SRAM no reset. O linker não sabe o que o startup faz.
+  fonte: "GNU Binutils, manual do ld, seções Basic Linker Script Concepts (VMA e LMA) e Output Section LMA; ST, startup_stm32f103xb.s (laço CopyDataInit)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T09-006
+  objetivo: O2
+  tipo: multipla
+  dificuldade: 3
+  bloom: entender
+  enunciado: |
+    Quais destas tarefas são feitas pelo **código** de startup (o Reset_Handler) num firmware típico de STM32 compilado com gcc?
+  alternativas:
+    - "Copiar os valores iniciais de .data da flash para a SRAM"
+    - "Zerar a seção .bss"
+    - "Carregar o MSP com o valor inicial da pilha, lido do endereço 0x0"
+    - "Chamar `__libc_init_array`, que executa os construtores de objetos globais C++"
+  resposta: [0, 1, 3]
+  explicacao: |
+    O código do Reset_Handler copia .data, zera .bss, chama SystemInit e `__libc_init_array` e por fim o `main`. O carregamento do MSP a partir da posição 0 da tabela é feito pelo **hardware** do Cortex-M, antes de qualquer instrução — por isso o Reset_Handler já pode chamar funções. (Algumas versões do startup da ST reescrevem o SP por segurança, mas isso é redundante no Cortex-M.)
+  fonte: "ST, startup_stm32f103xb.s (STM32CubeF1); ARMv7-M Architecture Reference Manual, Reset behavior"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T09-007
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 4
+  bloom: aplicar
+  enunciado: |
+    Antes de ligar o PLL, um STM32 roda a 8 MHz (HSI). O startup copia 2048 bytes de .data, palavra a palavra, gastando 4 ciclos por palavra, e zera 8192 bytes de .bss, gastando 2 ciclos por palavra (palavras de 4 bytes). Quanto tempo leva essa inicialização? Responda em µs, exato.
+  resposta: {valor: 768, unidade: "µs", tolerancia: 0.01}
+  explicacao: |
+    .data: 2048 ÷ 4 = 512 palavras × 4 ciclos = 2048 ciclos. .bss: 8192 ÷ 4 = 2048 palavras × 2 ciclos = 4096 ciclos. Total: 6144 ciclos ÷ 8·10⁶ Hz = 768 µs. Num produto que precisa responder rápido ao ligar (ou que acorda do sono profundo pelo reset), buffers grandes em .bss atrasam o `main`; por isso alguns firmwares põem buffers numa seção que não é zerada (`.noinit`).
+  fonte: "GNU Binutils, manual do ld, Linker Scripts; ST, startup_stm32f103xb.s (laços CopyDataInit e FillZerobss)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T09-008
+  objetivo: O3
+  tipo: unica
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    No linker script, a seção de saída `.data` termina com `> RAM AT> FLASH`. O que isso significa?
+  alternativas:
+    - "A seção é copiada da RAM para a flash quando o firmware desliga."
+    - "O código acessa .data na RAM (endereço de execução), mas os valores iniciais ficam gravados na flash (endereço de carga)."
+    - "A seção fica na RAM se houver espaço; senão, vai para a flash."
+    - "A seção é gravada duas vezes no arquivo binário."
+  resposta: 1
+  explicacao: |
+    `> RAM` define a VMA (onde as instruções acessam as variáveis); `AT> FLASH` define a LMA (onde o conteúdo é colocado na imagem gravada). O startup copia da LMA para a VMA, usando `_sidata = LOADADDR(.data)`, `_sdata` e `_edata`. Nada é copiado de volta ao desligar.
+  fonte: "GNU Binutils, manual do ld, seções Basic Linker Script Concepts e Output Section LMA"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T09-009
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    `arm-none-eabi-size firmware.elf` mostra `text = 12480`, `data = 136`, `bss = 2344`. Quantos bytes de flash o firmware ocupa? Responda em bytes, exato.
+  resposta: {valor: 12616, unidade: "bytes", tolerancia: 0}
+  explicacao: |
+    Flash = text + data = 12 480 + 136 = 12 616 bytes. O `data` entra porque os valores iniciais das variáveis inicializadas ficam gravados na flash. O `bss` não ocupa flash: o startup só zera aquela área da SRAM.
+  fonte: "GNU Binutils, manual do size (formato Berkeley); GNU Binutils, manual do ld, Linker Scripts"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T09-010
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    O mesmo firmware (`text = 12480`, `data = 136`, `bss = 2344`) roda num STM32F103C8 com 20 KB (20 480 bytes) de SRAM e não usa heap. Quantos bytes de SRAM sobram para a pilha? Responda em bytes, exato.
+  resposta: {valor: 18000, unidade: "bytes", tolerancia: 0}
+  explicacao: |
+    SRAM estática = data + bss = 136 + 2344 = 2480 bytes. Sobra: 20 480 − 2480 = 18 000 bytes para a pilha (que começa em `_estack`, no topo da SRAM, e desce). O `size` não sabe quanto a pilha vai usar de verdade: isso se mede com `-fstack-usage` ou pintando a pilha com um padrão e conferindo depois.
+  fonte: "GNU Binutils, manual do size; Manual do GCC, opção -fstack-usage"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T09-011
+  objetivo: O3
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    O linker script define `RAM (rwx) : ORIGIN = 0x20000000, LENGTH = 20K` e `_estack = ORIGIN(RAM) + LENGTH(RAM);`. Qual é o valor de `_estack`, que vai para a posição 0 da tabela de vetores?
+  alternativas:
+    - "0x2000_4FFF"
+    - "0x2002_0000"
+    - "0x2000_5000"
+    - "0x2000_2000"
+  resposta: 2
+  explicacao: |
+    20K = 20 × 1024 = 20 480 = 0x5000. 0x2000_0000 + 0x5000 = 0x2000_5000, o primeiro endereço depois da SRAM. A pilha do Cortex-M é *full descending*: o `push` primeiro decrementa o SP e depois grava, então a primeira palavra empilhada fica em 0x2000_4FFC, dentro da SRAM. Usar 0x2000_4FFF deixaria a pilha desalinhada.
+  fonte: "GNU Binutils, manual do ld, Builtin Functions (ORIGIN e LENGTH); Joseph Yiu, The Definitive Guide to ARM Cortex-M3 and Cortex-M4 Processors, 3ª ed., capítulo Architecture, seção Stack memory"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T09-012
+  objetivo: O4
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: se o startup declara `void USART1_IRQHandler(void) __attribute__((weak, alias("Default_Handler")));` e você escreve, em outro arquivo, uma função `void USART1_IRQHandler(void) { ... }`, o linker usa a sua função na tabela de vetores.
+  resposta: true
+  explicacao: |
+    Um símbolo fraco (`weak`) cede lugar a um símbolo forte de mesmo nome. Se ninguém define o tratador, o apelido para `Default_Handler` fica valendo. O risco é o nome errado (por exemplo, `USART1_IRQhandler`): não há erro de link, a sua função fica sem uso e a interrupção cai no `Default_Handler`, um laço infinito.
+  fonte: "Manual do GCC, Common Function Attributes (weak e alias); ST, startup_stm32f103xb.s"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T09-013
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Uma tabela de vetores de Cortex-M3 tem as 16 entradas iniciais da arquitetura (incluindo o MSP inicial) e mais 60 entradas de IRQ, e começa em 0x0800_0000. Quantos bytes ela ocupa? Responda em bytes, exato.
+  resposta: {valor: 304, unidade: "bytes", tolerancia: 0}
+  explicacao: |
+    (16 + 60) entradas × 4 bytes = 304 bytes = 0x130. A tabela vai de 0x0800_0000 a 0x0800_012F, e o código que o linker põe em seguida começa em 0x0800_0130. Ao relocar a tabela com o VTOR, o endereço precisa respeitar o alinhamento exigido pelo tamanho da tabela.
+  fonte: "ARMv7-M Architecture Reference Manual, The vector table (VTOR e alinhamento); Joseph Yiu, The Definitive Guide to ARM Cortex-M3 and Cortex-M4 Processors, 3ª ed., capítulo Exceptions and Interrupts"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T09-014
+  objetivo: O4
+  tipo: unica
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Num STM32, um bootloader ocupa os primeiros 16 KB da flash e a aplicação foi ligada para começar em 0x0800_4000, com a própria tabela de vetores lá. Qual sequência o bootloader deve usar para entregar o controle à aplicação?
+  alternativas:
+    - "Saltar para 0x0800_4000, porque é ali que está a primeira instrução da aplicação."
+    - "Escrever 0x0800_4000 no VTOR e chamar o `main` da aplicação pelo nome."
+    - "Saltar para o endereço guardado em 0x0800_4000 e deixar o VTOR como está."
+    - "Carregar o MSP com a palavra em 0x0800_4000, escrever 0x0800_4000 no VTOR e saltar para o endereço guardado em 0x0800_4004."
+  resposta: 3
+  explicacao: |
+    O bootloader imita o que o hardware faz no reset, mas com a tabela da aplicação: MSP ← palavra 0, PC ← palavra 1 (o Reset_Handler da aplicação, com o bit Thumb). O VTOR precisa apontar para a tabela da aplicação, senão as interrupções dela usarão os tratadores do bootloader. 0x0800_4000 contém o valor da pilha, não uma instrução; e o `main` da aplicação não pode ser chamado diretamente, porque o startup dela (cópia de .data, zeragem de .bss) precisa rodar antes.
+  fonte: "ARMv7-M Architecture Reference Manual, Reset behavior e Vector Table Offset Register (VTOR); Joseph Yiu, The Definitive Guide to ARM Cortex-M3 and Cortex-M4 Processors, 3ª ed., capítulo Exceptions and Interrupts, seção Vector table relocation"
+  origem: ia
+  revisao: rascunho

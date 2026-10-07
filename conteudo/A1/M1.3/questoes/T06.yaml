@@ -1,0 +1,235 @@
+- id: Q-M1.3.T06-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Logo depois do reset, em que modo, nível de privilégio e com qual ponteiro de pilha um Cortex-M3 começa a executar?
+  alternativas:
+    - "Handler, privilegiado, PSP"
+    - "Thread, não privilegiado, PSP"
+    - "Thread, privilegiado, MSP"
+    - "Handler, privilegiado, MSP"
+  resposta: 2
+  explicacao: |
+    Depois do reset o núcleo está em Thread, com privilégio e usando o MSP (cujo valor inicial vem da posição 0 da tabela de vetores). O Handler só é usado durante exceções. Um firmware bare-metal simples nunca sai desse estado; um RTOS muda as tarefas para o PSP e, se quiser, para o nível não privilegiado.
+  fonte: "Joseph Yiu, The Definitive Guide to ARM Cortex-M3 and Cortex-M4 Processors, 3ª ed., capítulo Architecture, seção Operation modes and states"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T06-002
+  objetivo: O1
+  tipo: multipla
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Sobre o modo Handler do Cortex-M3/M4, quais afirmações são corretas?
+  alternativas:
+    - "O código em Handler é sempre privilegiado."
+    - "Em Handler, o ponteiro de pilha em uso é sempre o MSP."
+    - "O campo IPSR do xPSR contém o número da exceção que está sendo atendida."
+    - "Uma rotina de interrupção pode rodar sem privilégio se o bit nPRIV de CONTROL estiver em 1."
+  resposta: [0, 1, 2]
+  explicacao: |
+    Handler é o modo das exceções: sempre privilegiado e sempre com MSP. O IPSR mostra o número da exceção ativa (0 quando em Thread). O bit nPRIV de CONTROL afeta só o modo Thread; não há como uma rotina de exceção perder o privilégio.
+  fonte: "Joseph Yiu, The Definitive Guide to ARM Cortex-M3 and Cortex-M4 Processors, 3ª ed., capítulo Architecture, seções Operation modes and states e Special registers; ARMv7-M Architecture Reference Manual, The ARMv7-M programmers' model"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T06-003
+  objetivo: O4
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: com PRIMASK = 1 (depois de `cpsid i`), nenhuma exceção pode ser atendida, nem mesmo o NMI ou o HardFault.
+  resposta: false
+  explicacao: |
+    PRIMASK bloqueia as exceções de prioridade configurável (todas as IRQs, SysTick, PendSV, SVCall etc.). NMI (prioridade −2) e HardFault (−1) continuam podendo ocorrer. No M3/M4, FAULTMASK bloqueia também o HardFault, mas o NMI nunca é bloqueado. As interrupções bloqueadas ficam pendentes e são atendidas quando PRIMASK volta a 0.
+  fonte: "ARM, Cortex-M4 Devices Generic User Guide, seção Core registers (Priority Mask Register); Joseph Yiu, The Definitive Guide to ARM Cortex-M3 and Cortex-M4 Processors, 3ª ed., capítulo Architecture, seção Special registers"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T06-004
+  objetivo: O1
+  tipo: unica
+  dificuldade: 3
+  bloom: avaliar
+  enunciado: |
+    Um RTOS para Cortex-M faz cada tarefa rodar em Thread usando o PSP (com uma pilha por tarefa), enquanto o kernel e as rotinas de interrupção usam o MSP. Qual é a principal vantagem dessa separação?
+  alternativas:
+    - "As interrupções ficam mais rápidas, porque o MSP fica num barramento separado."
+    - "As tarefas passam a rodar sem empilhar nada nas chamadas de função."
+    - "O PSP dispensa o empilhamento automático do quadro de exceção."
+    - "A pilha de cada tarefa só precisa de espaço para a própria tarefa e para o quadro de exceção, sem reservar espaço para interrupções aninhadas, e um estouro numa pilha de tarefa não corrompe a pilha do kernel."
+  resposta: 3
+  explicacao: |
+    Quando uma interrupção chega durante uma tarefa, só o quadro de 8 palavras vai para a pilha da tarefa (PSP); a rotina e as interrupções aninhadas usam o MSP. Assim, as várias pilhas de tarefa não precisam reservar espaço para o pior caso de aninhamento, e a troca de contexto é só trocar o valor do PSP. Não há barramento separado nem empilhamento dispensado.
+  fonte: "Joseph Yiu, The Definitive Guide to ARM Cortex-M3 and Cortex-M4 Processors, 3ª ed., capítulos Architecture (Stack memory) e OS Support Features"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T06-005
+  objetivo: O2
+  tipo: vf
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Verdadeiro ou falso: na entrada de uma exceção, o hardware do Cortex-M3 empilha automaticamente R0, R1, R2, R3, R12, LR, o endereço de retorno (PC) e o xPSR.
+  resposta: true
+  explicacao: |
+    Esse é o quadro básico de exceção: 8 palavras, 32 bytes. São exatamente os registradores que a AAPCS deixa a cargo de quem chama, mais o PC e o xPSR; por isso a rotina de interrupção pode ser uma função C comum. Os registradores r4–r11, se usados, são salvos pelo código da própria rotina, como em qualquer função.
+  fonte: "Joseph Yiu, The Definitive Guide to ARM Cortex-M3 and Cortex-M4 Processors, 3ª ed., capítulo Exception Handling in Detail, seção Exception entry; ARMv7-M Architecture Reference Manual, Exception entry behavior"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T06-006
+  objetivo: O2
+  tipo: unica
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Você para o depurador na primeira instrução de uma rotina de interrupção de um Cortex-M3 cujo código principal roda em Thread com MSP. Que valor o LR contém?
+  alternativas:
+    - "0xFFFF_FFF9, um valor EXC_RETURN que indica retorno para Thread usando o MSP"
+    - "O endereço da instrução que estava rodando quando a interrupção chegou"
+    - "O endereço da rotina de interrupção, lido da tabela de vetores"
+    - "Zero, porque o LR é zerado na entrada da exceção"
+  resposta: 0
+  explicacao: |
+    Na entrada da exceção, o hardware põe no LR um EXC_RETURN. 0xFFFF_FFF9 significa "volte para Thread e desempilhe da MSP". O endereço de retorno verdadeiro está no quadro empilhado (posição do PC), e o LR antigo também foi empilhado. Quando a rotina executa `bx lr`, o EXC_RETURN chega ao PC e dispara o retorno de exceção.
+  fonte: "ARMv7-M Architecture Reference Manual, Exception return behavior (tabela de EXC_RETURN); Joseph Yiu, The Definitive Guide to ARM Cortex-M3 and Cortex-M4 Processors, 3ª ed., capítulo Exception Handling in Detail"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T06-007
+  objetivo: O2
+  tipo: unica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Dentro do tratador de HardFault de um sistema com RTOS, o firmware lê LR = 0xFFFF_FFFD (sem FPU). De qual pilha ele deve ler o quadro empilhado para descobrir o PC em que a falha ocorreu?
+  alternativas:
+    - "Da MSP, porque o tratador roda em Handler"
+    - "Da PSP, porque o EXC_RETURN indica que a exceção interrompeu código em Thread usando a PSP"
+    - "Tanto faz: MSP e PSP apontam sempre para o mesmo lugar"
+    - "De nenhuma: o PC da falha fica guardado no próprio LR"
+  resposta: 1
+  explicacao: |
+    0xFFFF_FFFD = retorno para Thread com PSP: o código interrompido (uma tarefa) usava a PSP, e o quadro foi empilhado nela. O tratador roda com MSP, mas o quadro está na PSP; o PC da falha é a 7ª palavra do quadro (deslocamento 0x18). Os tratadores de HardFault típicos testam o bit 2 do LR para escolher entre MSP e PSP.
+  fonte: "ARMv7-M Architecture Reference Manual, Exception return behavior; Joseph Yiu, The Definitive Guide to ARM Cortex-M3 and Cortex-M4 Processors, 3ª ed., capítulo Fault Exceptions (análise do quadro de pilha)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T06-008
+  objetivo: O2
+  tipo: multipla
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    No Cortex-M, uma rotina de interrupção pode ser escrita como uma função C comum, `void TIM2_IRQHandler(void) { ... }`, sem palavras-chave especiais. Quais fatos tornam isso possível?
+  alternativas:
+    - "O hardware empilha R0–R3, R12, LR, PC e xPSR, justamente os registradores que a AAPCS não obriga uma função a preservar."
+    - "O retorno é um `bx lr` comum: o valor EXC_RETURN no LR faz o hardware reconhecer o retorno de exceção e desempilhar o quadro."
+    - "O compilador detecta o nome `_IRQHandler` e gera um prólogo que salva todos os 16 registradores."
+    - "A tabela de vetores guarda diretamente o endereço da função, sem precisar de um trecho em assembly intermediário."
+  resposta: [0, 1, 3]
+  explicacao: |
+    A ARM desenhou a entrada de exceção para casar com a AAPCS: o que o hardware salva é o que uma função C pode destruir; o que ela precisa preservar (r4–r11), o compilador já salva quando usa. O retorno usa o mecanismo EXC_RETURN, que funciona com o `bx lr` normal. E o vetor aponta direto para a função. O nome `TIM2_IRQHandler` só importa para o linker casar com a tabela de vetores; o compilador não o trata de modo especial.
+  fonte: "Joseph Yiu, The Definitive Guide to ARM Cortex-M3 and Cortex-M4 Processors, 3ª ed., capítulo Exception Handling in Detail; ARM, Procedure Call Standard for the Arm Architecture (AAPCS)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T06-009
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    No STM32F103, a interrupção do TIM2 é a IRQ número 28. Em que deslocamento, a partir do início da tabela de vetores, fica o endereço da rotina `TIM2_IRQHandler`? Responda em bytes, em decimal, exato.
+  resposta: {valor: 176, unidade: "bytes", tolerancia: 0}
+  explicacao: |
+    As IRQs começam no número de exceção 16. Exceção = 16 + 28 = 44. Cada entrada tem 4 bytes: 44 × 4 = 176 = 0xB0. Esquecer o 16 dá 112 (0x70), que é a entrada de outra interrupção.
+  fonte: "ARMv7-M Architecture Reference Manual, The vector table; ST, RM0008, capítulo Interrupts and events, tabela Vector table for other STM32F10xxx devices"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T06-010
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Num Cortex-M3 sem FPU, quantos bytes o hardware empilha automaticamente na entrada de uma exceção, sem contar um eventual enchimento de alinhamento? Responda em bytes, exato.
+  resposta: {valor: 32, unidade: "bytes", tolerancia: 0}
+  explicacao: |
+    8 registradores de 4 bytes (R0, R1, R2, R3, R12, LR, PC, xPSR) = 32 bytes. Num Cortex-M4F com contexto de ponto flutuante ativo, o quadro estendido tem 26 palavras = 104 bytes. Some isso ao dimensionar a pilha para interrupções aninhadas.
+  fonte: "Joseph Yiu, The Definitive Guide to ARM Cortex-M3 and Cortex-M4 Processors, 3ª ed., capítulo Exception Handling in Detail, seção Exception entry (stack frames)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T06-011
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Num STM32F103 a 72 MHz, uma interrupção chega a cada 10 µs. Cada atendimento custa 12 ciclos de entrada, 60 ciclos de corpo da rotina e 12 ciclos de saída. Que porcentagem do tempo da CPU essa interrupção consome? Responda em %, com 1 casa decimal.
+  resposta: {valor: 11.7, unidade: "%", tolerancia: 0.01}
+  explicacao: |
+    Ciclos por atendimento: 12 + 60 + 12 = 84. Atendimentos por segundo: 1 ÷ 10 µs = 100 000. Ciclos por segundo: 84 × 100 000 = 8,4·10⁶. Fração: 8,4·10⁶ ÷ 72·10⁶ ≈ 0,1167 = 11,7 %. A entrada e a saída são 24 dos 84 ciclos: em interrupções muito frequentes e curtas, o custo fixo pesa — e o DMA passa a valer a pena.
+  fonte: "ARM, Beginner guide on interrupt latency and Arm Cortex-M processors; Joseph Yiu, The Definitive Guide to ARM Cortex-M3 and Cortex-M4 Processors, 3ª ed., capítulo Exception Handling in Detail, seção Interrupt latency"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T06-012
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Num Cortex-M4F, uma interrupção chega com o contexto de ponto flutuante ativo (quadro estendido de 26 palavras) e com MSP = 0x2000_4FF4, que não é múltiplo de 8. O alinhamento de pilha a 8 bytes está habilitado. Quantos bytes o MSP desce na entrada da exceção, contando o enchimento? Responda em bytes, exato.
+  resposta: {valor: 108, unidade: "bytes", tolerancia: 0}
+  explicacao: |
+    O quadro precisa começar num endereço múltiplo de 8: o hardware desce 4 bytes de enchimento (0x2000_4FF4 → 0x2000_4FF0) e registra isso no bit 9 do xPSR empilhado. Depois empilha 26 × 4 = 104 bytes: MSP final = 0x2000_4FF0 − 0x68 = 0x2000_4F88. Total: 4 + 104 = 108 bytes.
+  fonte: "ARMv7-M Architecture Reference Manual, Stack alignment on exception entry e Exception entry behavior; Joseph Yiu, The Definitive Guide to ARM Cortex-M3 and Cortex-M4 Processors, 3ª ed., capítulo Floating Point Operations (lazy stacking)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T06-013
+  objetivo: O4
+  tipo: unica
+  dificuldade: 2
+  bloom: lembrar
+  enunciado: |
+    Qual exceção de sistema do Cortex-M os RTOS (como o FreeRTOS) costumam usar, com a prioridade mais baixa, para fazer a troca de contexto entre tarefas?
+  alternativas:
+    - "SysTick"
+    - "PendSV"
+    - "NMI"
+    - "HardFault"
+  resposta: 1
+  explicacao: |
+    O PendSV é uma exceção "pendurada" por software (escrevendo no ICSR) e, com a prioridade mais baixa, só roda quando nenhuma outra interrupção está ativa — o momento seguro para trocar a pilha da tarefa. O SysTick gera o tick periódico que decide quando trocar; o SVCall atende pedidos `svc`; NMI e HardFault são para emergências.
+  fonte: "Joseph Yiu, The Definitive Guide to ARM Cortex-M3 and Cortex-M4 Processors, 3ª ed., capítulo OS Support Features (PendSV e context switching)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T06-014
+  objetivo: O4
+  tipo: unica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Num Cortex-M3, a rotina da IRQ A (prioridade 0x40) está rodando quando a IRQ B (prioridade 0x80) é pedida. O que acontece?
+  alternativas:
+    - "B interrompe A imediatamente, porque chegou depois."
+    - "B fica pendente; quando A termina, o processador vai direto para B por tail-chaining, sem desempilhar e empilhar de novo o quadro."
+    - "B é descartada, porque o NVIC não guarda pedidos de prioridade menor."
+    - "A e B passam a rodar alternadamente, a cada ciclo."
+  resposta: 1
+  explicacao: |
+    Número menor = prioridade maior: A (0x40) é mais prioritária que B (0x80), então B não preempta A e fica pendente no NVIC. Quando A termina, em vez de desempilhar o quadro e empilhá-lo de novo para B, o núcleo faz tail-chaining (6 ciclos no M3/M4) e entra em B. Se B tivesse prioridade 0x20, preemptaria A.
+  fonte: "Joseph Yiu, The Definitive Guide to ARM Cortex-M3 and Cortex-M4 Processors, 3ª ed., capítulo Exception Handling in Detail, seções Tail chaining e Late arrival; ARM, Cortex-M4 Devices Generic User Guide, Exception model (Exception priorities)"
+  origem: ia
+  revisao: rascunho

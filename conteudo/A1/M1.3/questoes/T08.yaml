@@ -1,0 +1,273 @@
+- id: Q-M1.3.T08-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Na linha abaixo, tirada de `arm-none-eabi-objdump -d`, o que é `4408`?
+    ```
+     80001ac:	4408      	add	r0, r1
+    ```
+  alternativas:
+    - "O endereço da instrução na flash"
+    - "O código de máquina da instrução (uma meia-palavra Thumb de 16 bits)"
+    - "O número da linha do código C que gerou a instrução"
+    - "O valor de r0 depois da soma"
+  resposta: 1
+  explicacao: |
+    As colunas são: endereço (`80001ac`), código de máquina (`4408`, a instrução Thumb de 16 bits; na memória, little-endian, os bytes ficam `08 44`) e o mnemônico com operandos. O objdump não executa nada: ele só traduz os bytes de volta em texto.
+  fonte: "GNU Binutils, manual do objdump (opção -d); Harris & Harris, Digital Design and Computer Architecture (edição ARM), capítulo Architecture, seção Machine Language"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T08-002
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    A listagem mostra o símbolo `<soma_array>` começando em 0x080001B0, e o símbolo seguinte, `<liga_led>`, começando em 0x080001CC. Quantos bytes de flash ocupa `soma_array`? Responda em bytes, exato.
+  resposta: {valor: 28, unidade: "bytes", tolerancia: 0}
+  explicacao: |
+    0x080001CC − 0x080001B0 = 0x1C = 28 bytes. Para medir o tamanho de funções sem fazer conta, use `arm-none-eabi-nm --size-sort -S firmware.elf`, que lista o tamanho de cada símbolo — útil para descobrir quem está enchendo a flash.
+  fonte: "GNU Binutils, manuais do objdump e do nm (opção -S)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T08-003
+  objetivo: O1
+  tipo: unica
+  dificuldade: 3
+  bloom: entender
+  enunciado: |
+    Compilada com `-O0`, a função `int soma(int a, int b) { return a + b; }` vira 13 instruções que gravam `a` e `b` na pilha e as leem de volta; com `-O2`, vira `add r0, r1` e `bx lr`. Por que o `-O0` gera esse código?
+  alternativas:
+    - "Porque, sem otimização, o compilador dá a cada variável um endereço na pilha e a lê e escreve a cada uso, o que facilita a depuração."
+    - "Porque o Cortex-M exige que os argumentos estejam na pilha antes de serem somados."
+    - "Porque o `-O0` desliga o uso de registradores de uso geral."
+    - "Porque a AAPCS manda passar argumentos pela pilha quando não há otimização."
+  resposta: 0
+  explicacao: |
+    Em `-O0`, o gcc traduz cada comando de forma isolada e mantém cada variável na memória, para que o depurador possa mostrar e alterar seu valor em qualquer linha. A AAPCS é a mesma nos dois casos (argumentos chegam em r0 e r1); o `-O0` apenas os copia para a pilha. O Cortex-M soma registradores, nunca memória (é load/store).
+  fonte: "Manual do GCC, Options That Control Optimization (-O0); ARM, Procedure Call Standard for the Arm Architecture (AAPCS), Parameter passing"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T08-004
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Num Cortex-M, a instrução de 16 bits `d1fa` está no endereço 0x080001C4. Ela é um `bne` com deslocamento de 8 bits com sinal (0xFA), em meias-palavras, contado a partir do PC (endereço da instrução + 4). Qual é a distância do destino ao endereço da própria instrução `bne`? Responda em bytes, com sinal (negativo se o desvio for para trás), exato.
+  resposta: {valor: -8, unidade: "bytes", tolerancia: 0}
+  explicacao: |
+    0xFA como inteiro de 8 bits com sinal vale −6. Em meias-palavras: −6 × 2 = −12 bytes. Base = 0x080001C4 + 4 = 0x080001C8. Destino = 0x080001C8 − 12 = 0x080001BC. Distância em relação à instrução: 0x080001BC − 0x080001C4 = −8 bytes. É o laço de `soma_array` voltando para o `ldr`.
+  fonte: "ARMv7-M Architecture Reference Manual, instrução B (encoding T1) e o valor do PC lido em Thumb; Joseph Yiu, The Definitive Guide to ARM Cortex-M3 and Cortex-M4 Processors, 3ª ed., capítulo Instruction Set"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T08-005
+  objetivo: O2
+  tipo: vf
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: a instrução `cmp r0, r1` subtrai r1 de r0 e guarda o resultado em r0.
+  resposta: false
+  explicacao: |
+    `cmp` calcula r0 − r1 apenas para atualizar as flags N, Z, C e V; o resultado é descartado e r0 não muda. É o par de um desvio condicional: `cmp r0, r1` seguido de `beq`, `bne`, `bhi`, `bgt` etc. Quem guarda o resultado é `subs r0, r0, r1`.
+  fonte: "ARM, Cortex-M4 Devices Generic User Guide, instruções CMP e CMN; Joseph Yiu, The Definitive Guide to ARM Cortex-M3 and Cortex-M4 Processors, 3ª ed., capítulo Instruction Set"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T08-006
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Qual é o valor final de r1, em decimal, depois deste trecho Thumb?
+    ```asm
+    movs r0, #0x0F
+    lsls r1, r0, #4
+    orrs r1, r1, r0
+    movs r2, #0x3C
+    ands r1, r1, r2
+    subs r1, r1, #4
+    ```
+    Responda em decimal, exato.
+  resposta: {valor: 56, unidade: "valor", tolerancia: 0}
+  explicacao: |
+    r0 = 0x0F; `lsls` desloca 4 bits: r1 = 0xF0; `orrs` com 0x0F: r1 = 0xFF; `ands` com 0x3C: r1 = 0x3C (60); `subs` 4: r1 = 0x38 = 56. São as máscaras do M0.6.T05, agora na forma em que a CPU as executa.
+  fonte: "ARM, Cortex-M4 Devices Generic User Guide, instruções LSL, ORR, AND e SUB; Harris & Harris, Digital Design and Computer Architecture (edição ARM), capítulo Architecture, seção Logical Instructions"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T08-007
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Qual é o valor final de r0 depois deste laço Thumb?
+    ```asm
+        movs r0, #0
+        movs r1, #6
+    laco:
+        adds r0, r0, r1
+        subs r1, r1, #1
+        bne  laco
+    ```
+    Responda em decimal, exato.
+  resposta: {valor: 21, unidade: "valor", tolerancia: 0}
+  explicacao: |
+    O laço soma r1 em r0 enquanto r1 não chega a zero: 6 + 5 + 4 + 3 + 2 + 1 = 21. O `subs` atualiza Z; quando r1 vira 0, Z = 1 e o `bne` não desvia mais. O corpo roda 6 vezes. Contar para baixo até zero dispensa um `cmp`.
+  fonte: "Harris & Harris, Digital Design and Computer Architecture (edição ARM), capítulo Architecture, seção Programming (loops); ARM, Cortex-M4 Devices Generic User Guide, instruções SUB e B"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T08-008
+  objetivo: O2
+  tipo: multipla
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Num Cortex-M, r0 = 3 e r1 = 0xFFFF_FFFF. Depois de `cmp r0, r1`, quais destes desvios condicionais **são tomados**?
+  alternativas:
+    - "`bgt` (maior, com sinal)"
+    - "`bhi` (maior, sem sinal)"
+    - "`blo` (menor, sem sinal)"
+    - "`beq` (igual)"
+  resposta: [0, 2]
+  explicacao: |
+    Com sinal, r1 = −1 e 3 > −1: `bgt` desvia. Sem sinal, r1 = 4 294 967 295 e 3 < r1: `blo` desvia e `bhi` não. Não são iguais: `beq` não desvia. As flags são as mesmas (3 − 0xFFFF_FFFF dá 4 com empréstimo: C = 0, Z = 0, N = 0, V = 0); o que muda é qual combinação cada condição testa. O compilador escolhe pelo tipo da variável em C.
+  fonte: "ARMv7-M Architecture Reference Manual, Conditional execution (tabela de condições); ARM, Cortex-M4 Devices Generic User Guide, Condition flags"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T08-009
+  objetivo: O3
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Pela convenção de chamada AAPCS, usada pelo arm-none-eabi-gcc, em que registrador chega o primeiro argumento inteiro de uma função e em qual sai o valor de retorno?
+  alternativas:
+    - "Primeiro argumento em r1; retorno em r0"
+    - "Primeiro argumento na pilha; retorno em r0"
+    - "Primeiro argumento em r4; retorno em r4"
+    - "Primeiro argumento em r0; retorno em r0"
+  resposta: 3
+  explicacao: |
+    Os quatro primeiros argumentos vão em r0, r1, r2 e r3; os demais, na pilha. O retorno sai em r0 (r0 e r1 para 64 bits). Por isso `soma` em `-O2` é só `add r0, r1` e `bx lr`: os argumentos já estão onde o retorno precisa estar.
+  fonte: "ARM, Procedure Call Standard for the Arm Architecture (AAPCS, IHI 0042), seções Core registers e Parameter passing"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T08-010
+  objetivo: O3
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: uma função que chama outra função com `bl` precisa salvar o LR (por exemplo, com `push {r4, lr}`) antes da chamada, porque o `bl` sobrescreve o LR com o novo endereço de retorno.
+  resposta: true
+  explicacao: |
+    O LR guarda só um endereço de retorno. Se `f` chama `g` com `bl`, o LR passa a apontar para dentro de `f`, e o caminho de volta para quem chamou `f` se perde — a menos que `f` o tenha empilhado. O padrão é `push {..., lr}` no prólogo e `pop {..., pc}` no epílogo, que já retorna. Funções folha (que não chamam ninguém) podem deixar o LR no registrador e retornar com `bx lr`.
+  fonte: "ARM, Procedure Call Standard for the Arm Architecture (AAPCS); Harris & Harris, Digital Design and Computer Architecture (edição ARM), capítulo Architecture, seção Function Calls"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T08-011
+  objetivo: O3
+  tipo: multipla
+  dificuldade: 2
+  bloom: lembrar
+  enunciado: |
+    Pela AAPCS, quais registradores uma função precisa devolver com o mesmo valor que recebeu (*callee-saved*), salvando-os se for usá-los?
+  alternativas:
+    - "r4"
+    - "r0"
+    - "r12"
+    - "r8"
+  resposta: [0, 3]
+  explicacao: |
+    r4 a r11 são preservados pela função chamada: se ela os usa, empilha no prólogo e restaura no epílogo. r0 a r3 e r12 são de rascunho (*caller-saved*): quem chama não pode contar com eles depois da chamada. Uma rotina em assembly que usa r4 sem salvar corrompe silenciosamente o código C que a chamou.
+  fonte: "ARM, Procedure Call Standard for the Arm Architecture (AAPCS, IHI 0042), seção Core registers"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T08-012
+  objetivo: O4
+  tipo: unica
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    No ATmega328P, `PORTB |= (1 << PB5);` compilado com `avr-gcc -Os` vira a instrução única `sbi 0x05, 5`. O que ela faz?
+  alternativas:
+    - "Lê PORTB para r5, liga o bit e escreve de volta, em três ciclos de barramento interrompíveis"
+    - "Copia o valor 5 para o registrador de E/S 0x05"
+    - "Liga o bit 5 do registrador de E/S no endereço de E/S 0x05 (PORTB) numa única instrução, que não pode ser interrompida no meio"
+    - "Liga o bit 5 do registrador de uso geral r5"
+  resposta: 2
+  explicacao: |
+    `sbi A, b` (*set bit in I/O register*) liga um bit de um registrador de E/S nos endereços 0x00–0x1F. PORTB está no endereço de E/S 0x05 (0x25 no espaço de dados). Por ser uma única instrução, nenhuma interrupção entra no meio. Com dois bits (`PORTB |= 0x30;`), o avr-gcc gera `in`, `ori`, `out`: leitura-modificação-escrita em três instruções.
+  fonte: "Microchip, AVR Instruction Set Manual, instrução SBI; ATmega328P datasheet, Register Summary (PORTB em 0x05/0x25)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T08-013
+  objetivo: O4
+  tipo: unica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Que função C provavelmente gerou este trecho (Cortex-M, `-O2`; r0 e r1 são os dois argumentos)?
+    ```
+     cmp     r1, #0
+     ble.n   fim0
+     mov     r3, r0
+     add.w   r1, r0, r1, lsl #2
+     movs    r0, #0
+    volta:
+     ldr.w   r2, [r3], #4
+     cmp     r3, r1
+     add     r0, r2
+     bne.n   volta
+     bx      lr
+    fim0:
+     movs    r0, #0
+     bx      lr
+    ```
+  alternativas:
+    - "`int conta(const char *s, int n)`, que conta os caracteres não nulos de uma string"
+    - "`int32_t soma(const int32_t *v, int n)`, que soma os n elementos de um vetor"
+    - "`int32_t maior(const int32_t *v, int n)`, que devolve o maior elemento"
+    - "`void zera(int32_t *v, int n)`, que zera os n elementos de um vetor"
+  resposta: 1
+  explicacao: |
+    O `lsl #2` calcula n × 4 (elementos de 4 bytes) para achar o fim do vetor; o `ldr` com pós-incremento de 4 lê um `int32_t` por volta; `add r0, r2` acumula; o retorno sai em r0, começando de 0 (inclusive quando n ≤ 0). Não há comparação entre elementos (descarta `maior`), não há `str` (descarta `zera`) e as leituras são de 4 bytes, não de 1 (descarta a string, que usaria `ldrb`).
+  fonte: "Harris & Harris, Digital Design and Computer Architecture (edição ARM), capítulo Architecture, seções Arrays e Loops; ARM, Cortex-M4 Devices Generic User Guide, instrução LDR (post-indexed)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.3.T08-014
+  objetivo: O4
+  tipo: vf
+  dificuldade: 3
+  bloom: avaliar
+  enunciado: |
+    Verdadeiro ou falso: o código abaixo, gerado para `GPIOA->ODR |= 1u << 5;`, pode perder uma alteração feita no mesmo registrador por uma rotina de interrupção que rode entre o `ldr` e o `str`.
+    ```
+    ldr  r2, [pc, #8]      @ r2 = 0x40020014
+    ldr  r3, [r2]
+    orr.w r3, r3, #32
+    str  r3, [r2]
+    ```
+  resposta: true
+  explicacao: |
+    É uma leitura-modificação-escrita em três instruções. Se a interrupção chegar depois do `ldr` e ligar outro bit do ODR, o `str` escreve o valor antigo lido (com o bit 5) e apaga o que a interrupção fez. As soluções são desligar interrupções nesse trecho, usar o registrador BSRR (que liga ou desliga bits sem leitura, T04) ou o bit-banding (T05).
+  fonte: "Joseph Yiu, The Definitive Guide to ARM Cortex-M3 and Cortex-M4 Processors, 3ª ed., capítulo Memory System (bit-band e operações atômicas); ST, RM0090, capítulo General-purpose I/Os, registrador GPIOx_BSRR"
+  origem: ia
+  revisao: rascunho
