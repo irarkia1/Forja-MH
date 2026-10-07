@@ -1,0 +1,215 @@
+- id: Q-M0.3.T05-001
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Um fio longo e reto conduz 5 A. Qual é o módulo do campo magnético a 2 cm dele? Use μ₀ = 4π × 10⁻⁷ T·m/A. Responda em µT.
+  resposta: {valor: 50, unidade: "µT", tolerancia: 0.01}
+  explicacao: |
+    B = μ₀·I/(2π·r) = 4π × 10⁻⁷ × 5 / (2π × 0,02) = 2 × 10⁻⁷ × 5 / 0,02 = 5 × 10⁻⁵ T = 50 µT — praticamente o campo magnético da Terra. Um magnetômetro de celular perto de um cabo de 5 A já mostra o desvio.
+  fonte: "OpenStax, University Physics Volume 2, capítulo Sources of Magnetic Fields, seção Magnetic Field Due to a Thin Straight Wire"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T05-002
+  objetivo: O1
+  tipo: vf
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: uma carga elétrica que se move paralelamente às linhas de um campo magnético uniforme não sofre força magnética.
+  resposta: true
+  explicacao: |
+    F = q·v × B tem módulo q·v·B·sen θ; com v paralelo a B, θ = 0 e sen θ = 0. A força magnética é máxima quando a velocidade é perpendicular ao campo e, quando existe, é sempre perpendicular à velocidade (por isso não muda a rapidez da carga, só a direção).
+  fonte: "OpenStax, University Physics Volume 2, capítulo Magnetic Forces and Fields, seção Motion of a Charged Particle in a Magnetic Field"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T05-003
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um solenoide longo tem 200 espiras distribuídas em 4 cm e conduz 0,5 A, sem núcleo. Qual é o campo magnético no seu interior? Use μ₀ = 4π × 10⁻⁷ T·m/A. Responda em mT, com 2 casas decimais.
+  resposta: {valor: 3.14, unidade: "mT", tolerancia: 0.01}
+  explicacao: |
+    n = N/l = 200/0,04 = 5 000 espiras/m. B = μ₀·n·I = 4π × 10⁻⁷ × 5 000 × 0,5 ≈ 3,14 × 10⁻³ T = 3,14 mT. Quem usa N no lugar de n (espiras por metro) obtém 0,126 mT, 25 vezes menos.
+  fonte: "OpenStax, University Physics Volume 2, capítulo Sources of Magnetic Fields, seção Solenoids and Toroids"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T05-004
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um trecho reto de 5 cm de fio conduz 3 A num campo magnético uniforme de 0,2 T. O fio faz 30° com a direção do campo. Qual é o módulo da força sobre o trecho? Responda em mN.
+  resposta: {valor: 15, unidade: "mN", tolerancia: 0.01}
+  explicacao: |
+    F = B·I·L·sen θ = 0,2 × 3 × 0,05 × sen 30° = 0,03 × 0,5 = 0,015 N = 15 mN. Só a componente do fio perpendicular ao campo contribui. Sem o seno, daria 30 mN; com cosseno, ≈ 26 mN.
+  fonte: "OpenStax, University Physics Volume 2, capítulo Magnetic Forces and Fields, seção Magnetic Force on a Current-Carrying Conductor"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T05-005
+  objetivo: O2
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um transformador ideal reduz 220 V para 12 V e tem 1 100 espiras no primário. Quantas espiras tem o secundário?
+  alternativas:
+    - "60"
+    - "20 167"
+    - "92"
+    - "18"
+  resposta: 0
+  explicacao: |
+    V_s/V_p = N_s/N_p ⇒ N_s = 1 100 × 12/220 = 60 espiras. "20 167" inverteu a razão (1 100 × 220/12); "92" dividiu 1 100 por 12; "18" é apenas a razão de tensões 220/12 (≈ 18,3), não o número de espiras. Cada espira, primária ou secundária, recebe a mesma fem, porque o mesmo fluxo variável atravessa todas elas.
+  fonte: "OpenStax, University Physics Volume 2, capítulo Alternating-Current Circuits, seção Transformers"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T05-006
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um laço formado por uma trilha de sinal e seu retorno tem área de 4 cm². Perto dele, um conversor chaveado faz o campo magnético perpendicular ao laço variar uniformemente 20 µT em 50 ns. Qual é o módulo da fem induzida no laço durante essa variação? Responda em mV.
+  resposta: {valor: 160, unidade: "mV", tolerancia: 0.01}
+  explicacao: |
+    |ε| = A·ΔB/Δt = 4 × 10⁻⁴ m² × 20 × 10⁻⁶ T / 50 × 10⁻⁹ s = 8 × 10⁻⁹ / 5 × 10⁻⁸ = 0,16 V = 160 mV. É ruído suficiente para atrapalhar um sinal analógico de milivolts. Reduzir a área do laço (retorno logo abaixo, plano de terra contínuo) reduz a fem na mesma proporção.
+  fonte: "OpenStax, University Physics Volume 2, capítulo Electromagnetic Induction, seção Faraday's Law"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T05-007
+  objetivo: O2
+  tipo: multipla
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Marque as afirmações corretas sobre a lei de Faraday-Lenz e o acoplamento indutivo.
+  alternativas:
+    - "Reduzir a área do laço formado por uma trilha e seu caminho de retorno reduz a tensão induzida por campos magnéticos externos"
+    - "Um fio vizinho com corrente contínua constante de 10 A induz uma tensão constante num laço próximo"
+    - "Dobrar a frequência de um campo magnético senoidal de mesma amplitude não muda a fem induzida num laço"
+    - "A corrente induzida num laço cria um campo que se opõe à variação do fluxo que a produziu"
+  resposta: [0, 3]
+  explicacao: |
+    A fem é −dΦ/dt e Φ = B·A: menos área, menos fem; e o sinal negativo (Lenz) significa oposição à variação. Corrente contínua constante cria fluxo constante, que não induz nada. Num campo senoidal, dΦ/dt é proporcional a ω: dobrar a frequência dobra a fem — por isso o ruído de bordas rápidas de chaveamento acopla tanto.
+  fonte: "OpenStax, University Physics Volume 2, capítulo Electromagnetic Induction, seções Faraday's Law e Lenz's Law"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T05-008
+  objetivo: O3
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Quanta energia está armazenada no campo magnético de um indutor de 22 µH percorrido por 3 A?
+  alternativas:
+    - "66 µJ"
+    - "198 µJ"
+    - "99 µJ"
+    - "33 µJ"
+  resposta: 2
+  explicacao: |
+    E = ½·L·I² = 0,5 × 22 × 10⁻⁶ × 9 = 99 µJ. "66 µJ" usou L·I sem elevar ao quadrado; "198 µJ" esqueceu o ½; "33 µJ" usou ½·L·I. É a energia que precisa ser descarregada em algum lugar quando a corrente é interrompida.
+  fonte: "OpenStax, University Physics Volume 2, capítulo Inductance, seção Energy in a Magnetic Field"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T05-009
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um indutor com núcleo de ar é feito com 50 espiras num tubo de 5 mm de diâmetro, ocupando 10 mm de comprimento. Pela fórmula do solenoide longo L = μ₀·N²·A/l, qual é a indutância? Use μ₀ = 4π × 10⁻⁷ T·m/A. Responda em µH, com 2 casas decimais.
+  resposta: {valor: 6.17, unidade: "µH", tolerancia: 0.01}
+  explicacao: |
+    A = π·r² = π × (2,5 × 10⁻³)² ≈ 1,963 × 10⁻⁵ m². L = 4π × 10⁻⁷ × 50² × 1,963 × 10⁻⁵ / 0,01 ≈ 6,17 × 10⁻⁶ H = 6,17 µH. A bobina real terá um pouco menos, porque ela não é "longa" (comprimento só 2 vezes o diâmetro) e o campo se espalha nas pontas. Usar o diâmetro como raio daria 4 vezes mais.
+  fonte: "OpenStax, University Physics Volume 2, capítulo Inductance, seção Self-Inductance and Inductors"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T05-010
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 4
+  bloom: aplicar
+  enunciado: |
+    Um conversor buck ideal converte 5 V em 1,8 V chaveando a 1 MHz, com indutor de 4,7 µH. Qual é a ondulação de corrente pico a pico no indutor, ΔI = (V_in − V_out)·D/(L·f_sw), com D = V_out/V_in? Responda em mA, sem casas decimais.
+  resposta: {valor: 245, unidade: "mA", tolerancia: 0.01}
+  explicacao: |
+    D = 1,8/5 = 0,36. Durante o tempo ligado (D/f = 0,36 µs), o indutor vê V_in − V_out = 3,2 V e, por v = L·di/dt, ΔI = 3,2 × 0,36 × 10⁻⁶ / 4,7 × 10⁻⁶ ≈ 0,245 A = 245 mA. Para uma saída de 1 A, isso é ≈ 25% — dentro da faixa recomendada de 20–40%.
+  fonte: "Texas Instruments, Basic Calculation of a Buck Converter's Power Stage; OpenStax, University Physics Volume 2, capítulo Inductance, seção Self-Inductance and Inductors"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T05-011
+  objetivo: O3
+  tipo: vf
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: num indutor ideal, a corrente não pode variar instantaneamente (de forma descontínua), porque isso exigiria uma tensão infinita.
+  resposta: true
+  explicacao: |
+    v = L·di/dt: um salto instantâneo de corrente teria di/dt infinito e, portanto, tensão infinita. É o dual do capacitor, cuja tensão não pode saltar. Na prática, ao tentar interromper a corrente de um indutor, a tensão sobe até algo conduzir — um arco, a avalanche do transistor ou o diodo de roda livre.
+  fonte: "OpenStax, University Physics Volume 2, capítulo Inductance, seções Self-Inductance and Inductors e RL Circuits"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T05-012
+  objetivo: O4
+  tipo: unica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    A bobina de um relé tem L = 50 mH e conduz 60 mA. O transistor que a aciona corta a corrente em cerca de 1 µs, e não há diodo de roda livre. Qual é a ordem de grandeza da tensão induzida que a bobina tenta impor, pela estimativa v ≈ L·ΔI/Δt?
+  alternativas:
+    - "3 V"
+    - "0,003 V"
+    - "30 V"
+    - "3 000 V"
+  resposta: 3
+  explicacao: |
+    v ≈ L·ΔI/Δt = 0,05 × 0,06 / 10⁻⁶ = 3 000 V. Nenhum transistor de sinal aguenta isso: ele entra em avalanche ou rompe. Por isso todo relé, solenoide ou motor acionado por transistor leva um diodo de roda livre em antiparalelo com a bobina. As outras alternativas erram as potências de 10 de mH e µs.
+  fonte: "OpenStax, University Physics Volume 2, capítulo Inductance, seção Self-Inductance and Inductors; TE Connectivity, Coil Suppression Can Reduce Relay Life"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T05-013
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Uma bobina de relé de 12 V tem resistência de 100 Ω e indutância de 0,1 H, com diodo de roda livre. O relé solta quando a corrente cai abaixo de 30 mA. Desprezando a queda no diodo, quanto tempo depois do corte do transistor o relé solta? Responda em ms, com 2 casas decimais.
+  resposta: {valor: 1.39, unidade: "ms", tolerancia: 0.01}
+  explicacao: |
+    Corrente inicial: 12/100 = 120 mA. Com o diodo, a corrente circula pela bobina e decai como i(t) = I₀·e^(−t/τ), com τ = L/R = 0,1/100 = 1 ms. Soltura: 30 = 120·e^(−t/τ) ⇒ t = τ·ln(120/30) = 1 ms × ln 4 ≈ 1,39 ms. É esse atraso (e o arco mais lento nos contatos) que leva alguns projetos a usar diodo + zener, que impõe uma tensão reversa maior e derruba a corrente mais rápido.
+  fonte: "OpenStax, University Physics Volume 2, capítulo Inductance, seção RL Circuits; TE Connectivity, Coil Suppression Can Reduce Relay Life"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T05-014
+  objetivo: O4
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: quando a corrente num indutor de núcleo de ferrite ultrapassa a corrente de saturação, a indutância aumenta, o que ajuda a limitar a corrente.
+  resposta: false
+  explicacao: |
+    É o contrário: na saturação o núcleo não consegue mais aumentar o fluxo, a permeabilidade efetiva despenca e a indutância cai. Como di/dt = v/L, com L menor a corrente sobe muito mais rápido — num buck, isso pode destruir o transistor. Por isso se escolhe I_sat acima do pico de corrente (I_out + ΔI/2) com margem.
+  fonte: "OpenStax, University Physics Volume 2, capítulo Sources of Magnetic Fields, seção Magnetism in Matter; Würth Elektronik, catálogo de indutores (especificação de I_sat)"
+  origem: ia
+  revisao: rascunho

@@ -1,0 +1,215 @@
+- id: Q-M0.3.T08-001
+  objetivo: O1
+  tipo: vf
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Verdadeiro ou falso: nos metais não há banda proibida separando os elétrons de condução: as bandas se sobrepõem ou a última banda ocupada está só parcialmente cheia.
+  resposta: true
+  explicacao: |
+    É isso que faz do metal um condutor: há estados vazios imediatamente acima dos ocupados, e qualquer campo, por menor que seja, acelera elétrons. Em semicondutores e isolantes existe um gap entre a banda de valência cheia e a banda de condução vazia; o que os diferencia é a largura desse gap.
+  fonte: "OpenStax, University Physics Volume 3, capítulo Condensed Matter Physics, seção Band Theory of Solids"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T08-002
+  objetivo: O1
+  tipo: unica
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Pela largura da banda proibida, qual destes materiais é um **isolante**?
+  alternativas:
+    - "Cobre, sem banda proibida"
+    - "Silício, com gap de 1,12 eV"
+    - "Dióxido de silício, com gap de cerca de 9 eV"
+    - "Arseneto de gálio, com gap de 1,42 eV"
+  resposta: 2
+  explicacao: |
+    Com ~9 eV de gap (centenas de vezes kT ≈ 0,026 eV a 300 K), praticamente nenhum elétron do SiO₂ chega à banda de condução: é o isolante usado no óxido de porta dos MOSFETs. O cobre é condutor; silício e arseneto de gálio, com gaps de 1 a 1,5 eV, são semicondutores.
+  fonte: "OpenStax, University Physics Volume 3, capítulo Condensed Matter Physics, seção Band Theory of Solids; HyperPhysics, Semiconductor Band Gaps"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T08-003
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    A 300 K, a energia térmica característica é kT ≈ 0,02585 eV. Quantas vezes o gap do silício (1,12 eV) é maior que kT? Responda com 1 casa decimal.
+  resposta: {valor: 43.3, unidade: "vezes", tolerancia: 0.01}
+  explicacao: |
+    1,12/0,02585 ≈ 43,3. Como a fração de elétrons excitados cai aproximadamente com e^(−E_g/2kT) = e^(−21,7) ≈ 4 × 10⁻¹⁰, pouquíssimos átomos contribuem com portadores — mas, com ~5 × 10²² átomos/cm³, isso ainda dá ~10¹⁰ portadores por cm³.
+  fonte: "OpenStax, University Physics Volume 3, capítulo Condensed Matter Physics, seção Semiconductors and Doping"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T08-004
+  objetivo: O1
+  tipo: multipla
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Marque as afirmações corretas sobre semicondutores de gap largo, como o carbeto de silício (SiC) e o nitreto de gálio (GaN), em comparação com o silício.
+  alternativas:
+    - "Por terem gap maior que o do silício, suportam campos elétricos de ruptura maiores"
+    - "Por terem gap maior, têm mais portadores intrínsecos à temperatura ambiente"
+    - "O germânio também é de gap largo, com gap maior que o do silício"
+    - "Podem trabalhar a temperaturas de junção mais altas antes que os portadores gerados termicamente dominem os da dopagem"
+  resposta: [0, 3]
+  explicacao: |
+    Gap maior significa ligações mais difíceis de quebrar: mais campo para causar avalanche e menos portadores térmicos (n_i despenca com e^(−E_g/2kT)), o que permite temperaturas maiores. Por isso SiC e GaN dominam carregadores compactos e inversores. O germânio tem gap de 0,66 eV, menor que o do silício (1,12 eV) — por isso tem mais fuga.
+  fonte: "OpenStax, University Physics Volume 3, capítulo Condensed Matter Physics, seção Semiconductors and Doping; HyperPhysics, Semiconductor Band Gaps"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T08-005
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um silício tipo N tem dopagem N_D = 10¹⁶ cm⁻³ (n ≈ N_D). Com n_i = 1,5 × 10¹⁰ cm⁻³, qual é a concentração de lacunas p? Responda em unidades de 10⁴ cm⁻³, com 2 casas decimais.
+  resposta: {valor: 2.25, unidade: "× 10⁴ cm⁻³", tolerancia: 0.01}
+  explicacao: |
+    Lei da ação de massas: n·p = n_i² ⇒ p = n_i²/n = (1,5 × 10¹⁰)²/10¹⁶ = 2,25 × 10²⁰/10¹⁶ = 2,25 × 10⁴ cm⁻³. Os minoritários são ~4 × 10¹¹ vezes menos numerosos que os majoritários. Quem esquece de elevar n_i ao quadrado obtém 1,5 × 10⁻⁶, um absurdo físico.
+  fonte: "OpenStax, University Physics Volume 3, capítulo Condensed Matter Physics, seção Semiconductors and Doping; PVEducation, Intrinsic Carrier Concentration"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T08-006
+  objetivo: O2
+  tipo: unica
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Ao dopar silício com fósforo (grupo 15 da tabela periódica), que tipo de semicondutor se obtém?
+  alternativas:
+    - "Tipo N: o fósforo tem 5 elétrons de valência e doa o elétron que sobra à banda de condução"
+    - "Tipo P: o fósforo tem 5 elétrons de valência e cria lacunas"
+    - "Tipo N: o fósforo tem 3 elétrons de valência e captura elétrons"
+    - "Intrínseco: impurezas em pequena quantidade não mudam a condução"
+  resposta: 0
+  explicacao: |
+    O silício tem 4 elétrons de valência; o fósforo, 5. Quatro formam as ligações e o quinto fica fracamente preso, indo facilmente para a banda de condução: o fósforo é doador e o material é tipo N. Quem cria lacunas são aceitadores do grupo 13, como o boro (3 elétrons de valência). E mesmo uma parte em milhões de dopante muda a condutividade em várias ordens de grandeza.
+  fonte: "OpenStax, University Physics Volume 3, capítulo Condensed Matter Physics, seção Semiconductors and Doping"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T08-007
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Calcule a resistividade de um silício tipo N com N_D = 10¹⁵ cm⁻³, usando ρ ≈ 1/(q·n·μn), com q = 1,602 × 10⁻¹⁹ C, n ≈ N_D e μn = 1 350 cm²/(V·s). Responda em Ω·cm, com 2 casas decimais.
+  resposta: {valor: 4.62, unidade: "Ω·cm", tolerancia: 0.01}
+  explicacao: |
+    σ = q·n·μn = 1,602 × 10⁻¹⁹ × 10¹⁵ × 1 350 ≈ 0,216 S/cm ⇒ ρ = 1/σ ≈ 4,62 Ω·cm. As lacunas (p = n_i²/n ≈ 2,25 × 10⁵ cm⁻³) não contribuem de forma mensurável. Wafers comerciais são vendidos justamente pela resistividade, que diz a dopagem.
+  fonte: "OpenStax, University Physics Volume 3, capítulo Condensed Matter Physics, seção Semiconductors and Doping; PVEducation, Doping"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T08-008
+  objetivo: O2
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: num semicondutor tipo P, as lacunas são os portadores majoritários e, por isso, o pedaço de material tem carga elétrica total positiva.
+  resposta: false
+  explicacao: |
+    A primeira parte é verdadeira, a segunda não. Cada aceitador que cria uma lacuna fica como íon negativo fixo na rede; somando lacunas móveis e íons fixos, a carga total é zero. O material dopado é eletricamente neutro, seja N ou P. Cargas líquidas só aparecem onde os portadores móveis saem, como na região de depleção de uma junção.
+  fonte: "OpenStax, University Physics Volume 3, capítulo Condensed Matter Physics, seção Semiconductors and Doping"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T08-009
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um termistor NTC tem 10 kΩ a 25 °C e parâmetro B = 3 950 K, seguindo R(T) = R₂₅·exp[B·(1/T − 1/T₂₅)], com temperaturas em kelvin (T = °C + 273,15). Qual é a resistência a 50 °C? Responda em kΩ, com 2 casas decimais.
+  resposta: {valor: 3.59, unidade: "kΩ", tolerancia: 0.01}
+  explicacao: |
+    1/323,15 − 1/298,15 ≈ 0,0030945 − 0,0033540 = −2,595 × 10⁻⁴ K⁻¹. B × isso ≈ −1,025. R = 10 × e^(−1,025) ≈ 3,59 kΩ. A resistência caiu a 36% com 25 °C de aquecimento: o NTC é muito mais sensível que um RTD, mas não linear. Usar °C na fórmula dá um resultado sem sentido.
+  fonte: "Vishay, datasheets e notas de aplicação de termistores NTC (parâmetro B); OpenStax, University Physics Volume 3, capítulo Condensed Matter Physics, seção Semiconductors and Doping"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T08-010
+  objetivo: O3
+  tipo: unica
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Ao aumentar a temperatura de um fio de cobre e de uma amostra de silício puro, o que acontece com a resistividade de cada um?
+  alternativas:
+    - "Ambas sobem, porque a vibração da rede atrapalha os portadores nos dois materiais"
+    - "Ambas caem, porque mais energia térmica sempre facilita a condução"
+    - "A do cobre cai e a do silício sobe"
+    - "A do cobre sobe e a do silício cai"
+  resposta: 3
+  explicacao: |
+    No cobre, o número de elétrons livres é fixo; mais vibração da rede significa mais colisões e ρ maior (α positivo). No silício puro, a vibração também atrapalha, mas o número de portadores cresce exponencialmente (n_i ∝ T^(3/2)·e^(−E_g/2kT)), e esse efeito domina: ρ cai. É a base física dos termistores NTC e das correntes de fuga que crescem com a temperatura.
+  fonte: "OpenStax, University Physics Volume 3, capítulo Condensed Matter Physics, seções Free Electron Model of Metals e Semiconductors and Doping"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T08-011
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    A concentração intrínseca de portadores segue n_i ∝ T^(3/2)·exp(−E_g/(2kT)). Para o silício (E_g = 1,12 eV, considerado constante; k = 8,617 × 10⁻⁵ eV/K), por quanto n_i fica multiplicada quando a temperatura sobe de 300 K para 350 K? Responda com 1 casa decimal.
+  resposta: {valor: 27.8, unidade: "vezes", tolerancia: 0.01}
+  explicacao: |
+    Razão = (350/300)^1,5 × exp[−(1,12/(2 × 8,617 × 10⁻⁵)) × (1/350 − 1/300)]. Primeiro fator: 1,1667^1,5 ≈ 1,260. No expoente: 1,12/(1,7234 × 10⁻⁴) ≈ 6 499 K; (1/350 − 1/300) ≈ −4,762 × 10⁻⁴ K⁻¹; produto com o sinal: +3,095; e^3,095 ≈ 22,1. Total ≈ 1,260 × 22,1 ≈ 27,8. Um aquecimento de 50 °C multiplica os portadores intrínsecos por quase 30: é por isso que correntes de fuga explodem em chips quentes. Esquecer o fator 2 do expoente daria ≈ 614.
+  fonte: "OpenStax, University Physics Volume 3, capítulo Condensed Matter Physics, seção Semiconductors and Doping; PVEducation, Intrinsic Carrier Concentration"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T08-012
+  objetivo: O4
+  tipo: vf
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: na polarização direta de uma junção PN, a região de depleção fica mais estreita e a barreira de potencial diminui.
+  resposta: true
+  explicacao: |
+    Com o lado P mais positivo, a tensão aplicada se opõe ao potencial de contato: a barreira cai, os portadores majoritários voltam a atravessar e a depleção encolhe. A corrente cresce exponencialmente com a tensão. Na polarização reversa ocorre o contrário: barreira maior, depleção mais larga e só a pequena corrente de fuga.
+  fonte: "OpenStax, University Physics Volume 3, capítulo Condensed Matter Physics, seção Semiconductor Devices; HyperPhysics, The p-n Junction"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T08-013
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Uma junção PN de silício tem N_A = 10¹⁷ cm⁻³ no lado P e N_D = 10¹⁶ cm⁻³ no lado N. Com n_i = 1,5 × 10¹⁰ cm⁻³ e kT/q = 0,02585 V, calcule o potencial de contato V₀ = (kT/q)·ln(N_A·N_D/n_i²). Responda em V, com 2 casas decimais.
+  resposta: {valor: 0.75, unidade: "V", tolerancia: 0.01}
+  explicacao: |
+    N_A·N_D/n_i² = 10³³/2,25 × 10²⁰ ≈ 4,44 × 10¹²; ln(4,44 × 10¹²) ≈ 29,1. V₀ = 0,02585 × 29,1 ≈ 0,75 V. Esse potencial não pode ser medido com um voltímetro nos terminais (os contatos metálicos o compensam), mas é ele que explica por que o diodo de silício só conduz bem a partir de ~0,6 V.
+  fonte: "OpenStax, University Physics Volume 3, capítulo Condensed Matter Physics, seção Semiconductor Devices; PVEducation, Formation of a PN Junction"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T08-014
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Numa junção abrupta, a largura da região de depleção é proporcional a √(V₀ + V_R), e a capacitância da junção é inversamente proporcional a essa largura. Com V₀ = 0,75 V, a capacitância com polarização reversa de 5 V é que porcentagem da capacitância sem polarização (V_R = 0)? Responda em %, com 1 casa decimal.
+  resposta: {valor: 36.1, unidade: "%", tolerancia: 0.01}
+  explicacao: |
+    W(5 V)/W(0) = √((0,75 + 5)/0,75) = √7,667 ≈ 2,769. Como C ∝ 1/W (capacitor de placas paralelas com o dielétrico de depleção, T04), C(5 V)/C(0) = 1/2,769 ≈ 0,361 = 36,1%. É o princípio do varactor: a tensão reversa sintoniza a capacitância. Esquecer a raiz daria 13%.
+  fonte: "HyperPhysics, Depletion Region; OpenStax, University Physics Volume 3, capítulo Condensed Matter Physics, seção Semiconductor Devices"
+  origem: ia
+  revisao: rascunho

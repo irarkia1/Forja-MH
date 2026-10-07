@@ -1,0 +1,215 @@
+- id: Q-M0.3.T02-001
+  objetivo: O1
+  tipo: vf
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: num fio de cobre que conduz 1 A, os elétrons livres se deslocam, em média, a uma velocidade próxima da velocidade da luz.
+  resposta: false
+  explicacao: |
+    A velocidade de deriva é minúscula: v_d = I/(n·q·A) ≈ 0,07 mm/s para 1 A em 1 mm² de cobre. O que se propaga quase à velocidade da luz é o campo elétrico ao longo do fio, que põe todos os elétrons em movimento praticamente ao mesmo tempo.
+  fonte: "OpenStax, University Physics Volume 2, capítulo Current and Resistance, seção Electrical Current; HyperPhysics, Drift Velocity"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T02-002
+  objetivo: O1
+  tipo: vf
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Verdadeiro ou falso: uma corrente constante de 150 mA durante 2 horas transporta 1 080 C de carga.
+  resposta: true
+  explicacao: |
+    Com corrente constante, q = I·t = 0,15 A × 7 200 s = 1 080 C. É a mesma conta que define a capacidade de bateria: 150 mA × 2 h = 300 mAh = 1 080 C. Quem esquece de converter horas em segundos obtém 0,3 C.
+  fonte: "OpenStax, University Physics Volume 2, capítulo Current and Resistance, seção Electrical Current"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T02-003
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Ao ligar uma placa, a corrente de carga dos capacitores de entrada é i(t) = 20 mA·e^(−t/5 ms), para t ≥ 0. Qual é a carga total que passa pelo fio de alimentação (de t = 0 até t → ∞)? Responda em µC.
+  resposta: {valor: 100, unidade: "µC", tolerancia: 0.01}
+  explicacao: |
+    q = ∫₀^∞ i dt = ∫₀^∞ 20 mA·e^(−t/τ) dt = 20 mA × τ·[−e^(−t/τ)]₀^∞ = 20 × 10⁻³ × 5 × 10⁻³ = 10⁻⁴ C = 100 µC. A integral de uma exponencial decrescente é o valor inicial vezes a constante de tempo: a área de um "retângulo equivalente" de altura I₀ e largura τ.
+  fonte: "OpenStax, University Physics Volume 2, capítulo Current and Resistance, seção Electrical Current; OpenStax, Calculus Volume 1, capítulo Integration"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T02-004
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 4
+  bloom: aplicar
+  enunciado: |
+    Um fio de cobre AWG 22 (diâmetro 0,644 mm) conduz 3 A. Com n = 8,5 × 10²⁸ elétrons livres por m³ e e = 1,602 × 10⁻¹⁹ C, qual é a velocidade de deriva dos elétrons? Responda em mm/s, com 2 casas decimais.
+  resposta: {valor: 0.68, unidade: "mm/s", tolerancia: 0.01}
+  explicacao: |
+    A = π·r² = π × (0,322 × 10⁻³)² ≈ 3,257 × 10⁻⁷ m². v_d = I/(n·e·A) = 3 / (8,5 × 10²⁸ × 1,602 × 10⁻¹⁹ × 3,257 × 10⁻⁷) ≈ 6,76 × 10⁻⁴ m/s ≈ 0,68 mm/s. Erros comuns: usar o diâmetro no lugar do raio (área 4 vezes maior, velocidade 4 vezes menor) ou esquecer de converter mm para m antes de elevar ao quadrado.
+  fonte: "OpenStax, University Physics Volume 2, capítulo Current and Resistance, seção Electrical Current; HyperPhysics, Drift Velocity"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T02-005
+  objetivo: O2
+  tipo: unica
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Uma trilha de PCB tem resistência R. Se você dobrar o comprimento e também dobrar a largura, mantendo a espessura do cobre, a nova resistência será:
+  alternativas:
+    - "R"
+    - "2R"
+    - "R/2"
+    - "4R"
+  resposta: 0
+  explicacao: |
+    R = ρ·L/(w·t): dobrar L multiplica por 2, dobrar w divide por 2 — os efeitos se cancelam. É a ideia de resistência de folha: a resistência depende do número de "quadrados" L/w, que não mudou. "2R" considerou só o comprimento, "R/2" só a largura, e "4R" multiplicou os dois efeitos.
+  fonte: "OpenStax, University Physics Volume 2, capítulo Current and Resistance, seção Resistivity and Resistance"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T02-006
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Calcule a resistência de uma trilha de cobre de 1 oz (35 µm de espessura), 0,3 mm de largura e 80 mm de comprimento, a 20 °C. Use ρ = 1,72 × 10⁻⁸ Ω·m. Responda em mΩ, sem casas decimais.
+  resposta: {valor: 131, unidade: "mΩ", tolerancia: 0.01}
+  explicacao: |
+    A = 0,3 × 10⁻³ × 35 × 10⁻⁶ = 1,05 × 10⁻⁸ m². R = ρ·L/A = 1,72 × 10⁻⁸ × 0,08 / 1,05 × 10⁻⁸ ≈ 0,131 Ω = 131 mΩ. Conferência pela resistência de folha: 80/0,3 ≈ 267 quadrados × 0,49 mΩ ≈ 131 mΩ.
+  fonte: "OpenStax, University Physics Volume 2, capítulo Current and Resistance, seção Resistivity and Resistance; Saturn PCB Toolkit, Conductor Properties"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T02-007
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um sensor é alimentado por um cabo de 1 m com dois condutores de cobre AWG 24 (diâmetro 0,511 mm), um de ida e outro de volta. O sensor consome 500 mA. Qual é a queda de tensão total no cabo? Use ρ = 1,72 × 10⁻⁸ Ω·m. Responda em mV, sem casas decimais.
+  resposta: {valor: 84, unidade: "mV", tolerancia: 0.01}
+  explicacao: |
+    A = π × (0,2555 × 10⁻³)² ≈ 2,051 × 10⁻⁷ m². O caminho elétrico tem 2 m (ida e volta): R = 1,72 × 10⁻⁸ × 2 / 2,051 × 10⁻⁷ ≈ 0,168 Ω. Queda: V = I·R = 0,5 × 0,168 ≈ 0,084 V = 84 mV. Quem usa só 1 m obtém 42 mV e subestima a queda pela metade.
+  fonte: "OpenStax, University Physics Volume 2, capítulo Current and Resistance, seção Resistivity and Resistance"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T02-008
+  objetivo: O2
+  tipo: multipla
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Uma trilha de alimentação está com resistência alta demais. Marque as mudanças que **reduzem** a resistência dela.
+  alternativas:
+    - "Fabricar a placa com cobre de 2 oz (70 µm) em vez de 1 oz"
+    - "Dobrar o comprimento da trilha, mantendo a largura, para contornar um componente"
+    - "Aumentar a largura da trilha"
+    - "Trocar o FR-4 por um laminado de constante dielétrica menor"
+  resposta: [0, 2]
+  explicacao: |
+    R = ρ·L/(w·t): aumentar a espessura t (2 oz) ou a largura w aumenta a seção e reduz R. Dobrar o comprimento dobra R. A constante dielétrica do laminado afeta capacitância e impedância de sinais, não a resistência DC do cobre.
+  fonte: "OpenStax, University Physics Volume 2, capítulo Current and Resistance, seção Resistivity and Resistance"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T02-009
+  objetivo: O3
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um sensor Pt100 tem 100 Ω a 0 °C e coeficiente α = 0,00385 /°C. Pelo modelo linear R = R₀·(1 + α·T), qual é a sua resistência a 100 °C?
+  alternativas:
+    - "103,85 Ω"
+    - "385 Ω"
+    - "100,385 Ω"
+    - "138,5 Ω"
+  resposta: 3
+  explicacao: |
+    R = 100 × (1 + 0,00385 × 100) = 100 × 1,385 = 138,5 Ω. "103,85 Ω" esqueceu de multiplicar α pelos 100 °C (usou ΔT = 10); "100,385 Ω" somou α×ΔT sem multiplicar por R₀; "385 Ω" multiplicou tudo e esqueceu o 1. O valor tabelado na IEC 60751 a 100 °C é 138,51 Ω — o modelo linear é excelente nessa faixa.
+  fonte: "IEC 60751 (termorresistências de platina); OpenStax, University Physics Volume 2, capítulo Current and Resistance, seção Resistivity and Resistance"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T02-010
+  objetivo: O3
+  tipo: vf
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Verdadeiro ou falso: com α = 0,00393 /°C, uma trilha de cobre a 85 °C tem resistência cerca de 25% maior do que a 20 °C.
+  resposta: true
+  explicacao: |
+    R/R₀ = 1 + α·ΔT = 1 + 0,00393 × 65 ≈ 1,255, ou seja, 25,5% a mais. Em fontes compactas que trabalham quentes, a queda de tensão e a dissipação nas trilhas devem ser calculadas na temperatura de operação, não a 20 °C.
+  fonte: "OpenStax, University Physics Volume 2, capítulo Current and Resistance, seção Resistivity and Resistance"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T02-011
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    O ADC de um registrador de temperatura mede 115,4 Ω num sensor Pt100 (100 Ω a 0 °C, α = 0,00385 /°C). Pelo modelo linear, qual é a temperatura? Responda em °C.
+  resposta: {valor: 40, unidade: "°C", tolerancia: 0.01}
+  explicacao: |
+    Isolando T em R = R₀·(1 + α·T): T = (R/R₀ − 1)/α = (1,154 − 1)/0,00385 = 0,154/0,00385 = 40 °C. No firmware é exatamente essa conta (ou a equação de Callendar–Van Dusen, para maior exatidão em faixas largas).
+  fonte: "IEC 60751 (termorresistências de platina); Texas Instruments, notas de aplicação sobre medição de RTD"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T02-012
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 3
+  bloom: criar
+  enunciado: |
+    Uma trilha de 60 mm em cobre de 1 oz (35 µm) deve levar 3 A até um módulo de rádio com queda máxima de 30 mV. Qual é a largura mínima? Use ρ = 1,72 × 10⁻⁸ Ω·m. Responda em mm, com 2 casas decimais.
+  resposta: {valor: 2.95, unidade: "mm", tolerancia: 0.01}
+  explicacao: |
+    R_máx = V/I = 0,03/3 = 0,01 Ω. De R = ρ·L/(w·t): w = ρ·L/(t·R) = 1,72 × 10⁻⁸ × 0,06 / (35 × 10⁻⁶ × 0,01) ≈ 2,95 × 10⁻³ m = 2,95 mm. Na prática, arredonde para cima (3 mm) e confira também o aquecimento na IPC-2152 — ou use 2 oz, que permite metade da largura.
+  fonte: "OpenStax, University Physics Volume 2, capítulo Current and Resistance, seção Resistivity and Resistance; IPC-2152"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T02-013
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Uma trilha de cobre de 1 oz (35 µm), 0,5 mm de largura e 100 mm de comprimento conduz 2 A. Em operação, a placa está a 60 °C. Qual é a potência dissipada na trilha? Use ρ = 1,72 × 10⁻⁸ Ω·m a 20 °C e α = 0,00393 /°C. Responda em mW, sem casas decimais.
+  resposta: {valor: 455, unidade: "mW", tolerancia: 0.01}
+  explicacao: |
+    A 20 °C: R₀ = 1,72 × 10⁻⁸ × 0,1 / (0,5 × 10⁻³ × 35 × 10⁻⁶) ≈ 0,0983 Ω. A 60 °C: R = 0,0983 × (1 + 0,00393 × 40) ≈ 0,1138 Ω. P = I²·R = 4 × 0,1138 ≈ 0,455 W = 455 mW. Calculando a frio daria 393 mW: 16% a menos. Quase meio watt numa trilha fina é muito — ela mesma esquenta, e a resistência sobe ainda mais.
+  fonte: "OpenStax, University Physics Volume 2, capítulo Current and Resistance, seções Resistivity and Resistance e Electrical Energy and Power; IPC-2152"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T02-014
+  objetivo: O4
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Num fio de cobre (ρ = 1,72 × 10⁻⁸ Ω·m), a densidade de corrente é 2 A/mm². Pela lei de Ohm microscópica, qual é o campo elétrico dentro do fio?
+  alternativas:
+    - "34,4 V/m"
+    - "34,4 mV/m"
+    - "116 MV/m"
+    - "34,4 µV/m"
+  resposta: 1
+  explicacao: |
+    J = 2 A/mm² = 2 × 10⁶ A/m². E = ρ·J = 1,72 × 10⁻⁸ × 2 × 10⁶ = 0,0344 V/m = 34,4 mV/m. "116 MV/m" dividiu J por ρ em vez de multiplicar; "34,4 V/m" e "34,4 µV/m" erraram a conversão de mm² para m² por um fator 1 000 (1 mm² = 10⁻⁶ m², não 10⁻³ nem 10⁻⁹). O campo é tão pequeno que o fio é praticamente uma equipotencial.
+  fonte: "HyperPhysics, Microscopic View of Ohm's Law; OpenStax, University Physics Volume 2, capítulo Current and Resistance, seção Ohm's Law"
+  origem: ia
+  revisao: rascunho

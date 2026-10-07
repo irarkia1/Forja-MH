@@ -1,0 +1,215 @@
+- id: Q-M0.3.T01-001
+  objetivo: O1
+  tipo: vf
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Verdadeiro ou falso: uma carga de 1 nC corresponde a cerca de 6,24 bilhões de elétrons (use e = 1,602 × 10⁻¹⁹ C).
+  resposta: true
+  explicacao: |
+    n = q/e = 10⁻⁹ / 1,602 × 10⁻¹⁹ ≈ 6,24 × 10⁹, ou seja, 6,24 bilhões. A carga é quantizada: todo corpo carrega um múltiplo inteiro de e, mas os números são tão grandes que no dia a dia a carga parece contínua.
+  fonte: "OpenStax, University Physics Volume 2, capítulo Electric Charges and Fields, seção Electric Charge"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T01-002
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Duas cargas pontuais de 2 nC e 3 nC estão a 5 mm uma da outra, no ar. Qual é o módulo da força entre elas? Use k = 8,988 × 10⁹ N·m²/C². Responda em mN, com 2 casas decimais.
+  resposta: {valor: 2.16, unidade: "mN", tolerancia: 0.01}
+  explicacao: |
+    F = k·q₁·q₂/r² = 8,988 × 10⁹ × (2 × 10⁻⁹ × 3 × 10⁻⁹) / (5 × 10⁻³)² = 8,988 × 10⁹ × 6 × 10⁻¹⁸ / 2,5 × 10⁻⁵ ≈ 2,16 × 10⁻³ N = 2,16 mN. Quem esquece de elevar 5 mm ao quadrado obtém um valor 200 vezes menor.
+  fonte: "OpenStax, University Physics Volume 2, capítulo Electric Charges and Fields, seção Coulomb's Law"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T01-003
+  objetivo: O1
+  tipo: unica
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Duas cargas fixas se repelem com força F. Se a distância entre elas for dobrada, a nova força será:
+  alternativas:
+    - "F/2"
+    - "F/4"
+    - "2F"
+    - "4F"
+  resposta: 1
+  explicacao: |
+    Pela lei de Coulomb, F ∝ 1/r². Com 2r, a força fica multiplicada por 1/2² = 1/4. "F/2" trata a força como inversamente proporcional à distância (sem o quadrado); "2F" e "4F" trocam o sentido da dependência — afastar cargas sempre enfraquece a força.
+  fonte: "OpenStax, University Physics Volume 2, capítulo Electric Charges and Fields, seção Coulomb's Law; HyperPhysics, Coulomb's Law"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T01-004
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    No modelo do corpo humano (HBM) usado em testes de ESD, a pessoa equivale a um capacitor de 100 pF. Quantos elétrons em excesso ela tem quando está carregada a 4 kV? Use Q = C·V e e = 1,602 × 10⁻¹⁹ C. Responda em unidades de 10¹² elétrons, com 2 casas decimais.
+  resposta: {valor: 2.50, unidade: "× 10¹² elétrons", tolerancia: 0.01}
+  explicacao: |
+    Q = C·V = 100 × 10⁻¹² × 4 000 = 4 × 10⁻⁷ C = 0,4 µC. n = Q/e = 4 × 10⁻⁷ / 1,602 × 10⁻¹⁹ ≈ 2,50 × 10¹². Repare: 0,4 µC é uma carga minúscula para um circuito de potência, mas descarregada em nanossegundos num pino de CMOS pode romper o óxido de porta.
+  fonte: "OpenStax, University Physics Volume 2, capítulo Electric Charges and Fields, seção Electric Charge; Texas Instruments, ESD Protection Layout Guide"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T01-005
+  objetivo: O2
+  tipo: vf
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Verdadeiro ou falso: entre duas placas paralelas separadas por 1 mm e submetidas a 5 V, o campo elétrico (supondo-o uniforme) vale 5 kV/m.
+  resposta: true
+  explicacao: |
+    E = V/d = 5 / (1 × 10⁻³) = 5 000 V/m = 5 kV/m. O erro típico é usar d em milímetros e obter 5 V/m — converta sempre para metros.
+  fonte: "OpenStax, University Physics Volume 2, capítulo Electric Potential, seção Electric Potential and Potential Difference"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T01-006
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Qual é o módulo do campo elétrico a 3 cm de uma carga pontual de 10 nC, no ar? Use k = 8,988 × 10⁹ N·m²/C². Responda em kV/m, com 1 casa decimal.
+  resposta: {valor: 99.9, unidade: "kV/m", tolerancia: 0.01}
+  explicacao: |
+    E = k·q/r² = 8,988 × 10⁹ × 10 × 10⁻⁹ / (0,03)² = 89,88 / 9 × 10⁻⁴ ≈ 99 867 V/m ≈ 99,9 kV/m. Note que N/C e V/m são a mesma unidade.
+  fonte: "OpenStax, University Physics Volume 2, capítulo Electric Charges and Fields, seção Electric Field"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T01-007
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    O nível mais severo do teste de descarga no ar da norma IEC 61000-4-2 é 15 kV. Supondo campo uniforme e rigidez dielétrica do ar de 3 kV/mm, qual é a maior distância de ar que essa descarga consegue romper? Responda em mm.
+  resposta: {valor: 5, unidade: "mm", tolerancia: 0.01}
+  explicacao: |
+    O arco se forma quando E = V/d atinge a rigidez: d = V/E_rup = 15 kV / (3 kV/mm) = 5 mm. É uma estimativa por baixo: perto de pontas e cantos vivos o campo é maior que V/d, e a descarga salta mais longe. Por isso frestas no gabinete perto da eletrônica precisam de folga generosa.
+  fonte: "OpenStax, University Physics Volume 2, capítulo Electric Potential, seção Applications of Electrostatics; IEC 61000-4-2 (níveis de ensaio)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T01-008
+  objetivo: O2
+  tipo: multipla
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Marque as afirmações corretas sobre descargas eletrostáticas (ESD) em eletrônica.
+  alternativas:
+    - "Uma descarga abaixo do limiar de percepção humana (alguns kV) não consegue danificar um circuito integrado"
+    - "Andar sobre carpete com sapato de sola isolante carrega o corpo por efeito triboelétrico, transferindo elétrons entre os materiais"
+    - "Ar mais úmido favorece o acúmulo de carga estática, por isso a ESD é mais frequente em dias chuvosos"
+    - "O óxido de porta de um MOSFET tem poucos nanômetros de espessura, então poucos volts já produzem campos próximos da rigidez dielétrica do SiO₂"
+  resposta: [1, 3]
+  explicacao: |
+    O atrito transfere elétrons entre materiais (efeito triboelétrico), e o óxido de porta de ~10 nm sob 5 V já sente 5 × 10⁸ V/m, perto da rigidez do SiO₂. É falso que só descargas perceptíveis estragam CMOS: elas podem danificar (ou enfraquecer) o chip muito abaixo do limiar de alguns kV que a pele sente. E a umidade faz o contrário: ar seco favorece a estática; a umidade torna as superfícies levemente condutoras e escoa a carga.
+  fonte: "OpenStax, University Physics Volume 2, capítulo Electric Charges and Fields, seção Conductors, Insulators, and Charging by Induction; Texas Instruments, ESD Protection Layout Guide"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T01-009
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Um elétron atravessa uma diferença de potencial de 3,3 V. Quanta energia ele ganha, em joules? Use e = 1,602 × 10⁻¹⁹ C. Responda em unidades de 10⁻¹⁹ J, com 2 casas decimais.
+  resposta: {valor: 5.29, unidade: "× 10⁻¹⁹ J", tolerancia: 0.01}
+  explicacao: |
+    U = q·V = 1,602 × 10⁻¹⁹ × 3,3 ≈ 5,29 × 10⁻¹⁹ J. Em elétron-volts a conta é imediata: 3,3 eV. É por isso que o eV é a unidade preferida na física de semicondutores.
+  fonte: "OpenStax, University Physics Volume 2, capítulo Electric Potential, seção Electric Potential and Potential Difference"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T01-010
+  objetivo: O3
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Quanto trabalho é necessário para levar uma carga de +2 µC de um ponto a 1 V até um ponto a 6 V?
+  alternativas:
+    - "12 µJ"
+    - "2 µJ"
+    - "10 µJ"
+    - "0,4 µJ"
+  resposta: 2
+  explicacao: |
+    W = q·(V_B − V_A) = 2 × 10⁻⁶ × (6 − 1) = 10 µJ. O trabalho depende só da diferença de potencial, não do caminho. "12 µJ" usou só o potencial final (q·6), "2 µJ" usou só o inicial, e "0,4 µJ" dividiu a carga pela tensão.
+  fonte: "OpenStax, University Physics Volume 2, capítulo Electric Potential, seção Electric Potential Energy"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T01-011
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Num tubo de vácuo, um elétron parte do repouso e percorre 5 cm num campo elétrico uniforme de 2 kV/m, sendo acelerado por ele. Qual é a velocidade final? Use e = 1,602 × 10⁻¹⁹ C e mₑ = 9,109 × 10⁻³¹ kg. Responda em unidades de 10⁶ m/s, com 2 casas decimais.
+  resposta: {valor: 5.93, unidade: "× 10⁶ m/s", tolerancia: 0.01}
+  explicacao: |
+    Primeiro a diferença de potencial atravessada: ΔV = E·d = 2 000 × 0,05 = 100 V. A energia ganha, e·ΔV, vira energia cinética: ½·m·v² = e·ΔV ⇒ v = √(2·e·ΔV/m) = √(2 × 1,602 × 10⁻¹⁹ × 100 / 9,109 × 10⁻³¹) ≈ 5,93 × 10⁶ m/s. Quem usa diretamente E = 2 000 no lugar de ΔV obtém um valor √20 vezes maior.
+  fonte: "OpenStax, University Physics Volume 2, capítulo Electric Potential, seção Electric Potential and Potential Difference"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T01-012
+  objetivo: O4
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: as linhas de campo elétrico são tangentes (paralelas) às superfícies equipotenciais.
+  resposta: false
+  explicacao: |
+    São perpendiculares. Se o campo tivesse componente ao longo de uma equipotencial, mover uma carga sobre ela custaria trabalho, e o potencial mudaria — contradição. Por isso, num condutor em equilíbrio (uma equipotencial), o campo chega sempre perpendicular à superfície.
+  fonte: "OpenStax, University Physics Volume 2, capítulo Electric Potential, seção Equipotential Surfaces and Conductors"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T01-013
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Numa região de depleção, o potencial é V(x) = 4 × 10⁸·x² (V, com x em metros). Qual é o módulo do campo elétrico em x = 25 µm? Responda em kV/m.
+  resposta: {valor: 20, unidade: "kV/m", tolerancia: 0.01}
+  explicacao: |
+    E = −dV/dx = −8 × 10⁸·x. Em x = 25 × 10⁻⁶ m: |E| = 8 × 10⁸ × 25 × 10⁻⁶ = 2 × 10⁴ V/m = 20 kV/m. O sinal negativo indica que o campo aponta para onde o potencial diminui. Quem calcula V/x (4 × 10⁸ × x = 10 kV/m) esqueceu que o campo é a derivada, não a razão V/x — só no caso linear as duas coincidem.
+  fonte: "OpenStax, University Physics Volume 2, capítulo Electric Potential, seção Determining Field from Potential"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T01-014
+  objetivo: O4
+  tipo: unica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Duas esferas condutoras, de raios 1 mm e 10 mm, estão ligadas por um fio e carregadas a 10 kV em relação a um plano distante. Usando a aproximação E ≈ V/r para o campo na superfície de cada esfera e a rigidez do ar de 3 MV/m, o que se espera?
+  alternativas:
+    - "A esfera maior ioniza o ar primeiro, porque guarda mais carga"
+    - "As duas ionizam o ar ao mesmo tempo, porque estão no mesmo potencial"
+    - "Nenhuma ioniza o ar, porque 10 kV é menor que 3 MV"
+    - "A esfera menor ioniza o ar: seu campo é cerca de 10 MV/m, enquanto o da maior é cerca de 1 MV/m"
+  resposta: 3
+  explicacao: |
+    Ligadas por um fio, as esferas formam uma única equipotencial (10 kV). Com E ≈ V/r: 10⁴/10⁻³ = 10⁷ V/m = 10 MV/m na pequena e 10⁴/10⁻² = 10⁶ V/m = 1 MV/m na grande. Só a pequena passa de 3 MV/m. A grande tem mais carga, mas espalhada numa área muito maior. Mesmo potencial não significa mesmo campo, e comparar volts com volts por metro não faz sentido. É o poder das pontas: para-raios, spark gaps e cantos vivos de cobre em alta tensão.
+  fonte: "OpenStax, University Physics Volume 2, capítulo Electric Potential, seção Equipotential Surfaces and Conductors; Feynman Lectures on Physics, Vol. II, Electricity in the Atmosphere"
+  origem: ia
+  revisao: rascunho

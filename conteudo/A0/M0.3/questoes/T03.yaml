@@ -1,0 +1,215 @@
+- id: Q-M0.3.T03-001
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Uma bateria de Li-ion tem tensão nominal de 3,7 V e capacidade de 2 500 mAh. Quanta energia ela armazena? Responda em Wh, com 2 casas decimais.
+  resposta: {valor: 9.25, unidade: "Wh", tolerancia: 0.01}
+  explicacao: |
+    E = Q·V = 2,5 Ah × 3,7 V = 9,25 Wh. O mAh mede carga, não energia: é preciso multiplicar pela tensão. Em joules: 9,25 × 3 600 = 33 300 J.
+  fonte: "OpenStax, University Physics Volume 2, capítulo Current and Resistance, seção Electrical Energy and Power"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T03-002
+  objetivo: O1
+  tipo: vf
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Verdadeiro ou falso: 1 kWh equivale a 3,6 MJ.
+  resposta: true
+  explicacao: |
+    1 kWh = 1 000 W × 3 600 s = 3,6 × 10⁶ J = 3,6 MJ. O watt é joule por segundo; multiplicar potência por tempo dá energia.
+  fonte: "OpenStax, University Physics Volume 1, capítulo Work and Kinetic Energy, seção Power"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T03-003
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Durante uma transmissão alimentada por 3,3 V constantes, a corrente de um módulo de rádio sobe linearmente de 0 a 300 mA em 10 ms e depois fica em 300 mA por mais 20 ms, desligando em seguida. Calcule a energia consumida E = ∫ v·i dt. Responda em mJ, com 2 casas decimais.
+  resposta: {valor: 24.75, unidade: "mJ", tolerancia: 0.01}
+  explicacao: |
+    Com v constante, E = V·∫i dt, e a integral é a área sob a curva de corrente: rampa (triângulo) ½ × 0,3 A × 0,01 s = 1,5 mC, mais patamar (retângulo) 0,3 A × 0,02 s = 6 mC; total 7,5 mC. E = 3,3 × 7,5 × 10⁻³ = 24,75 mJ. Quem usa 300 mA durante os 30 ms inteiros obtém 29,7 mJ, ignorando que a rampa tem metade da área do retângulo.
+  fonte: "OpenStax, University Physics Volume 1, capítulo Work and Kinetic Energy, seção Power; OpenStax, Calculus Volume 1, capítulo Integration"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T03-004
+  objetivo: O1
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Quanta energia armazena uma célula de 1 000 mAh com tensão nominal de 3,7 V?
+  alternativas:
+    - "3 600 J"
+    - "3,7 J"
+    - "13 320 J"
+    - "13,32 J"
+  resposta: 2
+  explicacao: |
+    Carga: 1 Ah = 3 600 C. Energia: E = Q·V = 3 600 × 3,7 = 13 320 J (ou 3,7 Wh). "3 600 J" esqueceu a tensão (é a carga em coulombs, não energia); "3,7 J" e "13,32 J" esqueceram de converter horas em segundos.
+  fonte: "OpenStax, University Physics Volume 2, capítulo Current and Resistance, seção Electrical Energy and Power"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T03-005
+  objetivo: O2
+  tipo: vf
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: um regulador LDO moderno que baixa 5 V para 3,3 V atinge cerca de 90% de eficiência, porque a sua tensão de queda (dropout) é muito pequena.
+  resposta: false
+  explicacao: |
+    No regulador linear a corrente de entrada é igual à de saída, então η ≈ V_out/V_in = 3,3/5 = 66%, seja qual for o dropout. Dropout baixo só significa que o LDO continua regulando com V_in próximo de V_out; é nessa situação (por exemplo, 3,7 V → 3,3 V, η ≈ 89%) que ele é eficiente.
+  fonte: "Texas Instruments, Understanding the Terms and Definitions of LDO Voltage Regulators"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T03-006
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um LDO alimenta um sensor de 3,3 V e 150 mA a partir de uma fonte de 12 V. Desprezando a corrente quiescente, quanta potência ele dissipa em calor? Responda em W, com 2 casas decimais.
+  resposta: {valor: 1.31, unidade: "W", tolerancia: 0.01}
+  explicacao: |
+    P_perda = (V_in − V_out)·I = (12 − 3,3) × 0,15 = 8,7 × 0,15 ≈ 1,31 W, contra só 0,495 W entregues à carga (η ≈ 27,5%). Mais de 1 W num encapsulamento SOT-23 é inviável: aqui cabe um buck ou um pré-regulador.
+  fonte: "Texas Instruments, Understanding the Terms and Definitions of LDO Voltage Regulators"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T03-007
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um conversor buck com eficiência de 88% converte 12 V em 3,3 V para uma carga de 500 mA. Qual é a corrente média de entrada? Responda em mA, sem casas decimais.
+  resposta: {valor: 156, unidade: "mA", tolerancia: 0.01}
+  explicacao: |
+    P_out = 3,3 × 0,5 = 1,65 W. P_in = P_out/η = 1,65/0,88 = 1,875 W. I_in = P_in/V_in = 1,875/12 ≈ 0,156 A = 156 mA. A corrente de entrada é bem menor que a de saída: o buck troca tensão por corrente. Num LDO, a entrada seria os mesmos 500 mA.
+  fonte: "Texas Instruments, Basic Calculation of a Buck Converter's Power Stage"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T03-008
+  objetivo: O2
+  tipo: multipla
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Marque as afirmações corretas na comparação entre um regulador linear (LDO) e um conversor buck.
+  alternativas:
+    - "O LDO fica mais eficiente quanto maior for a tensão de entrada em relação à de saída"
+    - "Desprezando a corrente quiescente, a eficiência do LDO é aproximadamente V_out/V_in, qualquer que seja a corrente de carga"
+    - "Num buck, a corrente média de entrada pode ser menor que a corrente de saída"
+    - "Por não ter ondulação de chaveamento, o buck é a escolha natural para alimentar a referência de um ADC de precisão"
+  resposta: [1, 2]
+  explicacao: |
+    No LDO I_in ≈ I_out, logo η ≈ V_out/V_in — e ela piora quando V_in sobe. No buck P_in ≈ P_out/η, e com V_in > V_out a corrente de entrada pode ser menor que a de saída. Quem tem ondulação de chaveamento é justamente o buck; para referências e circuitos analógicos sensíveis usa-se um LDO (às vezes depois do buck).
+  fonte: "Texas Instruments, Understanding the Terms and Definitions of LDO Voltage Regulators; Texas Instruments, Basic Calculation of a Buck Converter's Power Stage"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T03-009
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um sensor IoT consome 50 mA durante 1 s a cada ciclo de 100 s e 20 µA no resto do tempo (sono). Qual é a corrente média? Responda em mA, com 2 casas decimais.
+  resposta: {valor: 0.52, unidade: "mA", tolerancia: 0.01}
+  explicacao: |
+    I_média = (50 mA × 1 s + 0,020 mA × 99 s)/100 s = (50 + 1,98)/100 ≈ 0,52 mA. A parte ativa responde por 50 das 51,98 mA·s do ciclo: é ela que manda. Quem faz a média simples (50 + 0,02)/2 ≈ 25 mA ignora quanto tempo o sensor passa em cada estado.
+  fonte: "Espressif, ESP32 Series Datasheet, seção de consumo de energia; OpenStax, University Physics Volume 2, capítulo Current and Resistance, seção Electrical Current"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T03-010
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 4
+  bloom: aplicar
+  enunciado: |
+    Um nó LoRa acorda a cada 15 minutos: processa por 0,5 s com 10 mA e transmite por 1,5 s com 120 mA; no resto do ciclo dorme com 5 µA. A bateria tem 1 200 mAh, dos quais 80% são utilizáveis. Qual é a autonomia? Responda em dias, sem casas decimais.
+  resposta: {valor: 190, unidade: "dias", tolerancia: 0.01}
+  explicacao: |
+    Ciclo T = 900 s; sono = 900 − 2 = 898 s. Carga por ciclo: 120 × 1,5 + 10 × 0,5 + 0,005 × 898 = 180 + 5 + 4,49 = 189,49 mA·s. I_média = 189,49/900 ≈ 0,2105 mA. Capacidade útil: 0,8 × 1 200 = 960 mAh. Autonomia: 960/0,2105 ≈ 4 560 h ≈ 190 dias. Sem o desconto de 80% daria ≈ 237 dias — otimista demais.
+  fonte: "Espressif, ESP32 Series Datasheet, seção de consumo de energia; Nordic Semiconductor, Online Power Profiler"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T03-011
+  objetivo: O3
+  tipo: unica
+  dificuldade: 3
+  bloom: avaliar
+  enunciado: |
+    No nó LoRa que acorda a cada 15 min (transmite 1,5 s com 120 mA, processa 0,5 s com 10 mA, dorme o resto com 5 µA), qual mudança aumenta mais a autonomia?
+  alternativas:
+    - "Reduzir a corrente de sono de 5 µA para 2 µA"
+    - "Trocar o LDO por outro com corrente quiescente 1 µA menor"
+    - "Reduzir o tempo de processamento de 0,5 s para 0,25 s"
+    - "Transmitir a cada 30 min em vez de a cada 15 min"
+  resposta: 3
+  explicacao: |
+    A transmissão domina: 180 das 189,5 mA·s do ciclo. Dobrando o período, a corrente média cai de ≈ 0,211 mA para ≈ 0,108 mA, quase dobrando a autonomia. Baixar o sono para 2 µA economiza 0,003 × 898 ≈ 2,7 mA·s por ciclo (≈ 1,4%), tirar 1 µA de quiescente economiza ≈ 0,9 mA·s (≈ 0,5%) e cortar o processamento pela metade economiza 2,5 mA·s (≈ 1,3%). Otimize primeiro o que domina o consumo.
+  fonte: "Nordic Semiconductor, Online Power Profiler; Espressif, ESP32 Series Datasheet, seção de consumo de energia"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T03-012
+  objetivo: O4
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: quando uma fonte com resistência interna r entrega a máxima potência possível a uma carga (R = r), o rendimento é de 50%.
+  resposta: true
+  explicacao: |
+    Com R = r, a mesma corrente passa pelas duas resistências iguais: metade da potência fica na carga e metade vira calor dentro da fonte. η = R/(R + r) = 1/2. Por isso o casamento de impedâncias é usado em sinais de RF, mas nunca em alimentação, onde se quer R ≫ r.
+  fonte: "OpenStax, University Physics Volume 2, capítulo Direct-Current Circuits, seção Electromotive Force"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T03-013
+  objetivo: O4
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Uma bateria de 9 V com resistência interna de 2 Ω alimenta uma carga de 10 Ω. Qual é o rendimento (a fração da potência fornecida pela fem que chega à carga)?
+  alternativas:
+    - "83,3%"
+    - "16,7%"
+    - "50%"
+    - "80%"
+  resposta: 0
+  explicacao: |
+    I = ε/(R + r) = 9/12 = 0,75 A. P_carga = 0,75² × 10 = 5,625 W; P_total = ε·I = 6,75 W. η = 5,625/6,75 = R/(R + r) = 10/12 ≈ 83,3%. "16,7%" é a fração perdida dentro da bateria; "50%" só valeria com R = r; "80%" seria 1 − r/R, uma conta sem sentido físico.
+  fonte: "OpenStax, University Physics Volume 2, capítulo Direct-Current Circuits, seção Electromotive Force"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T03-014
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Uma fonte de fem 5 V com resistência interna de 1 Ω deve entregar exatamente 2 W a uma carga resistiva. Há duas correntes possíveis; calcule a menor delas (a de maior rendimento). Responda em mA, sem casas decimais.
+  resposta: {valor: 438, unidade: "mA", tolerancia: 0.01}
+  explicacao: |
+    Potência na carga = potência da fem menos a perda interna: P = ε·I − I²·r ⇒ 2 = 5I − I² ⇒ I² − 5I + 2 = 0. Δ = 25 − 8 = 17 ⇒ I = (5 ± √17)/2 ⇒ I ≈ 0,438 A ou I ≈ 4,56 A. Com 0,438 A, a carga vale R = 2/0,438² ≈ 10,4 Ω e η = (5 − 0,438)/5 ≈ 91%; com 4,56 A, R ≈ 0,096 Ω e η ≈ 9%: a mesma potência na carga, mas a fonte esquentando dez vezes mais.
+  fonte: "OpenStax, University Physics Volume 2, capítulo Direct-Current Circuits, seção Electromotive Force"
+  origem: ia
+  revisao: rascunho

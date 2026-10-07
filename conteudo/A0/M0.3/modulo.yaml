@@ -1,45 +1,128 @@
 id: M0.3
 ato: A0
 nome: "Física para eletrônica"
+missao: "Desça às minas da Vila da Forja e aprenda as leis que movem as faíscas: quem não entende o campo, o calor e a luz queima a peça antes de forjá-la."
 horas: 140
 trilha: base
 ordem: 3
 requer: ["M0.2"]
 tags_chefe: []
+# Ordem didática: carga, campo e potencial (a origem de tudo) → corrente e resistividade (a carga em movimento num condutor) → energia, potência e eficiência (o que essa corrente custa à bateria) → calor e transferência térmica (para onde vai a potência perdida, logo depois de calculá-la) → capacitância (volta ao campo elétrico, agora armazenado) → magnetismo e indução (o campo da corrente e o indutor) → ondas (campos E e B acoplados se propagando: rádio e antena) → condutores, isolantes e semicondutores (bandas de energia, ponte para os semicondutores) → óptica (o fóton junta ondas e bandas: LED e fotodetector).
 topicos:
   - id: M0.3.T01
     nome: "Carga, campo elétrico e potencial"
     tipo: comum
     peso: 1
+    objetivos:
+      - id: O1
+        texto: "Aplicar a lei de Coulomb e a quantização da carga (q = n·e) para calcular forças entre cargas e o número de elétrons envolvidos"
+      - id: O2
+        texto: "Calcular o campo elétrico de cargas pontuais e entre placas paralelas (E = V/d) e relacioná-lo à rigidez dielétrica do ar e do FR-4 e às descargas eletrostáticas (ESD)"
+      - id: O3
+        texto: "Relacionar potencial, diferença de potencial e energia (U = q·V, elétron-volt) e calcular o trabalho para mover uma carga num campo"
+      - id: O4
+        texto: "Obter o campo a partir do potencial (E = −dV/dx) e explicar superfícies equipotenciais, o poder das pontas e a blindagem por condutores (gaiola de Faraday)"
   - id: M0.3.T02
     nome: "Corrente, resistência e resistividade"
     tipo: comum
     peso: 1
+    objetivos:
+      - id: O1
+        texto: "Relacionar corrente, densidade de corrente e velocidade de deriva (i = dq/dt, J = I/A = n·q·v_d) e calcular a carga transportada a partir de i(t)"
+      - id: O2
+        texto: "Calcular a resistência de condutores pela resistividade e pela geometria (R = ρ·L/A), inclusive trilhas de PCB em cobre de 1 oz (35 µm) e fios AWG"
+      - id: O3
+        texto: "Aplicar o coeficiente de temperatura (R = R₀·[1 + α·ΔT]) a trilhas de cobre, fios e sensores RTD como o Pt100"
+      - id: O4
+        texto: "Dimensionar a largura de uma trilha de PCB pela queda de tensão e pela dissipação, e aplicar a lei de Ohm microscópica (J = σ·E) reconhecendo os limites do modelo ôhmico"
   - id: M0.3.T03
     nome: "Energia, potência e eficiência"
     tipo: comum
     peso: 1
-  - id: M0.3.T04
-    nome: "Capacitância e dielétricos"
-    tipo: comum
-    peso: 1
-  - id: M0.3.T05
-    nome: "Magnetismo, indução e indutância"
-    tipo: comum
-    peso: 1
-  - id: M0.3.T06
-    nome: "Ondas e espectro eletromagnético"
-    tipo: comum
-    peso: 1
+    objetivos:
+      - id: O1
+        texto: "Calcular trabalho, energia e potência (p = dE/dt, E = ∫p dt) em joules, watt-hora e miliampère-hora, convertendo entre essas unidades"
+      - id: O2
+        texto: "Calcular a eficiência de conversores e a potência perdida em calor, comparando o regulador linear (LDO) com o conversor buck"
+      - id: O3
+        texto: "Estimar a autonomia de bateria de um dispositivo IoT a partir do ciclo de trabalho (sono profundo × transmissão) e da corrente média"
+      - id: O4
+        texto: "Aplicar a conservação de energia a fontes reais com resistência interna, incluindo o rendimento e a máxima transferência de potência"
   - id: M0.3.T07
     nome: "Calor, temperatura e transferência térmica"
     tipo: comum
     peso: 1
+    objetivos:
+      - id: O1
+        texto: "Distinguir calor de temperatura, converter entre °C, K e °F e calcular o calor para aquecer um corpo (Q = m·c·ΔT) e sua capacidade térmica"
+      - id: O2
+        texto: "Explicar condução, convecção e radiação e aplicar a lei de Fourier e a de Stefan-Boltzmann a componentes eletrônicos"
+      - id: O3
+        texto: "Calcular a temperatura de junção com o modelo de resistências térmicas em série (TJ = TA + P·RθJA) usando dados de datasheet"
+      - id: O4
+        texto: "Dimensionar um dissipador ou a área de cobre de uma PCB e estimar o aquecimento transitório com a constante de tempo térmica τ = Rθ·Cθ"
+  - id: M0.3.T04
+    nome: "Capacitância e dielétricos"
+    tipo: comum
+    peso: 1
+    objetivos:
+      - id: O1
+        texto: "Calcular a capacitância de placas paralelas (C = ε₀·εr·A/d), a carga e a energia armazenada (E = ½·C·V², obtida pela integral do trabalho)"
+      - id: O2
+        texto: "Explicar a polarização de um dielétrico, a constante dielétrica εr e a rigidez dielétrica, e relacioná-las à tensão nominal de um capacitor"
+      - id: O3
+        texto: "Comparar dielétricos de MLCC (C0G/NP0, X7R, X5R, Y5V) pelo código EIA, pela estabilidade com a temperatura e pelo efeito DC-bias"
+      - id: O4
+        texto: "Aplicar i = C·dv/dt a capacitores de desacoplamento e de reserva (bulk) e estimar a capacitância parasita entre trilhas e planos de uma PCB"
+  - id: M0.3.T05
+    nome: "Magnetismo, indução e indutância"
+    tipo: comum
+    peso: 1
+    objetivos:
+      - id: O1
+        texto: "Calcular o campo magnético de um fio longo e de um solenoide e a força sobre cargas em movimento e condutores (F = q·v×B, F = I·L×B)"
+      - id: O2
+        texto: "Aplicar a lei de Faraday-Lenz (ε = −dΦ/dt) a geradores, transformadores e ao acoplamento indutivo que causa EMI"
+      - id: O3
+        texto: "Calcular a indutância de um solenoide, a energia armazenada (E = ½·L·I²) e a ondulação de corrente do indutor de um conversor buck (v = L·di/dt)"
+      - id: O4
+        texto: "Explicar a sobretensão ao desligar a bobina de um relé, dimensionar o diodo de roda livre e reconhecer a saturação de núcleos ferromagnéticos"
+  - id: M0.3.T06
+    nome: "Ondas e espectro eletromagnético"
+    tipo: comum
+    peso: 1
+    objetivos:
+      - id: O1
+        texto: "Relacionar velocidade, frequência, comprimento de onda e período (v = λ·f) e calcular λ de sinais de rádio no vácuo e em meios com εr"
+      - id: O2
+        texto: "Explicar a onda eletromagnética como campos E e B acoplados e identificar as faixas do espectro usadas em IoT (433, 868/915 MHz, 2,4 GHz, infravermelho, visível)"
+      - id: O3
+        texto: "Dimensionar antenas de meia onda e de quarto de onda e calcular a perda no espaço livre e a densidade de potência de um transmissor"
+      - id: O4
+        texto: "Decidir quando uma trilha deve ser tratada como linha de transmissão a partir do tempo de subida e do comprimento elétrico, e relacionar harmônicos de clock à EMI"
   - id: M0.3.T08
     nome: "Condutores, isolantes e semicondutores (introdução)"
     tipo: comum
     peso: 1
+    objetivos:
+      - id: O1
+        texto: "Explicar o modelo de bandas de energia e classificar materiais pela banda proibida (gap) em condutores, semicondutores e isolantes"
+      - id: O2
+        texto: "Calcular a concentração de portadores no silício intrínseco e dopado (n·p = ni²) e distinguir a dopagem tipo N da tipo P"
+      - id: O3
+        texto: "Explicar como a condutividade varia com a temperatura em metais e em semicondutores e relacionar isso aos termistores NTC e PTC"
+      - id: O4
+        texto: "Descrever a formação da junção PN, a região de depleção e as polarizações direta e reversa, como ponte para o estudo de diodos e transistores"
   - id: M0.3.T09
     nome: "Óptica básica (luz, LED, fotodetecção)"
     tipo: comum
     peso: 1
+    objetivos:
+      - id: O1
+        texto: "Calcular a energia de um fóton (E = h·f = h·c/λ) e relacioná-la ao gap do semicondutor e à cor de um LED"
+      - id: O2
+        texto: "Aplicar reflexão, refração (lei de Snell) e reflexão interna total a lentes de LED, fibras ópticas e janelas de sensores"
+      - id: O3
+        texto: "Distinguir grandezas radiométricas de fotométricas (watt, lúmen, lux, candela) e calcular iluminância e eficácia luminosa de LEDs"
+      - id: O4
+        texto: "Explicar o funcionamento do fotodiodo, do fototransistor e do LDR e calcular a fotocorrente pela responsividade (A/W)"

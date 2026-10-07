@@ -1,0 +1,215 @@
+- id: Q-M0.3.T09-001
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Qual é a energia de um fóton de luz azul de 465 nm? Use E(eV) ≈ 1 240/λ(nm). Responda em eV, com 2 casas decimais.
+  resposta: {valor: 2.67, unidade: "eV", tolerancia: 0.01}
+  explicacao: |
+    E = 1 240/465 ≈ 2,67 eV. É por isso que LEDs azuis (InGaN) precisam de cerca de 3 V de tensão direta: a energia que cada elétron perde na junção é da ordem da energia do fóton emitido.
+  fonte: "OpenStax, University Physics Volume 3, capítulo Photons and Matter Waves, seção Photoelectric Effect; HyperPhysics, Light Emitting Diodes"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T09-002
+  objetivo: O1
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: um LED infravermelho de 940 nm precisa de tensão direta maior que um LED azul de 465 nm, porque o infravermelho é mais penetrante.
+  resposta: false
+  explicacao: |
+    É o contrário: o fóton de 940 nm tem só ≈ 1,32 eV, contra ≈ 2,67 eV do azul. A tensão direta acompanha o gap do material, que define a energia do fóton: LEDs IR trabalham com ≈ 1,2–1,4 V, e os azuis com ≈ 2,8–3,3 V. "Penetrante" não tem relação com isso.
+  fonte: "HyperPhysics, Light Emitting Diodes; OpenStax, University Physics Volume 3, capítulo Condensed Matter Physics, seção Semiconductor Devices"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T09-003
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    O silício tem gap de 1,12 eV. Qual é o maior comprimento de onda que um fotodiodo de silício consegue detectar (comprimento de onda de corte)? Use λ(nm) ≈ 1 240/E(eV). Responda em nm, sem casas decimais.
+  resposta: {valor: 1107, unidade: "nm", tolerancia: 0.01}
+  explicacao: |
+    Um fóton só cria um par elétron-lacuna se E ≥ E_g. λ_corte = 1 240/1,12 ≈ 1 107 nm. Acima disso (por exemplo, 1 550 nm das fibras ópticas, com ≈ 0,8 eV) o silício é transparente e é preciso usar InGaAs ou germânio, de gap menor.
+  fonte: "OpenStax, University Physics Volume 3, capítulo Condensed Matter Physics, seção Semiconductor Devices; HyperPhysics, Photodiode"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T09-004
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 4
+  bloom: aplicar
+  enunciado: |
+    Um laser vermelho de 650 nm emite 5 mW. Quantos fótons ele emite por segundo? Use h = 6,626 × 10⁻³⁴ J·s e c = 3,00 × 10⁸ m/s. Responda em unidades de 10¹⁶ fótons/s, com 2 casas decimais.
+  resposta: {valor: 1.63, unidade: "× 10¹⁶ fótons/s", tolerancia: 0.01}
+  explicacao: |
+    Energia por fóton: E = h·c/λ = 6,626 × 10⁻³⁴ × 3 × 10⁸ / 650 × 10⁻⁹ ≈ 3,058 × 10⁻¹⁹ J (≈ 1,91 eV). Fótons por segundo: N = P/E = 5 × 10⁻³ / 3,058 × 10⁻¹⁹ ≈ 1,63 × 10¹⁶. Com responsividade ideal (cada fóton gera um elétron), isso daria 1,63 × 10¹⁶ × 1,602 × 10⁻¹⁹ ≈ 2,6 mA — a ponte entre potência óptica e fotocorrente.
+  fonte: "OpenStax, University Physics Volume 3, capítulo Photons and Matter Waves, seção Photoelectric Effect"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T09-005
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um raio de luz passa do ar (n = 1,00) para uma janela de acrílico (n = 1,49) com ângulo de incidência de 30° em relação à normal. Qual é o ângulo de refração? Responda em graus, com 1 casa decimal.
+  resposta: {valor: 19.6, unidade: "°", tolerancia: 0.01}
+  explicacao: |
+    Snell: 1,00 × sen 30° = 1,49 × sen θ₂ ⇒ sen θ₂ = 0,5/1,49 ≈ 0,3356 ⇒ θ₂ ≈ 19,6°. Ao entrar num meio mais denso, o raio se aproxima da normal. Medir o ângulo a partir da superfície (60°) em vez da normal leva a um resultado errado.
+  fonte: "OpenStax, University Physics Volume 3, capítulo The Nature of Light, seção Refraction; HyperPhysics, Snell's Law"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T09-006
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    A luz gerada dentro do encapsulamento de epóxi de um LED (n = 1,5) tenta sair para o ar (n = 1,0). Acima de que ângulo de incidência, medido a partir da normal, ela sofre reflexão interna total na superfície plana? Responda em graus, com 1 casa decimal.
+  resposta: {valor: 41.8, unidade: "°", tolerancia: 0.01}
+  explicacao: |
+    θ_c = arcsen(n₂/n₁) = arcsen(1/1,5) ≈ 41,8°. Raios mais inclinados que isso voltam para dentro. A cúpula arredondada do LED faz os raios chegarem à superfície quase perpendiculares e escaparem; a fibra óptica faz o contrário, usando a reflexão interna total para prender a luz no núcleo.
+  fonte: "OpenStax, University Physics Volume 3, capítulo The Nature of Light, seção Total Internal Reflection"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T09-007
+  objetivo: O2
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um sensor óptico fica atrás de uma janela de vidro (n = 1,5) no ar. Em incidência normal, que fração da luz é refletida em **cada** superfície ar–vidro, pela fórmula de Fresnel R = ((n₁ − n₂)/(n₁ + n₂))²?
+  alternativas:
+    - "20%"
+    - "0,04%"
+    - "50%"
+    - "4%"
+  resposta: 3
+  explicacao: |
+    R = ((1,5 − 1)/(1,5 + 1))² = (0,5/2,5)² = 0,2² = 0,04 = 4%. Duas superfícies somam ≈ 8% de perda — e esse reflexo é também o caminho por onde a luz do próprio LED de um sensor de proximidade volta ao fotodetector. "20%" esqueceu de elevar ao quadrado; "0,04%" errou a conversão para porcentagem.
+  fonte: "OpenStax, University Physics Volume 3, capítulo The Nature of Light, seção The Law of Reflection; HyperPhysics, Fresnel Equations"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T09-008
+  objetivo: O3
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Um sensor de luz ambiente informa quanto fluxo luminoso chega por metro quadrado da superfície do sensor. Em que unidade essa grandeza é medida?
+  alternativas:
+    - "Candela (cd)"
+    - "Lúmen (lm)"
+    - "Lux (lx)"
+    - "Watt (W)"
+  resposta: 2
+  explicacao: |
+    Iluminância é fluxo luminoso por área: lux = lm/m². O lúmen mede o fluxo total emitido; a candela, o fluxo por ângulo sólido numa direção (intensidade); o watt é unidade radiométrica, que não pondera pela sensibilidade do olho.
+  fonte: "HyperPhysics, Photometry; OpenStax, University Physics Volume 3, capítulo The Nature of Light"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T09-009
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um LED tem intensidade luminosa de 20 cd no seu eixo. Tratando-o como fonte pontual, qual é a iluminância numa superfície perpendicular ao eixo, a 0,5 m? Responda em lx.
+  resposta: {valor: 80, unidade: "lx", tolerancia: 0.01}
+  explicacao: |
+    E = I/d² = 20 cd / (0,5 m)² = 20/0,25 = 80 lx. É a lei do inverso do quadrado, a mesma da densidade de potência de uma antena (T06). Quem divide por d (e não d²) obtém 40 lx.
+  fonte: "HyperPhysics, Photometry"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T09-010
+  objetivo: O3
+  tipo: vf
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: um LED infravermelho de 940 nm que emite 50 mW de luz tem fluxo luminoso de praticamente 0 lúmen.
+  resposta: true
+  explicacao: |
+    O lúmen pondera a potência pela curva de sensibilidade do olho, V(λ), que é praticamente nula acima de ~750 nm. 50 mW de IR são energia real (aquecem, são detectados por fotodiodos de silício), mas "luz" nenhuma para o olho. Por isso LEDs IR são especificados em grandezas radiométricas (mW, mW/sr).
+  fonte: "HyperPhysics, Photometry"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T09-011
+  objetivo: O4
+  tipo: vf
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Verdadeiro ou falso: um fotodiodo com responsividade de 0,6 A/W, iluminado com 20 µW de luz, produz uma fotocorrente de 12 µA.
+  resposta: true
+  explicacao: |
+    I_ph = R·P = 0,6 A/W × 20 × 10⁻⁶ W = 12 × 10⁻⁶ A = 12 µA. A responsividade (A/W) já embute a eficiência quântica e o comprimento de onda; ela vem na curva do datasheet do fotodiodo.
+  fonte: "HyperPhysics, Photodiode; Vishay, notas de aplicação de fotodiodos (responsividade)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T09-012
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Um fotodiodo de silício tem eficiência quântica de 0,75 em 905 nm e recebe 50 µW. A fotocorrente vai para um amplificador de transimpedância com resistor de realimentação de 47 kΩ (V_out = I_ph·R_f). Use R ≈ η·λ(nm)/1 240 (em A/W). Qual é a tensão de saída? Responda em V, com 2 casas decimais.
+  resposta: {valor: 1.29, unidade: "V", tolerancia: 0.01}
+  explicacao: |
+    Responsividade: R = 0,75 × 905/1 240 ≈ 0,547 A/W. Fotocorrente: I = 0,547 × 50 × 10⁻⁶ ≈ 27,4 µA. Saída: V = 27,4 × 10⁻⁶ × 47 × 10³ ≈ 1,29 V. De onde vem a fórmula: R = η·q/E_fóton; com E_fóton = h·c/λ e h·c/q ≈ 1 240 nm·V, fica R = η·λ(nm)/1 240. Cada fóton de 905 nm carrega ≈ 1,37 eV, e no máximo um elétron é coletado por fóton.
+  fonte: "HyperPhysics, Photodiode; OpenStax, University Physics Volume 3, capítulo Photons and Matter Waves, seção Photoelectric Effect"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T09-013
+  objetivo: O4
+  tipo: multipla
+  dificuldade: 3
+  bloom: avaliar
+  enunciado: |
+    Marque as afirmações corretas sobre fotodetectores.
+  alternativas:
+    - "Um fotodiodo polarizado reversamente responde rápido e tem corrente proporcional à potência óptica ao longo de muitas décadas"
+    - "A resistência de um LDR de CdS cai quando a luz aumenta, mas sua resposta é lenta, da ordem de dezenas de milissegundos"
+    - "O fototransistor é mais rápido que o fotodiodo, porque o ganho do transistor acelera a resposta"
+    - "A resistência de um LDR aumenta com a luz, porque os fótons atrapalham o movimento dos elétrons"
+  resposta: [0, 1]
+  explicacao: |
+    Polarizado reversamente, o fotodiodo tem depleção larga e capacitância pequena (T08): é rápido e linear. No LDR, os fótons geram portadores e a resistência cai, mas a recombinação lenta deixa a resposta em dezenas de ms. O fototransistor multiplica a fotocorrente por β, mas a capacitância base-coletor amplificada (efeito Miller) o torna mais lento que o fotodiodo, não mais rápido.
+  fonte: "HyperPhysics, Photodiode; Vishay, notas de aplicação de fotodiodos e fototransistores"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T09-014
+  objetivo: O4
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um LDR está ligado entre o pino do ADC e o terra, e um resistor de 10 kΩ entre o pino e 3,3 V. Sob luz, o LDR vale 2 kΩ. Qual é a tensão no pino?
+  alternativas:
+    - "2,75 V"
+    - "0,55 V"
+    - "3,27 V"
+    - "0,66 V"
+  resposta: 1
+  explicacao: |
+    Divisor de tensão: V = 3,3 × R_LDR/(R_LDR + 10 k) = 3,3 × 2/12 = 0,55 V. "2,75 V" é a tensão sobre o resistor de 10 kΩ (trocou os ramos); "3,27 V" seria no escuro (LDR ≈ 1 MΩ); "0,66 V" usou 3,3 × 2/10, esquecendo o LDR no denominador. Nesse arranjo, mais luz significa tensão menor no pino.
+  fonte: "HyperPhysics, Photodiode (fotocondutores); OpenStax, University Physics Volume 2, capítulo Direct-Current Circuits, seção Resistors in Series and Parallel"
+  origem: ia
+  revisao: rascunho

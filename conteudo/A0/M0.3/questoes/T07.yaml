@@ -1,0 +1,215 @@
+- id: Q-M0.3.T07-001
+  objetivo: O1
+  tipo: vf
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Verdadeiro ou falso: um aumento de temperatura de 10 °C corresponde a um aumento de 10 K.
+  resposta: true
+  explicacao: |
+    As escalas Celsius e Kelvin têm o mesmo tamanho de grau; só o zero é deslocado (T(K) = T(°C) + 273,15). Por isso uma diferença de temperatura é a mesma nas duas, e os datasheets escrevem resistência térmica em °C/W ou K/W sem distinção. Somar 273 a uma diferença é um erro clássico.
+  fonte: "OpenStax, University Physics Volume 2, capítulo Temperature and Heat, seção Thermometers and Temperature Scales"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T07-002
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    A faixa industrial de temperatura de um componente vai até 85 °C. Quanto é isso em graus Fahrenheit? Responda em °F.
+  resposta: {valor: 185, unidade: "°F", tolerancia: 0.01}
+  explicacao: |
+    T(°F) = 1,8·T(°C) + 32 = 1,8 × 85 + 32 = 153 + 32 = 185 °F. Quem esquece o +32 obtém 153; quem divide por 1,8 em vez de multiplicar obtém ≈ 79.
+  fonte: "OpenStax, University Physics Volume 2, capítulo Temperature and Heat, seção Thermometers and Temperature Scales"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T07-003
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Quanto calor é necessário para aquecer um pad de cobre de 15 g em 60 K? Use c = 385 J/(kg·K) para o cobre. Responda em J, com 1 casa decimal.
+  resposta: {valor: 346.5, unidade: "J", tolerancia: 0.01}
+  explicacao: |
+    Q = m·c·ΔT = 0,015 kg × 385 J/(kg·K) × 60 K = 346,5 J. É por isso que soldar num plano de terra grande exige ferro mais potente ou alívio térmico (*thermal relief*): o cobre absorve muita energia antes de chegar à temperatura de fusão da solda. Quem usa a massa em gramas sem converter obtém 346 500 J.
+  fonte: "OpenStax, University Physics Volume 2, capítulo Temperature and Heat, seção Heat Transfer, Specific Heat, and Calorimetry"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T07-004
+  objetivo: O1
+  tipo: unica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um transistor dissipa 2 W num bloco de alumínio de 20 g (c = 900 J/(kg·K)). Supondo que nenhum calor escape para o ar, quanto tempo o bloco leva para aquecer 40 K?
+  alternativas:
+    - "0,36 s"
+    - "360 s"
+    - "1 440 s"
+    - "180 s"
+  resposta: 1
+  explicacao: |
+    Energia necessária: Q = m·c·ΔT = 0,02 × 900 × 40 = 720 J. Com potência constante, t = Q/P = 720/2 = 360 s (6 min). "0,36 s" usou a massa em kg errado (0,00002); "1 440 s" multiplicou pela potência em vez de dividir; "180 s" usou metade da energia. Na prática o bloco também perde calor para o ar, e o aquecimento é mais lento que isso.
+  fonte: "OpenStax, University Physics Volume 2, capítulo Temperature and Heat, seção Heat Transfer, Specific Heat, and Calorimetry"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T07-005
+  objetivo: O2
+  tipo: unica
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Num regulador em encapsulamento QFN com o pad exposto soldado a um plano de cobre, por qual mecanismo o calor vai predominantemente do chip até o plano?
+  alternativas:
+    - "Convecção, pelo ar entre o encapsulamento e a placa"
+    - "Radiação infravermelha do chip para o cobre"
+    - "Condução, através do pad metálico, da solda e do cobre"
+    - "Convecção forçada, pela corrente elétrica que atravessa o pad"
+  resposta: 2
+  explicacao: |
+    Entre sólidos em contato o calor passa por condução (lei de Fourier), e metais como cobre e solda têm condutividade térmica centenas de vezes maior que o ar ou o plástico. Não há ar entre o pad soldado e a placa, a radiação é pequena nessa escala de temperatura e distância, e a corrente elétrica não transporta calor por convecção.
+  fonte: "OpenStax, University Physics Volume 2, capítulo Temperature and Heat, seção Mechanisms of Heat Transfer"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T07-006
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Uma almofada térmica de 0,5 mm de espessura e condutividade k = 3 W/(m·K) cobre uma área de 15 mm × 15 mm entre um chip e o dissipador. Qual é a sua resistência térmica de condução? Responda em °C/W, com 2 casas decimais.
+  resposta: {valor: 0.74, unidade: "°C/W", tolerancia: 0.01}
+  explicacao: |
+    Rθ = L/(k·A) = 0,5 × 10⁻³ / (3 × 225 × 10⁻⁶) = 0,5 × 10⁻³ / 6,75 × 10⁻⁴ ≈ 0,74 °C/W. Com 10 W passando, ela sozinha causa 7,4 °C de diferença. Dobrar a espessura dobra Rθ; dobrar a área a divide por 2 — a mesma geometria do R = ρL/A elétrico.
+  fonte: "OpenStax, University Physics Volume 2, capítulo Temperature and Heat, seção Mechanisms of Heat Transfer; HyperPhysics, Heat Conduction"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T07-007
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 4
+  bloom: aplicar
+  enunciado: |
+    Um dissipador de alumínio anodizado preto (emissividade 0,85) tem 0,02 m² de área externa e está a 70 °C, num ambiente a 25 °C. Quanta potência ele perde só por radiação? Use σ = 5,67 × 10⁻⁸ W/(m²·K⁴) e T(K) = T(°C) + 273,15. Responda em W, com 2 casas decimais.
+  resposta: {valor: 5.75, unidade: "W", tolerancia: 0.01}
+  explicacao: |
+    P = ε·σ·A·(T⁴ − T_amb⁴), com temperaturas absolutas: 343,15 K e 298,15 K. 343,15⁴ ≈ 1,3866 × 10¹⁰ e 298,15⁴ ≈ 7,902 × 10⁹; diferença ≈ 5,964 × 10⁹ K⁴. P = 0,85 × 5,67 × 10⁻⁸ × 0,02 × 5,964 × 10⁹ ≈ 5,75 W. Usar °C (70⁴ − 25⁴) daria um absurdo de ≈ 0,02 W — a lei de Stefan-Boltzmann exige kelvin.
+  fonte: "OpenStax, University Physics Volume 2, capítulo Temperature and Heat, seção Mechanisms of Heat Transfer; HyperPhysics, Stefan-Boltzmann Law"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T07-008
+  objetivo: O3
+  tipo: vf
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Verdadeiro ou falso: um chip com Rθ_JA = 120 °C/W que dissipa 0,5 W num ambiente a 25 °C tem temperatura de junção de 85 °C.
+  resposta: true
+  explicacao: |
+    T_J = T_A + P·Rθ_JA = 25 + 0,5 × 120 = 25 + 60 = 85 °C. É a "lei de Ohm térmica": a potência (corrente) atravessando a resistência térmica produz uma diferença de temperatura (tensão).
+  fonte: "Texas Instruments, Semiconductor and IC Package Thermal Metrics"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T07-009
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um LDO em SOT-223 (Rθ_JA = 60 °C/W) alimenta 150 mA a 3,3 V a partir de 12 V, dentro de uma caixa a 40 °C. Desprezando a corrente quiescente, qual é a temperatura da junção? Responda em °C, com 1 casa decimal.
+  resposta: {valor: 118.3, unidade: "°C", tolerancia: 0.01}
+  explicacao: |
+    Potência dissipada: P = (12 − 3,3) × 0,15 = 1,305 W. T_J = 40 + 1,305 × 60 ≈ 118,3 °C. Fica abaixo de 125 °C, com margem pequena. Quem usa a potência entregue à carga (3,3 × 0,15 = 0,495 W) acha só 69,7 °C e subestima o problema: o que aquece o LDO é a queda de tensão vezes a corrente.
+  fonte: "Texas Instruments, Semiconductor and IC Package Thermal Metrics; Texas Instruments, Understanding the Terms and Definitions of LDO Voltage Regulators"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T07-010
+  objetivo: O3
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: o Rθ_JA informado no datasheet é uma propriedade fixa do encapsulamento e vale para qualquer placa em que o chip seja montado.
+  resposta: false
+  explicacao: |
+    O Rθ_JA é medido numa placa de teste padronizada (JEDEC), com área de cobre e número de camadas definidos. Na sua placa, com mais cobre, vias térmicas ou fluxo de ar, ele pode ser bem menor; com pouco cobre, bem maior. O que é mais intrínseco ao encapsulamento é o Rθ_JC (junção-invólucro).
+  fonte: "Texas Instruments, Semiconductor and IC Package Thermal Metrics"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T07-011
+  objetivo: O3
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um chip tem T_J,máx = 125 °C e Rθ_JA = 50 °C/W na sua placa. Qual é a máxima potência que ele pode dissipar com o ambiente a 85 °C?
+  alternativas:
+    - "0,8 W"
+    - "2,5 W"
+    - "1,7 W"
+    - "4,2 W"
+  resposta: 0
+  explicacao: |
+    P_máx = (T_J,máx − T_A)/Rθ_JA = (125 − 85)/50 = 0,8 W. "2,5 W" usou 125/50, como se o ambiente estivesse a 0 °C; "1,7 W" usou 85/50; "4,2 W" somou as temperaturas. Por isso as curvas de *derating* caem linearmente com a temperatura ambiente.
+  fonte: "Texas Instruments, Semiconductor and IC Package Thermal Metrics"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T07-012
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 3
+  bloom: criar
+  enunciado: |
+    Um MOSFET dissipa 8 W. Dados: T_J,máx = 150 °C, T_A = 50 °C, Rθ_JC = 1,5 °C/W e Rθ_CS = 0,5 °C/W (pasta térmica). Qual é a máxima resistência térmica dissipador-ambiente Rθ_SA admissível? Responda em °C/W, com 1 casa decimal.
+  resposta: {valor: 10.5, unidade: "°C/W", tolerancia: 0.01}
+  explicacao: |
+    Resistência total admissível: (150 − 50)/8 = 12,5 °C/W. Descontando as que já estão no caminho: Rθ_SA ≤ 12,5 − 1,5 − 0,5 = 10,5 °C/W. Escolha no catálogo um dissipador com Rθ_SA abaixo disso (na condição de ventilação real). Esquecer a pasta térmica daria 11 °C/W e um dissipador ligeiramente pequeno demais.
+  fonte: "Texas Instruments, Semiconductor and IC Package Thermal Metrics; catálogos de dissipadores (Rθ_SA em °C/W)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T07-013
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 4
+  bloom: aplicar
+  enunciado: |
+    Um conjunto componente + dissipador tem resistência térmica para o ambiente Rθ = 8 K/W e capacidade térmica Cθ = 25 J/K. Ele começa a 30 °C (igual ao ambiente) e passa a dissipar 4 W. Pelo modelo de primeira ordem, qual é a temperatura após 100 s? Responda em °C, com 1 casa decimal.
+  resposta: {valor: 42.6, unidade: "°C", tolerancia: 0.01}
+  explicacao: |
+    τ = Rθ·Cθ = 8 × 25 = 200 s. Elevação final: P·Rθ = 4 × 8 = 32 K. T(t) = T_A + 32·(1 − e^(−t/τ)); em t = 100 s: 1 − e^(−0,5) ≈ 0,3935 ⇒ T ≈ 30 + 12,6 = 42,6 °C. Em regime chegaria a 62 °C. É a mesma EDO do capacitor carregando por um resistor (M0.2.T07).
+  fonte: "OpenStax, University Physics Volume 2, capítulo Temperature and Heat, seção Heat Transfer, Specific Heat, and Calorimetry; OpenStax, Calculus Volume 2, capítulo Introduction to Differential Equations"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T07-014
+  objetivo: O4
+  tipo: multipla
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um regulador em QFN com pad exposto está esquentando demais. Marque as mudanças de layout que **reduzem** a temperatura de junção.
+  alternativas:
+    - "Cobrir o pad exposto com máscara de solda, deixando-o sem solda"
+    - "Colocar o regulador colado ao processador, que também esquenta"
+    - "Preencher a região sob o pad exposto com vias térmicas para os planos internos"
+    - "Aumentar a área de cobre ligada ao pad exposto na camada externa"
+  resposta: [2, 3]
+  explicacao: |
+    O FR-4 conduz mal o calor (k ≈ 0,3 W/(m·K)); as vias térmicas levam o calor do pad para os planos internos, e mais área de cobre espalha o calor e aumenta a superfície de troca com o ar — as duas reduzem o Rθ_JA efetivo. Deixar o pad sem solda corta o principal caminho de condução, e ficar ao lado de outra fonte de calor eleva a temperatura ambiente local.
+  fonte: "Texas Instruments, Semiconductor and IC Package Thermal Metrics; OpenStax, University Physics Volume 2, capítulo Temperature and Heat, seção Mechanisms of Heat Transfer"
+  origem: ia
+  revisao: rascunho

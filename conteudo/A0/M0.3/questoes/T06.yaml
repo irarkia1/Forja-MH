@@ -1,0 +1,215 @@
+- id: Q-M0.3.T06-001
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Qual é o comprimento de onda, no vácuo, de um sinal de Wi-Fi/BLE de 2,4 GHz? Use c = 3,00 × 10⁸ m/s. Responda em cm, com 1 casa decimal.
+  resposta: {valor: 12.5, unidade: "cm", tolerancia: 0.01}
+  explicacao: |
+    λ = c/f = 3 × 10⁸ / 2,4 × 10⁹ = 0,125 m = 12,5 cm. É por isso que antenas de 2,4 GHz cabem num módulo: um quarto de onda tem pouco mais de 3 cm.
+  fonte: "OpenStax, University Physics Volume 2, capítulo Electromagnetic Waves, seção The Electromagnetic Spectrum"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T06-002
+  objetivo: O1
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Qual é o comprimento de onda, no vácuo, de um transmissor de 433 MHz (c = 3,00 × 10⁸ m/s)?
+  alternativas:
+    - "6,93 cm"
+    - "1,44 m"
+    - "34,6 cm"
+    - "69,3 cm"
+  resposta: 3
+  explicacao: |
+    λ = 3 × 10⁸ / 433 × 10⁶ ≈ 0,693 m = 69,3 cm. "6,93 cm" errou uma potência de 10; "1,44 m" inverteu a fórmula: f/c = 433 × 10⁶/3 × 10⁸ ≈ 1,44, número que nem tem unidade de comprimento; "34,6 cm" é meio comprimento de onda — o tamanho de um dipolo, não de λ.
+  fonte: "OpenStax, University Physics Volume 2, capítulo Electromagnetic Waves, seção The Electromagnetic Spectrum"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T06-003
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um sinal de 2,45 GHz se propaga num dielétrico com εr = 4 (e μr = 1). Qual é o comprimento de onda dentro do dielétrico? Use c = 3,00 × 10⁸ m/s. Responda em cm, com 2 casas decimais.
+  resposta: {valor: 6.12, unidade: "cm", tolerancia: 0.01}
+  explicacao: |
+    No meio, v = c/√εr = 3 × 10⁸/2 = 1,5 × 10⁸ m/s. λ = v/f = 1,5 × 10⁸ / 2,45 × 10⁹ ≈ 0,0612 m = 6,12 cm. A frequência não muda ao entrar no meio; a velocidade e o comprimento de onda caem por √εr. Dividir por εr (e não pela raiz) daria 3,06 cm.
+  fonte: "OpenStax, University Physics Volume 2, capítulo Electromagnetic Waves, seção Plane Electromagnetic Waves"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T06-004
+  objetivo: O1
+  tipo: vf
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Verdadeiro ou falso: o período de um sinal de 1 GHz é 1 µs.
+  resposta: false
+  explicacao: |
+    T = 1/f = 1/10⁹ = 10⁻⁹ s = 1 ns. 1 µs é o período de 1 MHz. Giga (10⁹) ↔ nano (10⁻⁹), mega (10⁶) ↔ micro (10⁻⁶).
+  fonte: "OpenStax, University Physics Volume 1, capítulo Waves, seção Traveling Waves"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T06-005
+  objetivo: O2
+  tipo: unica
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Qual destas ondas eletromagnéticas tem a **maior** frequência?
+  alternativas:
+    - "Rádio LoRa em 915 MHz"
+    - "Luz verde de 530 nm"
+    - "Wi-Fi em 2,4 GHz"
+    - "Infravermelho de controle remoto em 940 nm"
+  resposta: 1
+  explicacao: |
+    f = c/λ. Luz verde: 3 × 10⁸/530 × 10⁻⁹ ≈ 566 THz; infravermelho de 940 nm: ≈ 319 THz; Wi-Fi: 2,4 GHz; LoRa: 0,915 GHz. Quanto menor o comprimento de onda, maior a frequência — e o infravermelho fica logo abaixo do vermelho, com frequência menor que a de qualquer luz visível.
+  fonte: "OpenStax, University Physics Volume 2, capítulo Electromagnetic Waves, seção The Electromagnetic Spectrum"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T06-006
+  objetivo: O2
+  tipo: vf
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Verdadeiro ou falso: no vácuo, ondas de rádio de 868 MHz e a luz visível viajam à mesma velocidade.
+  resposta: true
+  explicacao: |
+    Toda onda eletromagnética no vácuo viaja a c ≈ 3 × 10⁸ m/s, qualquer que seja a frequência. O que muda entre rádio, infravermelho e luz é a frequência (e portanto o comprimento de onda e a energia do fóton). Num meio material, a velocidade cai para c/√εr.
+  fonte: "OpenStax, University Physics Volume 2, capítulo Electromagnetic Waves, seções Maxwell's Equations and Electromagnetic Waves e The Electromagnetic Spectrum"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T06-007
+  objetivo: O2
+  tipo: vf
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Verdadeiro ou falso: numa onda eletromagnética plana no vácuo com campo elétrico de amplitude 3 V/m, o campo magnético tem amplitude de 10 nT (use c = 3 × 10⁸ m/s).
+  resposta: true
+  explicacao: |
+    Na onda plana, E = c·B ⇒ B = E/c = 3/(3 × 10⁸) = 10⁻⁸ T = 10 nT. Os dois campos são perpendiculares entre si e à direção de propagação, oscilam em fase e carregam a mesma energia.
+  fonte: "OpenStax, University Physics Volume 2, capítulo Electromagnetic Waves, seção Plane Electromagnetic Waves"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T06-008
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Qual é o comprimento ideal (sem fator de encurtamento) de uma antena monopolo de quarto de onda para 868 MHz? Use c = 3,00 × 10⁸ m/s. Responda em cm, com 2 casas decimais.
+  resposta: {valor: 8.64, unidade: "cm", tolerancia: 0.01}
+  explicacao: |
+    λ = 3 × 10⁸ / 868 × 10⁶ ≈ 0,3456 m; λ/4 ≈ 0,0864 m = 8,64 cm. Na prática, a antena é cortada um pouco menor (efeito de pontas, εr do invólucro) e ajustada medindo. O monopolo precisa de um plano de terra, que faz o papel da outra metade do dipolo.
+  fonte: "Texas Instruments, Antenna Selection Guide (AN058); HyperPhysics, Dipole Antenna"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T06-009
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Calcule a perda no espaço livre, FSPL(dB) = 20·log₁₀(4π·d/λ), para um enlace de 2,4 GHz com 50 m de distância. Use c = 3,00 × 10⁸ m/s. Responda em dB, com 1 casa decimal.
+  resposta: {valor: 74.0, unidade: "dB", tolerancia: 0.01}
+  explicacao: |
+    λ = 0,125 m. 4π·d/λ = 4π × 50/0,125 ≈ 5 026,5. 20·log₁₀(5 026,5) ≈ 20 × 3,701 ≈ 74,0 dB. A potência cai com o quadrado da distância: dobrar d soma ≈ 6 dB. Usar 10·log daria 37 dB, a metade.
+  fonte: "OpenStax, University Physics Volume 2, capítulo Electromagnetic Waves, seção Energy Carried by Electromagnetic Waves; Texas Instruments, Antenna Selection Guide (AN058)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T06-010
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Um enlace LoRa em 915 MHz tem potência de transmissão de +14 dBm, antenas de 2 dBi em cada ponta e sensibilidade do receptor de −130 dBm. Reservando 20 dB de margem para obstáculos e desvanecimento, qual é o alcance máximo em espaço livre? Use FSPL(dB) = 20·log₁₀(4π·d/λ) e c = 3,00 × 10⁸ m/s. Responda em km, com 1 casa decimal.
+  resposta: {valor: 65.5, unidade: "km", tolerancia: 0.01}
+  explicacao: |
+    FSPL admissível = P_tx + G_tx + G_rx − sensibilidade − margem = 14 + 2 + 2 + 130 − 20 = 128 dB. Isolando d: d = (λ/4π)·10^(FSPL/20). λ = 3 × 10⁸/915 × 10⁶ ≈ 0,3279 m; λ/4π ≈ 0,02609 m; 10^(128/20) = 10^6,4 ≈ 2,512 × 10⁶. d ≈ 65,5 km. Enlaces LoRa de dezenas de km existem, mas só com visada direta e antenas altas; em cidade o alcance é de poucos km, porque prédios e o solo somam perdas muito maiores que a margem.
+  fonte: "OpenStax, University Physics Volume 2, capítulo Electromagnetic Waves, seção Energy Carried by Electromagnetic Waves; Texas Instruments, Antenna Selection Guide (AN058)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T06-011
+  objetivo: O3
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um transmissor irradia 1 W de forma isotrópica (igual em todas as direções). Qual é a densidade de potência a 2 m dele?
+  alternativas:
+    - "19,9 mW/m²"
+    - "79,6 mW/m²"
+    - "39,8 mW/m²"
+    - "250 mW/m²"
+  resposta: 0
+  explicacao: |
+    A potência se espalha numa esfera de área 4πd²: S = P/(4π·d²) = 1/(4π × 4) ≈ 0,0199 W/m² = 19,9 mW/m². "79,6 mW/m²" é o valor a 1 m (esqueceu d²); "39,8 mW/m²" usou d em vez de d²; "250 mW/m²" esqueceu o 4π. Dobrar a distância divide a densidade por 4.
+  fonte: "OpenStax, University Physics Volume 2, capítulo Electromagnetic Waves, seção Energy Carried by Electromagnetic Waves"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T06-012
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um sinal digital tem tempo de subida de 0,5 ns e corre numa trilha de FR-4 onde se propaga a metade da velocidade da luz (c/2, com c = 3 × 10⁸ m/s). Pela regra prática de tratar a trilha como linha de transmissão quando ela passa de 1/6 do comprimento da borda (l_borda = t_r × velocidade), qual é o comprimento crítico? Responda em mm, com 1 casa decimal.
+  resposta: {valor: 12.5, unidade: "mm", tolerancia: 0.01}
+  explicacao: |
+    Velocidade: 1,5 × 10⁸ m/s. Comprimento da borda: 0,5 × 10⁻⁹ × 1,5 × 10⁸ = 0,075 m = 75 mm. Limite: 75/6 = 12,5 mm. Acima disso, a borda "vê" a trilha como linha: reflexões aparecem se a impedância não for controlada e a terminação adequada. Repare que o clock pode ser lento: quem manda é o tempo de subida.
+  fonte: "Johnson e Graham, High-Speed Digital Design: A Handbook of Black Magic (circuitos concentrados × distribuídos)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T06-013
+  objetivo: O4
+  tipo: multipla
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Marque as afirmações corretas sobre clocks digitais, harmônicos e EMI.
+  alternativas:
+    - "Um clock de 16 MHz não tem energia acima de 16 MHz, então não pode interferir num rádio de 433 MHz"
+    - "Uma onda quadrada simétrica ideal contém harmônicos ímpares (3f, 5f, 7f...) com amplitudes que caem com 1/n"
+    - "Com a mesma frequência de clock, bordas mais rápidas aumentam o conteúdo espectral em altas frequências"
+    - "Se o clock é de baixa frequência, a trilha nunca precisa ser tratada como linha de transmissão, qualquer que seja o tempo de subida"
+  resposta: [1, 2]
+  explicacao: |
+    Pela série de Fourier, a onda quadrada é f + 3f/3 + 5f/5 + ...; bordas mais rápidas empurram a "frequência de joelho" (≈ 0,5/t_r) para cima. Por isso um clock de 16 MHz com bordas de 1 ns tem energia até ~500 MHz e pode, sim, cair sobre 433 MHz (o 27º harmônico de 16 MHz é 432 MHz). E é o tempo de subida, não a frequência do clock, que decide os efeitos de linha de transmissão.
+  fonte: "Johnson e Graham, High-Speed Digital Design: A Handbook of Black Magic (frequência de joelho); OpenStax, University Physics Volume 1, capítulo Waves"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T06-014
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Uma trilha de 30 mm leva o sinal de 2,4 GHz do rádio até a antena, numa placa com permissividade efetiva εr_ef = 3,3. Qual é o comprimento elétrico dessa trilha, em graus de fase (360° = um comprimento de onda guiado)? Use c = 3,00 × 10⁸ m/s. Responda em graus, sem casas decimais.
+  resposta: {valor: 157, unidade: "°", tolerancia: 0.01}
+  explicacao: |
+    λ no ar = 125 mm; λ guiado = 125/√3,3 ≈ 68,8 mm. Comprimento elétrico = 30/68,8 × 360° ≈ 157°. Bem acima de λ/10 (36°): a trilha é uma linha de transmissão e precisa ter impedância controlada de 50 Ω, ou o descasamento reflete parte da potência de volta ao rádio. Esquecer o dielétrico (usar 125 mm) daria 86°.
+  fonte: "Johnson e Graham, High-Speed Digital Design: A Handbook of Black Magic; OpenStax, University Physics Volume 2, capítulo Electromagnetic Waves, seção Plane Electromagnetic Waves"
+  origem: ia
+  revisao: rascunho

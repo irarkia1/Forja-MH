@@ -1,0 +1,215 @@
+- id: Q-M0.3.T04-001
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Duas placas paralelas de 1 cm² estão separadas por 1 mm de ar (εr ≈ 1). Qual é a capacitância? Use ε₀ = 8,854 × 10⁻¹² F/m. Responda em pF, com 2 casas decimais.
+  resposta: {valor: 0.89, unidade: "pF", tolerancia: 0.01}
+  explicacao: |
+    C = ε₀·A/d = 8,854 × 10⁻¹² × 10⁻⁴ / 10⁻³ = 8,854 × 10⁻¹³ F ≈ 0,89 pF. 1 cm² = 10⁻⁴ m² (não 10⁻²): é o erro mais comum. Placas de tamanho "de mão" no ar dão só frações de picofarad — por isso capacitores reais usam áreas enormes enroladas ou empilhadas e dielétricos com εr alto.
+  fonte: "OpenStax, University Physics Volume 2, capítulo Capacitance, seção Capacitors and Capacitance"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T04-002
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Quanta energia está armazenada num capacitor eletrolítico de 470 µF carregado a 16 V? Responda em mJ, com 1 casa decimal.
+  resposta: {valor: 60.2, unidade: "mJ", tolerancia: 0.01}
+  explicacao: |
+    E = ½·C·V² = 0,5 × 470 × 10⁻⁶ × 16² = 0,5 × 470 × 10⁻⁶ × 256 ≈ 0,0602 J = 60,2 mJ. Quem esquece de elevar V ao quadrado obtém 3,76 mJ; quem esquece o ½ obtém o dobro.
+  fonte: "OpenStax, University Physics Volume 2, capítulo Capacitance, seção Energy Stored in a Capacitor"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T04-003
+  objetivo: O1
+  tipo: vf
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: se a tensão num capacitor dobrar, a energia armazenada nele também dobra.
+  resposta: false
+  explicacao: |
+    E = ½·C·V²: a energia cresce com o quadrado da tensão, então dobrar V quadruplica E. O que dobra é a carga (Q = C·V). A dependência quadrática vem da integral W = ∫ v dq: cada nova carga é empurrada contra uma tensão que já é maior.
+  fonte: "OpenStax, University Physics Volume 2, capítulo Capacitance, seção Energy Stored in a Capacitor"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T04-004
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Numa placa de 4 camadas, os planos de alimentação e de terra têm 15 cm × 10 cm de sobreposição e estão separados por 0,15 mm de dielétrico com εr = 4,3. Qual é a capacitância entre os planos? Use ε₀ = 8,854 × 10⁻¹² F/m. Responda em nF, com 2 casas decimais.
+  resposta: {valor: 3.81, unidade: "nF", tolerancia: 0.01}
+  explicacao: |
+    A = 0,15 × 0,10 = 0,015 m²; d = 1,5 × 10⁻⁴ m. C = ε₀·εr·A/d = 8,854 × 10⁻¹² × 4,3 × 0,015 / 1,5 × 10⁻⁴ ≈ 3,81 × 10⁻⁹ F = 3,81 nF. Por isso projetistas de alta velocidade colocam os planos de alimentação e terra bem próximos: dielétrico fino aumenta essa capacitância de baixíssima indutância.
+  fonte: "OpenStax, University Physics Volume 2, capítulo Capacitance, seções Capacitors and Capacitance e Capacitor with a Dielectric"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T04-005
+  objetivo: O2
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um capacitor de placas paralelas com ar é carregado a uma tensão V e depois desligado da fonte (a carga fica presa nele). Em seguida, o espaço entre as placas é preenchido com um dielétrico de εr = 4. Qual passa a ser a tensão entre as placas?
+  alternativas:
+    - "4V"
+    - "V, porque a tensão é imposta pela fonte"
+    - "V/16"
+    - "V/4"
+  resposta: 3
+  explicacao: |
+    Desligado da fonte, Q é constante. A capacitância passa a 4C₀, então V = Q/C cai para V/4: a polarização do dielétrico cria um campo oposto que reduz o campo interno a 1/εr. "V" valeria se o capacitor continuasse ligado à fonte (aí a carga subiria para 4Q). "4V" inverte o efeito; "V/16" confundiu com a energia, que cai para 1/4, não 1/16.
+  fonte: "OpenStax, University Physics Volume 2, capítulo Capacitance, seção Capacitor with a Dielectric"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T04-006
+  objetivo: O2
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: um dielétrico com constante dielétrica (εr) maior sempre suporta um campo elétrico maior antes de romper.
+  resposta: false
+  explicacao: |
+    Constante dielétrica e rigidez dielétrica são propriedades diferentes. εr diz quanto o material se polariza (e aumenta a capacitância); a rigidez diz qual campo ele aguenta antes de conduzir. O titanato de bário dos MLCC tem εr de milhares, e o polipropileno, ≈ 2,2; mesmo assim, capacitores de filme de polipropileno são os preferidos para alta tensão.
+  fonte: "OpenStax, University Physics Volume 2, capítulo Capacitance, seção Capacitor with a Dielectric; HyperPhysics, Dielectric Constant"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T04-007
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um fabricante quer especificar a tensão nominal de um capacitor cujo dielétrico tem 5 µm de espessura e rigidez dielétrica de 100 MV/m, usando fator de segurança 4 entre a tensão de ruptura e a nominal. Qual é a tensão nominal máxima? Responda em V.
+  resposta: {valor: 125, unidade: "V", tolerancia: 0.01}
+  explicacao: |
+    Tensão de ruptura: V_rup = E_rup·d = 100 × 10⁶ × 5 × 10⁻⁶ = 500 V. Com fator de segurança 4: V_nominal = 500/4 = 125 V. Para dobrar a tensão nominal seria preciso dobrar a espessura, o que divide a capacitância por 2 (C ∝ 1/d): é o compromisso entre capacitância e tensão no mesmo volume.
+  fonte: "OpenStax, University Physics Volume 2, capítulo Capacitance, seção Capacitor with a Dielectric"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T04-008
+  objetivo: O3
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    O que significa o código EIA X7R num capacitor cerâmico?
+  alternativas:
+    - "Variação de 0 ± 30 ppm/°C, sem efeito de tensão"
+    - "Tensão nominal de 7 V e tolerância R de ±15%"
+    - "Faixa de −55 °C a +125 °C, com variação de capacitância de no máximo ±15% nessa faixa"
+    - "Faixa de −30 °C a +85 °C, com variação de +22% a −82%"
+  resposta: 2
+  explicacao: |
+    X = −55 °C (mínima), 7 = +125 °C (máxima), R = ±15% de variação com a temperatura. "0 ± 30 ppm/°C" descreve o C0G (classe 1); "−30 a +85 °C, +22/−82%" é o Y5V. O código não tem nada a ver com a tensão nominal, que é marcada à parte.
+  fonte: "Murata, artigos técnicos sobre características de capacitores cerâmicos (classes de temperatura EIA)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T04-009
+  objetivo: O3
+  tipo: multipla
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Marque as afirmações corretas sobre o efeito DC-bias em capacitores cerâmicos multicamada (MLCC).
+  alternativas:
+    - "Em dielétricos X5R e X7R, a capacitância efetiva diminui quando se aplica uma tensão DC"
+    - "Para o mesmo valor nominal, um encapsulamento maior ou de tensão nominal mais alta costuma perder menos capacitância sob a mesma tensão DC"
+    - "A tolerância de ±15% do código X7R já inclui a perda de capacitância por tensão DC"
+    - "Capacitores C0G (NP0) praticamente não apresentam efeito DC-bias"
+  resposta: [0, 1, 3]
+  explicacao: |
+    O titanato de bário dos dielétricos classe 2 tem a permissividade reduzida pelo campo DC; camadas mais grossas (encapsulamentos maiores ou tensão nominal maior) sentem campo E = V/d menor e perdem menos. O C0G, classe 1, é estável com tensão. O ±15% do X7R refere-se só à temperatura: a perda por DC-bias é adicional e precisa ser lida na curva do fabricante.
+  fonte: "Murata, SimSurfing e artigos técnicos sobre a característica de DC-bias de capacitores cerâmicos"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T04-010
+  objetivo: O3
+  tipo: vf
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Verdadeiro ou falso: um capacitor de 10 µF com dielétrico Y5V pode chegar a apenas cerca de 1,8 µF dentro da sua própria faixa de temperatura especificada.
+  resposta: true
+  explicacao: |
+    Y5V significa −30 °C a +85 °C com variação de +22% a −82%. No pior caso: 10 × (1 − 0,82) = 1,8 µF. Por isso o Y5V só serve onde a capacitância exata pouco importa; para desacoplamento sério, prefira X5R/X7R.
+  fonte: "Murata, artigos técnicos sobre características de capacitores cerâmicos (classes de temperatura EIA)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T04-011
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Um MLCC X5R de 22 µF com tolerância de ±10% trabalha a 5 V. A curva do fabricante mostra que, a 5 V, ele retém 45% da capacitância. Considerando o pior caso da tolerância e da variação com a temperatura do código X5R (±15%), qual é a menor capacitância efetiva esperada? Responda em µF, com 2 casas decimais.
+  resposta: {valor: 7.57, unidade: "µF", tolerancia: 0.01}
+  explicacao: |
+    Os efeitos se multiplicam: 22 µF × 0,90 (tolerância) × 0,45 (DC-bias a 5 V) × 0,85 (temperatura) ≈ 7,57 µF — cerca de um terço do nominal. Se o projeto precisa de 10 µF efetivos, esse capacitor sozinho não basta: use dois em paralelo, um encapsulamento maior ou um de tensão nominal maior.
+  fonte: "Murata, SimSurfing e artigos técnicos sobre a característica de DC-bias de capacitores cerâmicos"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T04-012
+  objetivo: O4
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Na partida de um regulador com *soft-start*, a tensão sobre um capacitor de saída de 10 µF sobe linearmente de 0 a 3,3 V em 1 ms. Qual é a corrente de carga do capacitor durante a rampa?
+  alternativas:
+    - "33 µA"
+    - "33 mA"
+    - "3,3 mA"
+    - "33 A"
+  resposta: 1
+  explicacao: |
+    i = C·dv/dt = 10 × 10⁻⁶ × (3,3 / 10⁻³) = 10 × 10⁻⁶ × 3 300 = 0,033 A = 33 mA. Se a mesma rampa durasse 1 µs, seriam 33 A — por isso os reguladores limitam a velocidade de subida. "33 µA" e "3,3 mA" erraram potências de 10 ao converter µF e ms.
+  fonte: "OpenStax, University Physics Volume 2, capítulo Capacitance, seção Capacitors and Capacitance; OpenStax, Calculus Volume 1, capítulo Derivatives"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T04-013
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 3
+  bloom: criar
+  enunciado: |
+    Um módulo de rádio passa a puxar 250 mA de repente. O regulador que o alimenta leva 20 µs para reagir, e a queda de tensão admissível é de 100 mV. Qual é a capacitância efetiva mínima de reserva (bulk) junto ao módulo? Responda em µF.
+  resposta: {valor: 50, unidade: "µF", tolerancia: 0.01}
+  explicacao: |
+    Enquanto o regulador não reage, o capacitor fornece a corrente: ΔV = I·Δt/C ⇒ C = I·Δt/ΔV = 0,25 × 20 × 10⁻⁶ / 0,1 = 5 × 10⁻⁵ F = 50 µF. Atenção: 50 µF efetivos, já descontado o efeito DC-bias. Com MLCC X5R que retêm metade na tensão de trabalho, seria preciso algo como 100 µF nominais.
+  fonte: "Analog Devices, MT-101: Decoupling Techniques; OpenStax, University Physics Volume 2, capítulo Capacitance, seção Capacitors and Capacitance"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.3.T04-014
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Um botão de toque capacitivo tem um pad de 10 mm × 10 mm coberto por 2 mm de acrílico (εr = 3). A capacitância parasita do pad e da trilha até o MCU é de 10 pF. Modelando o dedo como uma placa condutora aterrada que cobre o pad inteiro, qual é o aumento percentual de capacitância quando o dedo toca o acrílico? Use ε₀ = 8,854 × 10⁻¹² F/m. Responda em %, com 1 casa decimal.
+  resposta: {valor: 13.3, unidade: "%", tolerancia: 0.01}
+  explicacao: |
+    Capacitância do dedo: C_dedo = ε₀·εr·A/d = 8,854 × 10⁻¹² × 3 × 10⁻⁴ / 2 × 10⁻³ ≈ 1,33 pF. Ela fica em paralelo com a parasita (o dedo é outro caminho para o terra): ΔC/C = 1,33/10 ≈ 13,3%. Se a trilha fosse longa e a parasita subisse para 30 pF, a variação cairia para ≈ 4,4%, mais difícil de distinguir do ruído — por isso as notas de aplicação de toque capacitivo pedem trilhas curtas e finas e sem plano de terra sólido sob o pad.
+  fonte: "OpenStax, University Physics Volume 2, capítulo Capacitance, seções Capacitors in Series and in Parallel e Capacitor with a Dielectric"
+  origem: ia
+  revisao: rascunho
