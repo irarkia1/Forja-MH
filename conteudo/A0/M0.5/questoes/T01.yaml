@@ -1,0 +1,220 @@
+- id: Q-M0.5.T01-001
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Um sinal é descrito por v(t) = 12·sen(2513·t + 0,5) V, com t em segundos. Qual é a frequência do sinal? Responda em Hz, arredondando para o inteiro mais próximo.
+  resposta: {valor: 400, unidade: "Hz", tolerancia: 0.01}
+  explicacao: |
+    O número que multiplica t é a frequência angular: ω = 2513 rad/s. Como ω = 2πf, f = 2513 / (2π) ≈ 399,96 Hz ≈ 400 Hz. O 12 é o pico (V) e o 0,5 é a fase (rad); nenhum dos dois altera a frequência. Quem responde 2513 Hz confundiu ω com f.
+  fonte: "All About Circuits, Volume II: AC, capítulo Basic AC Theory, seção AC Waveforms"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T01-002
+  objetivo: O1
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    No osciloscópio, uma senoide sem componente DC ocupa 6 V de vale a pico, e um ciclo completo ocupa 4 divisões horizontais com a base de tempo em 0,5 ms/div. Considerando fase zero, qual expressão descreve o sinal?
+  alternativas:
+    - "v(t) = 6·sen(3142·t) V"
+    - "v(t) = 3·sen(500·t) V"
+    - "v(t) = 3·sen(3142·t) V"
+    - "v(t) = 3·sen(12 566·t) V"
+  resposta: 2
+  explicacao: |
+    Vpp = 6 V ⇒ Vp = 3 V. T = 4 div × 0,5 ms = 2 ms ⇒ f = 500 Hz ⇒ ω = 2π × 500 ≈ 3142 rad/s. Logo v(t) = 3·sen(3142·t). Usar 6 como amplitude confunde pico a pico com pico; "500·t" usa f no lugar de ω; 12 566 rad/s corresponderia a 2 kHz (período de 0,5 ms, uma só divisão).
+  fonte: "All About Circuits, Volume II: AC, capítulo Basic AC Theory, seções AC Waveforms e Measurements of AC Magnitude"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T01-003
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um gerador fornece v(t) = 10·sen(2π·1000·t + 30°) V. Qual é o valor instantâneo da tensão em t = 0,2 ms? Responda em V, com 2 casas decimais.
+  resposta: {valor: 9.78, unidade: "V", tolerancia: 0.01}
+  explicacao: |
+    ωt = 2π × 1000 × 0,0002 = 0,4π rad = 72°. Somando a fase: 72° + 30° = 102°. v = 10 × sen(102°) = 10 × 0,9781 ≈ 9,78 V. O erro típico é somar radianos com graus (1,257 + 30 = 31,257) ou calcular o seno com a calculadora no modo errado.
+  fonte: "OpenStax, University Physics Volume 2, capítulo Alternating-Current Circuits, seção AC Sources"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T01-004
+  objetivo: O1
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: uma senoide de 60 Hz completa um ciclo em cerca de 16,67 ms e tem frequência angular de cerca de 377 rad/s.
+  resposta: true
+  explicacao: |
+    T = 1/f = 1/60 s ≈ 16,67 ms e ω = 2πf = 2π × 60 ≈ 377 rad/s. São os números da rede elétrica brasileira: v(t) = Vp·sen(377·t).
+  fonte: "All About Circuits, Volume II: AC, capítulo Basic AC Theory, seção AC Waveforms"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T01-005
+  objetivo: O2
+  tipo: vf
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: num PWM de 0 a 5 V com ciclo de trabalho de 40 %, o valor médio é 2 V e o valor eficaz (RMS) também é 2 V.
+  resposta: false
+  explicacao: |
+    A média é D·V = 0,4 × 5 = 2 V, mas o RMS é √D·V = √0,4 × 5 ≈ 3,16 V. O RMS eleva ao quadrado antes de fazer a média, então os trechos em 5 V pesam mais. Média e RMS só coincidem em DC pura.
+  fonte: "All About Circuits, Volume II: AC, capítulo Basic AC Theory, seção Measurements of AC Magnitude"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T01-006
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um pino de 3,3 V gera PWM com ciclo de trabalho de 64 % e alimenta diretamente um resistor de aquecimento. Qual é o valor eficaz (RMS) dessa tensão? Responda em V, com 2 casas decimais.
+  resposta: {valor: 2.64, unidade: "V", tolerancia: 0.01}
+  explicacao: |
+    V_RMS = √D · V = √0,64 × 3,3 = 0,8 × 3,3 = 2,64 V. É esse valor que define a potência no resistor (P = V_RMS²/R). A média seria 0,64 × 3,3 = 2,11 V, que é o que um filtro RC entregaria, não o que aquece.
+  fonte: "All About Circuits, Volume II: AC, capítulo Basic AC Theory, seção Measurements of AC Magnitude"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T01-007
+  objetivo: O2
+  tipo: multipla
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Marque os pares "forma de onda → valor eficaz" que estão corretos. Só o PWM tem componente DC; as outras formas são simétricas em torno de zero.
+  alternativas:
+    - "Senoide de 10 Vpp → 7,07 V"
+    - "Quadrada de ±5 V → 5 V"
+    - "PWM de 0 a 5 V com 50 % → 2,5 V"
+    - "Triangular de 6 Vpp → 1,73 V"
+  resposta: [1, 3]
+  explicacao: |
+    Senoide de 10 Vpp tem Vp = 5 V e RMS = 5/√2 ≈ 3,54 V (7,07 V seria o RMS de 10 V de pico). Quadrada de ±5 V: o quadrado vale sempre 25, então RMS = 5 V. PWM de 5 V a 50 %: RMS = √0,5 × 5 ≈ 3,54 V; 2,5 V é a média. Triangular de 6 Vpp: Vp = 3 V e RMS = 3/√3 ≈ 1,73 V.
+  fonte: "All About Circuits, Volume II: AC, capítulo Basic AC Theory, seção Measurements of AC Magnitude"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T01-008
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    A tensão v(t) = 2 + 3·sen(ωt) V (uma componente DC de 2 V somada a uma senoide de 3 V de pico) é aplicada a um resistor de 10 Ω. Qual é a potência média dissipada? Responda em W, com 2 casas decimais.
+  resposta: {valor: 0.85, unidade: "W", tolerancia: 0.01}
+  explicacao: |
+    Ao elevar ao quadrado e fazer a média, o termo cruzado 2·2·3·sen(ωt) tem média zero, e sobram V_RMS² = V_DC² + (Vp/√2)² = 4 + 4,5 = 8,5 V² (V_RMS ≈ 2,92 V). P = 8,5/10 = 0,85 W. Quem soma os valores (2 + 2,12 = 4,12 V ⇒ 1,70 W) esqueceu que se somam os quadrados, não os eficazes; quem usa só a parte DC acha 0,4 W.
+  fonte: "All About Circuits, Volume II: AC, capítulo Basic AC Theory, seção Measurements of AC Magnitude; OpenStax, University Physics Volume 2, capítulo Alternating-Current Circuits, seção Power in an AC Circuit"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T01-009
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Dois sinais de 1 kHz aparecem no osciloscópio. O canal 2 cruza o zero subindo 0,25 ms depois do canal 1. Qual é a defasagem entre eles? Responda em graus, sem casas decimais.
+  resposta: {valor: 90, unidade: "°", tolerancia: 0.01}
+  explicacao: |
+    T = 1/1000 = 1 ms. Δφ = (Δt/T) × 360° = (0,25/1) × 360° = 90°. O canal 2 está atrasado 90° (o canal 1 está adiantado). É a relação típica entre a tensão e a corrente num capacitor ideal.
+  fonte: "All About Circuits, Volume II: AC, capítulo Basic AC Theory, seção AC Phase"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T01-010
+  objetivo: O3
+  tipo: unica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Considere v₁(t) = 5·sen(ωt + 20°) e v₂(t) = 5·cos(ωt − 30°). Qual afirmação está correta?
+  alternativas:
+    - "v₁ está adiantada 40° em relação a v₂"
+    - "v₂ está adiantada 40° em relação a v₁"
+    - "v₂ está adiantada 50° em relação a v₁"
+    - "As duas estão em fase, porque têm a mesma amplitude e a mesma frequência"
+  resposta: 1
+  explicacao: |
+    Escreva as duas como seno: cos(x) = sen(x + 90°), então v₂ = 5·sen(ωt − 30° + 90°) = 5·sen(ωt + 60°). Δφ = 60° − 20° = 40° a favor de v₂: v₂ está adiantada 40°. Quem compara 20° com −30° direto (50°) misturou seno com cosseno; a amplitude não tem nada a ver com a fase.
+  fonte: "All About Circuits, Volume II: AC, capítulo Basic AC Theory, seção AC Phase"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T01-011
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Num motor ligado à rede de 60 Hz, a corrente está atrasada 30° em relação à tensão. Quanto tempo depois da tensão a corrente cruza o zero subindo? Responda em ms, com 2 casas decimais.
+  resposta: {valor: 1.39, unidade: "ms", tolerancia: 0.01}
+  explicacao: |
+    T = 1/60 s ≈ 16,667 ms. Δt = (Δφ/360°) × T = (30/360) × 16,667 ms ≈ 1,389 ms ≈ 1,39 ms. Atraso de fase significa que a corrente chega depois, ou seja, aparece à direita da tensão na tela do osciloscópio.
+  fonte: "All About Circuits, Volume II: AC, capítulo Basic AC Theory, seção AC Phase"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T01-012
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    A tensão nominal de uma tomada é 127 V (valor eficaz, senoidal). Qual é o valor de pico dessa tensão? Responda em V, com 1 casa decimal.
+  resposta: {valor: 179.6, unidade: "V", tolerancia: 0.01}
+  explicacao: |
+    Vp = V_RMS × √2 = 127 × 1,4142 ≈ 179,6 V. Para 220 V eficazes o pico é ≈ 311 V. Componentes ligados à rede (capacitores, varistores, MOSFETs de fonte) são escolhidos pelo pico com margem, não pelo valor eficaz.
+  fonte: "OpenStax, University Physics Volume 2, capítulo Alternating-Current Circuits, seção AC Sources"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T01-013
+  objetivo: O4
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um multímetro de resposta média (não true-RMS), calibrado para senoide, mede uma onda quadrada simétrica de ±2 V. O que ele indica?
+  alternativas:
+    - "2,00 V, o RMS verdadeiro da quadrada"
+    - "1,41 V, porque divide o pico por √2"
+    - "1,80 V, porque multiplica a média por 0,9"
+    - "2,22 V, porque multiplica a média do módulo por 1,111"
+  resposta: 3
+  explicacao: |
+    O medidor de resposta média retifica (média do módulo = 2 V para a quadrada) e multiplica pelo fator de forma da senoide, π/(2√2) ≈ 1,111: indica ≈ 2,22 V. O RMS verdadeiro da quadrada é 2 V, então o erro é de +11 %. Só um true-RMS mostraria 2,00 V.
+  fonte: "All About Circuits, Volume II: AC, capítulo AC Metering Circuits, seção AC Voltmeters and Ammeters; Fluke, nota de aplicação Why True-RMS?"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T01-014
+  objetivo: O4
+  tipo: multipla
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    A corrente de entrada de uma fonte chaveada barata (sem PFC), ligada em 127 V, vem em pulsos estreitos perto dos picos da tensão, com fator de crista 3. Marque as afirmações corretas.
+  alternativas:
+    - "Como a tensão é senoidal, a corrente também tem fator de crista √2"
+    - "Um multímetro de resposta média tende a indicar menos que o RMS verdadeiro dessa corrente"
+    - "Se o RMS da corrente for 0,5 A, o pico é de cerca de 1,5 A"
+    - "Um true-RMS especificado para fator de crista máximo de 1,5 mede essa corrente sem erro adicional"
+  resposta: [1, 2]
+  explicacao: |
+    Pulsos estreitos têm média do módulo pequena em relação ao RMS, e o medidor de resposta média (média × 1,111) fica abaixo do valor real. Fator de crista 3 significa pico = 3 × RMS = 1,5 A. A forma da corrente depende da carga, não da tensão: o retificador com capacitor só conduz perto do pico. Um true-RMS com fator de crista máximo de 1,5 está fora da especificação e pode errar.
+  fonte: "Fluke, nota de aplicação Why True-RMS?; All About Circuits, Volume II: AC, capítulo AC Metering Circuits, seção AC Voltmeters and Ammeters"
+  origem: ia
+  revisao: rascunho

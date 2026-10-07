@@ -1,0 +1,215 @@
+- id: Q-M0.5.T02-001
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Duas tensões de mesma frequência estão em série: 3∠0° V e 4∠90° V (fasores eficazes). Qual é o módulo da tensão total? Responda em V, sem casas decimais.
+  resposta: {valor: 5, unidade: "V", tolerancia: 0.01}
+  explicacao: |
+    Na forma retangular: 3 + j4. Módulo: √(3² + 4²) = 5 V (ângulo de 53,13°). Somar os módulos (7 V) só valeria se as duas estivessem em fase.
+  fonte: "All About Circuits, Volume II: AC, capítulo Complex Numbers, seções Simple Vector Addition e Polar and Rectangular Notation"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T02-002
+  objetivo: O1
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Some os fasores 10∠30° V e 10∠−30° V.
+  alternativas:
+    - "17,32∠0° V"
+    - "20∠0° V"
+    - "14,14∠0° V"
+    - "17,32∠30° V"
+  resposta: 0
+  explicacao: |
+    10∠30° = 8,660 + j5 e 10∠−30° = 8,660 − j5. Soma: 17,32 + j0 = 17,32∠0° V. As partes imaginárias se cancelam (simetria), e a parte real é 2 × 10·cos 30°. 20 V somaria módulos; 14,14 V seria o caso de 90° entre eles.
+  fonte: "All About Circuits, Volume II: AC, capítulo Complex Numbers, seção Complex Number Arithmetic"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T02-003
+  objetivo: O1
+  tipo: vf
+  dificuldade: 3
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: uma tensão de 60 Hz (5∠0° V) somada a um sinal de 1 kHz (1∠45° V) pode ser representada pelo fasor único 5 + (0,707 + j0,707) = 5,75∠7,1° V.
+  resposta: false
+  explicacao: |
+    Um fasor guarda amplitude e fase pressupondo uma frequência comum a todo o circuito. Sinais de frequências diferentes não se somam como fasores: a defasagem entre eles muda o tempo todo. O caminho correto é analisar cada frequência separadamente (superposição) e somar as respostas no tempo.
+  fonte: "OpenStax, University Physics Volume 2, capítulo Alternating-Current Circuits, seção RLC Series Circuits with AC; All About Circuits, Volume II: AC, capítulo Mixed-Frequency AC Signals"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T02-004
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Qual é a reatância de um capacitor de 100 nF em 50 Hz? Responda em kΩ, com 1 casa decimal.
+  resposta: {valor: 31.8, unidade: "kΩ", tolerancia: 0.01}
+  explicacao: |
+    X_C = 1/(2πfC) = 1/(2π × 50 × 100 × 10⁻⁹) ≈ 31 831 Ω ≈ 31,8 kΩ. Em baixa frequência o capacitor pequeno quase não conduz; a 1 kHz o mesmo capacitor teria 1,59 kΩ.
+  fonte: "All About Circuits, Volume II: AC, capítulo Reactance and Impedance—Capacitive, seção AC Capacitor Circuits"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T02-005
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um indutor de 10 µH de um conversor chaveado opera a 1 MHz. Qual é a reatância dele nessa frequência? Responda em Ω, com 1 casa decimal.
+  resposta: {valor: 62.8, unidade: "Ω", tolerancia: 0.01}
+  explicacao: |
+    X_L = 2πfL = 2π × 10⁶ × 10 × 10⁻⁶ = 20π ≈ 62,8 Ω. Esquecer o 2π dá 10 Ω; trocar µ por m dá 62,8 kΩ.
+  fonte: "All About Circuits, Volume II: AC, capítulo Reactance and Impedance—Inductive, seção AC Inductor Circuits"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T02-006
+  objetivo: O2
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Qual é a impedância complexa de um capacitor ideal de 1 µF em 1 kHz?
+  alternativas:
+    - "+j159,2 Ω"
+    - "−j6283 Ω"
+    - "−j159,2 Ω"
+    - "159,2 Ω"
+  resposta: 2
+  explicacao: |
+    Z_C = 1/(jωC) = −j/(ωC) = −j/(2π × 1000 × 10⁻⁶) = −j159,2 Ω. O sinal negativo indica que a tensão atrasa 90° em relação à corrente. +j seria um indutor; 159,2 Ω sem j seria um resistor; 6283 é ω (rad/s), não a reatância.
+  fonte: "All About Circuits, Volume II: AC, capítulo Reactance and Impedance—R, L, and C, seção Review of R, X, and Z"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T02-007
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    A partir de que frequência um capacitor de 100 nF passa a ter reatância de 50 Ω ou menos? Responda em kHz, com 1 casa decimal.
+  resposta: {valor: 31.8, unidade: "kHz", tolerancia: 0.01}
+  explicacao: |
+    X_C = 1/(2πfC) ⇒ f = 1/(2π·X_C·C) = 1/(2π × 50 × 100 × 10⁻⁹) ≈ 31 831 Hz ≈ 31,8 kHz. Acima disso a reatância cai ainda mais. É esse raciocínio que define a partir de onde um capacitor de desacoplamento "curto-circuita" o ruído.
+  fonte: "All About Circuits, Volume II: AC, capítulo Reactance and Impedance—Capacitive, seção AC Capacitor Circuits"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T02-008
+  objetivo: O3
+  tipo: vf
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: um resistor em série com um indutor tem impedância com parte imaginária positiva (circuito indutivo), em qualquer frequência acima de zero.
+  resposta: true
+  explicacao: |
+    Z = R + jωL; para f > 0, ωL > 0. O ângulo fica entre 0° (baixa frequência, domina R) e quase 90° (alta frequência, domina L).
+  fonte: "All About Circuits, Volume II: AC, capítulo Reactance and Impedance—Inductive, seção Series Resistor-Inductor Circuits"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T02-009
+  objetivo: O3
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um resistor de 60 Ω está em série com um capacitor de reatância 80 Ω. Qual é a impedância equivalente?
+  alternativas:
+    - "60 + j80 Ω = 100∠53,13° Ω"
+    - "140 Ω"
+    - "60 − j80 Ω = 100∠−36,87° Ω"
+    - "60 − j80 Ω = 100∠−53,13° Ω"
+  resposta: 3
+  explicacao: |
+    Capacitor contribui com −jX_C: Z = 60 − j80 Ω. |Z| = √(60² + 80²) = 100 Ω; θ = arctan(−80/60) = −53,13°. +j seria indutivo; 140 Ω soma como se fossem resistores; −36,87° é o ângulo complementar (arctan de 60/80), erro de trocar os catetos.
+  fonte: "All About Circuits, Volume II: AC, capítulo Reactance and Impedance—Capacitive, seção Series Resistor-Capacitor Circuits"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T02-010
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Calcule o ângulo da impedância de um resistor de 1 kΩ em paralelo com um capacitor de 100 nF, em 1 kHz. Responda em graus, com 1 casa decimal e com o sinal.
+  resposta: {valor: -32.1, unidade: "°", tolerancia: 0.01}
+  explicacao: |
+    Z_C = −j1591,5 Ω. Z = R·Z_C/(R + Z_C) = (1000 × 1591,5∠−90°)/(1879,6∠−57,86°) = 846,7∠−32,14° Ω. Atalho para R ∥ C: θ = −arctan(R/X_C) = −arctan(0,6283) ≈ −32,1°. Negativo: o paralelo é capacitivo.
+  fonte: "All About Circuits, Volume II: AC, capítulo Reactance and Impedance—R, L, and C, seção Parallel R, L, and C"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T02-011
+  objetivo: O3
+  tipo: multipla
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Um resistor de 100 Ω está em série com o paralelo de um indutor de 10 mH e um capacitor de 10 µF. A frequência é 1 kHz (X_L = 62,83 Ω, X_C = 15,92 Ω). Marque as afirmações corretas.
+  alternativas:
+    - "Nessa frequência, o paralelo LC se comporta como uma reatância capacitiva"
+    - "A impedância total é 100 + j46,9 Ω"
+    - "O módulo do paralelo LC é 62,83 × 15,92 / (62,83 + 15,92) ≈ 12,7 Ω"
+    - "O módulo da impedância total é de cerca de 102 Ω"
+  resposta: [0, 3]
+  explicacao: |
+    Paralelo: (j62,83)(−j15,92)/(j62,83 − j15,92) = 1000/(j46,92) = −j21,31 Ω, capacitivo. Total: 100 − j21,31 Ω = 102,2∠−12,0° Ω. "100 + j46,9" somou as reatâncias como se estivessem em série; "12,7 Ω" aplicou produto sobre soma aos módulos, ignorando que +j e −j se subtraem no denominador.
+  fonte: "All About Circuits, Volume II: AC, capítulo Reactance and Impedance—R, L, and C, seção Series-parallel R, L, and C"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T02-012
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Uma fonte de 24 V eficazes alimenta um resistor de 120 Ω em série com um indutor de reatância 160 Ω. Qual é a corrente eficaz? Responda em mA, sem casas decimais.
+  resposta: {valor: 120, unidade: "mA", tolerancia: 0.01}
+  explicacao: |
+    Z = 120 + j160 Ω ⇒ |Z| = √(120² + 160²) = 200 Ω. I = 24/200 = 0,12 A = 120 mA (atrasada 53,13° em relação à fonte). Somar R + X_L = 280 Ω daria 85,7 mA, erro clássico de esquecer o j.
+  fonte: "OpenStax, University Physics Volume 2, capítulo Alternating-Current Circuits, seção RLC Series Circuits with AC"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T02-013
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um divisor tem R = 10 kΩ em cima e C = 10 nF embaixo (saída sobre o capacitor). A entrada é uma senoide de 2 V eficazes a 2 kHz. Qual é a tensão eficaz na saída? Responda em V, com 3 casas decimais.
+  resposta: {valor: 1.245, unidade: "V", tolerancia: 0.01}
+  explicacao: |
+    X_C = 1/(2π × 2000 × 10⁻⁸) ≈ 7958 Ω. V_saída = V_entrada · Z_C/(R + Z_C) ⇒ |H| = X_C/√(R² + X_C²) = 1/√(1 + (ωRC)²), com ωRC = 1,2566 ⇒ |H| ≈ 0,6225. V_saída ≈ 2 × 0,6225 ≈ 1,245 V, atrasada ≈ 51,5°. Em Python: abs(2*Zc/(R+Zc)).
+  fonte: "All About Circuits, Volume II: AC, capítulo Reactance and Impedance—Capacitive, seção Series Resistor-Capacitor Circuits; documentação do Python, módulo cmath"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T02-014
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Para descobrir a indutância de uma bobina (resistência desprezível), você a liga em série com um resistor de 100 Ω e aplica 10 V eficazes a 1 kHz. O multímetro mede 6 V sobre o resistor. Qual é a indutância? Responda em mH, com 1 casa decimal.
+  resposta: {valor: 21.2, unidade: "mH", tolerancia: 0.01}
+  explicacao: |
+    I = 6 V/100 Ω = 60 mA. Pela LKT fasorial (V_R e V_L a 90°): V_L = √(10² − 6²) = 8 V — e não 10 − 6 = 4 V. X_L = 8/0,06 ≈ 133,3 Ω. L = X_L/(2πf) = 133,3/6283 ≈ 21,2 mH. Quem subtrai os módulos acha 10,6 mH.
+  fonte: "All About Circuits, Volume II: AC, capítulo Reactance and Impedance—Inductive, seção Series Resistor-Inductor Circuits"
+  origem: ia
+  revisao: rascunho

@@ -1,41 +1,115 @@
 id: M0.5
 ato: A0
 nome: "Circuitos AC"
+missao: "Domine a corrente que vai e volta antes de chegar perto da grande linha que alimenta a Vila da Forja: quem não respeita a fase e o isolamento vira faísca na bigorna."
 horas: 100
 trilha: base
 ordem: 5
 requer: ["M0.4", "M0.2"]
 tags_chefe: []
+# Ordem didática: senoides e valor eficaz (a linguagem da rede de 60 Hz) → fasores e impedância (a ferramenta de cálculo de todo o resto) → filtros RC/RL/RLC (a primeira aplicação: anti-aliasing, PWM, LC de fonte) → decibéis e Bode logo em seguida (é a linguagem em que a resposta de um filtro é descrita e medida) → ressonância e Q (a 2ª ordem levada ao extremo, lida com a banda de −3 dB do Bode) → potência em AC (usa o ângulo da impedância; Q reaparece como razão entre potências) → transformadores (dimensionados em VA, a potência aparente, e que trazem o isolamento galvânico) → osciloscópio e gerador, o laboratório de elite que fecha o módulo: mede na bancada o Bode do filtro e depende do isolamento do T06 para entender a armadilha do terra da sonda.
 topicos:
   - id: M0.5.T01
     nome: "Senoides, valor eficaz, fase"
     tipo: comum
     peso: 1
+    objetivos:
+      - id: O1
+        texto: "Escrever v(t) = Vp·sen(ωt + φ) a partir do pico, da frequência e da fase e extrair dela o período, a frequência angular e o valor de pico a pico"
+      - id: O2
+        texto: "Calcular o valor eficaz (RMS) e o valor médio de senoides, ondas quadradas, triangulares e PWM, e explicar o RMS como a tensão DC que dissipa a mesma potência"
+      - id: O3
+        texto: "Calcular a defasagem entre duas senoides de mesma frequência em graus e em tempo e dizer qual delas está adiantada"
+      - id: O4
+        texto: "Aplicar o valor eficaz à rede de 127/220 V a 60 Hz (picos, fator de crista) e distinguir multímetros de resposta média e true-RMS"
   - id: M0.5.T02
     nome: "Fasores e impedância"
     tipo: comum
     peso: 1
+    objetivos:
+      - id: O1
+        texto: "Representar senoides de mesma frequência como fasores (módulo e ângulo) e somá-las pela soma de números complexos"
+      - id: O2
+        texto: "Calcular a reatância e a impedância complexa de resistores, capacitores e indutores em função da frequência"
+      - id: O3
+        texto: "Calcular a impedância equivalente de associações em série, em paralelo e mistas e expressá-la nas formas retangular e polar"
+      - id: O4
+        texto: "Aplicar a lei de Ohm, as leis de Kirchhoff e o divisor de tensão na forma fasorial e conferir o resultado com Python (cmath) ou um simulador"
   - id: M0.5.T03
     nome: "Filtros passivos RC, RL, RLC"
     tipo: comum
     peso: 1
-  - id: M0.5.T04
-    nome: "Ressonância e fator Q"
-    tipo: comum
-    peso: 1
-  - id: M0.5.T05
-    nome: "Potência em AC e fator de potência"
-    tipo: comum
-    peso: 1
-  - id: M0.5.T06
-    nome: "Transformadores"
-    tipo: comum
-    peso: 1
+    objetivos:
+      - id: O1
+        texto: "Calcular a frequência de corte, o ganho e a fase de filtros RC e RL passa-baixas e passa-altas de 1ª ordem"
+      - id: O2
+        texto: "Dimensionar um filtro RC anti-aliasing antes do ADC a partir da frequência de amostragem, da atenuação desejada e das impedâncias da fonte e da entrada"
+      - id: O3
+        texto: "Dimensionar um filtro RC que transforma PWM em tensão analógica, calculando a ondulação residual e o tempo de assentamento"
+      - id: O4
+        texto: "Analisar filtros LC e RLC de 2ª ordem, como o LC de saída de fonte, incluindo a inclinação de 40 dB/década e o efeito do amortecimento e da carga"
   - id: M0.5.T07
     nome: "Decibéis e diagrama de Bode"
     tipo: comum
     peso: 1
+    objetivos:
+      - id: O1
+        texto: "Converter razões de tensão e de potência em dB e dBm e somar os ganhos de estágios em cascata"
+      - id: O2
+        texto: "Esboçar o diagrama de Bode assintótico de módulo de funções com polos e zeros reais, com inclinações de ±20 dB/década por polo ou zero"
+      - id: O3
+        texto: "Esboçar o diagrama de fase de polos e zeros reais (−45° no polo, assíntotas uma década antes e uma depois) e calcular o erro das assíntotas"
+      - id: O4
+        texto: "Ler um diagrama de Bode medido ou simulado (LTspice, Falstad) para extrair a frequência de corte, a ordem do filtro e a atenuação numa frequência dada"
+  - id: M0.5.T04
+    nome: "Ressonância e fator Q"
+    tipo: comum
+    peso: 1
+    objetivos:
+      - id: O1
+        texto: "Calcular a frequência de ressonância de circuitos LC série e paralelo e descrever a impedância, a corrente e a fase na ressonância"
+      - id: O2
+        texto: "Calcular o fator Q e a largura de banda de −3 dB de circuitos RLC série e paralelo e relacionar Q à seletividade e à sobretensão nos componentes"
+      - id: O3
+        texto: "Explicar o circuito tanque e o cristal de quartzo (modelo elétrico, ressonâncias série e paralela, capacitância de carga) e calcular os capacitores de carga do oscilador de um MCU"
+      - id: O4
+        texto: "Identificar ressonâncias indesejadas em placas, como a autorressonância de capacitores de desacoplamento e o pico do filtro LC de entrada, e as formas de amortecê-las"
+  - id: M0.5.T05
+    nome: "Potência em AC e fator de potência"
+    tipo: comum
+    peso: 1
+    objetivos:
+      - id: O1
+        texto: "Calcular a potência instantânea e a potência ativa de cargas resistivas, indutivas e capacitivas a partir dos valores eficazes e do ângulo entre tensão e corrente"
+      - id: O2
+        texto: "Calcular as potências ativa, reativa e aparente pela potência complexa S = V·I* e montar o triângulo de potências"
+      - id: O3
+        texto: "Calcular o fator de potência de cargas lineares e o capacitor que o corrige para um valor desejado"
+      - id: O4
+        texto: "Explicar o fator de potência de fontes chaveadas (distorção da corrente, PFC) e dimensionar a corrente e os VA de fontes, nobreaks e tomadas a partir da potência, do rendimento e do FP"
+  - id: M0.5.T06
+    nome: "Transformadores"
+    tipo: comum
+    peso: 1
+    objetivos:
+      - id: O1
+        texto: "Aplicar a relação de espiras às tensões, às correntes e às impedâncias de um transformador ideal"
+      - id: O2
+        texto: "Explicar a indução mútua, as perdas no cobre e no núcleo e a regulação, e ler a especificação de um transformador real (VA, tensões, frequência)"
+      - id: O3
+        texto: "Explicar o isolamento galvânico, o transformador de isolamento e o autotransformador, e aplicar a regra de nunca trabalhar na rede de 127/220 V sem isolamento, proteção e supervisão"
+      - id: O4
+        texto: "Dimensionar o transformador de uma fonte linear (secundário, retificação, ondulação) e explicar por que as fontes chaveadas usam transformadores pequenos de ferrite em alta frequência"
   - id: M0.5.T08
     nome: "Osciloscópio e gerador de funções"
     tipo: elite
     peso: 2
+    objetivos:
+      - id: O1
+        texto: "Configurar o osciloscópio (escalas vertical e horizontal, acoplamento AC/DC, trigger por borda com nível e modo) para obter um traço estável e usar as medidas automáticas e os cursores"
+      - id: O2
+        texto: "Escolher e compensar a sonda ×1/×10, considerar a largura de banda e a carga que ela impõe e evitar a armadilha do terra da sonda ligado ao terra de proteção"
+      - id: O3
+        texto: "Configurar o gerador de funções (forma de onda, frequência, amplitude, offset) levando em conta a impedância de saída de 50 Ω e o ajuste de carga High-Z"
+      - id: O4
+        texto: "Medir a resposta em frequência de um filtro RC com o gerador e o osciloscópio e comparar o Bode medido com o teórico, explicando as divergências"

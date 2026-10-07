@@ -1,0 +1,220 @@
+- id: Q-M0.5.T04-001
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Qual é a frequência de ressonância de um circuito com L = 10 mH e C = 1 µF? Responda em Hz, arredondando para o inteiro mais próximo.
+  resposta: {valor: 1592, unidade: "Hz", tolerancia: 0.01}
+  explicacao: |
+    LC = 10⁻² × 10⁻⁶ = 10⁻⁸ s²; √(LC) = 10⁻⁴ s. f₀ = 1/(2π × 10⁻⁴) ≈ 1591,5 Hz ≈ 1592 Hz. A fórmula é a mesma para LC série e paralelo (ideais).
+  fonte: "All About Circuits, Volume II: AC, capítulo Resonance, seção Simple Series Resonance"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T04-002
+  objetivo: O1
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: num RLC série alimentado na frequência de ressonância, a corrente é máxima e está em fase com a tensão da fonte.
+  resposta: true
+  explicacao: |
+    Em f₀, j·X_L − j·X_C = 0 e Z = R, o menor valor possível e puramente resistivo: corrente máxima (V/R) e fase zero entre tensão e corrente.
+  fonte: "All About Circuits, Volume II: AC, capítulo Resonance, seção Simple Series Resonance; OpenStax, University Physics Volume 2, capítulo Alternating-Current Circuits, seção Resonance in an AC Circuit"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T04-003
+  objetivo: O1
+  tipo: unica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Um circuito tanque (L em paralelo com C) é alimentado numa frequência um pouco acima da sua ressonância. Como a fonte enxerga esse circuito?
+  alternativas:
+    - "Capacitivo, porque o ramo do capacitor conduz mais corrente que o do indutor"
+    - "Indutivo, porque X_L cresce com a frequência"
+    - "Puramente resistivo, porque está perto da ressonância"
+    - "Com impedância infinita, em qualquer frequência acima de f₀"
+  resposta: 0
+  explicacao: |
+    Acima de f₀, X_C < X_L: a corrente no capacitor (V/X_C) é maior que no indutor, e a soma dos dois ramos é capacitiva. No paralelo, prevalece o ramo de menor reatância — o contrário do série, que acima de f₀ é indutivo. A impedância é máxima só em f₀ e cai fora dela.
+  fonte: "All About Circuits, Volume II: AC, capítulo Resonance, seção Simple Parallel (Tank Circuit) Resonance"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T04-004
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    A antena de um leitor NFC é uma bobina de 1,5 µH que deve ressoar em 13,56 MHz. Que capacitância total de sintonia é necessária? Responda em pF, com 1 casa decimal.
+  resposta: {valor: 91.8, unidade: "pF", tolerancia: 0.01}
+  explicacao: |
+    C = 1/((2πf₀)²·L) = 1/((2π × 13,56 × 10⁶)² × 1,5 × 10⁻⁶) ≈ 91,8 × 10⁻¹² F = 91,8 pF. Na prática, parte disso é capacitância parasita da bobina e da placa, e o resto vem de capacitores ajustados na bancada.
+  fonte: "All About Circuits, Volume II: AC, capítulo Resonance, seção Applications of Resonance"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T04-005
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Um filtro de frequência intermediária ressoa em 455 kHz e tem largura de banda de −3 dB de 10 kHz. Qual é o fator Q? Responda adimensional, com 1 casa decimal.
+  resposta: {valor: 45.5, unidade: "adimensional", tolerancia: 0.01}
+  explicacao: |
+    BW = f₀/Q ⇒ Q = f₀/BW = 455/10 = 45,5. Quanto maior o Q, mais estreita a banda e mais seletivo o filtro.
+  fonte: "All About Circuits, Volume II: AC, capítulo Resonance, seção Q and Bandwidth of a Resonant Circuit"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T04-006
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um RLC série tem L = 1 mH, C = 10 nF e R = 20 Ω. Qual é o fator Q? Responda adimensional, com 2 casas decimais.
+  resposta: {valor: 15.81, unidade: "adimensional", tolerancia: 0.01}
+  explicacao: |
+    Série: Q = X₀/R = (1/R)·√(L/C) = √(10⁻³/10⁻⁸)/20 = √(10⁵)/20 ≈ 316,2/20 ≈ 15,81. A fórmula R·√(C/L) é a do paralelo; aqui daria 0,063.
+  fonte: "All About Circuits, Volume II: AC, capítulo Resonance, seção Q and Bandwidth of a Resonant Circuit"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T04-007
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Um RLC série com L = 10 mH, C = 1 µF e R = 5 Ω é alimentado por 2 V eficazes exatamente na ressonância. Qual é a tensão eficaz sobre o capacitor? Responda em V, sem casas decimais.
+  resposta: {valor: 40, unidade: "V", tolerancia: 0.01}
+  explicacao: |
+    X₀ = √(L/C) = √(10⁻²/10⁻⁶) = 100 Ω. I = 2 V/5 Ω = 0,4 A. V_C = X₀·I = 100 × 0,4 = 40 V = Q × V_fonte (Q = 20). Um capacitor de 25 V escolhido "pela tensão da fonte" falharia.
+  fonte: "OpenStax, University Physics Volume 2, capítulo Alternating-Current Circuits, seção Resonance in an AC Circuit; All About Circuits, Volume II: AC, capítulo Resonance, seção Simple Series Resonance"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T04-008
+  objetivo: O2
+  tipo: multipla
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Marque as afirmações corretas sobre o fator Q de circuitos ressonantes.
+  alternativas:
+    - "Num RLC série, aumentar R aumenta o Q"
+    - "Num RLC paralelo, aumentar a resistência em paralelo aumenta o Q"
+    - "A largura de banda de −3 dB é f₀/Q"
+    - "Q alto significa banda larga e pouca seletividade"
+  resposta: [1, 2]
+  explicacao: |
+    Paralelo: Q = R·√(C/L), cresce com R (menos corrente desviada pelas perdas). Série: Q = √(L/C)/R, cai quando R cresce. BW = f₀/Q: Q alto dá banda estreita e mais seletividade, o contrário do que diz a última afirmação.
+  fonte: "All About Circuits, Volume II: AC, capítulo Resonance, seção Q and Bandwidth of a Resonant Circuit"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T04-009
+  objetivo: O3
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um cristal de 32,768 kHz especifica capacitância de carga C_L = 12,5 pF. A capacitância parasita da placa e dos pinos é estimada em 3,5 pF. Que valor usar em cada um dos dois capacitores iguais (C1 = C2) do oscilador?
+  alternativas:
+    - "12,5 pF"
+    - "18 pF"
+    - "25 pF"
+    - "9 pF"
+  resposta: 1
+  explicacao: |
+    C_L = C1·C2/(C1 + C2) + C_s; com C1 = C2: C1 = 2·(C_L − C_s) = 2 × (12,5 − 3,5) = 18 pF. Usar 12,5 pF em cada um daria C_L ≈ 6,25 + 3,5 ≈ 9,75 pF e o relógio adiantaria; 25 pF ignora a parasita; 9 pF esquece que os dois aparecem em série.
+  fonte: "STMicroelectronics, AN2867 (guia de projeto de osciladores para STM32); Microchip, AN826: Crystal Oscillator Basics and Crystal Selection for rfPIC and PICmicro Devices"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T04-010
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um cristal de 8 MHz pede C_L = 20 pF e você estima 4 pF de capacitância parasita. Qual deve ser o valor de cada capacitor (C1 = C2)? Responda em pF, sem casas decimais (o valor calculado, antes de escolher o comercial).
+  resposta: {valor: 32, unidade: "pF", tolerancia: 0.01}
+  explicacao: |
+    C1 = C2 = 2·(C_L − C_s) = 2 × (20 − 4) = 32 pF; o comercial mais próximo é 33 pF. Os capacitores devem ser C0G/NP0, estáveis com a temperatura.
+  fonte: "STMicroelectronics, AN2867 (guia de projeto de osciladores para STM32)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T04-011
+  objetivo: O3
+  tipo: unica
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Sobre o cristal de quartzo e seu modelo elétrico (ramo série R₁–L₁–C₁ em paralelo com C₀), qual afirmação está correta?
+  alternativas:
+    - "A ressonância paralela fica abaixo da ressonância série, e o cristal é capacitivo entre elas"
+    - "O Q do cristal é da ordem de 10, como o de um LC de placa, com a vantagem da estabilidade térmica"
+    - "A capacitância de carga não altera a frequência de oscilação, apenas a amplitude"
+    - "Entre a ressonância série e a paralela o cristal é indutivo, e é nessa faixa estreita que o oscilador Pierce o faz operar"
+  resposta: 3
+  explicacao: |
+    f_p ≈ f_s·(1 + C₁/(2C₀)) fica um pouco acima de f_s; entre elas a reatância do cristal é indutiva, e o Pierce ressoa essa "indutância" com os capacitores de carga. O Q típico vai de 10⁴ a 10⁶. A capacitância de carga desloca a frequência (pulling) — por isso o fabricante especifica C_L.
+  fonte: "Microchip, AN826: Crystal Oscillator Basics and Crystal Selection for rfPIC and PICmicro Devices; STMicroelectronics, AN2867"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T04-012
+  objetivo: O4
+  tipo: vf
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: acima da sua frequência de autorressonância (SRF), um capacitor de desacoplamento continua capacitivo, só que com reatância cada vez menor.
+  resposta: false
+  explicacao: |
+    O capacitor real é um RLC série (C, ESL, ESR). Acima da SRF a indutância série domina: ele passa a se comportar como indutor, e a impedância sobe com a frequência.
+  fonte: "All About Circuits, Volume II: AC, capítulo Resonance, seção Resonance in Series-Parallel Circuits; datasheet de capacitor MLCC (curva de impedância × frequência)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T04-013
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um capacitor cerâmico de 1 µF tem indutância série equivalente (ESL), já com a montagem, de 1,5 nH. Qual é a sua frequência de autorressonância? Responda em MHz, com 2 casas decimais.
+  resposta: {valor: 4.11, unidade: "MHz", tolerancia: 0.01}
+  explicacao: |
+    SRF = 1/(2π√(ESL·C)) = 1/(2π√(1,5 × 10⁻⁹ × 10⁻⁶)) = 1/(2π × 3,873 × 10⁻⁸) ≈ 4,11 MHz. Acima disso ele é indutivo; para desacoplar dezenas de MHz, use valores menores e montagem com menos indutância.
+  fonte: "All About Circuits, Volume II: AC, capítulo Resonance, seção Simple Series Resonance; datasheet de capacitor MLCC"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T04-014
+  objetivo: O4
+  tipo: multipla
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    O filtro LC de entrada de uma placa mostra um pico de ondulação na sua frequência de ressonância. Marque as medidas que amortecem essa ressonância.
+  alternativas:
+    - "Colocar uma resistência em série com o capacitor (ou usar um eletrolítico, cuja ESR amortece)"
+    - "Trocar o capacitor por um cerâmico de ESR mínima"
+    - "Aumentar a indutância de montagem do capacitor com uma trilha longa"
+    - "Ligar um ramo RC (snubber) em paralelo com o capacitor"
+  resposta: [0, 3]
+  explicacao: |
+    Amortecer é pôr perda resistiva no caminho da energia que oscila: ESR, resistor em série ou ramo RC em paralelo reduzem o Q. Cerâmico de ESR mínima aumenta o Q (pior), e indutância parasita a mais desloca e piora o comportamento em alta frequência.
+  fonte: "All About Circuits, Volume II: AC, capítulo Resonance, seção Q and Bandwidth of a Resonant Circuit; Analog Devices (Linear Technology), AN88: Ceramic Input Capacitors Can Cause Overvoltage Transients"
+  origem: ia
+  revisao: rascunho

@@ -1,0 +1,215 @@
+- id: Q-M0.5.T03-001
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Qual é a frequência de corte de um filtro RC passa-baixas com R = 1 kΩ e C = 1 µF? Responda em Hz, com 1 casa decimal.
+  resposta: {valor: 159.2, unidade: "Hz", tolerancia: 0.01}
+  explicacao: |
+    f_c = 1/(2πRC) = 1/(2π × 10³ × 10⁻⁶) = 1/(2π × 10⁻³) ≈ 159,2 Hz. Quem responde 1000 Hz calculou 1/(RC), que é a frequência angular de corte em rad/s.
+  fonte: "All About Circuits, Volume II: AC, capítulo Filters, seção Low-pass Filters"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T03-002
+  objetivo: O1
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: num filtro RC passa-baixas de 1ª ordem, na frequência de corte a saída tem 70,7 % da amplitude da entrada e está atrasada 45°.
+  resposta: true
+  explicacao: |
+    Em f = f_c, H = 1/(1 + j) = 0,707∠−45°: −3 dB (metade da potência) e 45° de atraso. No passa-altas o módulo é o mesmo e a fase é +45°.
+  fonte: "All About Circuits, Volume II: AC, capítulo Filters, seção Low-pass Filters"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T03-003
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um RC passa-baixas tem f_c = 1 kHz. Qual é o ganho (V_saída/V_entrada, em módulo) para uma senoide de 3 kHz? Responda adimensional, com 3 casas decimais.
+  resposta: {valor: 0.316, unidade: "V/V", tolerancia: 0.01}
+  explicacao: |
+    |H| = 1/√(1 + (f/f_c)²) = 1/√(1 + 9) = 1/√10 ≈ 0,316 (≈ −10 dB). A aproximação de alta frequência f_c/f = 0,333 já está perto, mas só vale bem para f ≫ f_c.
+  fonte: "All About Circuits, Volume II: AC, capítulo Filters, seção Low-pass Filters"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T03-004
+  objetivo: O1
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um resistor de 220 Ω está em série com um indutor de 2,2 mH, e a saída é tomada sobre o resistor. Que filtro é esse?
+  alternativas:
+    - "Passa-baixas com f_c ≈ 15,9 kHz"
+    - "Passa-altas com f_c ≈ 15,9 kHz"
+    - "Passa-baixas com f_c ≈ 100 kHz"
+    - "Passa-altas com f_c ≈ 100 kHz"
+  resposta: 0
+  explicacao: |
+    Em baixa frequência o indutor é quase curto e toda a tensão fica no R (passa); em alta, X_L cresce e "rouba" a tensão (bloqueia): passa-baixas. f_c = R/(2πL) = 220/(2π × 2,2 × 10⁻³) ≈ 15,9 kHz. 100 kHz seria R/L = 10⁵ rad/s tomado como hertz, esquecendo o 2π.
+  fonte: "All About Circuits, Volume II: AC, capítulo Filters, seções Low-pass Filters e High-pass Filters"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T03-005
+  objetivo: O2
+  tipo: vf
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: se um ruído acima de f_s/2 entrar no ADC, um filtro digital passa-baixas aplicado depois, no firmware, consegue removê-lo.
+  resposta: false
+  explicacao: |
+    Depois da amostragem, o ruído acima de f_s/2 já virou uma frequência falsa (alias) abaixo de f_s/2, indistinguível de sinal verdadeiro. Por isso o filtro anti-aliasing é analógico e fica antes do ADC.
+  fonte: "Analog Devices, MT-002: What the Nyquist Criterion Means to Your Sampled Data System Design"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T03-006
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Um firmware amostra um sensor a f_s = 1 kHz, sem filtro anti-aliasing. Uma interferência senoidal de 940 Hz entra junto com o sinal. Em que frequência ela aparece nos dados amostrados? Responda em Hz, sem casas decimais.
+  resposta: {valor: 60, unidade: "Hz", tolerancia: 0.01}
+  explicacao: |
+    940 Hz está acima de f_s/2 = 500 Hz e se dobra para |940 − 1000| = 60 Hz. O pior: 60 Hz parece interferência da rede, e você vai procurar o problema no lugar errado. Um RC antes do ADC (por exemplo, f_c ≈ 100 Hz) atenuaria a interferência antes da amostragem.
+  fonte: "Analog Devices, MT-002: What the Nyquist Criterion Means to Your Sampled Data System Design"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T03-007
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Um sensor com impedância de saída de 4,7 kΩ (resistiva) alimenta um filtro RC anti-aliasing de R = 1 kΩ e C = 100 nF na entrada do ADC. Qual é a atenuação real do conjunto em 5 kHz? Responda em dB, com 1 casa decimal e o sinal.
+  resposta: {valor: -25.1, unidade: "dB", tolerancia: 0.01}
+  explicacao: |
+    A resistência da fonte soma com a do filtro: R_total = 5,7 kΩ ⇒ f_c = 1/(2π × 5700 × 10⁻⁷) ≈ 279 Hz (e não os 1,59 kHz do filtro sozinho). |H(5 kHz)| = 1/√(1 + (5000/279,2)²) ≈ 0,0557 ⇒ 20·log₁₀(0,0557) ≈ −25,1 dB. Quem ignora a fonte acha ≈ −10,4 dB e, pior, não percebe que o corte caiu para perto da banda útil do sinal.
+  fonte: "All About Circuits, Volume II: AC, capítulo Filters, seção Low-pass Filters; Analog Devices, MT-002"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T03-008
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um PWM de 0 a 3,3 V com ciclo de trabalho de 30 % passa por um filtro RC bem dimensionado, sem carga. Qual tensão DC aparece na saída? Responda em V, com 2 casas decimais.
+  resposta: {valor: 0.99, unidade: "V", tolerancia: 0.01}
+  explicacao: |
+    O filtro entrega a média do PWM: D·V = 0,30 × 3,3 = 0,99 V (com uma pequena ondulação em volta). O RMS (√0,3 × 3,3 ≈ 1,81 V) não é o que o filtro entrega.
+  fonte: "All About Circuits, Volume II: AC, capítulo Filters, seção Low-pass Filters"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T03-009
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um PWM de 5 V a 1 kHz com D = 50 % é filtrado por R = 10 kΩ e C = 10 µF. Usando a aproximação ΔV ≈ V·D·(1 − D)/(f·R·C), qual é a ondulação pico a pico na saída? Responda em mV, com 1 casa decimal.
+  resposta: {valor: 12.5, unidade: "mV", tolerancia: 0.01}
+  explicacao: |
+    τ = RC = 0,1 s. ΔV ≈ 5 × 0,5 × 0,5/(1000 × 0,1) = 1,25/100 = 0,0125 V = 12,5 mV. A aproximação vale porque τ (100 ms) é muito maior que o período do PWM (1 ms).
+  fonte: "All About Circuits, Volume II: AC, capítulo Filters, seção Low-pass Filters"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T03-010
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    O filtro de um DAC por PWM usa R = 4,7 kΩ e C = 2,2 µF. Depois de uma mudança no ciclo de trabalho, quanto tempo a saída leva para chegar a 1 % do valor final? Responda em ms, com 1 casa decimal.
+  resposta: {valor: 47.6, unidade: "ms", tolerancia: 0.01}
+  explicacao: |
+    τ = 4700 × 2,2 × 10⁻⁶ = 10,34 ms. O erro cai como e^(−t/τ); para 1 %, t = τ·ln(100) ≈ 4,605 × 10,34 ≈ 47,6 ms. Se o firmware muda o D a cada 10 ms, a saída nunca chega ao valor pedido.
+  fonte: "All About Circuits, Volume II: AC, capítulo Filters, seção Low-pass Filters"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T03-011
+  objetivo: O3
+  tipo: multipla
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Um DAC por PWM com um único RC tem ondulação demais e resposta lenta demais ao mesmo tempo. Marque as mudanças que reduzem a ondulação sem deixar a resposta mais lenta.
+  alternativas:
+    - "Aumentar a frequência do PWM, mantendo R e C"
+    - "Dobrar o capacitor do filtro"
+    - "Usar dois estágios RC em cascata (2ª ordem), cada um com corte mais alto"
+    - "Ligar um resistor de 10 kΩ na saída do filtro para descarregar o capacitor mais rápido"
+  resposta: [0, 2]
+  explicacao: |
+    A ondulação é proporcional a 1/(f_PWM·RC): subir f_PWM reduz a ondulação sem mexer em τ. Um filtro de 2ª ordem atenua 40 dB/década, então pode ter corte mais alto (resposta mais rápida) com a mesma ondulação. Dobrar C reduz a ondulação, mas dobra τ. A carga de 10 kΩ forma divisor com o R do filtro e derruba a tensão de saída, além de não ser um projeto de filtro.
+  fonte: "All About Circuits, Volume II: AC, capítulo Filters, seção Low-pass Filters"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T03-012
+  objetivo: O4
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Bem acima da frequência de ressonância, quanto um filtro LC passa-baixas de 2ª ordem atenua a cada década de frequência?
+  alternativas:
+    - "20 dB por década"
+    - "40 dB por década"
+    - "6 dB por década"
+    - "3 dB por década"
+  resposta: 1
+  explicacao: |
+    Cada elemento reativo independente contribui com 20 dB/década; o LC tem dois, então |H| ≈ (f₀/f)², ou −40 dB/década. 20 dB/década é a 1ª ordem (RC); 6 dB é por oitava (1ª ordem), não por década; 3 dB é o valor no ponto de corte.
+  fonte: "All About Circuits, Volume II: AC, capítulo Filters, seção Resonant Filters"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T03-013
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    O filtro LC de saída de um conversor usa L = 22 µH e C = 47 µF. Qual é a frequência de ressonância do filtro? Responda em kHz, com 2 casas decimais.
+  resposta: {valor: 4.95, unidade: "kHz", tolerancia: 0.01}
+  explicacao: |
+    LC = 22 × 10⁻⁶ × 47 × 10⁻⁶ = 1,034 × 10⁻⁹ s². √(LC) ≈ 3,216 × 10⁻⁵ s. f₀ = 1/(2π × 3,216 × 10⁻⁵) ≈ 4949 Hz ≈ 4,95 kHz. A frequência de chaveamento (centenas de kHz) fica bem acima, na região de −40 dB/década.
+  fonte: "All About Circuits, Volume II: AC, capítulo Filters, seção Resonant Filters; OpenStax, University Physics Volume 2, capítulo Alternating-Current Circuits, seção Resonance in an AC Circuit"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T03-014
+  objetivo: O4
+  tipo: unica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Um filtro LC com L = 10 µH e C = 100 µF alimenta uma carga resistiva de 3,3 Ω ligada sobre o capacitor. Qual é a avaliação correta?
+  alternativas:
+    - "Q ≈ 0,1: resposta superamortecida, sem pico"
+    - "Não há ressonância, porque a carga é puramente resistiva"
+    - "Q ≈ 10: há um pico de ressonância perto de 5 kHz, e o filtro precisa de amortecimento"
+    - "Q ≈ 1000: o filtro oscila sozinho mesmo sem nenhuma excitação"
+  resposta: 2
+  explicacao: |
+    Z₀ = √(L/C) = √(10⁻⁵/10⁻⁴) ≈ 0,316 Ω. Com a carga em paralelo com C, Q = R/Z₀ = 3,3/0,316 ≈ 10,4: ganho de cerca de 10 vezes (+20 dB) perto de f₀ ≈ 5,03 kHz. Q ≈ 0,1 seria inverter a razão (Z₀/R). Circuito passivo não oscila sozinho, mas amplifica qualquer ruído nessa frequência; amortece-se com ESR, ramo RC em paralelo ou resistor sobre o indutor.
+  fonte: "All About Circuits, Volume II: AC, capítulo Resonance, seção Q and Bandwidth of a Resonant Circuit; capítulo Filters, seção Resonant Filters"
+  origem: ia
+  revisao: rascunho

@@ -1,0 +1,215 @@
+- id: Q-M0.5.T08-001
+  objetivo: O1
+  tipo: vf
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Verdadeiro ou falso: no modo de trigger Auto, se o evento de disparo não acontecer, a tela fica congelada na última captura até o evento ocorrer.
+  resposta: false
+  explicacao: |
+    Isso descreve o modo Normal. No Auto, o osciloscópio dispara sozinho depois de um tempo sem evento, e o traço continua aparecendo (ainda que "correndo"), o que ajuda a achar o sinal. O Single captura uma vez e para.
+  fonte: "Tektronix, The XYZs of Oscilloscopes (sistema de trigger e modos de disparo)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T08-002
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um osciloscópio tem 10 divisões horizontais e memória de 20 mil pontos por canal. Com a base de tempo em 500 µs/div, qual é a taxa de amostragem efetiva? Responda em MSa/s, com 1 casa decimal.
+  resposta: {valor: 4.0, unidade: "MSa/s", tolerancia: 0.01}
+  explicacao: |
+    A tela cobre 10 × 500 µs = 5 ms. Taxa = 20 000 pontos/5 ms = 4 × 10⁶ amostras/s = 4,0 MSa/s, mesmo que o folheto anuncie 1 GSa/s. Em base de tempo lenta, a memória limita a taxa de amostragem, e sinais rápidos podem sofrer aliasing.
+  fonte: "Tektronix, The XYZs of Oscilloscopes (taxa de amostragem e comprimento de registro)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T08-003
+  objetivo: O1
+  tipo: unica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Você quer ver a ondulação de cerca de 20 mV na saída de 3,3 V de um regulador. Qual configuração do canal é a adequada?
+  alternativas:
+    - "Acoplamento DC em 1 V/div, porque a ondulação aparece junto com o nível"
+    - "Acoplamento AC em 5 a 10 mV/div"
+    - "Acoplamento AC para medir também o nível de 3,3 V com a medida automática de média"
+    - "Trigger em modo Single e 1 V/div em DC"
+  resposta: 1
+  explicacao: |
+    O acoplamento AC remove os 3,3 V (passa-altas na entrada) e permite ampliar a variação; com 5–10 mV/div a ondulação ocupa várias divisões. Em DC a 1 V/div, 20 mV são 1/50 de divisão, abaixo da resolução do ADC de 8 bits na tela. Em AC a média medida é ≈ 0: para o nível, use DC.
+  fonte: "Tektronix, The XYZs of Oscilloscopes (sistema vertical: acoplamento AC e DC)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T08-004
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Dois canais mostram senoides de 5 kHz. Com os cursores, você mede que o CH2 cruza o zero subindo 25 µs depois do CH1. Qual é a defasagem? Responda em graus, sem casas decimais.
+  resposta: {valor: 45, unidade: "°", tolerancia: 0.01}
+  explicacao: |
+    Δφ = Δt·f·360° = 25 × 10⁻⁶ × 5000 × 360° = 45°, com o CH2 atrasado. É o que se espera na saída de um RC passa-baixas exatamente na frequência de corte.
+  fonte: "All About Circuits, Volume II: AC, capítulo AC Metering Circuits, seção Frequency and Phase Measurement"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T08-005
+  objetivo: O2
+  tipo: unica
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    A chave da sonda está em ×10, mas o menu do canal ficou configurado para ×1. O que acontece com as tensões mostradas?
+  alternativas:
+    - "Ficam 10 vezes maiores que as reais"
+    - "Ficam corretas, porque o osciloscópio detecta a sonda sozinho em qualquer caso"
+    - "Ficam 100 vezes menores que as reais"
+    - "Ficam 10 vezes menores que as reais"
+  resposta: 3
+  explicacao: |
+    A sonda ×10 divide o sinal por 10; se o menu não multiplica de volta, a leitura sai 10 vezes menor (5 V aparecem como 0,5 V). Alguns modelos detectam a sonda pelo conector, mas a maioria das sondas genéricas não tem esse contato.
+  fonte: "Tektronix, ABCs of Probes (sondas passivas ×1 e ×10)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T08-006
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    A entrada de um osciloscópio é 1 MΩ em paralelo com 15 pF, e o cabo da sonda soma 85 pF. Na ponta ×10 há 9 MΩ. Qual capacitância em paralelo com os 9 MΩ deixa a sonda compensada? Responda em pF, com 1 casa decimal.
+  resposta: {valor: 11.1, unidade: "pF", tolerancia: 0.01}
+  explicacao: |
+    Compensação: R_ponta·C_ponta = R_entrada·C_total ⇒ C_ponta = 1 MΩ × 100 pF/9 MΩ ≈ 11,1 pF. Com isso o divisor é ÷10 em qualquer frequência. O trimmer da sonda ajusta essa igualdade para o canal em que ela está.
+  fonte: "Tektronix, ABCs of Probes (compensação da sonda)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T08-007
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Uma borda de 4 ns de tempo de subida é medida num osciloscópio de 50 MHz de banda (use t_r ≈ 0,35/BW e a soma quadrática). Que tempo de subida aparece na tela? Responda em ns, com 1 casa decimal.
+  resposta: {valor: 8.1, unidade: "ns", tolerancia: 0.01}
+  explicacao: |
+    t_r do osciloscópio ≈ 0,35/50 MHz = 7 ns. Medido ≈ √(4² + 7²) = √65 ≈ 8,1 ns: o instrumento mais que dobra a borda. Para medir 4 ns com erro pequeno, o instrumento precisa ser ~5× mais rápido (≈ 0,8 ns, mais de 400 MHz).
+  fonte: "Tektronix, The XYZs of Oscilloscopes (termos de desempenho: largura de banda e tempo de subida); Keysight, Evaluating Oscilloscope Bandwidths for Your Application"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T08-008
+  objetivo: O2
+  tipo: multipla
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Sobre a garra de terra das sondas de um osciloscópio de bancada ligado a uma tomada com terra, marque as afirmações corretas.
+  alternativas:
+    - "A garra está ligada ao pino de terra do plugue, através do gabinete do osciloscópio"
+    - "Remover o pino de terra do cabo de força é uma forma aceitável de medir circuitos referidos à rede"
+    - "Ligar as garras do CH1 e do CH2 em pontos diferentes do circuito curto-circuita esses dois pontos"
+    - "Para medir entre dois pontos que não são o terra, usa-se dois canais com a função A − B ou uma sonda diferencial"
+  resposta: [0, 2, 3]
+  explicacao: |
+    As garras de todos os canais estão no terra de proteção; por isso duas garras em pontos diferentes fazem um curto entre eles, e uma garra num ponto referido à rede faz curto pela terra. Remover o terra põe o gabinete e todos os conectores no potencial do ponto medido — proibido por todos os fabricantes. A − B (com seus limites) e a sonda diferencial são as medidas corretas.
+  fonte: "Tektronix, The XYZs of Oscilloscopes (aterramento correto); Rohde & Schwarz, Oscilloscope Fundamentals (medição diferencial)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T08-009
+  objetivo: O3
+  tipo: vf
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: um gerador com saída de 50 Ω, ajustado no modo de carga "50 Ω" para mostrar 1 Vpp, entrega cerca de 2 Vpp quando ligado diretamente à entrada de 1 MΩ de um osciloscópio.
+  resposta: true
+  explicacao: |
+    No modo 50 Ω, o gerador produz internamente o dobro (2 Vpp) supondo que metade cairá nos seus 50 Ω internos e metade na carga de 50 Ω. Com carga de 1 MΩ, quase nada cai nos 50 Ω internos: ≈ 2 Vpp na entrada. Para o display bater, use o ajuste High-Z.
+  fonte: "Manual do gerador de funções, seção sobre impedância de carga (Load/Output termination); Tektronix, The XYZs of Oscilloscopes"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T08-010
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    O gerador (saída de 50 Ω) está no modo de carga "50 Ω" e mostra 1 Vpp. Ele alimenta um resistor de 150 Ω. Qual amplitude aparece sobre o resistor? Responda em Vpp, com 2 casas decimais.
+  resposta: {valor: 1.5, unidade: "Vpp", tolerancia: 0.01}
+  explicacao: |
+    Fonte interna = 2 × 1 = 2 Vpp. Divisor com os 50 Ω internos: 2 × 150/(150 + 50) = 1,50 Vpp. Só com carga de exatamente 50 Ω o valor seria 1 Vpp; com carga aberta, 2 Vpp.
+  fonte: "Manual do gerador de funções, seção sobre impedância de carga (Load/Output termination)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T08-011
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Para descobrir a resistência de saída de um gerador, você mede 2,00 Vpp sem carga e 0,97 Vpp com um resistor de 47 Ω na saída. Qual é a resistência de saída? Responda em Ω, arredondando para o inteiro mais próximo.
+  resposta: {valor: 50, unidade: "Ω", tolerancia: 0.01}
+  explicacao: |
+    V_carga = V_aberto·R_L/(R_L + R_s) ⇒ R_s = R_L·(V_aberto/V_carga − 1) = 47 × (2,00/0,97 − 1) ≈ 47 × 1,0619 ≈ 49,9 Ω ≈ 50 Ω. É o mesmo método do equivalente de Thévenin do M0.4, aplicado em AC.
+  fonte: "Manual do gerador de funções (impedância de saída); All About Circuits, Volume I: DC, capítulo Network Analysis, seção Thevenin's Theorem"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T08-012
+  objetivo: O4
+  tipo: unica
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Na medida do Bode de um filtro RC, por que é melhor ligar o CH1 no nó de entrada do filtro em vez de usar a amplitude mostrada no display do gerador?
+  alternativas:
+    - "Porque o CH1 tem largura de banda maior que o CH2"
+    - "Porque o gerador no modo High-Z não mostra a amplitude"
+    - "Porque a razão V_saída/V_entrada passa a depender só do filtro, sem o efeito dos 50 Ω do gerador e do ajuste de carga"
+    - "Porque assim não é preciso compensar as sondas"
+  resposta: 2
+  explicacao: |
+    Os 50 Ω internos somam com o R do filtro e a tensão no nó de entrada depende da carga; medindo V_entrada ali, esses efeitos se cancelam na razão. As sondas precisam ser compensadas de qualquer jeito, e os dois canais têm a mesma banda.
+  fonte: "Tektronix, The XYZs of Oscilloscopes (técnicas de medição); manual do gerador de funções (impedância de saída)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T08-013
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um RC passa-baixas com R = 2,2 kΩ e C = 47 nF é alimentado diretamente por um gerador de 50 Ω de saída, e o Bode é calculado com a amplitude da fonte interna do gerador como entrada. Qual frequência de corte esse Bode vai mostrar? Responda em Hz, arredondando para o inteiro mais próximo.
+  resposta: {valor: 1505, unidade: "Hz", tolerancia: 0.01}
+  explicacao: |
+    Os 50 Ω somam ao R: f_c = 1/(2π × 2250 × 47 × 10⁻⁹) ≈ 1505 Hz, contra 1539 Hz do filtro sozinho (≈ 2 % de diferença). Com R de 1 kΩ a diferença seria ≈ 5 %; com R de 100 Ω, um terço.
+  fonte: "All About Circuits, Volume II: AC, capítulo Filters, seção Low-pass Filters; manual do gerador de funções (impedância de saída)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T08-014
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Medindo um RC passa-baixas de 1ª ordem, você obtém Vpp de entrada = 1,00 V e Vpp de saída = 0,45 V em 3 kHz. Supondo o modelo de 1ª ordem, qual é a frequência de corte estimada? Responda em Hz, arredondando para o inteiro mais próximo.
+  resposta: {valor: 1512, unidade: "Hz", tolerancia: 0.01}
+  explicacao: |
+    |H| = 0,45 (≈ −6,9 dB). 1/√(1 + (f/f_c)²) = 0,45 ⇒ (f/f_c)² = 1/0,2025 − 1 ≈ 3,938 ⇒ f/f_c ≈ 1,984 ⇒ f_c ≈ 3000/1,984 ≈ 1512 Hz. Confirme medindo onde a fase vale −45° e onde o módulo cai 3 dB; se as três estimativas divergirem muito, o modelo de 1ª ordem (ou a medição) não está bom.
+  fonte: "All About Circuits, Volume II: AC, capítulo Filters, seção Low-pass Filters; Tektronix, The XYZs of Oscilloscopes (técnicas de medição)"
+  origem: ia
+  revisao: rascunho

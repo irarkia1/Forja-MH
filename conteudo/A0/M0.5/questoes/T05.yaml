@@ -1,0 +1,215 @@
+- id: Q-M0.5.T05-001
+  objetivo: O1
+  tipo: vf
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: um capacitor ideal ligado à rede tem potência ativa média nula, embora circule corrente por ele.
+  resposta: true
+  explicacao: |
+    Com φ = −90°, P = V·I·cos φ = 0: a energia que entra num quarto de ciclo volta à fonte no seguinte. A corrente existe e aquece os fios e a fonte, e por isso aparece na potência aparente (VA) e na reativa (var).
+  fonte: "All About Circuits, Volume II: AC, capítulo Power Factor, seção Power in Resistive and Reactive AC Circuits"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T05-002
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Uma carga em 220 V eficazes puxa 2 A eficazes, com a corrente atrasada 40° em relação à tensão. Qual é a potência ativa? Responda em W, com 1 casa decimal.
+  resposta: {valor: 337.1, unidade: "W", tolerancia: 0.01}
+  explicacao: |
+    P = V·I·cos φ = 220 × 2 × cos 40° = 440 × 0,766 ≈ 337,1 W. Os 440 VA são a potência aparente; a diferença está na parte reativa (440 × sen 40° ≈ 283 var).
+  fonte: "OpenStax, University Physics Volume 2, capítulo Alternating-Current Circuits, seção Power in an AC Circuit"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T05-003
+  objetivo: O1
+  tipo: unica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Numa carga RL ligada à rede de 60 Hz, a potência instantânea p(t) = v(t)·i(t) tem uma parte constante e uma parte oscilante. Qual é a frequência da parte oscilante?
+  alternativas:
+    - "60 Hz, a mesma da tensão"
+    - "30 Hz, metade da frequência da rede"
+    - "120 Hz, o dobro da frequência da rede"
+    - "Ela não oscila, porque a carga tem resistência"
+  resposta: 2
+  explicacao: |
+    p(t) = V·I·cos φ − V·I·cos(2ωt − φ): o produto de duas senoides de frequência f tem um termo em 2f. Na rede de 60 Hz, a potência pulsa a 120 Hz — inclusive num resistor puro, em que p(t) vai de 0 a 2·P sem nunca ficar negativa.
+  fonte: "All About Circuits, Volume II: AC, capítulo Power Factor, seção Power in Resistive and Reactive AC Circuits"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T05-004
+  objetivo: O2
+  tipo: unica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Uma carga consome potência ativa de 300 W e potência reativa de 400 var. Qual é a potência aparente?
+  alternativas:
+    - "700 VA"
+    - "500 VA"
+    - "100 VA"
+    - "500 W"
+  resposta: 1
+  explicacao: |
+    |S| = √(P² + Q²) = √(300² + 400²) = 500 VA (FP = 300/500 = 0,6). Somar 300 + 400 ignora que P e Q estão a 90° no triângulo; a unidade da potência aparente é VA, não W.
+  fonte: "All About Circuits, Volume II: AC, capítulo Power Factor, seção True, Reactive, and Apparent Power"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T05-005
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Com fasores eficazes V = 127∠0° V e I = 2∠−60° A, calcule a potência complexa S = V·I* e informe a potência reativa Q. Responda em var, com 1 casa decimal.
+  resposta: {valor: 220.0, unidade: "var", tolerancia: 0.01}
+  explicacao: |
+    I* = 2∠+60°. S = 127 × 2∠60° = 254∠60° VA = 127 + j220,0. Q = 254 × sen 60° ≈ 220,0 var, positivo: carga indutiva (corrente atrasada). Usar V·I sem o conjugado daria −220 var, com o sinal trocado.
+  fonte: "All About Circuits, Volume II: AC, capítulo Power Factor, seção True, Reactive, and Apparent Power"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T05-006
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Uma carga de impedância Z = 40 + j30 Ω está ligada em 127 V eficazes. Qual é a potência ativa? Responda em W, com 1 casa decimal.
+  resposta: {valor: 258.1, unidade: "W", tolerancia: 0.01}
+  explicacao: |
+    |Z| = 50 Ω ⇒ I = 127/50 = 2,54 A. P = I²·R = 2,54² × 40 ≈ 258,1 W (só a parte resistiva dissipa). Conferência: |S| = 127 × 2,54 = 322,6 VA e FP = 40/50 = 0,8 ⇒ 322,6 × 0,8 ≈ 258,1 W. Usar V²/R = 403 W erra porque a tensão sobre o R não é 127 V.
+  fonte: "OpenStax, University Physics Volume 2, capítulo Alternating-Current Circuits, seção Power in an AC Circuit"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T05-007
+  objetivo: O2
+  tipo: multipla
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Uma carga indutiva em 127 V puxa 10 A eficazes com fator de potência 0,8. Marque as afirmações corretas.
+  alternativas:
+    - "A potência ativa é de 1016 W"
+    - "A potência reativa é negativa, porque a carga é indutiva"
+    - "A potência aparente é de 1270 VA"
+    - "A potência reativa é de 762 var"
+  resposta: [0, 2, 3]
+  explicacao: |
+    |S| = 127 × 10 = 1270 VA. P = 1270 × 0,8 = 1016 W. sen φ = √(1 − 0,8²) = 0,6 ⇒ Q = 1270 × 0,6 = 762 var. Pela convenção S = V·I*, carga indutiva (corrente atrasada) tem Q positivo; negativo é o capacitivo.
+  fonte: "All About Circuits, Volume II: AC, capítulo Power Factor, seções True, Reactive, and Apparent Power e Calculating Power Factor"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T05-008
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um analisador de energia mostra, para uma máquina ligada em 127 V, corrente de 6 A e potência ativa de 600 W. Qual é o fator de potência? Responda adimensional, com 3 casas decimais.
+  resposta: {valor: 0.787, unidade: "adimensional", tolerancia: 0.01}
+  explicacao: |
+    FP = P/|S| = 600/(127 × 6) = 600/762 ≈ 0,787. Sozinho, esse número não diz se a carga é indutiva, capacitiva ou distorcida; o analisador costuma indicar também o sinal de Q e o THD.
+  fonte: "All About Circuits, Volume II: AC, capítulo Power Factor, seção Calculating Power Factor"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T05-009
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um motor de 2 kW opera em 220 V/60 Hz com fator de potência 0,75 (indutivo). Qual capacitor em paralelo eleva o FP para 0,92? Responda em µF, com 1 casa decimal.
+  resposta: {valor: 50.0, unidade: "µF", tolerancia: 0.01}
+  explicacao: |
+    Q₁ = 2000 × tan(arccos 0,75) ≈ 1763,8 var; Q₂ = 2000 × tan(arccos 0,92) ≈ 852,0 var; Q_C ≈ 911,8 var. C = Q_C/(ω·V²) = 911,8/(377 × 48 400) ≈ 50,0 µF. Erro comum: usar f no lugar de ω (daria ≈ 314 µF).
+  fonte: "All About Circuits, Volume II: AC, capítulo Power Factor, seção Practical Power Factor Correction"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T05-010
+  objetivo: O3
+  tipo: unica
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Depois de instalar o capacitor de correção do fator de potência de um motor, o que muda?
+  alternativas:
+    - "A potência ativa do motor aumenta na mesma proporção do FP"
+    - "O motor passa a entregar mais torque com a mesma corrente"
+    - "A tensão nos terminais do motor sobe para compensar o reativo"
+    - "A corrente da linha diminui, e a potência ativa do motor continua a mesma"
+  resposta: 3
+  explicacao: |
+    O capacitor fornece localmente o reativo que o motor troca com os campos; a rede passa a entregar quase só a parte ativa, com menos corrente para a mesma potência. O motor não percebe nada: tensão, potência e torque continuam iguais.
+  fonte: "All About Circuits, Volume II: AC, capítulo Power Factor, seção Practical Power Factor Correction"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T05-011
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Uma carga de 1 kW em 220 V tem o fator de potência corrigido de 0,70 para 0,95. Em quantos por cento cai a corrente eficaz da linha? Responda em %, com 1 casa decimal.
+  resposta: {valor: 26.3, unidade: "%", tolerancia: 0.01}
+  explicacao: |
+    I = P/(V·FP). Antes: 1000/(220 × 0,70) ≈ 6,49 A; depois: 1000/(220 × 0,95) ≈ 4,78 A. Redução: 1 − 0,70/0,95 ≈ 0,263 = 26,3 %. As perdas nos fios (I²R) caem ainda mais: 1 − (0,70/0,95)² ≈ 45,7 %.
+  fonte: "All About Circuits, Volume II: AC, capítulo Power Factor, seção Practical Power Factor Correction"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T05-012
+  objetivo: O4
+  tipo: vf
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: um capacitor em paralelo com a entrada corrige o baixo fator de potência de uma fonte chaveada sem PFC, como faz com um motor.
+  resposta: false
+  explicacao: |
+    O FP baixo de uma fonte sem PFC vem da distorção da corrente (pulsos estreitos perto do pico), não de uma defasagem da fundamental. Um capacitor não muda a forma dos pulsos; quem corrige é o PFC ativo (conversor boost que faz a corrente seguir a senoide).
+  fonte: "All About Circuits, Volume II: AC, capítulo Mixed-Frequency AC Signals; datasheet de fonte AC/DC com PFC (item Power Factor)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T05-013
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    A corrente de entrada de uma fonte tem a componente fundamental em fase com a tensão (cos φ₁ = 1) e distorção harmônica total THD = 120 %. Qual é o fator de potência? Responda adimensional, com 2 casas decimais.
+  resposta: {valor: 0.64, unidade: "adimensional", tolerancia: 0.01}
+  explicacao: |
+    FP = cos φ₁ × 1/√(1 + THD²) = 1/√(1 + 1,44) = 1/√2,44 ≈ 0,64. Mesmo sem nenhuma defasagem, os harmônicos aumentam o RMS da corrente sem entregar potência média.
+  fonte: "All About Circuits, Volume II: AC, capítulo Mixed-Frequency AC Signals; capítulo Power Factor, seção Calculating Power Factor"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T05-014
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um quadro tem 12 controladores IoT que consomem 24 W cada na saída DC das suas fontes. As fontes têm rendimento de 80 % e FP de 0,55 e estão ligadas em 220 V. Qual é a corrente eficaz total na entrada? Responda em A, com 2 casas decimais.
+  resposta: {valor: 2.98, unidade: "A", tolerancia: 0.01}
+  explicacao: |
+    Potência ativa de entrada: 12 × 24/0,80 = 360 W. Aparente: 360/0,55 ≈ 654,5 VA. Corrente: 654,5/220 ≈ 2,98 A. O cálculo ingênuo 288 W/220 V = 1,31 A subestima a corrente mais de 2 vezes, e é com essa corrente que se escolhem disjuntor, fios e nobreak.
+  fonte: "All About Circuits, Volume II: AC, capítulo Power Factor, seção True, Reactive, and Apparent Power; datasheet de fonte AC/DC (Efficiency, Power Factor)"
+  origem: ia
+  revisao: rascunho

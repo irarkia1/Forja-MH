@@ -1,0 +1,215 @@
+- id: Q-M0.5.T07-001
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Um amplificador multiplica a tensão por 100 (entrada e saída na mesma impedância). Qual é o ganho em dB? Responda em dB, sem casas decimais.
+  resposta: {valor: 40, unidade: "dB", tolerancia: 0.01}
+  explicacao: |
+    Para tensão: G = 20·log₁₀(100) = 20 × 2 = 40 dB. Usar 10·log (20 dB) é a fórmula de potência; em potência, esse amplificador dá ×10 000, que também são 40 dB.
+  fonte: "All About Circuits, Volume III: Semiconductors, capítulo Amplifiers, seção Decibels"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T07-002
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um módulo de rádio LoRa transmite 250 mW. Quanto é isso em dBm? Responda em dBm, com 1 casa decimal.
+  resposta: {valor: 24.0, unidade: "dBm", tolerancia: 0.01}
+  explicacao: |
+    P_dBm = 10·log₁₀(250 mW/1 mW) = 10·log₁₀(250) ≈ 23,98 ≈ 24,0 dBm. Conferência: 100 mW = 20 dBm, e ×2,5 ≈ +4 dB.
+  fonte: "Texas Instruments, Analog Engineer's Pocket Reference (conversões de dB e dBm)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T07-003
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um sensor fornece 10 mV a uma cadeia com: amplificador de +26 dB, filtro de −3 dB e segundo estágio de +6 dB (todos ganhos de tensão). Qual tensão chega ao ADC? Responda em mV, arredondando para o inteiro mais próximo.
+  resposta: {valor: 282, unidade: "mV", tolerancia: 0.01}
+  explicacao: |
+    Em cascata, os dB se somam: 26 − 3 + 6 = 29 dB. Razão de tensão: 10^(29/20) ≈ 28,18. Saída: 10 mV × 28,18 ≈ 282 mV. Multiplicar 10 mV por 29 (290 mV) por coincidência fica perto, mas é conta errada; com outros números o erro aparece.
+  fonte: "All About Circuits, Volume III: Semiconductors, capítulo Amplifiers, seção Decibels"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T07-004
+  objetivo: O1
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: um aumento de 3 dB na tensão sobre uma mesma resistência significa que a tensão dobrou.
+  resposta: false
+  explicacao: |
+    +3 dB dobra a potência; na tensão, isso é ×√2 ≈ 1,41. Dobrar a tensão é +6 dB (20·log₁₀ 2 ≈ 6,02), o que quadruplica a potência.
+  fonte: "All About Circuits, Volume III: Semiconductors, capítulo Amplifiers, seção Decibels"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T07-005
+  objetivo: O2
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Bem acima da frequência de um polo real, qual é a inclinação da assíntota de módulo no diagrama de Bode?
+  alternativas:
+    - "−6 dB por década"
+    - "−3 dB por década"
+    - "−20 dB por década"
+    - "−10 dB por década"
+  resposta: 2
+  explicacao: |
+    |H| ≈ f_p/f: a cada ×10 na frequência, a tensão cai 10 vezes, ou −20 dB/década (o mesmo que −6 dB por oitava). −3 dB é o valor no canto, não a inclinação.
+  fonte: "All About Circuits, Volume II: AC, capítulo Filters, seção Low-pass Filters; MIT OpenCourseWare, Signals and Systems, notas Bode Plots"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T07-006
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Pela assíntota do Bode, qual é o módulo de H(f) = 1000/(1 + j·f/100 Hz) em f = 10 kHz? Responda em dB, sem casas decimais.
+  resposta: {valor: 20, unidade: "dB", tolerancia: 0.01}
+  explicacao: |
+    Ganho em baixa frequência: 20·log₁₀ 1000 = 60 dB. De 100 Hz a 10 kHz são 2 décadas a −20 dB/década: 60 − 40 = 20 dB. O valor exato é 20,0 dB também (o erro da assíntota longe do polo é desprezível).
+  fonte: "MIT OpenCourseWare, Signals and Systems, notas Bode Plots"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T07-007
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Pelas assíntotas do Bode, qual é o módulo de H(f) = 10/[(1 + j·f/500 Hz)(1 + j·f/50 kHz)] em f = 500 kHz? Responda em dB, sem casas decimais e com o sinal.
+  resposta: {valor: -60, unidade: "dB", tolerancia: 0.01}
+  explicacao: |
+    Baixa frequência: +20 dB. De 500 Hz a 50 kHz (2 décadas) a −20 dB/década: 20 − 40 = −20 dB. De 50 kHz a 500 kHz (1 década) a −40 dB/década: −20 − 40 = −60 dB. O valor exato é ≈ −60,0 dB.
+  fonte: "MIT OpenCourseWare, Signals and Systems, notas Bode Plots"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T07-008
+  objetivo: O2
+  tipo: multipla
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Considere H(f) = 10·(1 + j·f/100 Hz)/(1 + j·f/10 kHz). Marque as afirmações corretas sobre o Bode assintótico de módulo.
+  alternativas:
+    - "Em baixa frequência o módulo é de 20 dB"
+    - "Entre 100 Hz e 10 kHz o módulo sobe 20 dB por década"
+    - "É um filtro passa-baixas, porque tem um polo"
+    - "Acima de 10 kHz o módulo fica plano em 60 dB"
+  resposta: [0, 1, 3]
+  explicacao: |
+    K = 10 → 20 dB. O zero em 100 Hz inicia +20 dB/década; o polo em 10 kHz soma −20 dB/década e a curva fica plana: 20 + 2 × 20 = 60 dB. A função tem um zero antes do polo, então amplifica mais as altas frequências (forma de "degrau para cima"), o contrário de um passa-baixas.
+  fonte: "MIT OpenCourseWare, Signals and Systems, notas Bode Plots"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T07-009
+  objetivo: O3
+  tipo: vf
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Verdadeiro ou falso: um polo real contribui com −45° de fase exatamente na sua frequência, e com quase −90° uma década acima dela.
+  resposta: true
+  explicacao: |
+    Fase = −arctan(f/f_p): −45° em f = f_p e −arctan(10) ≈ −84,3° em 10·f_p, chegando a −90° bem acima. Uma década abaixo, ≈ −5,7°.
+  fonte: "MIT OpenCourseWare, Signals and Systems, notas Bode Plots"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T07-010
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Num polo real isolado, qual é a diferença entre a assíntota de módulo e a curva real exatamente na frequência do polo? Responda em dB (valor positivo), com 2 casas decimais.
+  resposta: {valor: 3.01, unidade: "dB", tolerancia: 0.01}
+  explicacao: |
+    A assíntota vale 0 dB no canto; o real é 20·log₁₀(1/√2) ≈ −3,01 dB. É o maior erro da aproximação; uma oitava para cada lado ele cai para ≈ 0,97 dB.
+  fonte: "MIT OpenCourseWare, Signals and Systems, notas Bode Plots"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T07-011
+  objetivo: O3
+  tipo: unica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Qual é, aproximadamente, a fase de H(f) = 1/[(1 + j·f/1 kHz)(1 + j·f/100 kHz)] em f = 10 kHz?
+  alternativas:
+    - "≈ −45°"
+    - "≈ −135°"
+    - "≈ −180°"
+    - "≈ −90°"
+  resposta: 3
+  explicacao: |
+    O polo de 1 kHz, uma década abaixo, contribui −arctan(10) ≈ −84,3°; o polo de 100 kHz, uma década acima, contribui −arctan(0,1) ≈ −5,7°. Soma: ≈ −90°. −135° e −180° seriam as fases em 100 kHz e muito acima dos dois polos.
+  fonte: "MIT OpenCourseWare, Signals and Systems, notas Bode Plots"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T07-012
+  objetivo: O4
+  tipo: unica
+  dificuldade: 2
+  bloom: analisar
+  enunciado: |
+    Num Bode medido de um filtro passa-baixas, o módulo vale −20 dB em 2 kHz e −60 dB em 20 kHz, bem longe do corte. O que isso indica?
+  alternativas:
+    - "Filtro de 1ª ordem (−20 dB/década)"
+    - "Filtro de 2ª ordem (−40 dB/década)"
+    - "Filtro de 3ª ordem (−60 dB/década)"
+    - "Filtro de 4ª ordem (−80 dB/década)"
+  resposta: 1
+  explicacao: |
+    Caiu 40 dB em uma década (2 kHz → 20 kHz): −40 dB/década, 2ª ordem. Erro comum: ler o valor −60 dB como se fosse a inclinação.
+  fonte: "All About Circuits, Volume II: AC, capítulo Filters, seção What is a Filter?"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T07-013
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Uma simulação no LTspice de um filtro RC passa-baixas mostra o ponto de −3 dB em 2 kHz. Pela inclinação do filtro, qual atenuação você espera em 200 kHz? Responda em dB, sem casas decimais e com o sinal.
+  resposta: {valor: -40, unidade: "dB", tolerancia: 0.01}
+  explicacao: |
+    RC simples é 1ª ordem: −20 dB/década. De 2 kHz a 200 kHz são 2 décadas: −40 dB (exato: −40,0 dB). Na bancada, a atenuação medida nessa faixa costuma ser menor por causa de capacitâncias e indutâncias parasitas e do ruído do instrumento.
+  fonte: "All About Circuits, Volume II: AC, capítulo Filters, seção Low-pass Filters; LTspice, ajuda do comando .ac"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T07-014
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Num Bode medido, um filtro de 1ª ordem tem 0 dB na banda passante e −26 dB em 10 kHz, já na região de −20 dB/década. Qual é a frequência de corte estimada? Responda em Hz, arredondando para o inteiro mais próximo.
+  resposta: {valor: 501, unidade: "Hz", tolerancia: 0.01}
+  explicacao: |
+    Pela assíntota: −26 = −20·log₁₀(10 000/f_c) ⇒ 10 000/f_c = 10^1,3 ≈ 19,95 ⇒ f_c ≈ 501 Hz. Pela curva exata (1 + (f/f_c)² = 10^2,6) dá ≈ 502 Hz: a diferença é desprezível a 1,3 década do corte.
+  fonte: "All About Circuits, Volume II: AC, capítulo Filters, seção Low-pass Filters; MIT OpenCourseWare, Signals and Systems, notas Bode Plots"
+  origem: ia
+  revisao: rascunho

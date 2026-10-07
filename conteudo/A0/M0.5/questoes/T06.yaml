@@ -1,0 +1,225 @@
+- id: Q-M0.5.T06-001
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Um transformador ideal tem 1000 espiras no primário e 100 no secundário. O primário recebe 127 V eficazes. Qual é a tensão eficaz no secundário? Responda em V, com 1 casa decimal.
+  resposta: {valor: 12.7, unidade: "V", tolerancia: 0.01}
+  explicacao: |
+    V₂ = V₁ × N₂/N₁ = 127 × 100/1000 = 12,7 V. A tensão por espira (0,127 V) é a mesma nos dois enrolamentos.
+  fonte: "All About Circuits, Volume II: AC, capítulo Transformers, seção Step-up and Step-down Transformers"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T06-002
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um transformador ideal 220 V → 12 V alimenta uma carga que puxa 2 A no secundário. Qual é a corrente no primário? Responda em mA, com 1 casa decimal.
+  resposta: {valor: 109.1, unidade: "mA", tolerancia: 0.01}
+  explicacao: |
+    Potência conservada: V₁·I₁ = V₂·I₂ ⇒ I₁ = 12 × 2/220 ≈ 0,1091 A = 109,1 mA. Abaixar a tensão 18,3 vezes faz a corrente do primário ser 18,3 vezes menor que a do secundário.
+  fonte: "All About Circuits, Volume II: AC, capítulo Transformers, seção Step-up and Step-down Transformers; OpenStax, University Physics Volume 2, capítulo Alternating-Current Circuits, seção Transformers"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T06-003
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um amplificador de válvula precisa enxergar 600 Ω de carga, mas o alto-falante tem 8 Ω. Qual relação de espiras N₁/N₂ o transformador de saída deve ter? Responda adimensional, com 2 casas decimais.
+  resposta: {valor: 8.66, unidade: "adimensional", tolerancia: 0.01}
+  explicacao: |
+    Z₁ = a²·Z₂ ⇒ a = √(Z₁/Z₂) = √(600/8) = √75 ≈ 8,66. A impedância é transformada pelo quadrado da relação; usar 600/8 = 75 direto como relação de espiras é o erro clássico.
+  fonte: "All About Circuits, Volume II: AC, capítulo Transformers, seção Special Transformers and Applications"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T06-004
+  objetivo: O1
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: um transformador que abaixa a tensão 10 vezes também entrega uma corrente 10 vezes menor no secundário do que a do primário.
+  resposta: false
+  explicacao: |
+    É o contrário: com a potência conservada, a corrente no secundário é 10 vezes maior que no primário. Por isso o enrolamento de baixa tensão de um transformador abaixador usa fio mais grosso.
+  fonte: "All About Circuits, Volume II: AC, capítulo Transformers, seção Step-up and Step-down Transformers"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T06-005
+  objetivo: O2
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Por que o núcleo de um transformador de 60 Hz é feito de chapas de aço-silício laminadas e isoladas entre si, e não de um bloco maciço?
+  alternativas:
+    - "Para aumentar a relação de espiras sem acrescentar fio"
+    - "Para isolar eletricamente o primário do secundário"
+    - "Para reduzir as correntes parasitas (de Foucault) que circulam no núcleo e o aquecem"
+    - "Para permitir que o transformador funcione também em corrente contínua"
+  resposta: 2
+  explicacao: |
+    O fluxo variável induz correntes no próprio núcleo condutor; as lâminas isoladas cortam o caminho dessas correntes e reduzem a perda. O isolamento entre enrolamentos é feito pelo verniz e pelas camadas isolantes, não pela laminação; e nenhum núcleo faz o transformador funcionar em DC.
+  fonte: "All About Circuits, Volume II: AC, capítulo Transformers, seção Practical Considerations"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T06-006
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um transformador de 12 V mede 13,8 V no secundário em vazio e 12,0 V com a carga nominal. Qual é a regulação? Responda em %, com 1 casa decimal.
+  resposta: {valor: 15.0, unidade: "%", tolerancia: 0.01}
+  explicacao: |
+    Regulação = (V_vazio − V_carga)/V_carga = (13,8 − 12,0)/12,0 = 0,15 = 15,0 %. Transformadores pequenos têm regulação alta; por isso uma fonte linear em vazio entrega mais tensão que o projetado.
+  fonte: "All About Circuits, Volume II: AC, capítulo Transformers, seção Voltage Regulation"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T06-007
+  objetivo: O2
+  tipo: multipla
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    A etiqueta de um transformador diz: "Primário 127/220 V, 60 Hz — Secundário 12 V, 1 A — 12 VA". Marque as interpretações corretas.
+  alternativas:
+    - "Os 12 V são valor eficaz, especificado com a carga nominal"
+    - "Pode ser ligado direto numa bateria de 12 V para funcionar ao contrário e gerar 127 V"
+    - "Em vazio, o secundário deve medir mais que 12 V"
+    - "A potência é dada em VA porque o que limita o transformador é o aquecimento pela corrente, qualquer que seja o fator de potência da carga"
+  resposta: [0, 2, 3]
+  explicacao: |
+    Tensões AC de etiqueta são eficazes e, nos transformadores, normalmente a plena carga; a regulação faz a tensão em vazio ser maior. VA é potência aparente: fios e núcleo aquecem com corrente e tensão, não com cos φ. Em DC não há fluxo variável: nada é induzido e o enrolamento vira um curto.
+  fonte: "All About Circuits, Volume II: AC, capítulo Transformers, seções Voltage Regulation e Practical Considerations"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T06-008
+  objetivo: O3
+  tipo: vf
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Verdadeiro ou falso: um variac (autotransformador ajustável) isola galvanicamente a sua saída da rede elétrica.
+  resposta: false
+  explicacao: |
+    O autotransformador tem um só enrolamento com uma derivação: a saída continua ligada eletricamente à rede, e um terminal pode estar a 127/220 V em relação à terra mesmo com poucos volts entre os terminais. Isolamento só existe com enrolamentos separados.
+  fonte: "All About Circuits, Volume II: AC, capítulo Transformers, seções Electrical Isolation e Winding Configurations"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T06-009
+  objetivo: O3
+  tipo: unica
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Um equipamento é alimentado por um transformador de isolamento 1:1 de 220 V. Uma pessoa descalça encosta numa parte metálica ligada a um dos terminais do secundário. O que é correto afirmar?
+  alternativas:
+    - "Ela leva o mesmo choque que levaria na fase da rede, porque a tensão é a mesma"
+    - "Com um só terminal não há caminho de volta pela terra; mas, se tocar os dois terminais, leva 220 V e o DR a montante não desarma"
+    - "O transformador de isolamento torna o equipamento seguro em qualquer situação"
+    - "O DR da instalação desarma assim que ela toca o terminal"
+  resposta: 1
+  explicacao: |
+    O secundário isolado não está referido à terra, então tocar um terminal sozinho não fecha circuito. Tocar os dois fecha o circuito pelo corpo com toda a tensão, e o DR (que compara fase e neutro do lado da rede) não vê diferença nenhuma. Isolamento reduz um risco, não elimina o choque.
+  fonte: "All About Circuits, Volume II: AC, capítulo Transformers, seção Electrical Isolation; Volume I: DC, capítulo Electrical Safety"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T06-010
+  objetivo: O3
+  tipo: multipla
+  dificuldade: 3
+  bloom: avaliar
+  enunciado: |
+    Marque as práticas corretas para a bancada deste módulo e para quando, no futuro, um projeto exigir medir um circuito ligado à rede.
+  alternativas:
+    - "Tirar o pino de terra do cabo do osciloscópio para que a garra de terra da sonda possa ir em qualquer ponto"
+    - "No A0, fazer os experimentos com fontes certificadas de baixa tensão (até 30 V), gerador de funções ou simulador"
+    - "Com um transformador de isolamento, mexer no circuito energizado sem supervisão, porque o risco desaparece"
+    - "Quando for preciso medir na rede, com supervisão habilitada, alimentar o equipamento sob teste por um transformador de isolamento, e não o osciloscópio"
+  resposta: [1, 3]
+  explicacao: |
+    O A0 não trabalha na rede (M0.4.T09). No futuro, o isolamento vai no equipamento sob teste, com DR, instrumentos CAT adequados e supervisão (NR-10). Remover o terra do osciloscópio deixa o gabinete e todas as garras no potencial do ponto medido — é proibido por todos os fabricantes. Isolamento não elimina o choque entre os dois terminais.
+  fonte: "All About Circuits, Volume I: DC, capítulo Electrical Safety, seção Safe Practices; Tektronix, The XYZs of Oscilloscopes (aterramento correto)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T06-011
+  objetivo: O3
+  tipo: unica
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Um módulo de medição barato é alimentado por uma fonte sem transformador (um capacitor em série com a rede, seguido de zener). Você quer ligar o pino de GND desse módulo ao GND do seu ESP32, que está conectado ao notebook pelo USB. Qual é a avaliação correta?
+  alternativas:
+    - "Não há problema, porque a saída da fonte é de baixa tensão (5 V)"
+    - "Basta colocar um resistor de 1 kΩ entre os dois GNDs para limitar a corrente"
+    - "É seguro desde que o notebook esteja na bateria"
+    - "O GND do módulo está no potencial da rede; a ligação pode pôr o ESP32, o notebook e você em contato com a rede, ou causar um curto via terra do carregador"
+  resposta: 3
+  explicacao: |
+    Sem transformador não há isolamento: todo o circuito, inclusive o GND, oscila em relação à terra com a tensão da rede. Ligar a um equipamento aterrado (carregador com terra, USB, osciloscópio) cria curto pela terra; com o notebook na bateria, o notebook inteiro passa a estar no potencial da rede, e quem tocar nele leva choque. Um resistor não isola. A interface tem de ser isolada (optoacoplador, isolador digital, módulo com fonte isolada).
+  fonte: "All About Circuits, Volume II: AC, capítulo Transformers, seção Electrical Isolation; Volume I: DC, capítulo Electrical Safety"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T06-012
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    O secundário de um transformador fornece 9 V eficazes. Qual é a tensão de pico desse secundário, antes da ponte retificadora? Responda em V, com 2 casas decimais.
+  resposta: {valor: 12.73, unidade: "V", tolerancia: 0.01}
+  explicacao: |
+    Vp = 9 × √2 ≈ 12,73 V. Depois da ponte (duas quedas de ≈ 0,7 V) o capacitor carrega a ≈ 11,3 V. Projetar a fonte com 9 V de pico subestima a tensão em mais de 40 %.
+  fonte: "All About Circuits, Volume II: AC, capítulo Basic AC Theory, seção Measurements of AC Magnitude"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T06-013
+  objetivo: O4
+  tipo: unica
+  dificuldade: 3
+  bloom: entender
+  enunciado: |
+    Por que um carregador chaveado de 65 W tem um transformador muito menor que o de uma fonte linear de mesma potência?
+  alternativas:
+    - "Porque, pela relação V = 4,44·f·N·B·A, em centenas de kHz a mesma tensão exige muito menos espiras e área de núcleo do que em 60 Hz"
+    - "Porque a fonte chaveada não precisa de isolamento entre a rede e a saída"
+    - "Porque o núcleo de ferrite conduz corrente melhor que o enrolamento de cobre"
+    - "Porque a potência transferida em alta frequência é menor que em 60 Hz"
+  resposta: 0
+  explicacao: |
+    Para a mesma tensão, N·A é inversamente proporcional a f·B: subir de 60 Hz para ~100 kHz reduz o núcleo em ordens de grandeza, mesmo com o B menor da ferrite. O transformador de ferrite continua fazendo o isolamento (essencial). A ferrite é escolhida por ter alta resistividade e baixas perdas em alta frequência, não por conduzir.
+  fonte: "All About Circuits, Volume II: AC, capítulo Transformers, seção Practical Considerations"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M0.5.T06-014
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Uma fonte linear tem secundário de 15 V eficazes, ponte retificadora (considere 0,7 V por diodo, dois diodos conduzindo por vez), capacitor de 3300 µF e carga de 1 A, na rede de 60 Hz. Usando ΔV ≈ I/(2·f·C), qual é a tensão mínima (vale) no capacitor? Responda em V, com 1 casa decimal.
+  resposta: {valor: 17.3, unidade: "V", tolerancia: 0.01}
+  explicacao: |
+    Pico: 15√2 ≈ 21,21 V; menos 1,4 V da ponte: 19,81 V. Ondulação de onda completa (recarga a 120 Hz): 1/(120 × 0,0033) ≈ 2,53 V. Vale: 19,81 − 2,53 ≈ 17,3 V. É o vale, e não o pico, que deve ficar acima da tensão mínima de entrada do regulador.
+  fonte: "All About Circuits, Volume II: AC, capítulo Transformers, seção Step-up and Step-down Transformers; Volume III: Semiconductors, capítulo Diodes and Rectifiers"
+  origem: ia
+  revisao: rascunho
