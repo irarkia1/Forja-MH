@@ -1,0 +1,220 @@
+- id: Q-M1.4.T05-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Num timer de STM32 contando para cima, com clock f_TIM, prescaler PSC e auto-reload ARR, qual é a frequência do evento de atualização (UEV)?
+  alternativas:
+    - "f_TIM / (PSC × ARR)"
+    - "f_TIM / ((PSC + 1) × (ARR + 1))"
+    - "f_TIM × (PSC + 1) / (ARR + 1)"
+    - "f_TIM / (PSC + ARR + 2)"
+  resposta: 1
+  explicacao: |
+    O prescaler divide por PSC + 1 e o contador vai de 0 a ARR, ou seja, ARR + 1 contagens por período. Esquecer o +1 de um dos dois é o erro mais comum no cálculo.
+  fonte: "ST, RM0008, General-purpose timers (TIM2 to TIM5), seções Prescaler description e Upcounting mode"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T05-002
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    O TIM2 de uma Blue Pill recebe f_TIM = 72 MHz. Com PSC = 7199, que valor de ARR gera um evento de atualização a 2 Hz? Responda com um número inteiro.
+  resposta: {valor: 4999, unidade: "valor", tolerancia: 0}
+  explicacao: |
+    72 MHz ÷ 7200 = 10 kHz no contador. Para 2 Hz são 5000 contagens por período: ARR = 5000 − 1 = 4999.
+  fonte: "ST, RM0008, General-purpose timers (TIM2 to TIM5), Time-base unit; ST, AN4776"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T05-003
+  objetivo: O1
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: num timer de STM32 parado e recém-configurado, o valor escrito em TIMx_PSC passa a valer imediatamente, sem nenhum evento de atualização.
+  resposta: false
+  explicacao: |
+    O PSC é sempre bufferizado (*shadow register*): o valor novo só é transferido no próximo evento de atualização. Na inicialização, escreva EGR.UG = 1 para forçar esse evento — e limpe a UIF que ele liga antes de habilitar a interrupção.
+  fonte: "ST, RM0008, General-purpose timers (TIM2 to TIM5), seção Prescaler description e registrador TIMx_EGR"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T05-004
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Num STM32F103 com HCLK = 72 MHz e prescaler do APB1 em ÷2 (PCLK1 = 36 MHz), o TIM3 é configurado com PSC = 35 e ARR = 999. Qual é a frequência do evento de atualização? Responda em Hz, exato.
+  resposta: {valor: 2000, unidade: "Hz", tolerancia: 0}
+  explicacao: |
+    Como o APB1 divide por 2, o clock dos timers do APB1 é 2 × PCLK1 = 72 MHz. f = 72·10⁶ ÷ (36 × 1000) = 2000 Hz. Quem usa os 36 MHz do PCLK1 calcula 1000 Hz — metade do valor real.
+  fonte: "ST, RM0008, Reset and clock control (RCC), figura Clock tree; General-purpose timers, Time-base unit"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T05-005
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Você quer um PWM alinhado à borda de 20 kHz com a maior resolução possível num timer com f_TIM = 72 MHz. Com PSC = 0, qual deve ser o ARR? Responda com um número inteiro.
+  resposta: {valor: 3599, unidade: "valor", tolerancia: 0}
+  explicacao: |
+    72·10⁶ ÷ 20 000 = 3600 contagens por período → ARR = 3599. O ciclo de trabalho vai de CCR = 0 (0 %) a 3600 (100 %), em passos de 1/3600.
+  fonte: "ST, RM0008, General-purpose timers, seção PWM mode (edge-aligned); ST, AN4776"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T05-006
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    O PWM da questão anterior tem 3600 passos (ARR = 3599). Qual é a resolução equivalente em bits? Responda em bits, com 2 casas decimais.
+  resposta: {valor: 11.81, unidade: "bits", tolerancia: 0.01}
+  explicacao: |
+    Resolução = log₂(ARR + 1) = log₂(3600) ≈ 11,81 bits. Aumentar a frequência do PWM reduz a resolução na mesma proporção: a 40 kHz seriam 1800 passos (≈ 10,81 bits). Alinhado ao centro, a 20 kHz, também seriam só 1800 passos.
+  fonte: "ST, AN4776, seção sobre PWM; RM0008, PWM mode"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T05-007
+  objetivo: O2
+  tipo: unica
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Para que serve o bit OCxPE (*output compare preload enable*) do TIMx_CCMRx num canal de PWM?
+  alternativas:
+    - "Liga a saída do canal no pino"
+    - "Inverte a polaridade da saída"
+    - "Faz o contador carregar o ARR a cada evento de atualização"
+    - "Faz o valor novo de CCRx valer só no próximo evento de atualização, evitando um pulso deformado"
+  resposta: 3
+  explicacao: |
+    Com OCxPE = 1, a escrita em CCRx vai para um registrador de pré-carga, transferido no UEV. Sem isso, mudar o CCR no meio do período pode gerar um pulso mais curto ou mais longo naquele período. Quem liga a saída é o CCxE do CCER; a polaridade é o CCxP; a pré-carga do ARR é o ARPE do CR1.
+  fonte: "ST, RM0008, General-purpose timers, seção PWM mode e registrador TIMx_CCMR1"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T05-008
+  objetivo: O2
+  tipo: multipla
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Marque as afirmações corretas sobre o PWM dos timers do STM32 contando para cima.
+  alternativas:
+    - "No modo PWM 1, a saída fica ativa enquanto CNT < CCRx"
+    - "O modo PWM 2 gera automaticamente a saída complementar CHxN com tempo morto"
+    - "Com CCRx maior que ARR, o modo PWM 1 dá 100 % de ciclo de trabalho"
+    - "No modo alinhado ao centro, com o mesmo ARR, a frequência do PWM cai para a metade"
+  resposta: [0, 2, 3]
+  explicacao: |
+    Modo 1: ativa enquanto CNT < CCR; com CCR > ARR, a comparação é sempre verdadeira (100 %). O modo 2 é só a lógica invertida; saídas complementares e tempo morto são recursos do TIM1/TIM8 (CCxNE, BDTR). No centralizado, o contador sobe e desce: o período passa a ser 2 × ARR contagens.
+  fonte: "ST, RM0008, General-purpose timers, seções PWM mode, Edge-aligned mode e Center-aligned mode"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T05-009
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um timer de 16 bits (ARR = 0xFFFF) conta a 1 MHz e captura as bordas de subida de um sinal. A primeira captura vale 60 000, a segunda vale 4 464, e houve exatamente um estouro do contador entre elas. Qual é a frequência do sinal? Responda em Hz, exato.
+  resposta: {valor: 100, unidade: "Hz", tolerancia: 0}
+  explicacao: |
+    Δ = (65 536 − 60 000) + 4 464 = 10 000 contagens = 10 ms → 100 Hz. A subtração em `uint16_t`, (uint16_t)(4464 − 60000), dá os mesmos 10 000, desde que não haja mais de um estouro entre as capturas.
+  fonte: "ST, RM0008, General-purpose timers, seção Input capture mode; ST, AN4776"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T05-010
+  objetivo: O3
+  tipo: multipla
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Um TIM2 está no modo PWM input, medindo um sinal ligado a TI1: CC1S = 01, CC2S = 10, CC1 na borda de subida, CC2 na de descida, gatilho TI1FP1 e modo escravo *reset*. Marque as afirmações corretas.
+  alternativas:
+    - "O CCR2 guarda o período do sinal e o CCR1, a largura do pulso"
+    - "Os dois canais capturam a partir do mesmo pino de entrada"
+    - "A cada borda de subida o contador é zerado pelo modo escravo, então o CCR1 dá o período sem subtração"
+    - "Se uma nova captura acontecer antes de o software ler a anterior, a flag de sobrecaptura CC1OF é ligada"
+  resposta: [1, 2, 3]
+  explicacao: |
+    CC1S = 01 liga IC1 a TI1 e CC2S = 10 liga IC2 também a TI1. O reset pelo gatilho TI1FP1 zera o CNT na subida, então o CCR1 (subida) contém o período e o CCR2 (descida), a largura. A CCxOF indica que uma captura foi sobrescrita sem ter sido lida.
+  fonte: "ST, RM0008, General-purpose timers, seções PWM input mode e Input capture mode; registrador TIMx_SR"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T05-011
+  objetivo: O3
+  tipo: vf
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Verdadeiro ou falso: o campo ICxF do TIMx_CCMRx é um filtro digital que só aceita uma transição na entrada de captura depois de um número de amostras consecutivas no novo nível.
+  resposta: true
+  explicacao: |
+    O ICxF define a frequência de amostragem e o número N de amostras iguais exigidas. Pulsos de ruído mais curtos que o filtro são descartados, à custa de um atraso fixo na captura.
+  fonte: "ST, RM0008, General-purpose timers, registrador TIMx_CCMR1 (bits IC1F)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T05-012
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    O TIM1 de um STM32F103 recebe 72 MHz e CKD = 00, então t_DTS = 1/72 MHz. Que valor de DTG (na faixa linear, DTG[7:5] = 0xx, em que DT = DTG × t_DTS) dá um tempo morto de 500 ns? Responda com um número inteiro.
+  resposta: {valor: 36, unidade: "valor", tolerancia: 0}
+  explicacao: |
+    t_DTS = 13,89 ns. 500 ns ÷ 13,89 ns = 36 → DTG = 36 (0x24), dentro da faixa linear (0 a 127).
+  fonte: "ST, RM0008, Advanced-control timers (TIM1 and TIM8), registrador TIMx_BDTR (DTG) e seção Complementary outputs and dead-time insertion"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T05-013
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 4
+  bloom: aplicar
+  enunciado: |
+    Com o mesmo TIM1 (t_DTS = 1/72 MHz), você precisa de 2 µs de tempo morto. A faixa linear vai só até 127 × t_DTS; a faixa seguinte usa DTG[7:6] = 10 e DT = (64 + DTG[5:0]) × 2 × t_DTS. Qual é o valor de DTG (o byte inteiro)? Responda em decimal.
+  resposta: {valor: 136, unidade: "valor", tolerancia: 0}
+  explicacao: |
+    2 µs ÷ 13,89 ns = 144 unidades de t_DTS, acima de 127. Na faixa 10x: (64 + n) × 2 = 144 → n = 8. DTG = 0b10 001000 = 0x88 = 136.
+  fonte: "ST, RM0008, Advanced-control timers (TIM1 and TIM8), registrador TIMx_BDTR (DTG)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T05-014
+  objetivo: O4
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Você configurou o TIM1 de um STM32F103 com PWM em CH1 e CH1N (CCMR1, CCER, CCR1, ARR e pinos corretos) e ligou o contador, mas os dois pinos ficam parados. O que faltou?
+  alternativas:
+    - "Ligar o bit ARPE do CR1"
+    - "Escrever o tempo morto no DTG"
+    - "Ligar o bit MOE (main output enable) do TIM1_BDTR"
+    - "Escolher a função alternativa AF1 no AFR"
+  resposta: 2
+  explicacao: |
+    Nos timers avançados, as saídas só funcionam com MOE = 1 no BDTR (o break, quando ocorre, zera o MOE em hardware). ARPE e DTG não impedem a saída. O F1 não tem AFR: a função alternativa é implícita.
+  fonte: "ST, RM0008, Advanced-control timers (TIM1 and TIM8), registrador TIMx_BDTR (MOE) e seção Using the break function"
+  origem: ia
+  revisao: rascunho

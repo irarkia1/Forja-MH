@@ -1,0 +1,230 @@
+- id: Q-M1.4.T08-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Num projeto com a HAL, em que função se ligam os clocks, se configuram os pinos e se habilita o NVIC de uma USART, já que isso depende da placa?
+  alternativas:
+    - "HAL_UART_IRQHandler"
+    - "HAL_Init"
+    - "HAL_UART_MspInit"
+    - "HAL_UART_TxCpltCallback"
+  resposta: 2
+  explicacao: |
+    O `HAL_UART_Init` é portável e chama o `HAL_UART_MspInit`, uma função `__weak` que o projeto implementa (o CubeMX a gera em `stm32f1xx_hal_msp.c`) com clocks, GPIO, NVIC e DMA. `HAL_Init` prepara a biblioteca e o SysTick; o IRQHandler e os callbacks tratam eventos em tempo de execução.
+  fonte: "ST, UM1850, Overview of HAL drivers, seção HAL initialization (HAL_PPP_MspInit)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T08-002
+  objetivo: O1
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: ao regenerar um projeto no STM32CubeMX, o código que você escreveu no `main.c` é preservado em qualquer lugar do arquivo.
+  resposta: false
+  explicacao: |
+    Só o código dentro das regiões `/* USER CODE BEGIN … */` e `/* USER CODE END … */` é preservado. O resto do arquivo é reescrito a cada geração.
+  fonte: "ST, UM1718 (STM32CubeMX), seção sobre user code sections"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T08-003
+  objetivo: O1
+  tipo: multipla
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Marque as afirmações corretas sobre o STM32Cube.
+  alternativas:
+    - "O BSP é a HAL completa de todos os chips STM32, distribuída num único pacote"
+    - "As funções de configuração da LL são `static inline` nos cabeçalhos e, em geral, mexem em um registrador ou campo cada"
+    - "Os callbacks da HAL, como `HAL_UART_RxCpltCallback`, são `__weak` e devem ser redefinidos pela aplicação"
+    - "Por padrão, `HAL_GetTick()` e os timeouts da HAL dependem da interrupção do SysTick a cada 1 ms"
+  resposta: [1, 2, 3]
+  explicacao: |
+    O BSP (*Board Support Package*) é o suporte às placas da ST (LEDs, botões, sensores das Nucleo e Discovery), não a HAL. A LL é fina e inline; os callbacks são fracos para serem substituídos; e o `SysTick_Handler` gerado chama `HAL_IncTick()`, de que dependem `HAL_GetTick`, `HAL_Delay` e os timeouts.
+  fonte: "ST, UM1850, Overview of HAL drivers e Overview of low-layer drivers"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T08-004
+  objetivo: O1
+  tipo: unica
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    No modo de interrupção da HAL, o que faz a chamada `HAL_UART_IRQHandler(&huart1)` colocada no `USART1_IRQHandler`?
+  alternativas:
+    - "Lê as flags e as habilitações da USART, faz o trabalho do byte (enviar ou receber), trata erros e chama os callbacks quando a operação termina"
+    - "Só limpa a pendência no NVIC; o trabalho é feito no laço principal"
+    - "Desabilita a USART até que a aplicação chame HAL_UART_Init de novo"
+    - "Configura os pinos e os clocks da USART"
+  resposta: 0
+  explicacao: |
+    O tratador comum da HAL verifica cada fonte de interrupção (RXNE, TXE, TC, erros), avança os ponteiros e contadores do handle e, ao final de uma operação, chama `HAL_UART_RxCpltCallback`, `HAL_UART_TxCpltCallback` ou `HAL_UART_ErrorCallback`. Por ser genérico, ele é mais longo que uma rotina escrita para o seu caso.
+  fonte: "ST, stm32f1xx_hal_uart.c (HAL_UART_IRQHandler); UM1850, HAL I/O operation process"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T08-005
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Para escrever a USART1 de um STM32F103 por registrador, a 115 200 bit/s com PCLK2 = 72 MHz e sobreamostragem de 16, que valor vai no USART_BRR? Responda com um número inteiro.
+  resposta: {valor: 625, unidade: "valor", tolerancia: 0}
+  explicacao: |
+    USARTDIV = 72·10⁶ / (16 × 115 200) = 39,0625 → mantissa 39, fração 0,0625 × 16 = 1 → BRR = 39 × 16 + 1 = 625 (0x271). Atalho no F1: BRR = PCLK / baud quando a divisão é exata. A HAL faz essa conta em `UART_SetConfig`.
+  fonte: "ST, RM0008, USART, seção Fractional baud rate generation; stm32f1xx_hal_uart.c (UART_SetConfig)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T08-006
+  objetivo: O2
+  tipo: unica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Lendo o código atual de `HAL_GPIO_TogglePin` no pacote `stm32f1xx-hal-driver`, o que ele faz?
+  alternativas:
+    - "Executa `GPIOx->ODR ^= GPIO_Pin`, uma leitura-modificação-escrita do ODR"
+    - "Usa o bit-banding para inverter cada pino separadamente"
+    - "Desabilita as interrupções, inverte o ODR e reabilita"
+    - "Lê o ODR e escreve no BSRR os bits de liga para os pinos desligados e os de desliga para os pinos ligados, numa escrita só"
+  resposta: 3
+  explicacao: |
+    A versão atual calcula `((odr & pin) << 16) | (~odr & pin)` e escreve no BSRR: 6 instruções, sem gravar o ODR inteiro, e portanto sem desfazer mudanças de outros pinos feitas por interrupções. Versões antigas usavam `ODR ^=`. É um exemplo de por que ler o código da biblioteca — a documentação não diz isso.
+  fonte: "ST, stm32f1xx-hal-driver, Src/stm32f1xx_hal_gpio.c (HAL_GPIO_TogglePin)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T08-007
+  objetivo: O2
+  tipo: vf
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: compilada com otimização, uma chamada a `LL_USART_TransmitData8(USART1, c)` gera essencialmente o mesmo código que `USART1->DR = c;`.
+  resposta: true
+  explicacao: |
+    As funções de acesso da LL são `static inline` de uma linha (`WRITE_REG(USARTx->DR, Value)`). O compilador as expande no lugar da chamada: a LL dá nomes legíveis sem custo em tamanho nem em ciclos.
+  fonte: "ST, stm32f1xx-hal-driver, Inc/stm32f1xx_ll_usart.h; UM1850, Overview of low-layer drivers"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T08-008
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Num F103, um pisca com espera de 500 ms ocupa 1588 bytes de `.text` em HAL e 808 bytes por registrador. Um programa vazio (só vetores e startup) ocupa 584 bytes. Descontada essa parte fixa, quantos bytes **a mais** a versão HAL usa? Responda em bytes, com um número inteiro.
+  resposta: {valor: 780, unidade: "bytes", tolerancia: 0}
+  explicacao: |
+    HAL: 1588 − 584 = 1004 bytes próprios. Registrador: 808 − 584 = 224. Diferença: 1004 − 224 = 780 bytes. Comparar os totais (1588 × 808) sem descontar a parte fixa subestima a proporção real.
+  fonte: "Medição deste roteiro com arm-none-eabi-gcc 14.2, -Os e --gc-sections (STM32F103, stm32f1xx-hal-driver atual)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T08-009
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Com os números da questão anterior (1004 bytes próprios na versão HAL e 224 na versão por registrador), quantas vezes maior é o código próprio da versão HAL? Responda com 2 casas decimais.
+  resposta: {valor: 4.48, unidade: "vezes", tolerancia: 0.01}
+  explicacao: |
+    1004 ÷ 224 ≈ 4,48. A maior parte vem de `HAL_GPIO_Init` (424 bytes, genérica para todos os modos e para o EXTI), `HAL_Init`/`HAL_InitTick` e da configuração do NVIC. Em um único pisca a diferença é irrelevante; somada em vários periféricos, passa de dezenas de KB.
+  fonte: "Medição deste roteiro com arm-none-eabi-gcc 14.2 e arm-none-eabi-nm --size-sort"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T08-010
+  objetivo: O3
+  tipo: multipla
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Marque os procedimentos corretos para medir o custo de cada camada.
+  alternativas:
+    - "Usar `arm-none-eabi-nm --size-sort -S` para listar os símbolos com seus tamanhos e achar as funções maiores"
+    - "Usar o arquivo `.map` do linker para saber de que objeto (e de que biblioteca) veio cada função incluída"
+    - "Somar `text`, `data` e `bss` do `arm-none-eabi-size` para obter o uso de flash"
+    - "Ler o `DWT_CYCCNT` antes e depois da chamada para medir os ciclos, com a mesma otimização e o mesmo clock nas três versões"
+  resposta: [0, 1, 3]
+  explicacao: |
+    `nm` com tamanho e o `.map` mostram onde estão os bytes; o CYCCNT mede o tempo em ciclos, desde que as condições (otimização, wait states, clock) sejam iguais. A flash usada é `text` + `data`; o `bss` só ocupa RAM.
+  fonte: "GNU binutils (nm, size) e ld (-Map); ARMv7-M Architecture Reference Manual, DWT_CYCCNT"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T08-011
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Medida com o DWT_CYCCNT, uma função da HAL chamada dentro de uma rotina de interrupção custa 180 ciclos. A interrupção ocorre a 100 kHz num STM32F103 a 72 MHz. Que fração da CPU só essa chamada consome? Responda em %, exato.
+  resposta: {valor: 25, unidade: "%", tolerancia: 0}
+  explicacao: |
+    180 ciclos × 100 000/s = 18·10⁶ ciclos/s; ÷ 72·10⁶ = 25 %. Trocar por uma versão LL ou por registrador de ~20 ciclos derruba isso para menos de 3 %. É no caminho crítico que a escolha da camada pesa.
+  fonte: "Joseph Yiu, Definitive Guide, capítulo Debug and Trace Features (DWT); ST, UM1850"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T08-012
+  objetivo: O4
+  tipo: unica
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Num projeto HAL com o SysTick na prioridade 15, uma rotina de EXTI com prioridade 5 chama `HAL_Delay(10)`. O que acontece?
+  alternativas:
+    - "A espera dura 10 ms, como fora da interrupção"
+    - "O firmware trava: o SysTick não consegue interromper a rotina, o contador de ticks não avança e a espera nunca termina"
+    - "A espera dura 0 ms, porque HAL_Delay retorna imediatamente dentro de interrupções"
+    - "O núcleo gera uma HardFault por chamada de função bloqueante em interrupção"
+  resposta: 1
+  explicacao: |
+    `HAL_Delay` espera `HAL_GetTick()` avançar, e quem avança é o `SysTick_Handler` (prioridade 15). Dentro de uma rotina de prioridade 5, o SysTick fica pendente e nunca é atendido. Não use esperas, nem funções HAL com timeout, dentro de interrupções e callbacks.
+  fonte: "ST, stm32f1xx_hal.c (HAL_Delay, HAL_IncTick); UM1850, HAL common resources e Timeout and error management"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T08-013
+  objetivo: O4
+  tipo: multipla
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Marque as afirmações corretas sobre misturar HAL, LL e registrador.
+  alternativas:
+    - "Num projeto com RTOS, é comum escolher um timer (como o TIM6) como base de tempo da HAL, deixando o SysTick para o RTOS"
+    - "Escrever direto no `USART1->CR1` depois do `HAL_UART_Init` atualiza automaticamente o estado no handle `huart1`"
+    - "Os callbacks da HAL são executados no contexto da interrupção e devem ser curtos"
+    - "`HAL_Delay(n)` acrescenta um tick ao valor pedido para garantir uma espera de pelo menos n ms"
+  resposta: [0, 2, 3]
+  explicacao: |
+    O CubeMX oferece a opção de *timebase* por timer justamente para não brigar com o SysTick do RTOS. A HAL não sabe de escritas diretas: o `gState` fica desatualizado e a próxima chamada pode desfazer sua mudança ou retornar `HAL_BUSY` — use as macros `__HAL_UART_ENABLE_IT` ou assuma o periférico inteiro. Callbacks rodam dentro do `HAL_xxx_IRQHandler`. E o `HAL_Delay` soma `uwTickFreq` para não esperar menos que o pedido.
+  fonte: "ST, UM1718 (Timebase source); stm32f1xx_hal.c (HAL_Delay); UM1850, HAL I/O operation process"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T08-014
+  objetivo: O4
+  tipo: vf
+  dificuldade: 2
+  bloom: avaliar
+  enunciado: |
+    Verdadeiro ou falso: por ser portável e bem testada, a HAL é sempre a melhor escolha também dentro de uma rotina de interrupção que roda a 100 kHz numa malha de controle.
+  resposta: false
+  explicacao: |
+    Portabilidade e legibilidade pesam na inicialização e em periféricos complexos (USB, SD, Ethernet). No caminho crítico, o custo em ciclos de funções genéricas, com estados, *locks* e *timeouts*, pode ocupar boa parte da CPU. A prática comum é HAL/CubeMX para inicializar e LL ou registrador nas rotinas rápidas, medindo com o DWT_CYCCNT.
+  fonte: "ST, UM1850, Overview of low-layer drivers (quando usar a LL)"
+  origem: ia
+  revisao: rascunho

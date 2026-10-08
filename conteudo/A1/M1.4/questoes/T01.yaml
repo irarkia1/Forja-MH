@@ -1,0 +1,235 @@
+- id: Q-M1.4.T01-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    No nome STM32F103**C**8T6, o que indica o caractere C, logo depois do 103?
+  alternativas:
+    - "O tamanho da flash: 256 KB"
+    - "O número de pinos: 48"
+    - "O encapsulamento: QFN"
+    - "A faixa de temperatura: −40 a 105 °C"
+  resposta: 1
+  explicacao: |
+    No *Ordering information scheme* do datasheet, a letra depois da linha (103) é o número de pinos: C = 48 (T = 36, R = 64, V = 100). O tamanho da flash vem em seguida (8 = 64 KB), depois o encapsulamento (T = LQFP) e a temperatura (6 = −40 a 85 °C).
+  fonte: "ST, datasheet STM32F103x8/xB, seção Ordering information scheme"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T01-002
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Pelo esquema de nomes da ST, quanta flash tem um STM32F103RBT6? Responda em KB, com um número inteiro.
+  resposta: {valor: 128, unidade: "KB", tolerancia: 0}
+  explicacao: |
+    R = 64 pinos; **B = 128 KB** de flash (8 = 64 KB, C = 256 KB, E = 512 KB); T = LQFP; 6 = −40 a 85 °C. A SRAM não aparece no nome: consulte a tabela *Device overview* (20 KB no F103xB).
+  fonte: "ST, datasheet STM32F103x8/xB, seções Device overview e Ordering information scheme"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T01-003
+  objetivo: O1
+  tipo: multipla
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Marque as afirmações corretas sobre as séries STM32.
+  alternativas:
+    - "A série F1 usa o Cortex-M3, sem unidade de ponto flutuante"
+    - "A série G0 usa o Cortex-M7 com cache, para alto desempenho"
+    - "A série F4 usa o Cortex-M4 com FPU de precisão simples"
+    - "A série WL combina um núcleo Cortex-M com um rádio sub-GHz para LoRa"
+  resposta: [0, 2, 3]
+  explicacao: |
+    F1 = Cortex-M3 (72 MHz, sem FPU); F4 = Cortex-M4F; WL = Cortex-M4 (e M0+ em algumas peças) com rádio sub-GHz (LoRa). A G0 é a linha Mainstream barata com **Cortex-M0+** (64 MHz); o Cortex-M7 aparece nas séries F7 e H7.
+  fonte: "ST, STM32 MCU portfolio (st.com, STM32 32-bit Arm Cortex MCUs)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T01-004
+  objetivo: O1
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: o tamanho da SRAM de um STM32 pode ser lido diretamente no nome da peça, assim como o tamanho da flash.
+  resposta: false
+  explicacao: |
+    O nome codifica pinos, flash, encapsulamento e temperatura, mas não a SRAM. Ela vem da tabela *Device overview* do datasheet: o F401RE e o F411RE têm o mesmo código de flash, E (512 KB), mas 96 KB e 128 KB de SRAM, respectivamente.
+  fonte: "ST, datasheets STM32F401xD/xE e STM32F411xC/xE, seção Device overview"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T01-005
+  objetivo: O2
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Você precisa saber o que faz cada bit do registrador USART_CR1 do STM32F103. Qual documento abrir?
+  alternativas:
+    - "O datasheet do STM32F103x8/xB"
+    - "O manual de programação PM0056"
+    - "A nota de aplicação AN2586"
+    - "O manual de referência RM0008"
+  resposta: 3
+  explicacao: |
+    A descrição de cada periférico e de todos os seus registradores e bits está no manual de referência da família (RM0008 para o F1). O datasheet traz pinagem, recursos e elétrica; o PM0056 descreve o núcleo Cortex-M3 (instruções, NVIC, SysTick); a AN2586 trata do hardware mínimo.
+  fonte: "ST, RM0008, capítulo Universal synchronous asynchronous receiver transmitter (USART), seção USART registers"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T01-006
+  objetivo: O2
+  tipo: multipla
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Quais destas informações você encontra no **datasheet** de um STM32 (e não no manual de referência)?
+  alternativas:
+    - "A pinagem de cada encapsulamento e as funções alternativas de cada pino"
+    - "As características elétricas, como corrente máxima por pino e consumo em cada modo"
+    - "A descrição bit a bit do registrador RCC_CFGR"
+    - "O significado de cada letra do código de encomenda da peça"
+  resposta: [0, 1, 3]
+  explicacao: |
+    O datasheet é por peça: pinagem, tabela de funções alternativas, características elétricas, encapsulamentos e o *Ordering information scheme*. A descrição de registradores, como o RCC_CFGR, fica no manual de referência da família.
+  fonte: "ST, datasheet STM32F103x8/xB (Pinouts and pin descriptions, Electrical characteristics, Ordering information scheme); RM0008, capítulo Reset and clock control (RCC)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T01-007
+  objetivo: O2
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: os registradores do NVIC e do SysTick, que fazem parte do núcleo Cortex-M3, são descritos em detalhe no manual de programação PM0056, e não no capítulo de cada periférico do RM0008.
+  resposta: true
+  explicacao: |
+    NVIC, SCB, SysTick e MPU são periféricos do núcleo (região PPB, 0xE000_0000), iguais em todo Cortex-M3. A ST os descreve no manual de programação do núcleo (PM0056 para o M3, PM0214 para o M4); o RM0008 só traz a tabela de vetores e o que é específico do chip (EXTI, número de bits de prioridade).
+  fonte: "ST, PM0056, capítulo Core peripherals"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T01-008
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    No cabeçalho `stm32f103xb.h`, o campo MODE do pino 13 ocupa os bits 20 e 21 do registrador GPIOx_CRH e o campo CNF fica logo acima dele, também com 2 bits. Qual é o valor de `GPIO_CRH_CNF13_Pos`? Responda com um número inteiro.
+  resposta: {valor: 22, unidade: "posição de bit", tolerancia: 0}
+  explicacao: |
+    Cada pino ocupa 4 bits em CRL/CRH: MODE nos 2 bits de baixo e CNF nos 2 de cima. O pino 13 é o pino 5 do CRH: bits 4 × 5 = 20 a 23. MODE13 = bits 20–21, CNF13 = bits 22–23, logo `GPIO_CRH_CNF13_Pos = 22` e `GPIO_CRH_CNF13_Msk = 0x3 << 22`.
+  fonte: "ST, RM0008, General-purpose and alternate-function I/Os, Port configuration register high (GPIOx_CRH); cabeçalho stm32f103xb.h"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T01-009
+  objetivo: O3
+  tipo: unica
+  dificuldade: 3
+  bloom: entender
+  enunciado: |
+    Num projeto com o `system_stm32f1xx.c` atual do repositório `cmsis_device_f1` da ST, sem HAL e sem nenhum código de clock seu, a que frequência roda o núcleo de uma Blue Pill quando `main()` começa?
+  alternativas:
+    - "8 MHz, do oscilador interno HSI, porque o SystemInit() não configura o PLL"
+    - "72 MHz, porque o SystemInit() liga o HSE e o PLL × 9"
+    - "8 MHz, do cristal HSE, porque o reset sempre seleciona o HSE quando ele está presente"
+    - "64 MHz, porque o SystemInit() usa o HSI/2 com o PLL × 16"
+  resposta: 0
+  explicacao: |
+    Depois do reset, o STM32F1 sempre parte do HSI de 8 MHz. Na versão atual dos arquivos CMSIS da ST, o `SystemInit()` apenas reposiciona a tabela de vetores (se `USER_VECT_TAB_ADDRESS` estiver definido) e o `SystemCoreClock` vale 8 000 000. Quem configura o PLL é o seu código (T02) ou a HAL (`SystemClock_Config()` gerado pelo CubeMX). Bibliotecas antigas (StdPeriph) faziam o `SystemInit()` subir para 72 MHz — por isso a confusão.
+  fonte: "ST, cmsis_device_f1, Source/Templates/system_stm32f1xx.c (função SystemInit); RM0008, Reset and clock control (RCC), seção Clocks"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T01-010
+  objetivo: O3
+  tipo: multipla
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Marque as afirmações corretas sobre os arquivos CMSIS de um projeto STM32F103.
+  alternativas:
+    - "`core_cm3.h` (CMSIS-Core, da Arm) define funções como `NVIC_EnableIRQ` e `SysTick_Config`"
+    - "`SystemCoreClockUpdate()` reprograma o PLL para a frequência máxima do chip"
+    - "`stm32f103xb.h` define o tipo `IRQn_Type`, com `USART1_IRQn = 37`, e as structs dos periféricos"
+    - "O `Reset_Handler` do `startup_stm32f103xb.s` chama `SystemInit`, prepara `.data` e `.bss` e só então chama `main`"
+  resposta: [0, 2, 3]
+  explicacao: |
+    O CMSIS-Core traz o acesso ao núcleo (NVIC, SysTick, SCB, intrínsecas). O cabeçalho do dispositivo, da ST, traz os números de IRQ, as structs e as macros de bits. O startup monta a tabela de vetores e faz o caminho até o `main` (M1.3.T09). Já o `SystemCoreClockUpdate()` **não altera o hardware**: ele só lê o RCC_CFGR e recalcula a variável `SystemCoreClock` para refletir o clock que já está configurado.
+  fonte: "Arm, CMSIS-Core (Cortex-M), seções Device Header File e System Configuration Files; ST, cmsis_device_f1 (stm32f103xb.h, system_stm32f1xx.c, startup_stm32f103xb.s)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T01-011
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    No STM32F103, a struct `RCC_TypeDef` começa com os registradores de 32 bits CR, CFGR, CIR, APB2RSTR, APB1RSTR, AHBENR e APB2ENR, nessa ordem e sem lacunas. Qual é o deslocamento de APB2ENR em relação ao endereço base do RCC? Responda em bytes, em decimal.
+  resposta: {valor: 24, unidade: "bytes", tolerancia: 0}
+  explicacao: |
+    Cada registrador ocupa 4 bytes: CR 0x00, CFGR 0x04, CIR 0x08, APB2RSTR 0x0C, APB1RSTR 0x10, AHBENR 0x14, **APB2ENR 0x18 = 24**. Com RCC_BASE = 0x4002_1000, `RCC->APB2ENR` fica em 0x4002_1018, exatamente o deslocamento listado no RM0008.
+  fonte: "ST, RM0008, Reset and clock control (RCC), seção RCC register map"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T01-012
+  objetivo: O4
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Na Blue Pill, como está ligado o LED de usuário?
+  alternativas:
+    - "Em PA5, aceso com nível alto"
+    - "Em PB12, aceso com nível alto"
+    - "Em PC13, aceso com nível baixo"
+    - "Em PC13, aceso com nível alto"
+  resposta: 2
+  explicacao: |
+    O LED da Blue Pill vai do 3,3 V, por um resistor, até PC13: ele acende quando o pino vai a 0. PA5 é o LED LD2 da Nucleo-64, aceso em nível alto. PC13 também tem restrições elétricas (pouca corrente, baixa velocidade), vistas no T03.
+  fonte: "Esquema da placa Blue Pill (STM32F103C8T6, circulação aberta); ST, datasheet STM32F103x8/xB, notas sobre PC13–PC15"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T01-013
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    O `arm-none-eabi-size` mostra para um firmware: `text = 648`, `data = 8`, `bss = 1568`. Quantos bytes de **flash** esse firmware ocupa? Responda em bytes, com um número inteiro.
+  resposta: {valor: 656, unidade: "bytes", tolerancia: 0}
+  explicacao: |
+    Vão para a flash o código e as constantes (`text`) e os valores iniciais das variáveis inicializadas (`data`), que o startup copia para a SRAM (LMA na flash, VMA na RAM — M1.3.T09): 648 + 8 = 656 bytes. A SRAM usada é `data` + `bss` = 1576 bytes; o `bss` aqui inclui a reserva de pilha e heap do linker script.
+  fonte: "GNU binutils, documentação do size; ST, cmsis_device_f1, linker script de exemplo"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T01-014
+  objetivo: O4
+  tipo: multipla
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Marque as afirmações corretas sobre a Nucleo-F401RE na configuração de fábrica.
+  alternativas:
+    - "O clock HSE do STM32F401 vem da saída MCO do ST-LINK embutido, a 8 MHz, e não de um cristal próprio"
+    - "O ST-LINK embutido oferece uma porta serial virtual ligada à USART2 do alvo (PA2 e PA3)"
+    - "O botão de usuário B1 está em PA5 e o LED LD2 em PC13"
+    - "O firmware pode ser gravado copiando o arquivo .bin para o disco USB que o ST-LINK apresenta ao PC"
+  resposta: [0, 1, 3]
+  explicacao: |
+    Pelo UM1724, a configuração padrão do *OSC clock* é o MCO do ST-LINK (8 MHz, HSE em modo bypass, cristal X3 não montado); a porta serial virtual vai à USART2 (PA2/PA3); e o ST-LINK/V2-1 aparece como disco de gravação. LED e botão estão trocados na alternativa errada: LD2 é PA5 e B1 é PC13.
+  fonte: "ST, UM1724 STM32 Nucleo-64 boards, seções OSC clock, USART communication, LEDs e Push-buttons"
+  origem: ia
+  revisao: rascunho

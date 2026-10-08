@@ -1,0 +1,225 @@
+- id: Q-M1.4.T03-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    No STM32F103, um pino tem MODE = 00 e CNF = 10 no registrador CRL, e o bit correspondente do ODR vale 1. Como o pino está configurado?
+  alternativas:
+    - "Saída push-pull de uso geral"
+    - "Entrada analógica"
+    - "Entrada com pull-down"
+    - "Entrada com pull-up"
+  resposta: 3
+  explicacao: |
+    MODE = 00 é entrada. Na entrada, CNF = 10 liga o resistor interno, e quem escolhe o sentido é o ODR: 1 = pull-up, 0 = pull-down. CNF = 00 seria analógica e CNF = 01, flutuante (o estado de reset).
+  fonte: "ST, RM0008, General-purpose and alternate-function I/Os, tabelas Port bit configuration table e Input configuration"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T03-002
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    No STM32F103, que valor de 4 bits (CNF[1:0] nos bits altos, MODE[1:0] nos bits baixos) configura um pino como **saída de uso geral em dreno aberto, até 50 MHz**? Responda em decimal.
+  resposta: {valor: 7, unidade: "valor", tolerancia: 0}
+  explicacao: |
+    Saída de uso geral em dreno aberto: CNF = 01. Velocidade de 50 MHz: MODE = 11. Nibble = 0b0111 = 7. Para função alternativa em dreno aberto (como o SCL da I2C) seria CNF = 11 → 0b1111 = 15.
+  fonte: "ST, RM0008, General-purpose and alternate-function I/Os, registradores GPIOx_CRL e GPIOx_CRH"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T03-003
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Num STM32F411, o GPIOC_MODER vale 0. Você quer PC13 como entrada, PC6 como saída de uso geral e PC7 como função alternativa, sem mexer nos outros pinos. Qual é o novo valor de GPIOC_MODER? Responda em decimal.
+  resposta: {valor: 36864, unidade: "valor", tolerancia: 0}
+  explicacao: |
+    Dois bits por pino: entrada = 00, saída = 01, função alternativa = 10. PC13 continua 00. PC6 → 01 nos bits 12–13 = 0x1000. PC7 → 10 nos bits 14–15 = 0x8000. Soma: 0x9000 = 36 864.
+  fonte: "ST, RM0383, General-purpose I/Os (GPIO), registrador GPIOx_MODER"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T03-004
+  objetivo: O1
+  tipo: multipla
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Marque as afirmações corretas sobre a configuração de pinos no F1 e no F4.
+  alternativas:
+    - "No F1, uma entrada analógica usa CNF = 11 com MODE = 00"
+    - "No F1, o valor de reset de CRL e CRH é 0x4444_4444, isto é, entradas flutuantes"
+    - "No F4, o pull-up é escolhido no PUPDR, independentemente do ODR"
+    - "No F4, MODER = 11 coloca o pino em modo analógico"
+  resposta: [1, 2, 3]
+  explicacao: |
+    No F1, a entrada analógica é CNF = 00 com MODE = 00; CNF = 11 numa entrada é reservado. O nibble 0100 (entrada flutuante) é o estado de reset de todos os pinos. No F4, PUPDR (01 = pull-up, 10 = pull-down) é independente do ODR, e MODER = 11 é o modo analógico.
+  fonte: "ST, RM0008, GPIO registers (GPIOx_CRL, GPIOx_CRH); RM0383, GPIO registers (GPIOx_MODER, GPIOx_PUPDR)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T03-005
+  objetivo: O2
+  tipo: vf
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: escrever `GPIOA->BSRR = (1u << 5);` liga PA5 e não altera nenhum outro pino da porta A.
+  resposta: true
+  explicacao: |
+    No BSRR, bits em 1 na metade baixa ligam o pino, bits em 1 na metade alta desligam, e bits em 0 não fazem nada. Por isso não é preciso ler a porta antes: uma única escrita, sem risco de desfazer o trabalho de uma interrupção.
+  fonte: "ST, RM0008, General-purpose and alternate-function I/Os, seção Atomic bit set or reset e registrador GPIOx_BSRR"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T03-006
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Que valor escrever em `GPIOA->BSRR` para, numa única escrita, **ligar PA1** e **desligar PA3**? Responda em decimal.
+  resposta: {valor: 524290, unidade: "valor", tolerancia: 0}
+  explicacao: |
+    Ligar PA1: bit 1 (BS1) = 0x2. Desligar PA3: bit 16 + 3 = 19 (BR3) = 0x8_0000. Valor = 0x0008_0002 = 524 290.
+  fonte: "ST, RM0008, General-purpose and alternate-function I/Os, registrador GPIOx_BSRR"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T03-007
+  objetivo: O2
+  tipo: unica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    O laço principal executa `GPIOB->ODR ^= (1u << 12);` sem parar, e a rotina do SysTick executa `GPIOB->ODR |= (1u << 13);`. Às vezes PB13 não liga. Qual é a explicação?
+  alternativas:
+    - "O `^=` lê o ODR, inverte o bit 12 e escreve o valor inteiro; se o SysTick ligar PB13 entre a leitura e a escrita, a escrita do laço grava de volta o valor antigo de PB13"
+    - "O ODR só aceita escritas de 16 bits e o compilador gera escritas de 32 bits"
+    - "O SysTick tem prioridade menor que o laço principal e nunca o interrompe"
+    - "PB12 e PB13 não podem ser saídas ao mesmo tempo no STM32F103"
+  resposta: 0
+  explicacao: |
+    O `^=` vira ldr/eor/str: uma leitura-modificação-escrita. A interrupção pode acontecer entre o ldr e o str; quando o laço retoma, escreve o ODR com o bit 13 antigo e apaga o que a rotina fez. A correção é usar o BSRR nos dois lados (escrita única, sem leitura), ou proteger a operação com interrupções desligadas.
+  fonte: "ST, RM0008, General-purpose and alternate-function I/Os, seção Atomic bit set or reset"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T03-008
+  objetivo: O2
+  tipo: multipla
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Marque as afirmações corretas sobre o registrador GPIOx_LCKR.
+  alternativas:
+    - "A sequência de travamento é: escrever LCKK = 1 com os bits dos pinos, escrever LCKK = 0 com os mesmos bits, escrever LCKK = 1 de novo e ler; uma segunda leitura com LCKK = 1 confirma"
+    - "Depois de travado, o pino pode ser destravado repetindo a sequência com LCKK = 0"
+    - "O travamento vale até o próximo reset do chip"
+    - "Um pino de saída travado continua podendo mudar de nível por BSRR ou ODR"
+  resposta: [0, 2, 3]
+  explicacao: |
+    A sequência exata está no RM; qualquer desvio aborta o travamento. Só um reset destrava. O LCKR congela a **configuração** (MODE/CNF no F1; MODER, OTYPER, OSPEEDR, PUPDR e AFR no F4), não o valor da saída: o pino continua sendo ligado e desligado normalmente.
+  fonte: "ST, RM0008, General-purpose and alternate-function I/Os, seção GPIO locking mechanism e registrador GPIOx_LCKR"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T03-009
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Num STM32F401, você quer PA10 como USART1_RX, que é a função AF7 desse pino. O registrador `GPIOA->AFR[1]` (AFRH) vale 0 e nenhum outro pino de 8 a 15 usa função alternativa. Qual é o novo valor de `GPIOA->AFR[1]`? Responda em decimal.
+  resposta: {valor: 1792, unidade: "valor", tolerancia: 0}
+  explicacao: |
+    AFRH cobre os pinos 8 a 15, com 4 bits cada. PA10 é o terceiro deles (10 − 8 = 2): bits 8 a 11. AF7 → 7 << 8 = 0x700 = 1792. Não esqueça o MODER de PA10 em 10 (função alternativa).
+  fonte: "ST, RM0368, General-purpose I/Os (GPIO), registrador GPIOx_AFRH; datasheet STM32F401xD/xE, tabela Alternate function mapping"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T03-010
+  objetivo: O3
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    No STM32F103, escrever SWJ_CFG = 010 no AFIO_MAPR desliga o JTAG e mantém o SWD. Quais pinos ficam livres para uso como GPIO?
+  alternativas:
+    - "PA13 e PA14"
+    - "Apenas PB4"
+    - "PA15, PB3 e PB4"
+    - "PA13, PA14, PA15, PB3 e PB4"
+  resposta: 2
+  explicacao: |
+    O SWD usa só PA13 (SWDIO) e PA14 (SWCLK). Com o JTAG desligado, PA15 (JTDI), PB3 (JTDO) e PB4 (NJTRST) ficam livres. SWJ_CFG = 001 libera só PB4; SWJ_CFG = 100 libera os cinco, mas o depurador deixa de conectar.
+  fonte: "ST, RM0008, General-purpose and alternate-function I/Os, seção JTAG/SWD alternate function remapping e registrador AFIO_MAPR"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T03-011
+  objetivo: O3
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: no STM32F103, para levar a USART1_TX de PA9 para PB6, basta escrever o número da função alternativa no registrador AFR da porta B.
+  resposta: false
+  explicacao: |
+    O F1 não tem AFR: o mapeamento é fixo por periférico e alterado em grupo por bits do AFIO_MAPR. Para TX/RX em PB6/PB7, ligue o clock do AFIO (AFIOEN) e escreva USART1_REMAP = 1; depois configure PB6 como função alternativa push-pull e PB7 como entrada. O AFR existe no F4 e nas famílias mais novas.
+  fonte: "ST, RM0008, General-purpose and alternate-function I/Os, seções Software remapping of I/O alternate functions e USART alternate function remapping"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T03-012
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um laço que comuta um pino por BSRR, numa Blue Pill com HCLK = 72 MHz, gasta 14 ciclos de clock por período completo da onda (subida e descida). Qual é a frequência da onda no pino? Responda em MHz, com 2 casas decimais.
+  resposta: {valor: 5.14, unidade: "MHz", tolerancia: 0.01}
+  explicacao: |
+    f = 72 MHz ÷ 14 ciclos = 5,142… ≈ 5,14 MHz. O caminho de medida é o inverso: meça a frequência no osciloscópio e calcule os ciclos por período (72/f), depois compare com as instruções da desmontagem. Os ciclos extras vêm da ponte AHB→APB2 e dos wait states da flash.
+  fonte: "ST, RM0008, Memory and bus architecture; Joseph Yiu, The Definitive Guide to ARM Cortex-M3 and Cortex-M4 Processors, capítulo Memory System"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T03-013
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Você quer ligar um LED em PC13 de um STM32F103, com o LED e o resistor indo do 3,3 V ao pino (o pino drena a corrente). O LED tem V_F = 1,8 V e o datasheet limita PC13 a 3 mA de corrente drenada. Desprezando a tensão no pino em nível baixo, qual é o **menor** resistor que respeita esse limite? Responda em Ω, com um número inteiro.
+  resposta: {valor: 500, unidade: "Ω", tolerancia: 0}
+  explicacao: |
+    R = (3,3 − 1,8) V ÷ 0,003 A = 500 Ω. Use o valor comercial acima (560 Ω ou 1 kΩ). PC13–PC15 passam por uma chave interna do domínio de backup: corrente drenada de no máximo 3 mA, até 2 MHz e 30 pF, e nunca como fonte de corrente.
+  fonte: "ST, datasheet STM32F103x8/xB, notas da tabela Pin definitions sobre PC13, PC14 e PC15"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T03-014
+  objetivo: O4
+  tipo: multipla
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Marque as afirmações corretas sobre a parte elétrica do GPIO do STM32F103.
+  alternativas:
+    - "Pinos marcados como FT na tabela de pinos aceitam 5 V como entrada digital"
+    - "Aumentar a velocidade de saída (MODE = 11) aumenta a corrente que o pino pode fornecer com segurança"
+    - "Em dreno aberto, o tempo de subida depende do resistor de pull-up e da capacitância da linha"
+    - "PA0 é tolerante a 5 V, por isso pode receber diretamente a saída de um Arduino Uno"
+  resposta: [0, 2]
+  explicacao: |
+    FT = *five-volt tolerant*, para a entrada digital. A velocidade de saída só muda a inclinação das bordas (e o ruído), não o limite de corrente. Em dreno aberto, quem sobe a linha é o pull-up: t_r ≈ 2,2·R·C. PA0 tem função analógica (ADC) e **não** é FT no F103: aceita no máximo V_DD + 0,3 V.
+  fonte: "ST, datasheet STM32F103x8/xB, tabela Pin definitions e seção I/O port characteristics; AN4899"
+  origem: ia
+  revisao: rascunho

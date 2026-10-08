@@ -1,0 +1,230 @@
+- id: Q-M1.4.T06-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    No STM32F103, qual canal do DMA1 atende o pedido USART1_RX?
+  alternativas:
+    - "Canal 5"
+    - "Canal 1"
+    - "Canal 4"
+    - "Canal 7"
+  resposta: 0
+  explicacao: |
+    Pela tabela *Summary of DMA1 requests for each channel* do RM0008, USART1_RX está no canal 5 e USART1_TX no canal 4. O canal 1 atende o ADC1; o canal 7, a USART2_TX. No F1 o mapeamento é fixo: não há como escolher outro canal.
+  fonte: "ST, RM0008, Direct memory access controller (DMA), seção DMA request mapping"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T06-002
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Você vai copiar 1 KB (1024 bytes) por DMA no STM32F103 com PSIZE = MSIZE = 32 bits. Que valor escrever no CNDTR? Responda com um número inteiro.
+  resposta: {valor: 256, unidade: "transferências", tolerancia: 0}
+  explicacao: |
+    O CNDTR conta **dados**, não bytes: 1024 bytes ÷ 4 bytes por dado = 256. Com 8 bits seriam 1024 transferências, e a cópia levaria cerca de 4 vezes mais ciclos de barramento.
+  fonte: "ST, RM0008, Direct memory access controller (DMA), registrador DMA_CNDTRx e seção Programmable data width"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T06-003
+  objetivo: O1
+  tipo: vf
+  dificuldade: 2
+  bloom: lembrar
+  enunciado: |
+    Verdadeiro ou falso: no STM32F401/F411, tanto o DMA1 quanto o DMA2 podem fazer transferências de memória para memória.
+  resposta: false
+  explicacao: |
+    Só o DMA2 faz memória → memória no F4 (a porta de periférico do DMA1 só alcança o barramento do APB1, não a memória). O DMA1 atende periféricos do APB1, como USART2, I2C e SPI2/3.
+  fonte: "ST, RM0368/RM0383, DMA controller (DMA), seção Source, destination and transfer modes"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T06-004
+  objetivo: O1
+  tipo: multipla
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Marque as afirmações corretas sobre o DMA1 do STM32F103.
+  alternativas:
+    - "Durante a transferência, o CNDTR mostra quantos dados ainda faltam"
+    - "A configuração do canal (CPAR, CMAR, CNDTR e a maior parte do CCR) deve ser feita com o canal desabilitado"
+    - "Com dois canais de mesma prioridade (PL) pedindo ao mesmo tempo, o de menor número é atendido primeiro"
+    - "Qualquer canal pode atender qualquer periférico, desde que o periférico seja escolhido no CCR"
+  resposta: [0, 1, 2]
+  explicacao: |
+    O CNDTR decrementa a cada transferência. O RM manda configurar com EN = 0. O árbitro usa primeiro o PL e depois o número do canal. No F1 cada canal tem um grupo fixo de pedidos; não existe seleção de periférico no CCR (a seleção de canal existe no F4, no campo CHSEL).
+  fonte: "ST, RM0008, Direct memory access controller (DMA), seções Arbiter, Channel configuration procedure e DMA request mapping"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T06-005
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Uma UART a 115 200 bit/s, formato 8N1 (10 bits por byte), alimenta por DMA um buffer circular de 128 bytes com as interrupções HT e TC ligadas. De quanto em quanto tempo chega uma dessas interrupções com dados fluindo sem parar? Responda em ms, com 2 casas decimais.
+  resposta: {valor: 5.56, unidade: "ms", tolerancia: 0.01}
+  explicacao: |
+    115 200 ÷ 10 = 11 520 bytes/s. HT e TC acontecem a cada meio buffer = 64 bytes: 64 ÷ 11 520 = 5,56 ms. É também o prazo para consumir cada metade.
+  fonte: "ST, RM0008, Direct memory access controller (DMA), seções Circular mode e Interrupts"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T06-006
+  objetivo: O2
+  tipo: unica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Um ADC enche por DMA, em modo circular, um buffer de 2N amostras, com as interrupções HT e TC. Na rotina da interrupção **HT**, que parte do buffer o software deve processar?
+  alternativas:
+    - "A segunda metade, que acabou de ser escrita"
+    - "O buffer inteiro, porque HT significa que o DMA parou"
+    - "A primeira metade, enquanto o DMA escreve a segunda"
+    - "Nenhuma: o software deve esperar a TC para não haver conflito"
+  resposta: 2
+  explicacao: |
+    HT dispara quando metade das transferências foi feita: a primeira metade está cheia e o DMA segue escrevendo na segunda. Na TC, a segunda está cheia e o DMA voltou à primeira. Processar sempre a metade "parada" é o *ping-pong* com um único buffer.
+  fonte: "ST, RM0008, Direct memory access controller (DMA), seção Interrupts (half transfer); ST, AN2548"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T06-007
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Um ADC gera 1 milhão de amostras por segundo, levadas por DMA circular a um buffer de 2 × 1024 amostras com HT e TC. Qual é o tempo máximo que o processamento de cada metade pode levar sem que o DMA comece a sobrescrever dados ainda não processados? Responda em µs, exato.
+  resposta: {valor: 1024, unidade: "µs", tolerancia: 0}
+  explicacao: |
+    Cada metade tem 1024 amostras; a 1 MHz, o DMA leva 1024 µs para encher a outra metade e voltar. O processamento (mais a latência da interrupção e o que mais a CPU fizer) precisa caber nesse prazo, com folga. O DMA não acusa a sobrescrita.
+  fonte: "ST, AN2548; RM0008, Direct memory access controller (DMA), seção Circular mode"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T06-008
+  objetivo: O3
+  tipo: vf
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Verdadeiro ou falso: a flag IDLE da USART do STM32 sobe quando a linha de recepção fica em repouso durante o tempo de um quadro inteiro depois de ter recebido pelo menos um byte.
+  resposta: true
+  explicacao: |
+    IDLE indica o fim de uma rajada. Com IDLEIE = 1, ela gera interrupção, e o firmware olha o CNDTR para saber até onde o DMA escreveu — mesmo que a mensagem não tenha completado meio buffer. Ela só volta a subir depois que um novo byte chegar.
+  fonte: "ST, RM0008, Universal synchronous asynchronous receiver transmitter (USART), registrador USART_SR (bit IDLE)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T06-009
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Uma recepção por DMA circular usa um buffer de 128 bytes. Na interrupção IDLE, o CNDTR do canal vale 101 e a última posição já processada era 20. Quantos bytes novos devem ser processados? Responda com um número inteiro.
+  resposta: {valor: 7, unidade: "bytes", tolerancia: 0}
+  explicacao: |
+    A posição de escrita do DMA é 128 − 101 = 27. Os bytes novos vão do índice 20 ao 26: 27 − 20 = 7. Se a posição atual fosse menor que a última, o DMA teria dado a volta, e seria preciso processar do índice antigo até o fim e do início até a posição atual.
+  fonte: "ST, RM0008, Direct memory access controller (DMA), registrador DMA_CNDTRx; Tilen Majerle, stm32-usart-uart-dma-rx-tx"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T06-010
+  objetivo: O3
+  tipo: unica
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Por que só as interrupções HT e TC do DMA não bastam para receber mensagens de tamanho variável pela USART?
+  alternativas:
+    - "Porque o DMA não funciona em modo circular com a USART"
+    - "Porque uma mensagem curta pode não completar meio buffer, e nenhuma das duas interrupções dispara até chegarem mais bytes"
+    - "Porque HT e TC só funcionam em transferências de memória para memória"
+    - "Porque a USART desabilita o DMA a cada byte recebido"
+  resposta: 1
+  explicacao: |
+    HT e TC só acontecem em pontos fixos do buffer. Uma mensagem de 7 bytes num buffer de 64 fica parada no buffer até a próxima mensagem empurrar o DMA até a metade. A IDLE da USART avisa o fim da rajada, qualquer que seja o tamanho.
+  fonte: "ST, RM0008, USART (bit IDLE) e DMA (Interrupts); Tilen Majerle, stm32-usart-uart-dma-rx-tx"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T06-011
+  objetivo: O3
+  tipo: multipla
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Marque as afirmações corretas sobre a USART com DMA no STM32F103.
+  alternativas:
+    - "A interrupção TC do canal de transmissão do DMA indica que o último bit já saiu pelo pino TX"
+    - "Para a USART pedir DMA na recepção, é preciso ligar o bit DMAR do USART_CR3"
+    - "A flag IDLE é limpa por uma leitura do USART_SR seguida de uma leitura do USART_DR"
+    - "Dar a mesma prioridade às rotinas do DMA e da USART evita que uma interrompa a outra enquanto atualizam o índice de leitura"
+  resposta: [1, 2, 3]
+  explicacao: |
+    A TC do DMA diz que o último byte foi **escrito no DR**; ele ainda vai passar pelo registrador de deslocamento. Para saber que saiu do pino (por exemplo, antes de desligar um transceptor RS-485), espere a flag TC da USART. DMAR/DMAT ligam os pedidos; IDLE limpa com a sequência SR → DR; e prioridades iguais impedem a preempção mútua.
+  fonte: "ST, RM0008, USART, seções Continuous communication using DMA e Status register (USART_SR)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T06-012
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um ADC entrega 1 milhão de amostras por segundo, cada uma transferida por DMA como um dado de 16 bits. Quantos bytes por segundo o DMA move para a memória? Responda em MB/s (1 MB = 10⁶ bytes), exato.
+  resposta: {valor: 2, unidade: "MB/s", tolerancia: 0}
+  explicacao: |
+    10⁶ amostras/s × 2 bytes = 2·10⁶ bytes/s = 2 MB/s. Num AHB de 72 MHz e 32 bits (pico teórico de 288 MB/s, M1.3.T05), isso é pouco; o que pesa é a soma com a CPU e com outros canais.
+  fonte: "ST, AN2548, seção sobre largura de banda e latência do DMA"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T06-013
+  objetivo: O4
+  tipo: multipla
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Marque as afirmações corretas sobre coerência e desempenho com DMA.
+  alternativas:
+    - "Num Cortex-M7 com D-cache, buffers de DMA exigem manutenção de cache ou RAM não cacheável"
+    - "Transferências de 16 ou 32 bits exigem endereços alinhados a 2 ou 4 bytes"
+    - "Processar a metade do buffer em que o DMA está escrevendo é seguro, desde que a variável seja volatile"
+    - "Um canal de memória para memória com prioridade alta pode atrasar os pedidos de um periférico rápido"
+  resposta: [0, 1, 3]
+  explicacao: |
+    No M7, a CPU pode ler uma cópia antiga no cache ou o DMA pode ler dados ainda não escritos na RAM. O DMA exige alinhamento conforme a largura. `volatile` não impede que o DMA sobrescreva dados enquanto você os lê: processe só a metade parada. O árbitro favorece o PL mais alto, e uma cópia longa pode segurar o barramento.
+  fonte: "ST, AN4031 e AN2548; RM0008, Direct memory access controller (DMA), seção Arbiter"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T06-014
+  objetivo: O4
+  tipo: unica
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Numa recepção por DMA circular com HT e TC, o processamento de cada metade passa a demorar mais que o prazo de meio buffer. O que acontece?
+  alternativas:
+    - "O DMA para e liga a flag de erro TEIF"
+    - "A USART liga a flag de sobrescrita ORE e descarta os bytes novos"
+    - "O DMA reduz automaticamente a taxa de transferência"
+    - "O DMA sobrescreve dados ainda não processados, sem nenhuma flag de erro"
+  resposta: 3
+  explicacao: |
+    No modo circular, o DMA simplesmente continua escrevendo: para ele, o buffer é um anel. A TEIF indica erro de barramento (endereço inválido), não atraso do software. O ORE só aconteceria se o DMA não lesse o DR a tempo. O projeto precisa garantir o prazo: buffer maior, processamento mais rápido ou mais prioridade.
+  fonte: "ST, RM0008, Direct memory access controller (DMA), seções Circular mode e Error management"
+  origem: ia
+  revisao: rascunho

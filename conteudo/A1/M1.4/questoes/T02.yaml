@@ -1,0 +1,225 @@
+- id: Q-M1.4.T02-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Logo depois de um reset, qual é a fonte do SYSCLK num STM32F103?
+  alternativas:
+    - "O PLL, multiplicando o HSE por 9"
+    - "O HSE de 8 MHz, se o cristal estiver montado"
+    - "O HSI, oscilador RC interno de 8 MHz"
+    - "O LSI de aproximadamente 40 kHz"
+  resposta: 2
+  explicacao: |
+    Depois de qualquer reset o SYSCLK é o HSI (8 MHz no F1, 16 MHz no F4). O HSE e o PLL só funcionam depois que o software os liga, espera os bits de pronto (HSERDY, PLLRDY) e comuta o campo SW do RCC_CFGR.
+  fonte: "ST, RM0008, Reset and clock control (RCC), seções Clocks e System clock (SYSCLK) selection"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T02-002
+  objetivo: O1
+  tipo: vf
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Verdadeiro ou falso: num STM32F103 com HCLK = 72 MHz e prescaler do APB1 em ÷2, o TIM2 (que fica no APB1) conta a 36 MHz.
+  resposta: false
+  explicacao: |
+    PCLK1 = 36 MHz, mas o clock dos timers tem um multiplicador: se o prescaler do APB é ÷1, o timer recebe PCLK; se é qualquer outro valor, recebe 2 × PCLK. Com ÷2, o TIM2 conta a 72 MHz.
+  fonte: "ST, RM0008, Reset and clock control (RCC), figura Clock tree e seção Clocks (nota sobre os timers)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T02-003
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um STM32F103 roda com HSE de 8 MHz e PLL × 7, com AHB ÷1 e APB2 ÷1. O prescaler do ADC aceita ÷2, ÷4, ÷6 ou ÷8 e o clock do ADC não pode passar de 14 MHz. Qual é a **maior** frequência de clock do ADC possível? Responda em MHz, exato.
+  resposta: {valor: 14, unidade: "MHz", tolerancia: 0}
+  explicacao: |
+    SYSCLK = 8 × 7 = 56 MHz = PCLK2. ÷2 daria 28 MHz (acima do limite); ÷4 dá exatamente **14 MHz**, o máximo permitido. É por isso que algumas aplicações de ADC rápido usam 56 MHz em vez de 72 MHz: a 72 MHz, o melhor possível é ÷6 = 12 MHz.
+  fonte: "ST, RM0008, Reset and clock control (RCC), registrador RCC_CFGR (ADCPRE); capítulo Analog-to-digital converter (ADC), ADC clock"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T02-004
+  objetivo: O1
+  tipo: multipla
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Marque as afirmações corretas sobre a árvore de clock do STM32F103.
+  alternativas:
+    - "A USB só funciona se o PLL gerar 48 MHz (prescaler ÷1) ou 72 MHz (prescaler ÷1,5)"
+    - "O APB2 pode chegar a 72 MHz, mas o APB1 está limitado a 36 MHz"
+    - "O SysTick pode ser alimentado por HCLK ou por HCLK/8"
+    - "O PLL pode receber o HSI inteiro, de 8 MHz, como entrada"
+  resposta: [0, 1, 2]
+  explicacao: |
+    O prescaler do USB só divide por 1 ou 1,5, e a USB exige 48 MHz. PCLK2 vai a 72 MHz e PCLK1 a 36 MHz. O SysTick usa HCLK (CLKSOURCE = 1) ou a referência externa HCLK/8. A entrada do PLL é HSE, HSE/2 ou **HSI/2** — nunca o HSI inteiro, e por isso o máximo sem cristal é 4 × 16 = 64 MHz.
+  fonte: "ST, RM0008, Reset and clock control (RCC), figura Clock tree; PM0056, SysTick timer (STK)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T02-005
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Num STM32F103, o HSE de 8 MHz entra no PLL com PLLXTPRE = 1 (HSE ÷ 2) e PLLMUL = ×9. Qual é a frequência na saída do PLL? Responda em MHz, exato.
+  resposta: {valor: 36, unidade: "MHz", tolerancia: 0}
+  explicacao: |
+    PLLXTPRE = 1 divide o HSE por 2 antes do PLL: 8 ÷ 2 = 4 MHz; 4 × 9 = 36 MHz. O divisor serve para cristais de 16 MHz (16 ÷ 2 × 9 = 72 MHz). Esquecer esse bit em 1, herdado de outro projeto, é uma causa comum de um sistema rodando na metade da velocidade.
+  fonte: "ST, RM0008, Reset and clock control (RCC), seção PLL e registrador RCC_CFGR (PLLXTPRE, PLLMUL)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T02-006
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Uma placa com STM32F411 tem cristal HSE de 25 MHz. Você escolheu PLLM = 25 e PLLP = 2 e quer SYSCLK = 96 MHz (para ter 48 MHz de USB com PLLQ = 4). Qual deve ser o PLLN? Responda com um número inteiro.
+  resposta: {valor: 192, unidade: "valor", tolerancia: 0}
+  explicacao: |
+    Entrada do VCO = 25 ÷ 25 = 1 MHz. SYSCLK = VCO ÷ PLLP → VCO = 96 × 2 = 192 MHz → PLLN = 192 ÷ 1 = **192**. Conferindo os limites do F411: VCO de 100 a 432 MHz (192 está dentro), PLLN de 50 a 432, e USB = 192 ÷ 4 = 48 MHz.
+  fonte: "ST, RM0383, Reset and clock control (RCC), seção PLL e registrador RCC_PLLCFGR"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T02-007
+  objetivo: O2
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Num STM32F411 com HSE = 8 MHz e PLLM = 4, qual combinação gera SYSCLK = 96 MHz e 48 MHz de USB, dentro de todos os limites do PLL?
+  alternativas:
+    - "PLLN = 192, PLLP = 4, PLLQ = 8"
+    - "PLLN = 48, PLLP = 2, PLLQ = 2"
+    - "PLLN = 192, PLLP = 2, PLLQ = 8"
+    - "PLLN = 144, PLLP = 3, PLLQ = 6"
+  resposta: 0
+  explicacao: |
+    Entrada do VCO = 2 MHz. N = 192 → VCO = 384 MHz; P = 4 → 96 MHz; Q = 8 → 48 MHz. Com N = 48 o VCO seria 96 MHz (abaixo dos 100 MHz mínimos, e N < 50). Com N = 192 e P = 2 o SYSCLK seria 192 MHz, acima dos 100 MHz do F411. P = 3 não existe: PLLP só aceita 2, 4, 6 ou 8.
+  fonte: "ST, RM0383, Reset and clock control (RCC), seção PLL e registrador RCC_PLLCFGR"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T02-008
+  objetivo: O2
+  tipo: multipla
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Marque as afirmações corretas sobre o PLL principal do STM32F401.
+  alternativas:
+    - "Um VCO de 168 MHz é aceitável, porque está abaixo do limite de 432 MHz"
+    - "O campo PLLP só representa as divisões por 2, 4, 6 ou 8"
+    - "A frequência na entrada do VCO (após o PLLM) deve ficar perto de 1 a 2 MHz, de preferência 2 MHz, para reduzir o jitter"
+    - "Se o projeto não usa USB OTG nem SDIO, a saída do PLLQ pode ficar diferente de 48 MHz"
+  resposta: [1, 2, 3]
+  explicacao: |
+    O F401 exige VCO entre **192** e 432 MHz (o F411 aceita a partir de 100 MHz), então 168 MHz está fora. O PLLP tem 2 bits (00 = ÷2, 01 = ÷4, 10 = ÷6, 11 = ÷8). O manual recomenda 2 MHz na entrada do VCO para limitar o jitter. O PLLQ só alimenta USB OTG FS, SDIO e o RNG (nos chips que o têm); sem eles, 48 MHz não é obrigatório.
+  fonte: "ST, RM0368, Reset and clock control (RCC), seção PLL e registrador RCC_PLLCFGR; cabeçalho stm32f401xe.h (RCC_PLLVCO_OUTPUT_MIN)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T02-009
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um STM32F411 alimentado com 3,3 V vai rodar com HCLK = 100 MHz. Quantos wait states devem ser escritos no campo LATENCY do FLASH_ACR? Responda com um número inteiro.
+  resposta: {valor: 3, unidade: "wait states", tolerancia: 0}
+  explicacao: |
+    Pela tabela do RM0383 para 2,7–3,6 V: 0 WS até 30 MHz, 1 WS até 64 MHz, 2 WS até 90 MHz e **3 WS** até 100 MHz. O valor deve ser escrito **antes** de comutar o SYSCLK para o PLL.
+  fonte: "ST, RM0383, Embedded Flash memory interface, tabela Number of wait states according to CPU clock (HCLK) frequency"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T02-010
+  objetivo: O3
+  tipo: unica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Qual sequência leva um STM32F103 do HSI para 72 MHz (HSE × 9) com segurança?
+  alternativas:
+    - "Ligar o PLL, comutar SW para o PLL, ligar o HSE e por fim ajustar os wait states da flash"
+    - "Comutar SW para o PLL, ajustar os wait states, ligar o HSE e esperar HSERDY"
+    - "Ligar o HSE, ligar o PLL, comutar SW para o PLL e, por último, ajustar os wait states e os prescalers"
+    - "Ligar o HSE e esperar HSERDY, ajustar os wait states, configurar prescalers e PLL, ligar o PLL e esperar PLLRDY, comutar SW e conferir SWS"
+  resposta: 3
+  explicacao: |
+    O PLL deve ser configurado com ele desligado, e a CPU só pode passar para ele depois de PLLRDY. Os wait states precisam estar certos **antes** de o SYSCLK subir, senão a flash não acompanha a busca de instruções. Os prescalers também vêm antes, para que o APB1 nunca passe de 36 MHz. Por fim, o campo SWS confirma que a comutação aconteceu.
+  fonte: "ST, RM0008, Reset and clock control (RCC), seções PLL e System clock (SYSCLK) selection; Embedded Flash memory, Read operations"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T02-011
+  objetivo: O3
+  tipo: vf
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Verdadeiro ou falso: no STM32F103 é possível alterar o multiplicador PLLMUL com o PLL ligado e em uso como SYSCLK; a nova frequência vale a partir da escrita.
+  resposta: false
+  explicacao: |
+    O RM0008 determina que PLLMUL, PLLSRC e PLLXTPRE só podem ser escritos com o PLL desligado. Para mudar, comute o SYSCLK para o HSI (ou HSE), desligue o PLL (PLLON = 0), espere PLLRDY = 0, reconfigure e religue.
+  fonte: "ST, RM0008, Reset and clock control (RCC), registrador RCC_CFGR (notas dos campos PLLMUL e PLLSRC)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T02-012
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um firmware para STM32F103 chama `SysTick_Config(72000)` esperando uma interrupção por milissegundo, mas esqueceu de configurar o PLL: o chip roda no HSI de 8 MHz. De quanto em quanto tempo o SysTick interrompe? Responda em ms, exato.
+  resposta: {valor: 9, unidade: "ms", tolerancia: 0}
+  explicacao: |
+    O SysTick conta 72 000 ciclos de HCLK. A 8 MHz, isso leva 72 000 ÷ 8 000 000 = 9 ms. O LED que deveria piscar a 1 Hz pisca 9 vezes mais devagar — o teste do cronômetro denuncia o clock errado.
+  fonte: "ST, PM0056, SysTick timer (STK); RM0008, Reset and clock control (RCC), seção Clocks"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T02-013
+  objetivo: O4
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Com o Clock Security System ligado (CSSON = 1), o que o hardware do STM32F103 faz quando o HSE falha enquanto alimenta o PLL do SYSCLK?
+  alternativas:
+    - "Reinicia o chip pelo watchdog e mantém o PLL ligado"
+    - "Desliga o HSE e o PLL, comuta o SYSCLK para o HSI e dispara a NMI com a flag CSSF"
+    - "Comuta o PLL para a entrada HSI/2 e mantém os 72 MHz"
+    - "Para a CPU até que o cristal volte a oscilar"
+  resposta: 1
+  explicacao: |
+    O CSS detecta a falha, desliga o HSE e o PLL, força o SYSCLK para o HSI e gera a NMI. O tratador deve limpar a flag escrevendo CSSC no RCC_CIR (senão a NMI se repete) e ajustar o que depende do clock. Nada religa o PLL automaticamente.
+  fonte: "ST, RM0008, Reset and clock control (RCC), seção Clock security system (CSS)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T02-014
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Um STM32F103 a 72 MHz (PCLK2 = 72 MHz) transmite pela USART1 a 115 200 bit/s, com USART_BRR = 625. O cristal falha, o CSS comuta o SYSCLK para o HSI de 8 MHz (PCLK2 passa a 8 MHz) e o firmware não reconfigura a USART. Qual é a nova taxa real de transmissão? Responda em bit/s, com um número inteiro.
+  resposta: {valor: 12800, unidade: "bit/s", tolerancia: 0}
+  explicacao: |
+    A taxa é PCLK ÷ BRR (com sobreamostragem de 16 já embutida no valor de BRR, que é USARTDIV × 16). Antes: 72 000 000 ÷ 625 = 115 200. Depois: 8 000 000 ÷ 625 = **12 800 bit/s** — o PC só vê lixo. O tratador da NMI deve chamar `SystemCoreClockUpdate()` e recalcular o BRR (ou religar o PLL pelo HSI/2 × 16 = 64 MHz).
+  fonte: "ST, RM0008, Clock security system (CSS) e USART, seção Fractional baud rate generation"
+  origem: ia
+  revisao: rascunho

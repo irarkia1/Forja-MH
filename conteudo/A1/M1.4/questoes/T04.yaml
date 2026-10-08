@@ -1,0 +1,225 @@
+- id: Q-M1.4.T04-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    A rotina de interrupção do TIM2 de um STM32 faz seu trabalho, mas esquece de limpar a flag UIF no TIMx_SR. O que acontece?
+  alternativas:
+    - "Nada: o NVIC limpa a flag do periférico automaticamente ao entrar na rotina"
+    - "A interrupção é perdida e não volta mais"
+    - "A rotina volta a ser chamada logo depois de retornar, sem parar, e o laço principal deixa de executar"
+    - "O núcleo gera uma HardFault na saída da rotina"
+  resposta: 2
+  explicacao: |
+    O NVIC limpa só a pendência dele. A flag UIF continua em 1 e, com UIE habilitado, o pedido de interrupção continua ativo: ao retornar, a IRQ fica pendente de novo e é atendida outra vez (por tail-chaining), indefinidamente. O `main` fica parado e um breakpoint nele nunca é atingido.
+  fonte: "ST, PM0056, Nested vectored interrupt controller (NVIC), seção Level-sensitive and pulse interrupts"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T04-002
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    No STM32F103, a USART1 é a IRQ 37. Sem usar CMSIS, que valor você escreve em `NVIC->ISER[1]` para habilitá-la sem alterar as outras? Responda em decimal.
+  resposta: {valor: 32, unidade: "valor", tolerancia: 0}
+  explicacao: |
+    IRQ 37 → registrador 37 / 32 = 1, bit 37 mod 32 = 5. Valor = 1 << 5 = 32. Escrever 0 nos outros bits do ISER não desabilita nada (é para isso que existe o ICER), então não é preciso ler antes.
+  fonte: "ST, PM0056, Nested vectored interrupt controller (NVIC), Interrupt set-enable registers (NVIC_ISERx)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T04-003
+  objetivo: O1
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: num STM32, `NVIC_SetPriority(TIM2_IRQn, 5)` grava o valor 0x05 no byte de prioridade da IRQ 28.
+  resposta: false
+  explicacao: |
+    O STM32 implementa só os 4 bits altos do byte (`__NVIC_PRIO_BITS = 4`). A função CMSIS desloca o valor: grava 5 << 4 = 0x50. Quem escreve `NVIC->IP[28] = 5` à mão grava, na prática, prioridade 0 (os bits baixos são ignorados).
+  fonte: "Arm, CMSIS-Core, NVIC_SetPriority; ST, PM0056, Interrupt priority registers (NVIC_IPRx)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T04-004
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Você quer dar prioridade 5 (num esquema de 16 níveis, 0 a 15) à IRQ do TIM2 de um STM32 escrevendo **diretamente** o byte `NVIC->IP[28]`. Que valor escrever? Responda em decimal.
+  resposta: {valor: 80, unidade: "valor", tolerancia: 0}
+  explicacao: |
+    Os 4 níveis implementados ficam nos bits 7–4 do byte: 5 << 4 = 0x50 = 80.
+  fonte: "ST, PM0056, Interrupt priority registers (NVIC_IPRx)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T04-005
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Num STM32 (4 bits de prioridade), o campo PRIGROUP do SCB_AIRCR vale 5. Quantos níveis distintos de **preempção** existem? Responda com um número inteiro.
+  resposta: {valor: 4, unidade: "níveis", tolerancia: 0}
+  explicacao: |
+    PRIGROUP = 5 separa os 8 bits do campo em [7:6] preempção e [5:0] subprioridade. Dos 4 bits implementados (7–4), sobram 2 para preempção (4 níveis) e 2 para subprioridade (4 níveis).
+  fonte: "ST, PM0056, System control block, Application interrupt and reset control register (SCB_AIRCR), tabela Priority grouping"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T04-006
+  objetivo: O2
+  tipo: unica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    PRIGROUP = 3 (16 níveis de preempção, sem subprioridade). A rotina do TIM3 (prioridade 2) está executando quando ficam pendentes o ADC1_2 (prioridade 2, IRQ 18) e a USART2 (prioridade 7, IRQ 38). Em que ordem tudo é atendido?
+  alternativas:
+    - "TIM3 termina; depois ADC; depois USART2"
+    - "ADC interrompe o TIM3; depois TIM3 termina; depois USART2"
+    - "TIM3 termina; depois USART2, que chegou com número de IRQ maior; depois ADC"
+    - "USART2 interrompe o TIM3, porque 7 é maior que 2"
+  resposta: 0
+  explicacao: |
+    Preempção exige prioridade estritamente menor (numericamente): o ADC, com a mesma prioridade 2, espera o TIM3 terminar. Entre as pendentes, ganha a de menor valor de prioridade (ADC, 2) e depois a USART2 (7), encadeadas por tail-chaining. Número de IRQ só desempata prioridades iguais.
+  fonte: "ST, PM0056, Exception model, seções Exception priorities e Interrupt priority grouping"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T04-007
+  objetivo: O2
+  tipo: multipla
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Marque as afirmações corretas sobre grupos de prioridade num STM32.
+  alternativas:
+    - "A constante `NVIC_PRIORITYGROUP_4` da HAL corresponde a PRIGROUP = 3: 4 bits de preempção e nenhum de subprioridade"
+    - "Entre duas interrupções pendentes com a mesma preempção e a mesma subprioridade, é atendida primeiro a de menor número de IRQ"
+    - "Uma interrupção com subprioridade menor interrompe uma rotina em execução com a mesma preempção"
+    - "Com PRIGROUP = 5, `NVIC_EncodePriority(5, 1, 0)` retorna 4, que a `NVIC_SetPriority` grava como 0x40"
+  resposta: [0, 1, 3]
+  explicacao: |
+    O nome da HAL conta os bits de preempção, não o valor do campo (GROUP_4 = 0x3). O desempate final é pelo número da exceção. Subprioridade **nunca** causa preempção: só decide a ordem entre pendentes. Com 2 bits de preempção e 2 de sub, (1 << 2) | 0 = 4; deslocado para os bits altos, 0x40.
+  fonte: "ST, PM0056, Exception priorities e Interrupt priority grouping; Arm, CMSIS-Core, NVIC_EncodePriority; ST, stm32f1xx_hal_cortex.h"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T04-008
+  objetivo: O3
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    No STM32F103, que registrador escolhe de qual porta (A, B, C…) vem o sinal da linha EXTI 7?
+  alternativas:
+    - "EXTI_IMR"
+    - "SYSCFG_EXTICR2"
+    - "GPIOx_CRL"
+    - "AFIO_EXTICR2"
+  resposta: 3
+  explicacao: |
+    No F1, o multiplexador das linhas EXTI fica no AFIO: EXTICR1 cobre as linhas 0–3, EXTICR2 as linhas 4–7, e assim por diante, com 4 bits por linha. O SYSCFG_EXTICR faz o mesmo papel no F4. O EXTI_IMR só habilita a linha.
+  fonte: "ST, RM0008, General-purpose and alternate-function I/Os, External interrupt configuration register 2 (AFIO_EXTICR2)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T04-009
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Num STM32F103, você quer ligar PB14 à linha EXTI 14. O `AFIO->EXTICR[3]` (AFIO_EXTICR4, linhas 12 a 15, 4 bits por linha, código 0 = porta A, 1 = porta B, 2 = porta C) vale 0. Qual é o novo valor dele? Responda em decimal.
+  resposta: {valor: 256, unidade: "valor", tolerancia: 0}
+  explicacao: |
+    Linha 14 é a terceira do EXTICR4 (14 − 12 = 2): bits 8–11. Porta B = 1. Valor = 1 << 8 = 0x100 = 256.
+  fonte: "ST, RM0008, External interrupt configuration register 4 (AFIO_EXTICR4)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T04-010
+  objetivo: O3
+  tipo: multipla
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Marque as afirmações corretas sobre o EXTI dos STM32F1 e F4.
+  alternativas:
+    - "As linhas 5 a 9 têm cada uma seu próprio vetor de interrupção"
+    - "PA5 e PB5 não podem ser usados ao mesmo tempo como fontes EXTI, porque ambos usam a linha 5"
+    - "A rotina EXTI9_5_IRQHandler precisa testar o EXTI_PR para saber qual linha disparou"
+    - "Para limpar a pendência da linha 5, escreve-se 1 no bit 5 do EXTI_PR"
+  resposta: [1, 2, 3]
+  explicacao: |
+    As linhas 0–4 têm vetores próprios; 5–9 dividem o EXTI9_5 e 10–15 dividem o EXTI15_10. Cada linha recebe um pino de **uma** porta, escolhida no EXTICR. O PR é *rc_w1*: escrever 1 limpa, escrever 0 não faz nada.
+  fonte: "ST, RM0008, Interrupts and events, External interrupt/event controller (EXTI): External interrupt/event line mapping e Pending register (EXTI_PR)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T04-011
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um STM32F103 roda com HCLK = 72 MHz e o SysTick usa o clock do processador. Que valor deve ficar no registrador LOAD (STK_LOAD) para uma interrupção a cada 1 ms? Responda com um número inteiro.
+  resposta: {valor: 71999, unidade: "valor", tolerancia: 0}
+  explicacao: |
+    O período é LOAD + 1 ciclos: 72 000 ciclos = 1 ms → LOAD = 71 999. É o que `SysTick_Config(72000)` escreve.
+  fonte: "ST, PM0056, SysTick timer (STK), SysTick reload value register e Calculating the RELOAD value"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T04-012
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Num STM32F103 a 72 MHz, uma rotina de interrupção roda 20 000 vezes por segundo. O corpo dela gasta 150 ciclos, e a entrada e a saída da exceção custam 12 ciclos cada. Que fração da CPU essa interrupção consome? Responda em %, com 2 casas decimais.
+  resposta: {valor: 4.83, unidade: "%", tolerancia: 0.01}
+  explicacao: |
+    Ciclos por execução = 150 + 12 + 12 = 174. Por segundo: 174 × 20 000 = 3 480 000 ciclos. Fração = 3,48·10⁶ ÷ 72·10⁶ = 4,83 %. Esquecer a entrada e a saída daria 4,17 % — a diferença cresce quando a rotina é curta e frequente.
+  fonte: "Joseph Yiu, The Definitive Guide to ARM Cortex-M3 and Cortex-M4 Processors, capítulo Exception Handling in Detail (Interrupt latency)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T04-013
+  objetivo: O4
+  tipo: vf
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: num Cortex-M3, ler no laço principal uma variável `volatile uint64_t` incrementada pelo SysTick é sempre seguro, sem desabilitar interrupções.
+  resposta: false
+  explicacao: |
+    O Cortex-M3 lê 64 bits em duas leituras de 32 bits. Se o SysTick incrementar entre elas (por exemplo, na passagem de 0xFFFF_FFFF para 0x1_0000_0000), o valor lido mistura metades velha e nova. Proteja a leitura com PRIMASK (salvando e restaurando) ou leia de novo até duas leituras coincidirem. Leituras alinhadas de 32 bits ou menos são atômicas.
+  fonte: "Joseph Yiu, The Definitive Guide to ARM Cortex-M3 and Cortex-M4 Processors, capítulos Exceptions and Interrupts e Memory System"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T04-014
+  objetivo: O4
+  tipo: multipla
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Marque as afirmações corretas sobre seções críticas e o SysTick.
+  alternativas:
+    - "O BASEPRI existe no Cortex-M3/M4 e permite bloquear só as interrupções com prioridade numericamente maior ou igual a um limite"
+    - "Com LDREX/STREX, se uma interrupção ocorrer entre a leitura e a escrita, o STREX falha e o código tenta de novo"
+    - "`SysTick_Config` configura o SysTick com a prioridade mais baixa (15 no STM32)"
+    - "`__disable_irq()` bloqueia também a NMI e a HardFault"
+  resposta: [0, 1, 2]
+  explicacao: |
+    BASEPRI é a máscara por nível (usada pelos RTOS); não existe no M0/M0+. LDREX/STREX implementam leitura-modificação-escrita atômica. A `SysTick_Config` do CMSIS chama `NVIC_SetPriority(SysTick_IRQn, (1 << __NVIC_PRIO_BITS) − 1)`. O PRIMASK (`__disable_irq`) bloqueia todas as exceções configuráveis, mas NMI e HardFault continuam passando.
+  fonte: "ST, PM0056, Core registers (PRIMASK, BASEPRI) e instruções LDREX/STREX; Arm, CMSIS-Core, SysTick_Config"
+  origem: ia
+  revisao: rascunho

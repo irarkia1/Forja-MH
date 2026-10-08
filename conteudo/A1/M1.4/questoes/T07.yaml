@@ -1,0 +1,220 @@
+- id: Q-M1.4.T07-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    No ADC1 do STM32F103, qual canal mede a referência interna VREFINT?
+  alternativas:
+    - "IN16"
+    - "IN17"
+    - "IN0"
+    - "IN9"
+  resposta: 1
+  explicacao: |
+    IN16 é o sensor de temperatura e IN17 é a VREFINT (≈ 1,20 V); os dois só existem no ADC1 e precisam do bit TSVREFE do ADC_CR2. IN0 a IN9 são os pinos PA0–PA7 e PB0–PB1 no encapsulamento de 48 pinos.
+  fonte: "ST, RM0008, Analog-to-digital converter (ADC), seções Channel selection e Temperature sensor"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T07-002
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    O ADC de 12 bits de um STM32F103, com V_REF+ = V_DDA = 3,3 V, leu o código 2482 (alinhamento à direita). Que tensão está no pino? Responda em V, com 3 casas decimais.
+  resposta: {valor: 2.0, unidade: "V", tolerancia: 0.002}
+  explicacao: |
+    V = código × V_REF / 4096 = 2482 × 3,3 / 4096 ≈ 2,000 V. Cada LSB vale 3,3 / 4096 ≈ 0,806 mV.
+  fonte: "ST, RM0008, Analog-to-digital converter (ADC), seção Data alignment; datasheet STM32F103x8/xB, 12-bit ADC characteristics"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T07-003
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Num STM32F103 alimentado por bateria, a leitura do canal VREFINT deu o código 1595. Considerando VREFINT = 1,20 V, qual é o V_DDA real? Responda em V, com 3 casas decimais.
+  resposta: {valor: 3.081, unidade: "V", tolerancia: 0.001}
+  explicacao: |
+    Código = VREFINT × 4095 / V_DDA → V_DDA = 1,20 × 4095 / 1595 ≈ 3,081 V. Com esse valor, as leituras dos canais externos são corrigidas (V = código × 3,081 / 4095). Para precisão maior, use o VREFINT medido do seu chip (o F4 traz um valor de calibração de fábrica).
+  fonte: "ST, datasheet STM32F103x8/xB, Embedded reference voltage; ST, AN2834"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T07-004
+  objetivo: O1
+  tipo: vf
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Verdadeiro ou falso: no STM32F103, os canais IN16 (temperatura) e IN17 (VREFINT) podem ser lidos sem ligar nenhum bit adicional, como qualquer canal externo.
+  resposta: false
+  explicacao: |
+    É preciso ligar o bit TSVREFE do ADC_CR2, que alimenta o sensor e a referência. Sem ele, as leituras dos canais 16 e 17 não têm significado. Use tempo de amostragem longo (o RM recomenda 17,1 µs para o sensor).
+  fonte: "ST, RM0008, Analog-to-digital converter (ADC), seção Temperature sensor e registrador ADC_CR2"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T07-005
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    O ADC de um STM32F103 roda com f_ADC = 12 MHz e o canal está configurado com tempo de amostragem de 28,5 ciclos. Qual é o tempo total de uma conversão? Responda em µs, com 2 casas decimais.
+  resposta: {valor: 3.42, unidade: "µs", tolerancia: 0.01}
+  explicacao: |
+    No F1, t_conv = t_amostragem + 12,5 ciclos = 28,5 + 12,5 = 41 ciclos; 41 ÷ 12 MHz ≈ 3,42 µs (≈ 292,7 mil conversões por segundo num só canal).
+  fonte: "ST, RM0008, Analog-to-digital converter (ADC), seção Channel-by-channel programmable sample time"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T07-006
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Pela fórmula do datasheet do F103, R_AIN < T_S / (f_ADC · C_ADC · ln(2^(N+2))) − R_ADC. Com f_ADC = 12 MHz, T_S = 13,5 ciclos, C_ADC = 8 pF, R_ADC = 1 kΩ e N = 12, qual é a maior impedância de fonte admissível? Responda em kΩ, com 1 casa decimal.
+  resposta: {valor: 13.5, unidade: "kΩ", tolerancia: 0.01}
+  explicacao: |
+    ln(2¹⁴) ≈ 9,704. Denominador: 12·10⁶ × 8·10⁻¹² × 9,704 ≈ 9,316·10⁻⁴. 13,5 / 9,316·10⁻⁴ ≈ 14 491 Ω; menos 1000 Ω → ≈ 13,5 kΩ. Uma fonte de 50 kΩ exigiria um tempo de amostragem bem maior, um capacitor no pino ou um buffer.
+  fonte: "ST, datasheet STM32F103x8/xB, 12-bit ADC characteristics (equação de R_AIN max); ST, AN2834"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T07-007
+  objetivo: O2
+  tipo: unica
+  dificuldade: 3
+  bloom: avaliar
+  enunciado: |
+    Um divisor resistivo de 100 kΩ/100 kΩ (impedância de Thévenin de 50 kΩ) está ligado a um canal do ADC do F103 configurado com 1,5 ciclo de amostragem a 12 MHz. As leituras saem baixas e variam com o canal convertido antes. Qual é a correção adequada?
+  alternativas:
+    - "Trocar o alinhamento dos dados para a esquerda"
+    - "Reduzir o clock do ADC para 14 MHz"
+    - "Ligar o modo contínuo no lugar da conversão única"
+    - "Aumentar o tempo de amostragem (ou pôr um capacitor no pino ou um seguidor), porque 1,5 ciclo não carrega o capacitor de amostragem através de 50 kΩ"
+  resposta: 3
+  explicacao: |
+    O capacitor interno (8 pF) precisa carregar através de R_AIN + R_ADC até ¼ LSB em T_S. Com 1,5 ciclo, o limite é menos de 1 kΩ; o capacitor fica com parte da tensão do canal anterior (efeito de memória). Tempo de amostragem longo, capacitor de alguns nF no pino (que fornece a carga) ou um seguidor resolvem. 14 MHz seria **mais** rápido, piorando.
+  fonte: "ST, AN2834, seção sobre a impedância da fonte; datasheet STM32F103x8/xB, tabela de R_AIN max"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T07-008
+  objetivo: O2
+  tipo: vf
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Verdadeiro ou falso: num STM32F103 com PCLK2 = 72 MHz, o prescaler do ADC em ÷4 (18 MHz) é uma configuração válida.
+  resposta: false
+  explicacao: |
+    O clock do ADC do F1 não pode passar de 14 MHz. Com PCLK2 = 72 MHz, use ÷6 (12 MHz) ou ÷8 (9 MHz). Para ter 14 MHz exatos, o PCLK2 precisa ser 56 MHz (÷4).
+  fonte: "ST, RM0008, Reset and clock control (RCC), registrador RCC_CFGR (ADCPRE); datasheet STM32F103x8/xB, 12-bit ADC characteristics (f_ADC)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T07-009
+  objetivo: O3
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Você quer que o evento de atualização do TIM3 dispare as conversões regulares do ADC1 de um STM32F103. Além de configurar o TIM3 para exportar o UEV como TRGO (MMS = 010), que valor escrever no campo EXTSEL do ADC1_CR2 (com EXTTRIG = 1)?
+  alternativas:
+    - "100"
+    - "111"
+    - "011"
+    - "000"
+  resposta: 0
+  explicacao: |
+    Na tabela *External trigger for regular channels for ADC1 and ADC2*: 000 = TIM1_CC1, 011 = TIM2_CC2, **100 = TIM3_TRGO**, 111 = SWSTART (software). Sem o MMS do TIM3, o TRGO não carrega o evento de atualização.
+  fonte: "ST, RM0008, Analog-to-digital converter (ADC), seção Conversion on external trigger"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T07-010
+  objetivo: O3
+  tipo: multipla
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Marque as afirmações corretas sobre amostragem disparada por timer com varredura e DMA.
+  alternativas:
+    - "O DMA é necessário na varredura do grupo regular porque todos os canais escrevem no mesmo registrador ADC_DR"
+    - "Para disparar pelo timer, o ADC precisa estar no modo contínuo (CONT = 1)"
+    - "O disparo por hardware elimina o jitter que interrupções e laços de software introduzem entre amostras"
+    - "No F4, sem o bit DDS, o ADC deixa de pedir DMA depois que o contador do DMA chega ao fim pela primeira vez, mesmo com o DMA em modo circular"
+  resposta: [0, 2, 3]
+  explicacao: |
+    O grupo regular tem um único DR: sem DMA, cada resultado sobrescreve o anterior. Cada disparo do timer inicia uma varredura completa — o modo contínuo faria o ADC converter sem parar e ignoraria a cadência do timer. O disparo por hardware tem atraso fixo, sem jitter de software. No F4, DDS = 1 mantém os pedidos de DMA depois da última transferência.
+  fonte: "ST, RM0008, ADC (Scan mode, DMA request, Conversion on external trigger); RM0383, ADC (DMA mode, bit DDS); ST, AN3116"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T07-011
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    O ADC1 de um STM32F103 a f_ADC = 12 MHz faz uma varredura de 3 canais, todos com 41,5 ciclos de amostragem, a cada disparo do timer. Quanto tempo leva a varredura inteira? Responda em µs, com 1 casa decimal.
+  resposta: {valor: 13.5, unidade: "µs", tolerancia: 0.01}
+  explicacao: |
+    Cada conversão: 41,5 + 12,5 = 54 ciclos. Três canais: 162 ciclos ÷ 12 MHz = 13,5 µs. Com disparo a 10 kHz (a cada 100 µs), sobra folga; a 100 kHz (10 µs) já não caberia.
+  fonte: "ST, RM0008, Analog-to-digital converter (ADC), seções Scan mode e Channel-by-channel programmable sample time"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T07-012
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 4
+  bloom: aplicar
+  enunciado: |
+    Sem DAC, você gera uma tensão com PWM de 20 kHz (ciclo de 50 %, V_DD = 3,3 V) e um filtro RC de 4,7 kΩ e 1 µF. Usando a aproximação de ondulação pico a pico ≈ V_DD · T / (4RC), válida para RC muito maior que o período T, qual é a ondulação? Responda em mV, com 1 casa decimal.
+  resposta: {valor: 8.8, unidade: "mV", tolerancia: 0.01}
+  explicacao: |
+    T = 50 µs; RC = 4,7 ms. Ondulação ≈ 3,3 × 50·10⁻⁶ / (4 × 4,7·10⁻³) ≈ 8,8 mV. Aumentar o RC reduz a ondulação, mas deixa a resposta mais lenta (≈ 5RC = 23,5 ms para assentar um degrau).
+  fonte: "Teoria de filtros RC (M0.4/M0.5); ST, RM0008, Advanced-control timers, seção PWM mode"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T07-013
+  objetivo: O4
+  tipo: multipla
+  dificuldade: 2
+  bloom: lembrar
+  enunciado: |
+    Quais destes microcontroladores têm DAC interno?
+  alternativas:
+    - "STM32F103RET6 (alta densidade)"
+    - "STM32F103C8T6 (Blue Pill)"
+    - "STM32F401RET6 (Nucleo-F401RE)"
+    - "STM32F446RET6 (Nucleo-F446RE)"
+  resposta: [0, 3]
+  explicacao: |
+    O DAC de 2 canais aparece no F103 de alta densidade (RC/RD/RE…) e no F446 (e F405/F407). A linha média densidade do F103 (C8/CB) e o F401/F411 não têm DAC: neles, a saída analógica sai de PWM + filtro, de um DAC externo (I2C/SPI) ou de um PWM de alta frequência com dois estágios de filtro.
+  fonte: "ST, datasheets STM32F103xC/D/E, STM32F103x8/xB, STM32F401xD/xE e STM32F446xC/xE, seção Device overview"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T07-014
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    O DAC de um STM32F446 recebe, por DMA circular, uma tabela de 64 pontos de um período de seno, com um disparo de timer a 8 kHz. Qual é a frequência do seno gerado? Responda em Hz, exato.
+  resposta: {valor: 125, unidade: "Hz", tolerancia: 0}
+  explicacao: |
+    Cada disparo avança um ponto; um período completo exige 64 disparos: 8000 ÷ 64 = 125 Hz. Para mudar a frequência sem mudar a tabela, altere o ARR do timer de disparo.
+  fonte: "ST, RM0390 (STM32F446), Digital-to-analog converter (DAC), seções DAC trigger selection e DMA request"
+  origem: ia
+  revisao: rascunho

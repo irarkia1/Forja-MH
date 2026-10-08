@@ -1,0 +1,230 @@
+- id: Q-M1.4.T11-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Num Cortex-M3 logo depois do reset (SHCSR com os bits de habilitação em zero), o firmware executa uma instrução indefinida. Que tratador é executado?
+  alternativas:
+    - "UsageFault_Handler"
+    - "MemManage_Handler"
+    - "NMI_Handler"
+    - "HardFault_Handler"
+  resposta: 3
+  explicacao: |
+    MemManage, BusFault e UsageFault começam desligadas; quando desligadas, as falhas escalam para a HardFault (com HFSR.FORCED = 1). Para que a UsageFault seja tratada pelo próprio tratador, ligue USGFAULTENA no SHCSR.
+  fonte: "ST, PM0056, Fault handling, seção Fault escalation and hard faults; registrador SHCSR"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T11-002
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: lembrar
+  enunciado: |
+    No registrador CFSR do Cortex-M3/M4, o UFSR ocupa os bits 31 a 16. A flag DIVBYZERO é o bit 9 do UFSR. Qual é a posição dela no CFSR? Responda com um número inteiro.
+  resposta: {valor: 25, unidade: "posição de bit", tolerancia: 0}
+  explicacao: |
+    16 + 9 = 25. CFSR com só essa flag vale 0x0200_0000. Ela só aparece se o CCR.DIV_0_TRP estiver ligado; sem isso, a divisão por zero devolve 0 sem falha.
+  fonte: "ST, PM0056, System control block, Configurable fault status register (CFSR; UsageFault status register)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T11-003
+  objetivo: O1
+  tipo: multipla
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Um tratador registrou HFSR = 0x4000_0000 e CFSR = 0x0000_8200. Marque as conclusões corretas.
+  alternativas:
+    - "A falha foi imprecisa, então o PC empilhado não é a instrução culpada"
+    - "A falha foi escalada para HardFault, porque o tratador de BusFault estava desligado ou não pôde rodar"
+    - "O BFAR contém o endereço do acesso que falhou"
+    - "O PC empilhado aponta a instrução que fez o acesso"
+  resposta: [1, 2, 3]
+  explicacao: |
+    HFSR bit 30 = FORCED (escalada). CFSR = 0x8200 → BFSR = 0x82: bit 15 BFARVALID e bit 9 PRECISERR. Falha precisa: o PC empilhado é a instrução culpada e o BFAR é válido. Imprecisa seria IMPRECISERR (bit 10).
+  fonte: "ST, PM0056, Fault status registers and fault address registers (HFSR, BFSR, BFAR)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T11-004
+  objetivo: O1
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: depois de qualquer MemManage ou BusFault, os registradores MMFAR e BFAR contêm o endereço que causou a falha.
+  resposta: false
+  explicacao: |
+    Só se o bit de validade correspondente estiver em 1: MMARVALID (bit 7 do CFSR) para o MMFAR e BFARVALID (bit 15) para o BFAR. Em falhas imprecisas, de busca de instrução ou de empilhamento, o endereço não é registrado.
+  fonte: "ST, PM0056, MemManage fault address register e BusFault address register"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T11-005
+  objetivo: O2
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Dentro do tratador de falha, o LR vale 0xFFFF_FFFD. Onde está o quadro empilhado com o PC da instrução que falhou?
+  alternativas:
+    - "Na pilha principal (MSP), porque o tratador sempre usa a MSP"
+    - "Na pilha de processo (PSP), porque o bit 2 do EXC_RETURN está em 1"
+    - "No próprio LR, que guarda o PC de retorno"
+    - "Na tabela de vetores, na entrada da HardFault"
+  resposta: 1
+  explicacao: |
+    0xFFFF_FFFD: retorno a Thread usando a PSP (bit 2 = 1). O quadro foi empilhado na PSP — situação típica de uma tarefa de RTOS. O tratador roda com a MSP, mas deve ler o quadro da PSP (`mrs r0, psp`). O LR atual é o EXC_RETURN, não um endereço.
+  fonte: "ST, PM0056, Exception model, seção Exception return (EXC_RETURN); Joseph Yiu, Definitive Guide, capítulo Fault Exceptions and Fault Handling"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T11-006
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Num Cortex-M4F com contexto de FPU ativo, a falha empilhou o quadro estendido (que acrescenta S0–S15 e FPSCR **depois** do xPSR). A partir do endereço inicial do quadro, em que deslocamento está o PC empilhado? Responda em bytes, com um número inteiro.
+  resposta: {valor: 24, unidade: "bytes", tolerancia: 0}
+  explicacao: |
+    O quadro básico é R0, R1, R2, R3, R12, LR, PC, xPSR (4 bytes cada): o PC fica em +24 e o LR em +20. No quadro estendido, os registradores de ponto flutuante vêm depois do xPSR (de +32 em diante), então o PC continua em +24. O tamanho total é que muda (104 bytes em vez de 32).
+  fonte: "ST, PM0214, Exception model, seção Exception entry (Exception stack frame)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T11-007
+  objetivo: O2
+  tipo: vf
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: dentro do tratador de HardFault, basta ler o registrador PC atual (por exemplo, com `info registers` no GDB) para saber qual instrução causou a falha.
+  resposta: false
+  explicacao: |
+    O PC atual está dentro do tratador. O endereço da instrução que falhou é o **PC empilhado** no quadro de exceção (deslocamento +24), que o tratador recupera pela MSP ou PSP indicada no EXC_RETURN.
+  fonte: "Joseph Yiu, Definitive Guide, capítulo Fault Exceptions and Fault Handling (Analyzing faults); ST, AN4989"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T11-008
+  objetivo: O3
+  tipo: unica
+  dificuldade: 3
+  bloom: avaliar
+  enunciado: |
+    Uma falha aparece com CFSR = 0x0000_0400 (IMPRECISERR) e o PC empilhado aponta para uma instrução de soma que não acessa memória. Qual é o melhor passo seguinte para achar a culpada?
+  alternativas:
+    - "Ler o BFAR, que contém o endereço do acesso"
+    - "Ligar o DIV_0_TRP e reproduzir"
+    - "Desligar o buffer de escrita (ACTLR.DISDEFWBUF = 1) e reproduzir, para tornar a falha precisa"
+    - "Trocar o tratador de HardFault pelo de BusFault e ignorar a falha"
+  resposta: 2
+  explicacao: |
+    IMPRECISERR vem de uma escrita que passou pelo buffer: a CPU já seguiu adiante quando o barramento respondeu com erro, e o BFAR não é válido. Com DISDEFWBUF = 1, as escritas esperam a resposta, a falha vira precisa (PRECISERR + BFARVALID) e o PC empilhado aponta a `str` culpada. Depois, volte a ligar o buffer.
+  fonte: "ST, PM0056, Auxiliary control register (ACTLR) e BusFault status register; Joseph Yiu, Definitive Guide, capítulo Fault Exceptions and Fault Handling"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T11-009
+  objetivo: O3
+  tipo: multipla
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Marque as afirmações corretas sobre localizar a origem de uma falha a partir do registro do tratador.
+  alternativas:
+    - "`arm-none-eabi-addr2line -e firmware.elf -f 0x0800022E` mostra a função e a linha do PC empilhado, se o ELF tiver informação de depuração"
+    - "Numa falha imprecisa, o BFAR guarda o endereço da escrita que falhou"
+    - "O LR empilhado indica de onde a função interrompida foi chamada, útil quando o PC caiu num endereço absurdo"
+    - "`arm-none-eabi-objdump -d -S firmware.elf` intercala o código C com a desmontagem e permite ler a instrução no endereço do PC"
+  resposta: [0, 2, 3]
+  explicacao: |
+    addr2line (com `-g`) e objdump `-S` traduzem endereços em código-fonte. O LR empilhado é o endereço de retorno da função que estava rodando: mostra o chamador. Em falha imprecisa, o BFAR **não** é válido (BFARVALID = 0).
+  fonte: "GNU binutils (addr2line, objdump); ST, PM0056, BusFault status register"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T11-010
+  objetivo: O3
+  tipo: unica
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Uma falha registra CFSR = 0x0002_0000 (INVSTATE). Qual é a causa mais provável?
+  alternativas:
+    - "Um ponteiro de função com endereço par (bit 0 em 0) ou corrompido foi chamado"
+    - "Uma divisão por zero com DIV_0_TRP ligado"
+    - "Uma leitura de um endereço sem memória"
+    - "O SysTick foi configurado com valor maior que 2²⁴"
+  resposta: 0
+  explicacao: |
+    INVSTATE indica que a CPU tentou executar com o bit T (Thumb) do EPSR em 0. O Cortex-M só executa Thumb; desviar (`blx`/`bx`) para um endereço com bit 0 em 0 limpa o T e gera a falha. Típico de ponteiro de função não inicializado ou de pilha corrompida que estraga um endereço de retorno.
+  fonte: "ST, PM0056, UsageFault status register (INVSTATE); Joseph Yiu, Definitive Guide, capítulo Fault Exceptions and Fault Handling"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T11-011
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    O IWDG de um STM32F103 está com PR = 4 (divisor 64) e RLR = 624. Considerando o LSI a 40 kHz e o tempo = 4 × 2^PR × (RLR + 1) / f_LSI, depois de quanto tempo sem alimentação ele reinicia o chip? Responda em ms, exato.
+  resposta: {valor: 1000, unidade: "ms", tolerancia: 0}
+  explicacao: |
+    4 × 2⁴ = 64; 64 × 625 / 40 000 Hz = 1,000 s = 1000 ms. Esse é o valor nominal; o LSI real varia bastante.
+  fonte: "ST, RM0008, Independent watchdog (IWDG), seção IWDG functional description e tabela de tempos mínimo e máximo"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T11-012
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Com a mesma configuração (divisor 64, RLR = 624), o LSI de um chip específico oscila a 60 kHz, o máximo do datasheet. Qual é o tempo real até o reset? Responda em ms, com 1 casa decimal.
+  resposta: {valor: 666.7, unidade: "ms", tolerancia: 0.01}
+  explicacao: |
+    64 × 625 / 60 000 Hz ≈ 0,6667 s = 666,7 ms. Se o laço principal alimentar o watchdog a cada 800 ms (confiando no nominal de 1 s), esse chip reinicia sem parar. Dimensione o intervalo de alimentação pelo LSI mais rápido.
+  fonte: "ST, datasheet STM32F103x8/xB, Low-speed internal (LSI) RC oscillator characteristics; RM0008, Independent watchdog (IWDG)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T11-013
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    O requisito diz que um travamento deve provocar reset em **no máximo** 2 s, para qualquer chip. O LSI do F103 vai de 30 kHz a 60 kHz. Com o divisor 64 (PR = 4), qual é o maior RLR que atende ao requisito? Responda com um número inteiro.
+  resposta: {valor: 936, unidade: "valor", tolerancia: 0}
+  explicacao: |
+    O pior caso para "no máximo" é o LSI mais lento (30 kHz), que dá o tempo mais longo: 64 × (RLR + 1) / 30 000 ≤ 2 → RLR + 1 ≤ 937,5 → RLR = 936. Com esse valor, o chip mais rápido (60 kHz) reinicia em 64 × 937 / 60 000 ≈ 1,0 s — e é esse o prazo que o laço principal precisa respeitar ao alimentar.
+  fonte: "ST, RM0008, Independent watchdog (IWDG); datasheet STM32F103x8/xB, LSI oscillator characteristics"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T11-014
+  objetivo: O4
+  tipo: multipla
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Marque as afirmações corretas sobre a recuperação de falhas num STM32F103.
+  alternativas:
+    - "Uma variável numa seção `.noinit` (que o startup não zera) mantém o conteúdo depois de um `NVIC_SystemReset()`"
+    - "O IWDG pode ser desligado pelo software escrevendo 0 no IWDG_KR"
+    - "Depois de um `NVIC_SystemReset()`, a flag SFTRSTF do RCC_CSR indica reset por software"
+    - "O F103C8 tem MPU, então uma região de guarda abaixo da pilha detecta o estouro"
+  resposta: [0, 2]
+  explicacao: |
+    A SRAM não é apagada num reset de sistema, e a `.noinit` não é tocada pelo startup. O IWDG, uma vez ligado (KR = 0xCCCC), só para com um reset. O reset por software liga SFTRSTF (limpe com RMVF depois de ler). O F103C8 **não** tem MPU (o F401/F411 têm); nele, detecte o estouro por pintura da pilha ou colocando a pilha no início da RAM.
+  fonte: "ST, RM0008, Reset and clock control (RCC_CSR) e Independent watchdog (IWDG); cabeçalho stm32f103xb.h (__MPU_PRESENT = 0)"
+  origem: ia
+  revisao: rascunho

@@ -1,0 +1,230 @@
+- id: Q-M1.4.T10-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Por que o driver de USART recebe um *handle* (`uart_t *u`) em todas as funções, em vez de guardar o estado em variáveis globais do módulo?
+  alternativas:
+    - "Para economizar memória RAM"
+    - "Para permitir várias instâncias (USART1, USART2, USART3) com o mesmo código, cada uma com seu estado"
+    - "Porque o compilador não aceita variáveis globais em drivers"
+    - "Para que o driver possa ser chamado de dentro de qualquer interrupção sem cuidado"
+  resposta: 1
+  explicacao: |
+    O handle guarda os registradores da instância, os anéis e os contadores. Com globais, o código só serviria a uma USART; com handle, as três do F103 (ou duas placas diferentes) usam o mesmo driver. É o padrão da HAL (`UART_HandleTypeDef`) e dos drivers reutilizáveis.
+  fonte: "Jacob Beningo, Reusable Firmware Development, capítulos sobre projeto de APIs e drivers"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T10-002
+  objetivo: O1
+  tipo: multipla
+  dificuldade: 3
+  bloom: avaliar
+  enunciado: |
+    Marque as características de uma boa API para um driver de USART não bloqueante.
+  alternativas:
+    - "Um tipo enumerado de status, retornado pela inicialização, com os erros documentados"
+    - "Pré-condições escritas no cabeçalho (tamanho do buffer potência de 2, de que contexto cada função pode ser chamada)"
+    - "Uma função de escrita que devolve quantos bytes aceitou, em vez de esperar haver espaço"
+    - "Expor os nomes dos registradores (SR, DR, BRR) para a aplicação ajustar o que quiser"
+  resposta: [0, 1, 2]
+  explicacao: |
+    Status explícito, contrato documentado e funções que não bloqueiam tornam o driver previsível. Expor registradores à aplicação quebra o encapsulamento: o código da aplicação passa a depender do chip, e o driver perde o controle do estado.
+  fonte: "Jacob Beningo, Reusable Firmware Development; Elecia White, Making Embedded Systems, capítulo Creating a System Architecture"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T10-003
+  objetivo: O1
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: o driver de USART deve ligar o clock da USART e configurar os pinos TX e RX dentro de `uart_init`, porque assim a aplicação não precisa se preocupar com isso.
+  resposta: false
+  explicacao: |
+    Clock, pinos, remapeamento e prioridade dependem da **placa** (qual USART, em quais pinos). Deixá-los no BSP mantém o driver reutilizável entre placas — é a mesma separação do `HAL_UART_Init` (portável) e do `HAL_UART_MspInit` (da placa).
+  fonte: "Elecia White, Making Embedded Systems, capítulo Creating a System Architecture; ST, UM1850 (HAL_PPP_MspInit)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T10-004
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    O driver calcula o BRR do STM32F103 (sobreamostragem 16) por `(pclk + baud/2) / baud`, em inteiros. Que valor resulta para a USART2, com PCLK1 = 36 MHz, a 115 200 bit/s? Responda com um número inteiro.
+  resposta: {valor: 313, unidade: "valor", tolerancia: 0}
+  explicacao: |
+    36 000 000 / 115 200 = 312,5. Com o arredondamento: (36 000 000 + 57 600) / 115 200 = 313,0 → 313. Sem arredondar (divisão truncada), daria 312 e um erro maior no sentido oposto.
+  fonte: "ST, RM0008, USART, seção Fractional baud rate generation"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T10-005
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Com BRR = 313 e PCLK1 = 36 MHz, qual é o erro percentual da taxa real em relação aos 115 200 bit/s pedidos? Responda em %, com 2 casas decimais (negativo se a taxa real for menor).
+  resposta: {valor: -0.16, unidade: "%", tolerancia: 0.02}
+  explicacao: |
+    Taxa real = 36 000 000 / 313 ≈ 115 016 bit/s. Erro = (115 016 / 115 200 − 1) × 100 ≈ −0,16 %. Bem dentro da tolerância de uma UART (da ordem de ±2 % somando os dois lados).
+  fonte: "ST, RM0008, USART, seção Fractional baud rate generation (tabela de erro por baud rate)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T10-006
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Num anel com índices livres de 16 bits (`uint16_t`), o índice de entrada vale 3 e o de saída vale 65 533 (o de entrada já deu a volta). Quantos bytes estão no anel, calculando `(uint16_t)(entra − sai)`? Responda com um número inteiro.
+  resposta: {valor: 6, unidade: "bytes", tolerancia: 0}
+  explicacao: |
+    3 − 65 533 = −65 530; módulo 65 536 = 6. Os bytes estão nos índices 65 533, 65 534, 65 535, 0, 1 e 2 (posições obtidas com `& máscara`). A conta só funciona porque o tamanho do anel é potência de 2 e divide 65 536.
+  fonte: "Elecia White, Making Embedded Systems, seção sobre buffers circulares"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T10-007
+  objetivo: O2
+  tipo: unica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Por que o driver exige que o tamanho de cada anel seja potência de 2?
+  alternativas:
+    - "Porque a USART só transfere blocos de potências de 2"
+    - "Porque o DMA do STM32 exige buffers alinhados a potências de 2"
+    - "Para que o anel ocupe menos memória"
+    - "Para trocar o resto da divisão por uma máscara (`& (tam − 1)`) e para que os índices livres de 16 bits continuem certos quando dão a volta em 65 536"
+  resposta: 3
+  explicacao: |
+    Com tamanho 2ⁿ, a posição é `índice & (2ⁿ − 1)`, uma instrução, sem divisão dentro da interrupção. E, como 2ⁿ divide 65 536, a passagem dos índices de 65 535 para 0 não muda a posição relativa nem a conta de ocupação.
+  fonte: "Elecia White, Making Embedded Systems, seção sobre buffers circulares"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T10-008
+  objetivo: O3
+  tipo: unica
+  dificuldade: 2
+  bloom: analisar
+  enunciado: |
+    No driver, `uart_escreve` executa `regs->CR1 |= USART_CR1_TXEIE` e a rotina de interrupção executa `regs->CR1 &= ~USART_CR1_TXEIE`. Por que a linha de `uart_escreve` fica dentro de uma seção crítica?
+  alternativas:
+    - "Porque as duas são leituras-modificações-escritas do mesmo registrador; uma interrupção entre a leitura e a escrita teria sua alteração desfeita"
+    - "Porque escrever no CR1 com a USART ligada gera uma HardFault"
+    - "Porque o TXEIE só pode ser alterado com o clock da USART desligado"
+    - "Para impedir que o DMA leia o DR durante a escrita"
+  resposta: 0
+  explicacao: |
+    `|=` lê o CR1, liga o bit e escreve. Se a rotina rodar no meio e desligar o TXEIE (anel vazio), a escrita do laço grava de volta o valor antigo. O resultado pode ser bytes presos no anel ou interrupções desnecessárias. Os anéis não precisam de seção crítica porque cada índice tem um único escritor; o CR1 tem dois.
+  fonte: "Joseph Yiu, Definitive Guide, capítulo Exceptions and Interrupts; ST, PM0056 (PRIMASK)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T10-009
+  objetivo: O3
+  tipo: vf
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Verdadeiro ou falso: na USART do STM32F103, as flags de erro ORE, FE e NE são limpas por uma leitura do USART_SR seguida de uma leitura do USART_DR.
+  resposta: true
+  explicacao: |
+    É a mesma sequência que limpa o RXNE. Escrever 0 no SR não limpa essas flags no F1. Por isso a rotina do driver lê o SR uma vez, guarda o valor e lê o DR em seguida, mesmo quando só houve erro.
+  fonte: "ST, RM0008, USART, Status register (USART_SR), descrição dos bits ORE, NE e FE"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T10-010
+  objetivo: O3
+  tipo: multipla
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Sobre o anel de um produtor e um consumidor (SPSC) usado entre a interrupção e o laço principal, marque as afirmações corretas.
+  alternativas:
+    - "Cada índice deve ser escrito por um único lado: `entra` pelo produtor e `sai` pelo consumidor"
+    - "O produtor deve escrever o dado no vetor antes de avançar o índice `entra`"
+    - "Mesmo com índices de 16 bits, é obrigatório desligar as interrupções toda vez que o laço principal lê `entra`"
+    - "Se o laço principal também passasse a escrever em `rx.entra`, o anel deixaria de ser seguro sem seção crítica"
+  resposta: [0, 1, 3]
+  explicacao: |
+    Com um escritor por índice, as leituras de 16 bits alinhadas são atômicas no Cortex-M e não precisam de seção crítica. A ordem "dado, depois índice" garante que o consumidor nunca leia um byte ainda não escrito. Dois escritores no mesmo índice reintroduzem a corrida de leitura-modificação-escrita.
+  fonte: "Elecia White, Making Embedded Systems, capítulo Interrupts; Joseph Yiu, Definitive Guide, capítulo Memory System (acessos atômicos)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T10-011
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    O anel de recepção tem 64 bytes e a aplicação o esvazia a cada 10 ms. Com tráfego contínuo em 8N1 (10 bits por byte), qual é a maior taxa da linha que não causa perda garantida? Responda em bit/s, com um número inteiro.
+  resposta: {valor: 64000, unidade: "bit/s", tolerancia: 0}
+  explicacao: |
+    Em 10 ms cabem no máximo 64 bytes: 6400 bytes/s × 10 bits = 64 000 bit/s. Acima disso (115 200, por exemplo), o anel enche e o driver conta `rx_perdidos`. Soluções: anel maior, leitura mais frequente ou DMA (T06).
+  fonte: "Elecia White, Making Embedded Systems, seção sobre buffers circulares; ST, AN2548"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T10-012
+  objetivo: O4
+  tipo: unica
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    O driver de USART passou em todos os testes no PC, com registradores falsos. O que esses testes **não** conseguem verificar?
+  alternativas:
+    - "Se os índices dos anéis sobrevivem à volta de 65 535 para 0"
+    - "Se os bytes são entregues na ordem certa"
+    - "Os tempos reais: latência da interrupção, prioridades e o comportamento elétrico da linha"
+    - "Se o contador de erros de quadro é incrementado quando FE aparece no SR"
+  resposta: 2
+  explicacao: |
+    O teste no PC verifica a lógica: anéis, ordem, contadores, liga/desliga do TXEIE. Tempo, prioridades, ruído e níveis elétricos só aparecem na placa, com analisador lógico e depurador.
+  fonte: "James Grenning, Test-Driven Development for Embedded C, capítulos sobre testar código de hardware no PC"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T10-013
+  objetivo: O4
+  tipo: multipla
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Marque as técnicas válidas para testar a lógica do driver no PC.
+  alternativas:
+    - "Medir no PC a latência de interrupção do Cortex-M3 que o driver terá"
+    - "Definir `USART_TypeDef` como uma struct comum na RAM, num `uart_porta.h` próprio para o PC"
+    - "Chamar `uart_irq()` diretamente, depois de escrever valores no SR e no DR falsos, para simular uma interrupção"
+    - "Forçar os índices perto de 65 535 e conferir que leitura e escrita continuam corretas depois da volta"
+  resposta: [1, 2, 3]
+  explicacao: |
+    Registradores falsos, interrupções simuladas por chamada direta e casos de borda (volta dos índices, anel cheio) testam a lógica em milissegundos. A latência depende do núcleo, da flash e das prioridades do alvo: só se mede na placa (DWT_CYCCNT, analisador lógico).
+  fonte: "James Grenning, Test-Driven Development for Embedded C"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T10-014
+  objetivo: O4
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: numa organização em camadas bem feita, o código da aplicação inclui `stm32f1xx.h` e acessa `USART1->DR` quando precisa de desempenho, sem passar pelo driver.
+  resposta: false
+  explicacao: |
+    A aplicação só fala com a API do driver (e com o BSP). Se ela toca o registrador, o driver perde o controle do estado (anéis, flags) e a aplicação passa a depender do chip. Se o driver é lento demais, otimize o driver (DMA, por exemplo), mantendo a API.
+  fonte: "Elecia White, Making Embedded Systems, capítulo Creating a System Architecture"
+  origem: ia
+  revisao: rascunho

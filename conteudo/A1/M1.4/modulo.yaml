@@ -1,53 +1,154 @@
 id: M1.4
 ato: A1
 nome: "STM32 e ARM bare metal"
+missao: "Na bigorna de metal nu da Vila da Forja não há HAL que o proteja: acenda o STM32 registrador por registrador — clock, pinos, interrupções, timers, DMA e ADC — e aprenda a abrir a máquina pelo ST-Link quando ela travar, até forjar seus próprios drivers."
 horas: 200
 trilha: firmware
 ordem: 11
 requer: ["M1.2", "M1.3"]
 tags_chefe: []
+# Ordem didática: ecossistema e CMSIS (famílias, documentos, cabeçalhos e o primeiro projeto com arm-none-eabi-gcc: a ferramenta antes do metal) → árvore de clock (nada no STM32 funciona sem o RCC: é o que liga cada periférico e define todas as frequências que os tópicos seguintes usam) → GPIO por registrador (o primeiro periférico, com o clock já dominado; CRL/CRH do F1 e MODER do F4) → depuração SWD (vem cedo de propósito: a partir daqui todo laboratório é gravado e inspecionado pelo ST-Link com OpenOCD e GDB, e não mais "no escuro") → NVIC e prioridades (EXTI e SysTick: as interrupções que todos os periféricos seguintes usam) → timers avançados (base de tempo, PWM, captura e PWM complementar; o timer também é o gatilho do ADC e do DMA) → DMA (mover dados sem a CPU, com a USART + IDLE como primeira aplicação) → ADC e DAC (juntam timer como gatilho e DMA como transporte: o ápice dos periféricos) → HAL × LL × registrador (só agora, com todos os periféricos feitos à mão, comparar com a HAL e medir o custo de cada camada) → escrever um driver do zero (sintetiza tudo em uma API própria, testável e em camadas) → gerenciamento de falhas por último (HardFault, registradores de falha e recuperação: o que fazer quando o firmware, o driver ou o hardware dão errado, usando o depurador do T09).
 topicos:
   - id: M1.4.T01
     nome: "Ecossistema STM32 e CMSIS"
     tipo: comum
     peso: 1
+    objetivos:
+      - id: O1
+        texto: "Situar as famílias STM32 (F0, F1, F4, G0, G4, L0, L4, H7, WB, WL) pelo núcleo Cortex-M, desempenho e consumo, e decodificar o nome de uma peça como STM32F103C8T6"
+      - id: O2
+        texto: "Identificar os documentos de um STM32 (datasheet, manual de referência, manual de programação, errata e notas de aplicação) e o que procurar em cada um"
+      - id: O3
+        texto: "Descrever as camadas do CMSIS (CMSIS-Core, cabeçalho do dispositivo, system_stm32xxxx.c e arquivo de startup) e acessar periféricos pelas structs e macros de bits do cabeçalho"
+      - id: O4
+        texto: "Comparar as placas Blue Pill e Nucleo-F401/F411 (ST-Link, cristais, BOOT0, pinos) e montar um projeto bare metal mínimo com arm-none-eabi-gcc, CMSIS e Makefile"
   - id: M1.4.T02
     nome: "Árvore de clock"
     tipo: comum
     peso: 1
+    objetivos:
+      - id: O1
+        texto: "Ler a árvore de clock do STM32F103 e do STM32F401/F411 (HSI, HSE, LSI, LSE, PLL, SYSCLK, AHB, APB1, APB2, multiplicador dos timers, ADC e USB) e calcular todas as frequências derivadas"
+      - id: O2
+        texto: "Calcular os parâmetros do PLL (PLLMUL e PLLXTPRE no F1; PLLM, PLLN, PLLP e PLLQ no F4) respeitando os limites de entrada, de VCO e dos 48 MHz do USB"
+      - id: O3
+        texto: "Programar a troca de clock por registradores (HSE, wait states em FLASH_ACR, PLL, prescalers, comutação por SW e conferência por SWS) e atualizar o SystemCoreClock"
+      - id: O4
+        texto: "Conferir o clock real com a saída MCO e o SysTick e tratar a falha do cristal com o Clock Security System e o retorno ao HSI"
   - id: M1.4.T03
     nome: "GPIO por registrador"
     tipo: elite
     peso: 2
-  - id: M1.4.T04
-    nome: "NVIC e prioridades"
-    tipo: comum
-    peso: 1
-  - id: M1.4.T05
-    nome: "Timers avançados (captura, PWM complementar)"
-    tipo: elite
-    peso: 2
-  - id: M1.4.T06
-    nome: "DMA"
-    tipo: elite
-    peso: 2
-  - id: M1.4.T07
-    nome: "ADC e DAC"
-    tipo: elite
-    peso: 2
-  - id: M1.4.T08
-    nome: "HAL × LL × registrador"
-    tipo: comum
-    peso: 1
+    objetivos:
+      - id: O1
+        texto: "Configurar pinos do STM32F1 pelos campos MODE e CNF de CRL e CRH e do STM32F4 por MODER, OTYPER, OSPEEDR e PUPDR, como entrada, saída push-pull, dreno aberto, analógico ou função alternativa"
+      - id: O2
+        texto: "Escrever e ler pinos por ODR, IDR, BSRR e BRR, explicando por que o BSRR torna a escrita atômica, e travar a configuração com o LCKR"
+      - id: O3
+        texto: "Mapear funções alternativas e remapeamentos (AFIO_MAPR no F1, AFRL e AFRH no F4) e liberar os pinos do JTAG mantendo o SWD"
+      - id: O4
+        texto: "Medir a frequência máxima de comutação e o efeito da velocidade de saída, e respeitar os limites elétricos (corrente por pino, pinos tolerantes a 5 V, restrições de PC13 a PC15)"
   - id: M1.4.T09
     nome: "Depuração SWD/JTAG e breakpoints"
     tipo: elite
     peso: 2
+    objetivos:
+      - id: O1
+        texto: "Explicar a arquitetura de depuração do Cortex-M (DAP, SW-DP, JTAG-DP, sinais SWDIO, SWCLK, NRST e SWO) e ligar o ST-Link à Blue Pill e à Nucleo"
+      - id: O2
+        texto: "Gravar e depurar com OpenOCD e arm-none-eabi-gdb (target extended-remote, load, monitor reset halt, break, step, next, finish, bt, info registers, x) e pela integração com o VS Code"
+      - id: O3
+        texto: "Usar breakpoints de hardware (FPB) e de software (bkpt), watchpoints e o contador de ciclos do DWT, conhecendo os limites de quantidade de cada um"
+      - id: O4
+        texto: "Instrumentar o firmware com semihosting, ITM/SWO e RTT e recuperar placas travadas (connect under reset, BOOT0, pinos SWD reconfigurados, proteção de leitura)"
+  - id: M1.4.T04
+    nome: "NVIC e prioridades"
+    tipo: comum
+    peso: 1
+    objetivos:
+      - id: O1
+        texto: "Habilitar interrupções de periféricos pelas funções CMSIS (NVIC_EnableIRQ, NVIC_SetPriority, NVIC_SetPendingIRQ) e pelos registradores ISER, ICER, ISPR e IPR, limpando a flag do periférico na rotina"
+      - id: O2
+        texto: "Calcular prioridades com grupos e subprioridades (PRIGROUP do AIRCR, NVIC_EncodePriority) nos 4 bits do STM32 e prever preempção e ordem de atendimento"
+      - id: O3
+        texto: "Configurar interrupções externas pelo EXTI (AFIO_EXTICR no F1, SYSCFG_EXTICR no F4, RTSR, FTSR, IMR e PR) e tratar as linhas compartilhadas EXTI9_5 e EXTI15_10"
+      - id: O4
+        texto: "Gerar uma base de tempo com o SysTick (LOAD, VAL, CTRL, SysTick_Config) e proteger dados compartilhados com PRIMASK, BASEPRI e acesso atômico"
+  - id: M1.4.T05
+    nome: "Timers avançados (captura, PWM complementar)"
+    tipo: elite
+    peso: 2
+    objetivos:
+      - id: O1
+        texto: "Configurar a base de tempo dos timers (PSC, ARR, CNT, sentido de contagem, UG e ARPE) e calcular PSC e ARR para uma frequência ou período alvo"
+      - id: O2
+        texto: "Gerar PWM alinhado à borda e ao centro nos modos 1 e 2 (CCMRx, CCER, CCRx e pré-carga) e calcular frequência, ciclo de trabalho e resolução"
+      - id: O3
+        texto: "Medir período, frequência e largura de pulso por captura de entrada (CCxS, ICxF, ICxPSC e o modo PWM input com reset pelo escravo) tratando o estouro do contador"
+      - id: O4
+        texto: "Gerar PWM complementar com tempo morto no TIM1 (canais CHxN, BDTR, DTG, MOE e entrada BKIN) para uma meia-ponte e calcular o tempo morto"
+  - id: M1.4.T06
+    nome: "DMA"
+    tipo: elite
+    peso: 2
+    objetivos:
+      - id: O1
+        texto: "Descrever o controlador DMA do STM32F1 (canais com pedidos fixos) e do F4 (streams, seleção de canal, FIFO) e configurar uma transferência (endereços, largura, incremento, contador, sentido e prioridade)"
+      - id: O2
+        texto: "Usar os modos normal e circular e as interrupções de meia transferência e transferência completa para processar um buffer duplo sem perder dados"
+      - id: O3
+        texto: "Receber mensagens de tamanho variável pela USART com DMA circular e a interrupção IDLE e transmitir por DMA sem bloquear a CPU"
+      - id: O4
+        texto: "Calcular taxa de dados, tempo de transferência e prazo de processamento de cada metade, e evitar os erros de coerência (volatile, buffer em uso, alinhamento e arbitragem)"
+  - id: M1.4.T07
+    nome: "ADC e DAC"
+    tipo: elite
+    peso: 2
+    objetivos:
+      - id: O1
+        texto: "Descrever o ADC de 12 bits do STM32 (canais, grupos regular e injetado, tempo de amostragem, alinhamento, calibração, sensor de temperatura e VREFINT) e converter entre código e tensão"
+      - id: O2
+        texto: "Calcular o tempo de conversão e a taxa de amostragem a partir do clock do ADC e do SMPR, e escolher o tempo de amostragem para a impedância da fonte"
+      - id: O3
+        texto: "Disparar conversões por timer (TRGO e EXTSEL) e levar sequências de canais à memória por DMA em modo varredura e circular"
+      - id: O4
+        texto: "Gerar tensões e formas de onda com o DAC (DHR12R, disparo por timer e DMA) nos STM32 que o têm, e com PWM e filtro RC na Blue Pill e na Nucleo-F401/F411, que não têm DAC"
+  - id: M1.4.T08
+    nome: "HAL × LL × registrador"
+    tipo: comum
+    peso: 1
+    objetivos:
+      - id: O1
+        texto: "Descrever a arquitetura do STM32Cube (CubeMX, HAL, LL, BSP e middleware) e o fluxo de um driver HAL (handle, Init, MspInit, callbacks e HAL_GetTick)"
+      - id: O2
+        texto: "Escrever o mesmo recurso em HAL, em LL e por registrador, e ler o código-fonte da HAL para descobrir que registradores ela toca"
+      - id: O3
+        texto: "Medir e comparar o custo em flash, RAM e ciclos das três abordagens com arm-none-eabi-size, o arquivo .map e o DWT_CYCCNT"
+      - id: O4
+        texto: "Escolher a abordagem por critério (portabilidade, desempenho, manutenção, prazo) e misturar HAL, LL e registrador sem conflitos (SysTick, callbacks, HAL_Delay em interrupção)"
   - id: M1.4.T10
     nome: "Escrever um driver do zero"
     tipo: comum
     peso: 1
+    objetivos:
+      - id: O1
+        texto: "Projetar a API de um driver a partir do manual de referência (struct de configuração, handle por instância, funções de inicialização, leitura e escrita, códigos de erro)"
+      - id: O2
+        texto: "Implementar um driver de USART por interrupção com buffers circulares e cálculo do BRR, separando o acesso ao hardware da lógica do driver"
+      - id: O3
+        texto: "Tratar concorrência e erros no driver (seções críticas, flags ORE, FE e NE, tempos limite, estados) e documentar pré-condições e garantias"
+      - id: O4
+        texto: "Testar o driver no PC com registradores simulados e na placa, e organizar o firmware em camadas (acesso a registradores, driver, placa e aplicação)"
   - id: M1.4.T11
     nome: "Gerenciamento de falhas (HardFault)"
     tipo: comum
     peso: 1
+    objetivos:
+      - id: O1
+        texto: "Distinguir as falhas do Cortex-M3/M4 (HardFault, MemManage, BusFault, UsageFault), habilitá-las no SHCSR e interpretar CFSR, HFSR, MMFAR e BFAR"
+      - id: O2
+        texto: "Escrever um tratador de HardFault que recupere o quadro empilhado (MSP ou PSP, pelo EXC_RETURN) e registre PC, LR, xPSR e os registradores de falha"
+      - id: O3
+        texto: "Localizar a instrução culpada a partir do PC empilhado com GDB, addr2line e objdump, inclusive em falhas imprecisas"
+      - id: O4
+        texto: "Projetar a recuperação da falha (registro em RAM não inicializada, NVIC_SystemReset, watchdog IWDG, causa do reset em RCC_CSR e detecção de estouro de pilha)"

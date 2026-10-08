@@ -1,0 +1,230 @@
+- id: Q-M1.4.T09-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Quais sinais, além do GND, a interface SWD precisa no mínimo para gravar e depurar um STM32 alimentado pela própria placa?
+  alternativas:
+    - "TCK, TMS, TDI e TDO"
+    - "SWDIO e SWCLK"
+    - "SWDIO, SWCLK e SWO"
+    - "SWCLK e NRST"
+  resposta: 1
+  explicacao: |
+    O SWD usa dois fios: SWDIO (dados bidirecionais) e SWCLK (clock), mais a referência de terra. NRST é opcional (necessário para *connect under reset*) e SWO é opcional (saída de trace do ITM). TCK/TMS/TDI/TDO são os sinais do JTAG.
+  fonte: "ST, RM0008, Debug support (DBG), seções SWJ debug port e SW debug port"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T09-002
+  objetivo: O1
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: pelo AHB-AP do DAP, o depurador consegue ler e escrever a SRAM e os registradores de periféricos de um Cortex-M3 sem parar a CPU.
+  resposta: true
+  explicacao: |
+    O AHB-AP é um mestre do barramento do chip, como a CPU e o DMA. Por isso o depurador mostra variáveis "ao vivo" e o RTT funciona: a sonda lê o buffer na RAM enquanto o programa roda. O acesso compete pelo barramento, mas não exige a parada do núcleo.
+  fonte: "Joseph Yiu, The Definitive Guide to ARM Cortex-M3 and Cortex-M4 Processors, capítulo Debug and Trace Features (Debug architecture)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T09-003
+  objetivo: O1
+  tipo: multipla
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Marque as associações corretas entre pinos do STM32F103 e sinais de depuração.
+  alternativas:
+    - "PA13 = SWDIO (e JTMS)"
+    - "PB4 = SWCLK"
+    - "PA14 = SWCLK (e JTCK)"
+    - "PB3 = SWO (e JTDO)"
+  resposta: [0, 2, 3]
+  explicacao: |
+    PA13 = JTMS/SWDIO, PA14 = JTCK/SWCLK, PA15 = JTDI, PB3 = JTDO/TRACESWO e PB4 = NJTRST. O SWD usa PA13 e PA14; o SWO, se usado, ocupa PB3. PB4 é só o reset do JTAG.
+  fonte: "ST, RM0008, Debug support (DBG), seção Pinout and debug port pins"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T09-004
+  objetivo: O2
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Com o OpenOCD já rodando, qual sequência no `arm-none-eabi-gdb` grava o firmware e para a execução na entrada do `main`?
+  alternativas:
+    - "`load`, `target extended-remote :3333`, `break main`, `continue`"
+    - "`target extended-remote :3333`, `break main`, `continue`, `load`"
+    - "`target extended-remote :4444`, `monitor reset halt`, `load`, `run`"
+    - "`target extended-remote :3333`, `monitor reset halt`, `load`, `break main`, `continue`"
+  resposta: 3
+  explicacao: |
+    Primeiro conecta ao servidor GDB do OpenOCD (porta 3333; a 4444 é o telnet), depois para o chip num estado conhecido (`monitor reset halt`), grava (`load`), põe o breakpoint e continua. Gravar sem estar conectado não funciona, e `run` não se aplica a um alvo remoto já em execução.
+  fonte: "OpenOCD User's Guide, capítulo GDB and OpenOCD; Debugging with GDB, capítulo Remote Debugging"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T09-005
+  objetivo: O2
+  tipo: vf
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Verdadeiro ou falso: no GDB conectado ao OpenOCD, um comando começado por `monitor` (como `monitor reset halt`) é repassado ao OpenOCD em vez de ser interpretado pelo GDB.
+  resposta: true
+  explicacao: |
+    `monitor` envia o resto da linha ao servidor remoto. Assim o GDB, que não sabe nada de flash de STM32, consegue pedir ao OpenOCD um reset, um apagamento (`monitor stm32f1x mass_erase 0`) ou habilitar o semihosting.
+  fonte: "OpenOCD User's Guide, capítulo GDB and OpenOCD; Debugging with GDB, seção Remote Debugging (monitor)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T09-006
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    No GDB, o comando `x/7wx 0x40011000` mostra os registradores do GPIOC de um STM32F103. Quantos bytes de memória ele lê? Responda em bytes, com um número inteiro.
+  resposta: {valor: 28, unidade: "bytes", tolerancia: 0}
+  explicacao: |
+    `x/7wx`: 7 unidades, tamanho *w* (palavra de 4 bytes), em hexadecimal. 7 × 4 = 28 bytes: de 0x4001_1000 (CRL) a 0x4001_101B, cobrindo CRL, CRH, IDR, ODR, BSRR, BRR e LCKR.
+  fonte: "Debugging with GDB, seção Examining Memory; ST, RM0008, GPIO register map"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T09-007
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Para medir uma função, você lê o DWT_CYCCNT antes (0xFFFF_FF00) e depois (0x0000_0100) e subtrai em `uint32_t`. Quantos ciclos a função levou? Responda em ciclos, com um número inteiro.
+  resposta: {valor: 512, unidade: "ciclos", tolerancia: 0}
+  explicacao: |
+    O contador de 32 bits estourou no meio. A subtração sem sinal faz a conta módulo 2³²: 0x100 − 0xFFFF_FF00 = 0x200 = 512 ciclos. Vale desde que o intervalo seja menor que um estouro completo.
+  fonte: "Joseph Yiu, The Definitive Guide to ARM Cortex-M3 and Cortex-M4 Processors, capítulo Debug and Trace Features (DWT); ARMv7-M Architecture Reference Manual, DWT_CYCCNT"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T09-008
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    O DWT_CYCCNT de um STM32F103 a 72 MHz é um contador de 32 bits que soma 1 por ciclo. De quanto em quanto tempo ele volta a zero? Responda em segundos, com 2 casas decimais.
+  resposta: {valor: 59.65, unidade: "s", tolerancia: 0.01}
+  explicacao: |
+    2³² ciclos ÷ 72·10⁶ ciclos/s = 4 294 967 296 ÷ 72 000 000 ≈ 59,65 s. Medidas mais longas precisam contar os estouros (ou usar um timer).
+  fonte: "ARMv7-M Architecture Reference Manual, DWT_CYCCNT"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T09-009
+  objetivo: O3
+  tipo: unica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Num STM32F4 (Cortex-M4), você ativou 8 breakpoints em código que roda da flash e deu `continue`. O que acontece?
+  alternativas:
+    - "Funciona: o OpenOCD insere instruções bkpt na flash para os breakpoints que faltam"
+    - "Funciona: o GDB troca automaticamente dois breakpoints por watchpoints"
+    - "O `continue` falha com erro de recursos, porque o FPB do Cortex-M4 tem 6 comparadores de instrução"
+    - "Só os dois primeiros breakpoints são ignorados, sem aviso"
+  resposta: 2
+  explicacao: |
+    Código na flash só aceita breakpoints de hardware, e o FPB do M3/M4 tem 6 comparadores de instrução (o OpenOCD informa "hardware has 6 breakpoints, 4 watchpoints"). Ao tentar inserir o sétimo, o depurador falha e o GDB avisa que não conseguiu inserir os breakpoints. Breakpoint de software exigiria reescrever a flash.
+  fonte: "OpenOCD User's Guide, Breakpoint and Watchpoint commands; Joseph Yiu, Definitive Guide, capítulo Debug and Trace Features (FPB)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T09-010
+  objetivo: O3
+  tipo: multipla
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Marque as afirmações corretas sobre breakpoints e watchpoints no Cortex-M3/M4.
+  alternativas:
+    - "Breakpoints de software funcionam em código na flash, porque o depurador regrava a página a cada parada"
+    - "Um watchpoint para a CPU logo depois da instrução que acessou o dado; a culpada é a instrução anterior ao PC mostrado"
+    - "O DWT do Cortex-M3/M4 tem 4 comparadores, usados pelos watchpoints"
+    - "Uma instrução `bkpt` executada sem depurador conectado causa uma HardFault"
+  resposta: [1, 2, 3]
+  explicacao: |
+    Breakpoints de software (troca da instrução por `bkpt`) só valem em RAM; na flash o depurador usa o FPB. O watchpoint é um evento de depuração imprecisa: a CPU para depois de executar o acesso. O DWT do M3/M4 tem 4 comparadores. Sem depurador para atender o evento, o `bkpt` escala para HardFault.
+  fonte: "Joseph Yiu, The Definitive Guide to ARM Cortex-M3 and Cortex-M4 Processors, capítulo Debug and Trace Features; ARMv7-M Architecture Reference Manual, Debug Architecture"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T09-011
+  objetivo: O4
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Um firmware que usa `printf` por semihosting funciona na bancada, com o depurador ligado, mas trava no cliente, onde não há depurador. Qual é a causa?
+  alternativas:
+    - "A instrução `bkpt 0xAB` do semihosting, sem depurador para atendê-la, causa uma HardFault"
+    - "O ITM perde caracteres quando o pino SWO fica desconectado"
+    - "O semihosting precisa do cristal HSE, que só funciona com o depurador ligado"
+    - "Sem depurador, o printf passa a escrever na USART1, que não está configurada"
+  resposta: 0
+  explicacao: |
+    O semihosting é implementado com `bkpt 0xAB`: a CPU para e espera que o depurador execute a operação. Sem depurador, a instrução gera um evento de depuração que escala para HardFault. Retire o semihosting do firmware de produção ou use ITM/RTT, que seguem rodando sem a sonda.
+  fonte: "OpenOCD User's Guide, ARMv7-M specific commands (arm semihosting); ST, AN4989"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T09-012
+  objetivo: O4
+  tipo: multipla
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Marque as afirmações corretas sobre os métodos de saída de mensagens.
+  alternativas:
+    - "O RTT não precisa de nenhum pino além de SWDIO e SWCLK, porque a sonda lê um buffer na RAM"
+    - "Para o SWO decodificar corretamente, o depurador precisa saber a frequência real do clock do núcleo (traceclk)"
+    - "O `ITM_SendChar` do CMSIS trava o firmware para sempre se não houver depurador conectado"
+    - "O semihosting é mais rápido que o RTT, porque não usa a RAM"
+  resposta: [0, 1]
+  explicacao: |
+    O RTT usa só o acesso à memória pelo SWD. A SWO é serializada a partir do clock do núcleo: com o traceclk errado, o baud rate sai errado e o texto vira lixo. O `ITM_SendChar` testa se o ITM e a porta 0 estão habilitados e retorna sem esperar quando não estão. O semihosting para a CPU a cada chamada e é o mais lento dos três.
+  fonte: "Arm, CMSIS-Core, ITM_SendChar; OpenOCD User's Guide, seções RTT e TPIU; ST, AN4989"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T09-013
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Um firmware imprime uma linha de 20 caracteres pelo ITM, com um `ITM_SendChar` por caractere. Cada escrita de 1 byte na porta 0 gera um pacote de instrumentação de 2 bytes (cabeçalho + dado). O SWO está em modo UART (NRZ), com 1 bit de início e 1 de parada por byte, a 2 Mbit/s. Desprezando pacotes de sincronização e de tempo, quanto tempo a linha leva para sair pelo pino? Responda em µs, exato.
+  resposta: {valor: 200, unidade: "µs", tolerancia: 0}
+  explicacao: |
+    20 caracteres × 2 bytes por pacote = 40 bytes; 40 × 10 bits = 400 bits; 400 ÷ 2·10⁶ bit/s = 200 µs. Se a CPU escrever mais rápido que isso, o FIFO do ITM enche e o `ITM_SendChar` espera. Enviar 4 caracteres por escrita de 32 bits reduz o cabeçalho a 1 byte para cada 4 de dados.
+  fonte: "ARMv7-M Architecture Reference Manual, ITM e Debug ITM and DWT Packet Protocol; OpenOCD User's Guide, TPIU"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.4.T09-014
+  objetivo: O4
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: o *connect under reset* consegue conectar a um STM32 cujo firmware desliga o SWD logo no início, porque o depurador ativa a depuração e para o núcleo enquanto o NRST está em nível baixo, antes da primeira instrução do firmware.
+  resposta: true
+  explicacao: |
+    Com `reset_config srst_only connect_assert_srst`, o OpenOCD segura o NRST, conecta pelo SWD (que funciona durante o reset do sistema no STM32), pede a parada no vetor de reset e só então solta o NRST. O firmware nunca chega a reconfigurar os pinos. A alternativa sem o fio NRST é BOOT0 = 1, que executa o bootloader de sistema.
+  fonte: "ST, RM0008, Debug support (DBG), seção Capability of the debugger host to connect under system reset; OpenOCD User's Guide, reset_config"
+  origem: ia
+  revisao: rascunho
