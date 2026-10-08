@@ -1,0 +1,230 @@
+- id: Q-M1.1.T04-001
+  objetivo: O1
+  tipo: vf
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Verdadeiro ou falso: num latch SR feito com duas portas NOR, com S = 0 e R = 0 a saída Q mantém o valor que tinha.
+  resposta: true
+  explicacao: |
+    Com S = R = 0, cada NOR funciona como inversor da outra saída, e a realimentação cruzada guarda o estado: é a memória de 1 bit. S = 1 seta, R = 1 reseta e S = R = 1 é o caso proibido.
+  fonte: "Harris & Harris, Digital Design and Computer Architecture, capítulo Sequential Logic Design, seção Latches and Flip-Flops (SR Latch)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T04-002
+  objetivo: O1
+  tipo: unica
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Num latch S̄R̄ feito com duas portas NAND (entradas ativas em baixo), qual combinação de entradas é a proibida e o que acontece com as saídas nela?
+  alternativas:
+    - "S̄ = R̄ = 1; Q e Q̄ vão a 0"
+    - "S̄ = 0 e R̄ = 1; Q e Q̄ vão a 1"
+    - "S̄ = R̄ = 0; Q e Q̄ vão a 0"
+    - "S̄ = R̄ = 0; Q e Q̄ vão a 1"
+  resposta: 3
+  explicacao: |
+    Uma NAND com uma entrada em 0 dá 1; com S̄ = R̄ = 0, as duas saídas vão a 1 e deixam de ser complementares. Se as duas entradas voltarem a 1 ao mesmo tempo, o estado final é imprevisível. S̄ = R̄ = 1 é o estado de memória; S̄ = 0 sozinho seta (Q = 1, Q̄ = 0).
+  fonte: "Tocci, Widmer e Moss, Sistemas Digitais: princípios e aplicações, capítulo Flip-flops e dispositivos correlatos (latch com portas NAND)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T04-003
+  objetivo: O1
+  tipo: multipla
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Uma chave de alavanca de duas posições (SPDT) tem o comum no GND e cada contato numa entrada de um latch S̄R̄ de NAND, com pull-ups de 10 kΩ. Marque as afirmações corretas sobre esse circuito de debounce.
+  alternativas:
+    - "O primeiro toque no novo contato já muda o latch, e os repiques seguintes só alternam essa entrada entre ativa e repouso, sem mudar a saída"
+    - "O circuito precisa de um capacitor para funcionar, porque o latch sozinho repete os repiques"
+    - "Durante o repique, a chave não chega a tocar o contato oposto, por isso o latch nunca recebe o comando contrário"
+    - "O mesmo circuito funciona com um botão comum de dois terminais, ligando a outra entrada do latch ao GND"
+  resposta: [0, 2]
+  explicacao: |
+    O repique acontece num só contato: a entrada correspondente alterna entre 0 (setar de novo) e 1 (manter), e a saída não muda. O comando oposto só vem quando a chave vai para o outro lado. Não há RC nem atraso. Com a outra entrada no GND, o latch ficaria no estado proibido; com um só contato não existe o segundo comando.
+  fonte: "Floyd, Sistemas Digitais: fundamentos e aplicações, capítulo Latches, flip-flops e temporizadores (latch S-R como eliminador de repique de contato)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T04-004
+  objetivo: O1
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: num latch D com a habilitação em 1, a saída acompanha cada mudança da entrada D; num flip-flop D disparado pela borda de subida, mudanças de D com o clock parado em 1 não aparecem na saída.
+  resposta: true
+  explicacao: |
+    O latch D é transparente enquanto habilitado e só guarda quando a habilitação vai a 0. O flip-flop amostra D apenas no instante da borda; entre as bordas, Q fica fixo. Por isso os circuitos síncronos usam flip-flops: o estado muda num instante bem definido.
+  fonte: "Harris & Harris, Digital Design and Computer Architecture, capítulo Sequential Logic Design, seção Latches and Flip-Flops (D Latch e D Flip-Flop)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T04-005
+  objetivo: O2
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    O que acontece com a saída de um flip-flop JK na borda ativa do clock quando J = 1 e K = 1?
+  alternativas:
+    - "Vai a 1"
+    - "Inverte o valor anterior"
+    - "Vai a 0"
+    - "Mantém o valor anterior"
+  resposta: 1
+  explicacao: |
+    No JK: 00 mantém, 10 seta, 01 reseta e 11 inverte (toggle). Pela equação Q⁺ = J·Q̄ + K̄·Q, com J = K = 1 fica Q⁺ = Q̄. É o caso que o latch SR proibia e que o JK transforma em algo útil.
+  fonte: "Floyd, Sistemas Digitais: fundamentos e aplicações, capítulo Latches, flip-flops e temporizadores (flip-flop J-K disparado por borda)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T04-006
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um flip-flop JK começa com Q = 0 e recebe, em seis bordas de clock sucessivas, (J, K) = (1, 0), (1, 1), (0, 0), (1, 1), (0, 1), (1, 1). Qual é o valor de Q depois da sexta borda? Responda 0 ou 1.
+  resposta: {valor: 1, unidade: "(nível lógico)", tolerancia: 0}
+  explicacao: |
+    (1, 0) seta → 1; (1, 1) inverte → 0; (0, 0) mantém → 0; (1, 1) inverte → 1; (0, 1) reseta → 0; (1, 1) inverte → 1.
+  fonte: "Tocci, Widmer e Moss, Sistemas Digitais: princípios e aplicações, capítulo Flip-flops e dispositivos correlatos (flip-flop J-K com clock)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T04-007
+  objetivo: O2
+  tipo: multipla
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Sobre um flip-flop do 74HC74 (D disparado pela borda de subida, com SD̄ e RD̄ assíncronos e ativos em baixo), marque as afirmações corretas.
+  alternativas:
+    - "Com SD̄ = 0, Q vai a 1 imediatamente, sem esperar a borda do clock"
+    - "Com SD̄ = RD̄ = 0, as duas saídas Q e Q̄ ficam em 1, um estado que deve ser evitado"
+    - "Com SD̄ = RD̄ = 1, uma mudança em D com o clock parado em 1 muda Q imediatamente"
+    - "Com SD̄ = RD̄ = 1, Q assume o valor de D presente na borda de subida do clock"
+  resposta: [0, 1, 3]
+  explicacao: |
+    As entradas assíncronas agem na hora e têm prioridade sobre o clock; as duas ativas ao mesmo tempo forçam Q = Q̄ = 1, e o estado final depois de soltá-las não é garantido. Em operação normal, com ambas em 1, o flip-flop só copia D na borda de subida; com o clock parado, D pode mudar sem afetar Q.
+  fonte: "Nexperia, datasheet 74HC74 (Function table); Texas Instruments, datasheet SN74HC74 (Function Table)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T04-008
+  objetivo: O2
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    No projeto de um contador com flip-flops JK, um flip-flop precisa passar de Q = 0 para Q = 1 na próxima borda. Que valores J e K produzem essa transição (X = irrelevante)?
+  alternativas:
+    - "J = 0, K = X"
+    - "J = X, K = 1"
+    - "J = 1, K = X"
+    - "J = X, K = 0"
+  resposta: 2
+  explicacao: |
+    Partindo de Q = 0, J = 1 com K = 0 seta e J = 1 com K = 1 inverte: os dois levam a 1, então K é irrelevante. J = X, K = 1 é a linha da transição 1 → 0, e J = X, K = 0 é a de 1 → 1. Essa tabela de excitação é a base do projeto de contadores e de FSMs com JK.
+  fonte: "Floyd, Sistemas Digitais: fundamentos e aplicações, capítulo Contadores (projeto de contadores síncronos: tabela de transição do flip-flop J-K)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T04-009
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Num circuito síncrono, o flip-flop tem t_pcq = 20 ns e t_setup = 15 ns, e o caminho combinacional mais lento entre dois flip-flops tem duas portas de 18 ns. Desprezando o skew, qual é a frequência máxima de clock? Responda em MHz, com 1 casa decimal.
+  resposta: {valor: 14.1, unidade: "MHz", tolerancia: 0.01}
+  explicacao: |
+    T_c ≥ t_pcq + t_pd + t_setup = 20 + 2 × 18 + 15 = 71 ns ⇒ f_max = 1/71 ns ≈ 14,1 MHz. O caminho mais lento (crítico) define o clock; uma porta a mais nele derrubaria para cerca de 11,2 MHz.
+  fonte: "Harris & Harris, Digital Design and Computer Architecture, capítulo Sequential Logic Design, seção Timing of Sequential Logic (Setup Time Constraint)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T04-010
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um caminho registrador → lógica → registrador tem t_pcq = 12 ns, três portas de 8 ns e t_setup = 6 ns. O clock chega 3 ns mais cedo ao flip-flop de destino do que ao de origem, o que reduz o tempo disponível. Qual é a frequência máxima de clock? Responda em MHz, com 1 casa decimal.
+  resposta: {valor: 22.2, unidade: "MHz", tolerancia: 0.01}
+  explicacao: |
+    T_c ≥ t_pcq + t_pd + t_setup + t_skew = 12 + 24 + 6 + 3 = 45 ns ⇒ f_max = 1/45 ns ≈ 22,2 MHz. Quando o destino recebe a borda antes, o dado tem menos tempo para chegar, e o skew entra somado na restrição de setup.
+  fonte: "Harris & Harris, Digital Design and Computer Architecture, capítulo Sequential Logic Design, seção Timing of Sequential Logic (Clock Skew)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T04-011
+  objetivo: O3
+  tipo: unica
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Num registrador de deslocamento, a saída Q de cada flip-flop vai direto ao D do seguinte. Os flip-flops têm t_ccq = 5 ns e t_hold = 3 ns, e o clock chega ao flip-flop de destino 4 ns depois de chegar ao de origem. Qual é o diagnóstico correto?
+  alternativas:
+    - "Há violação de setup; basta reduzir a frequência do clock"
+    - "Há violação de hold; reduzir a frequência do clock resolve, porque dá mais tempo ao dado"
+    - "Não há violação, porque t_ccq é maior que t_hold"
+    - "Há violação de hold; reduzir o clock não resolve, e é preciso diminuir o skew ou acrescentar atraso entre os flip-flops"
+  resposta: 3
+  explicacao: |
+    Restrição de hold: t_ccq + t_cd ≥ t_hold + t_skew ⇒ 5 + 0 ≥ 3 + 4 = 7, falso. O novo valor do primeiro flip-flop chega ao segundo antes de terminar a janela de hold da borda atrasada, e um bit pode pular dois estágios. A restrição de hold não tem T_c: mudar a frequência não ajuda.
+  fonte: "Harris & Harris, Digital Design and Computer Architecture, capítulo Sequential Logic Design, seção Timing of Sequential Logic (Hold Time Constraint e Clock Skew)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T04-012
+  objetivo: O4
+  tipo: vf
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: se a entrada D de um flip-flop muda dentro da janela de setup e hold, a saída pode ficar por um tempo imprevisível num nível intermediário antes de se decidir por 0 ou 1.
+  resposta: true
+  explicacao: |
+    É a metaestabilidade. O tempo de resolução não tem limite superior garantido, apenas uma probabilidade que cai exponencialmente com o tempo. Entradas assíncronas, como botões e sinais de outros clocks, vão violar a janela de vez em quando.
+  fonte: "Harris & Harris, Digital Design and Computer Architecture, capítulo Sequential Logic Design, seção Timing of Sequential Logic (Metastability)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T04-013
+  objetivo: O4
+  tipo: unica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Por que o sincronizador de uma entrada assíncrona usa dois flip-flops em série, usando só a saída do segundo?
+  alternativas:
+    - "Porque o primeiro flip-flop elimina o repique do botão e o segundo inverte o sinal"
+    - "Porque o primeiro flip-flop ganha um período inteiro de clock para sair de uma eventual metaestabilidade antes de ser amostrado pelo segundo"
+    - "Porque dois flip-flops em série dobram a frequência máxima de clock"
+    - "Porque assim a entrada assíncrona deixa de precisar respeitar o tempo de hold do primeiro flip-flop"
+  resposta: 1
+  explicacao: |
+    O primeiro flip-flop ainda pode ficar metaestável, mas o segundo só olha para ele uma borda depois; cada período extra de resolução multiplica o MTBF por e^(T_c/τ). O sincronizador não elimina repique (isso é debounce) e não muda a janela de setup e hold do primeiro estágio.
+  fonte: "Harris & Harris, Digital Design and Computer Architecture, capítulo Sequential Logic Design, seção Timing of Sequential Logic (Synchronizers)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T04-014
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 4
+  bloom: aplicar
+  enunciado: |
+    Um flip-flop amostra uma entrada assíncrona que muda N = 1000 vezes por segundo, com clock de período T_c = 20 ns, t_setup = 2 ns e parâmetros de metaestabilidade τ = 1 ns e T₀ = 1 ns. Usando MTBF = T_c·e^((T_c − t_setup)/τ)/(N·T₀), qual é o tempo médio entre falhas sem sincronizador adicional? Responda em dias, com 1 casa decimal.
+  resposta: {valor: 15.2, unidade: "dias", tolerancia: 0.01}
+  explicacao: |
+    MTBF = 20 ns × e^(18)/(1000 × 1 ns) = 0,02 × 6,57 × 10⁷ ≈ 1,31 × 10⁶ s ≈ 15,2 dias: um defeito raro e difícil de reproduzir. Um segundo flip-flop acrescenta 20 ns de resolução e multiplica o MTBF por e²⁰ ≈ 4,9 × 10⁸, chegando a dezenas de milhões de anos.
+  fonte: "Harris & Harris, Digital Design and Computer Architecture, capítulo Sequential Logic Design, seção Timing of Sequential Logic (Resolution Time e Synchronizers)"
+  origem: ia
+  revisao: rascunho

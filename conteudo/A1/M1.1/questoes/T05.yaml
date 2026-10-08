@@ -1,0 +1,225 @@
+- id: Q-M1.1.T05-001
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Um contador binário assíncrono de 4 estágios recebe um clock de 1 MHz. Qual é a frequência da saída do último estágio (Q3)? Responda em kHz, com 1 casa decimal.
+  resposta: {valor: 62.5, unidade: "kHz", tolerancia: 0.01}
+  explicacao: |
+    Cada estágio divide por 2: Q0 = 500 kHz, Q1 = 250 kHz, Q2 = 125 kHz, Q3 = 62,5 kHz, ou seja, 1 MHz/2⁴.
+  fonte: "Floyd, Sistemas Digitais: fundamentos e aplicações, capítulo Contadores (operação do contador assíncrono, divisão de frequência)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T05-002
+  objetivo: O1
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Quantos flip-flops, no mínimo, são necessários para um contador de módulo 60 (0 a 59), como o dos segundos de um relógio?
+  alternativas:
+    - "5"
+    - "6"
+    - "7"
+    - "60"
+  resposta: 1
+  explicacao: |
+    São necessários ⌈log₂ 60⌉ flip-flops: 2⁵ = 32 não basta e 2⁶ = 64 basta, então 6. Na prática, relógios costumam usar dois contadores BCD (0–9 e 0–5), com 4 + 3 = 7 flip-flops, porque isso facilita o display; 60 flip-flops seria um contador em anel.
+  fonte: "Tocci, Widmer e Moss, Sistemas Digitais: princípios e aplicações, capítulo Contadores e registradores (contadores de módulo menor que 2ᴺ)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T05-003
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Um contador síncrono de década (0 a 9, em binário) recebe um clock de 1 kHz. Qual é o ciclo de trabalho da saída do bit mais significativo (Q3)? Responda em %, sem casas decimais.
+  resposta: {valor: 20, unidade: "%", tolerancia: 0.01}
+  explicacao: |
+    Q3 só vale 1 nos estados 8 (1000) e 9 (1001): 2 de 10 períodos de clock. A saída tem 100 Hz (um ciclo a cada 10 clocks), mas com ciclo de trabalho de 20 %, e não 50 %. Para uma quadrada simétrica, acrescente um flip-flop divisor por 2 depois (100 Hz → 50 Hz a 50 %).
+  fonte: "Floyd, Sistemas Digitais: fundamentos e aplicações, capítulo Contadores (contador de década síncrono, diagramas de tempo)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T05-004
+  objetivo: O2
+  tipo: vf
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Verdadeiro ou falso: o 74HC161 e o 74HC163 são contadores síncronos de 4 bits que diferem no reset: no 161 ele é assíncrono e no 163 é síncrono.
+  resposta: true
+  explicacao: |
+    No 161, o MR (ativo em baixo) zera o contador na hora; no 163, o reset só age na próxima borda de clock. Essa diferença decide qual estado deve ser decodificado para formar um contador de módulo N e se haverá estado transitório.
+  fonte: "Nexperia, datasheets 74HC161 e 74HC163 (General description e Function table)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T05-005
+  objetivo: O2
+  tipo: multipla
+  dificuldade: 2
+  bloom: analisar
+  enunciado: |
+    Um contador assíncrono de 4 bits passa do estado 0111 para 1000. Marque as afirmações corretas.
+  alternativas:
+    - "Por alguns nanossegundos, as saídas passam por 0110, 0100 e 0000 antes de chegar a 1000"
+    - "Uma porta que decodifica o estado 0000 pode gerar um pulso falso nessa transição"
+    - "Reduzir a frequência do clock elimina esse pulso falso"
+    - "Num contador síncrono, os bits mudam a partir da mesma borda, e os estados intermediários ficam limitados às pequenas diferenças de atraso entre as saídas"
+  resposta: [0, 1, 3]
+  explicacao: |
+    No ripple, cada bit só muda depois do anterior: Q0 cai, depois Q1, depois Q2 e só então Q3 sobe. Os estados intermediários aparecem em toda transição, qualquer que seja o clock, então reduzir a frequência não adianta. A solução é usar contador síncrono ou registrar a saída decodificada num flip-flop.
+  fonte: "Tocci, Widmer e Moss, Sistemas Digitais: princípios e aplicações, capítulo Contadores e registradores (problemas de decodificação de contadores assíncronos)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T05-006
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um oscilador de 32,768 kHz alimenta o clock de um 74HC4040 (contador assíncrono de 12 estágios, saídas Q0 a Q11, Q0 = f/2). Qual é a frequência na saída Q11? Responda em Hz, sem casas decimais.
+  resposta: {valor: 8, unidade: "Hz", tolerancia: 0.01}
+  explicacao: |
+    Q11 é a 12ª divisão por 2: 32 768/2¹² = 32 768/4096 = 8 Hz. Como 32 768 = 2¹⁵, com mais 3 estágios chega-se a 1 Hz — por isso relógios usam esse cristal.
+  fonte: "Nexperia, datasheet 74HC4040 (Functional description); Floyd, Sistemas Digitais, capítulo Contadores (aplicações)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T05-007
+  objetivo: O2
+  tipo: unica
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Você quer um contador que conte de 0 a 9 e volte a 0, usando um contador de 4 bits e uma porta NAND ligada à entrada de reset (ativa em baixo). Qual montagem conta corretamente e sem estado transitório?
+  alternativas:
+    - "74HC161 (reset assíncrono) com a NAND de Q3 e Q1"
+    - "74HC163 (reset síncrono) com a NAND de Q3 e Q1"
+    - "74HC161 (reset assíncrono) com a NAND de Q3 e Q0"
+    - "74HC163 (reset síncrono) com a NAND de Q3 e Q0"
+  resposta: 3
+  explicacao: |
+    No 163, decodifica-se o último estado desejado, 9 (1001, único de 0 a 9 com Q3 e Q0 em 1): o reset fica preparado e a próxima borda leva a 0. O 161 com Q3·Q1 também conta de 0 a 9, mas passa por 1010 durante alguns ns antes do reset assíncrono agir. O 163 com Q3·Q1 contaria até 10 (módulo 11), e o 161 com Q3·Q0 zeraria ao chegar em 9 (módulo 9).
+  fonte: "Nexperia, datasheets 74HC161 e 74HC163; Tocci, Sistemas Digitais, capítulo Contadores e registradores (contadores de módulo menor que 2ᴺ e CIs contadores síncronos)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T05-008
+  objetivo: O3
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    No 74HC595, qual sinal copia de uma vez os 8 bits do registrador de deslocamento para as saídas Q0 a Q7?
+  alternativas:
+    - "A borda de subida do clock de armazenamento (STCP, ou RCLK)"
+    - "A borda de subida do clock de deslocamento (SHCP, ou SRCLK)"
+    - "O nível baixo do MR (SRCLR)"
+    - "O nível alto do OE"
+  resposta: 0
+  explicacao: |
+    O 595 tem dois registradores: o SHCP desloca os bits no registrador interno sem mexer nas saídas, e a borda do STCP transfere os 8 bits para o latch de saída. O MR zera o registrador de deslocamento, e o OE em 1 põe as saídas em alta impedância.
+  fonte: "Nexperia, datasheet 74HC595 (Functional description e Function table)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T05-009
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    O byte 0xB2 é enviado a um 74HC595 com o bit menos significativo primeiro (8 pulsos de SHCP), seguido de um pulso de STCP. Lendo Q7 como o bit mais significativo e Q0 como o menos significativo, qual valor aparece nas saídas? Responda em decimal, como número inteiro.
+  resposta: {valor: 77, unidade: "(adimensional)", tolerancia: 0}
+  explicacao: |
+    O primeiro bit enviado termina em Q7. Com LSB primeiro, Q7 recebe o bit 0, Q6 o bit 1 e assim por diante: a ordem se inverte. 0xB2 = 1011 0010 invertido = 0100 1101 = 0x4D = 77. Com MSB primeiro, as saídas mostrariam 0xB2.
+  fonte: "Nexperia, datasheet 74HC595 (Functional description); Arduino, referência de shiftOut() (MSBFIRST e LSBFIRST)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T05-010
+  objetivo: O3
+  tipo: vf
+  dificuldade: 3
+  bloom: avaliar
+  enunciado: |
+    Verdadeiro ou falso: um 74HC595 pode acender ao mesmo tempo 8 LEDs de 10 mA cada, ligados direto às saídas, respeitando o máximo absoluto de 70 mA de corrente total pelo pino VCC.
+  resposta: false
+  explicacao: |
+    8 × 10 mA = 80 mA > 70 mA, e isso é o máximo absoluto, que nem deveria ser usado como condição de operação. Além disso, as saídas só garantem os níveis até cerca de 6 mA. Use LEDs a 5 mA, divida a carga entre chips ou use um driver de potência como o TPIC6B595 ou o ULN2803.
+  fonte: "Nexperia, datasheet 74HC595 (Limiting values e Static characteristics)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T05-011
+  objetivo: O3
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Dois 74HC595 estão em cascata: o MCU liga ao DS do chip A, e o Q7S do chip A vai ao DS do chip B, com SHCP e STCP comuns. O firmware envia o byte 0x81 e depois o byte 0x3C, com MSB primeiro, e então dá um pulso de STCP. O que aparece nas saídas?
+  alternativas:
+    - "Chip A = 0x81 e chip B = 0x3C"
+    - "Os dois chips mostram 0x3C"
+    - "Chip A = 0x3C e chip B = 0x81"
+    - "Chip A = 0x81 e chip B = 0x00"
+  resposta: 2
+  explicacao: |
+    Os primeiros 8 bits enviados atravessam o chip A e são empurrados para o B pelos 8 seguintes. Ao final, o último byte enviado (0x3C) fica no chip ligado ao MCU e o primeiro (0x81) no chip mais distante. Por isso o firmware envia primeiro o byte do último chip da cadeia.
+  fonte: "Nexperia, datasheet 74HC595 (Functional description: saída serial Q7S para cascateamento)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T05-012
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Quatro 74HC595 em cascata são atualizados por SPI com clock de 4 MHz. Desprezando o pulso de STCP, quanto tempo leva uma atualização completa? Responda em µs, sem casas decimais.
+  resposta: {valor: 8, unidade: "µs", tolerancia: 0.01}
+  explicacao: |
+    4 chips × 8 bits = 32 bits; 32/4 MHz = 8 µs. Um SPI por hardware deixa a CPU livre; em bit-banging, com alguns µs por bit, a mesma atualização levaria centenas de µs.
+  fonte: "Harris & Harris, Digital Design and Computer Architecture, capítulo Digital Building Blocks, seção Sequential Building Blocks (Shift Registers); Nexperia, datasheet 74HC595"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T05-013
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Um teclado de 24 botões é lido por três 74HC165 em cascata, por bit-banging. Cada varredura gasta 2 µs no pulso de carga paralela, 5 µs por bit lido e mais 26 µs de processamento no firmware. Quantas varreduras completas por segundo, no máximo, o sistema consegue fazer? Responda em varreduras por segundo, arredondando para o inteiro mais próximo.
+  resposta: {valor: 6757, unidade: "varreduras/s", tolerancia: 0.01}
+  explicacao: |
+    Uma varredura: 2 + 24 × 5 + 26 = 148 µs. Taxa máxima: 1/148 µs ≈ 6757 por segundo. Na prática, um tick de 5 a 10 ms para o debounce (100 a 200 varreduras por segundo) basta e deixa a CPU livre quase todo o tempo.
+  fonte: "Nexperia, datasheet 74HC165 (Functional description); Floyd, Sistemas Digitais, capítulo Registradores de deslocamento (entrada paralela, saída serial)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T05-014
+  objetivo: O4
+  tipo: multipla
+  dificuldade: 3
+  bloom: entender
+  enunciado: |
+    Sobre a leitura de entradas com o 74HC165 (carga paralela PL ativa em baixo, clock CP, saída serial Q7, entrada serial DS), marque as afirmações corretas.
+  alternativas:
+    - "Com PL em 0, as 8 entradas paralelas são copiadas para o registrador sem esperar o clock"
+    - "Logo após a carga, o valor de D7 já está em Q7, antes do primeiro pulso de clock"
+    - "Durante a leitura serial, PL deve ficar em 0 para manter os valores carregados"
+    - "Para cascatear, o Q7 do 165 mais distante vai ao DS do 165 mais próximo do MCU"
+  resposta: [0, 1, 3]
+  explicacao: |
+    A carga paralela do 165 é assíncrona e, enquanto PL fica em 0, o registrador continua recarregando as entradas e não desloca: ele precisa voltar a 1 antes dos clocks. O primeiro bit (D7) deve ser lido antes do primeiro clock, senão se perde. Em cascata, os bits do chip distante entram pelo DS do chip seguinte e saem depois dos 8 bits dele.
+  fonte: "Nexperia, datasheet 74HC165 (Function table e Functional description)"
+  origem: ia
+  revisao: rascunho

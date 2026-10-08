@@ -1,0 +1,225 @@
+- id: Q-M1.1.T03-001
+  objetivo: O1
+  tipo: vf
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Verdadeiro ou falso: num mapa de Karnaugh de 4 variáveis, as colunas são ordenadas 00, 01, 11, 10 para que duas células vizinhas difiram em uma só variável.
+  resposta: true
+  explicacao: |
+    É o código Gray. Com a ordem binária (00, 01, 10, 11), as colunas 01 e 10 ficariam lado a lado diferindo em duas variáveis, e um grupo entre elas não simplificaria nada. A ordem Gray também faz a primeira e a última coluna serem vizinhas (o mapa "dá a volta").
+  fonte: "Harris & Harris, Digital Design and Computer Architecture, capítulo Combinational Logic Design, seção Karnaugh Maps"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T03-002
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Minimize F(A, B, C) = Σm(0, 2, 4, 5, 6) em soma de produtos. Quantos literais tem a expressão mínima? Responda com um número inteiro de literais.
+  resposta: {valor: 3, unidade: "literais", tolerancia: 0}
+  explicacao: |
+    Os mintermos 0, 2, 4 e 6 têm C = 0 e formam um grupo de 4 (as colunas 00 e 10, vizinhas pela borda) → C'. O mintermo 5 (101) junta com o 4 (100) → AB'. F = C' + AB': 1 + 2 = 3 literais.
+  fonte: "Floyd, Sistemas Digitais: fundamentos e aplicações, capítulo Álgebra booleana e simplificação lógica (mapa de Karnaugh de 3 variáveis)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T03-003
+  objetivo: O1
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Qual é a soma de produtos mínima de F(A, B, C, D) = Σm(0, 2, 8, 10)?
+  alternativas:
+    - "A'B'D' + AB'D'"
+    - "B'D'"
+    - "A'B'C'D' + AB'CD'"
+    - "B' + D'"
+  resposta: 1
+  explicacao: |
+    Os mintermos 0 (0000), 2 (0010), 8 (1000) e 10 (1010) são os quatro cantos do mapa de 4 variáveis, que são vizinhos entre si. Neles B = 0 e D = 0, enquanto A e C variam: F = B'D'. A'B'D' + AB'D' também representa F, mas não é mínima; A'B'C'D' + AB'CD' cobre só o 0 e o 10; B' + D' cobriria 12 células.
+  fonte: "All About Circuits, Volume IV: Digital, capítulo Karnaugh Mapping, seção Larger 4-variable Karnaugh Maps"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T03-004
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Minimize F(A, B, C, D) = Σm(0, 1, 2, 5, 8, 9, 10) em soma de produtos. Quantos literais, no total, tem a expressão mínima? Responda com um número inteiro de literais.
+  resposta: {valor: 7, unidade: "literais", tolerancia: 0}
+  explicacao: |
+    Grupo de 4 {0, 1, 8, 9} → B'C'; grupo de 4 dos cantos {0, 2, 8, 10} → B'D'; o mintermo 5 (0101) só junta com o 1 (0001) → A'C'D. F = B'C' + B'D' + A'C'D: 2 + 2 + 3 = 7 literais.
+  fonte: "Tocci, Widmer e Moss, Sistemas Digitais: princípios e aplicações, capítulo Circuitos lógicos combinacionais (método do mapa de Karnaugh)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T03-005
+  objetivo: O2
+  tipo: unica
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    O que significa marcar uma célula do mapa de Karnaugh como irrelevância (X, don't care)?
+  alternativas:
+    - "Que a saída nessa combinação deve ser 0, para economizar portas"
+    - "Que a saída nessa combinação é indefinida e o circuito vai oscilar"
+    - "Que a combinação deve ser coberta por um grupo próprio"
+    - "Que a combinação não ocorre ou que sua saída não importa, então ela pode ser tratada como 0 ou como 1, conforme ajudar a simplificar"
+  resposta: 3
+  explicacao: |
+    O projetista usa o X como 1 quando ele aumenta um grupo e o ignora quando não ajuda. O circuito final dará algum valor fixo nessa combinação — por isso só se marca X o que realmente não acontece (como 1010 a 1111 numa entrada BCD) ou não importa.
+  fonte: "Harris & Harris, Digital Design and Computer Architecture, capítulo Combinational Logic Design, seção Karnaugh Maps (Don't Cares)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T03-006
+  objetivo: O2
+  tipo: multipla
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Sobre a obtenção do produto de somas mínimo pelo mapa de Karnaugh, marque as afirmações corretas.
+  alternativas:
+    - "Agrupar os zeros do mapa dá a expressão mínima de F' em soma de produtos"
+    - "Aplicando De Morgan a essa expressão de F', obtém-se F como produto de somas"
+    - "Um grupo de zeros nas células com A = 1 e B = 0 gera o fator (A + B')"
+    - "O produto de somas mínimo sempre tem menos literais que a soma de produtos mínima"
+  resposta: [0, 1]
+  explicacao: |
+    Os zeros com A = 1 e B = 0 formam o termo AB' de F'; por De Morgan, (AB')' = A' + B, então o fator é (A' + B): as variáveis aparecem invertidas em relação ao valor que têm no grupo. Qual das duas formas é menor depende da função; compare as duas.
+  fonte: "All About Circuits, Volume IV: Digital, capítulo Karnaugh Mapping, seção Minimal Product-Of-Sums (POS)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T03-007
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Minimize F(A, B, C, D) = Σm(1, 3, 7, 11, 15) + d(0, 2, 5), em que d são irrelevâncias. Quantos literais tem a soma de produtos mínima? Responda com um número inteiro de literais.
+  resposta: {valor: 4, unidade: "literais", tolerancia: 0}
+  explicacao: |
+    A coluna CD = 11 inteira {3, 7, 11, 15} → CD. O mintermo 1 precisa de um grupo: usando as irrelevâncias 0 e 2, a linha AB = 00 {0, 1, 3, 2} → A'B'; ou, usando a irrelevância 5, {1, 3, 5, 7} → A'D. As duas soluções mínimas, A'B' + CD e A'D + CD, têm 4 literais. Sem as irrelevâncias, o mintermo 1 exigiria A'B'D (3 literais).
+  fonte: "Tocci, Widmer e Moss, Sistemas Digitais: princípios e aplicações, capítulo Circuitos lógicos combinacionais (condições de irrelevância)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T03-008
+  objetivo: O3
+  tipo: vf
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: num decodificador de BCD para 7 segmentos cuja entrada é garantidamente BCD, as combinações de 1010 a 1111 podem ser tratadas como irrelevâncias em todos os mapas dos segmentos.
+  resposta: true
+  explicacao: |
+    Uma entrada BCD só assume os valores 0 a 9; as seis combinações restantes nunca ocorrem e viram X em cada um dos sete mapas, o que permite grupos maiores (por exemplo, o termo A sozinho nos segmentos a, d, f e g). Se a entrada puder sair da faixa (erro do firmware), o display mostrará um padrão qualquer.
+  fonte: "Floyd, Sistemas Digitais: fundamentos e aplicações, capítulo Álgebra booleana e simplificação lógica (decodificador BCD para 7 segmentos)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T03-009
+  objetivo: O3
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    No decodificador BCD → 7 segmentos (entradas ABCD, A mais significativo, combinações 10 a 15 irrelevantes), o segmento e acende nos dígitos 0, 2, 6 e 8. Qual é a sua soma de produtos mínima?
+  alternativas:
+    - "e = A'B'D' + A'CD'"
+    - "e = D'"
+    - "e = B'D' + CD'"
+    - "e = B'C'D' + BCD'"
+  resposta: 2
+  explicacao: |
+    Os cantos {0, 2, 8, 10} (com o X do 10) dão B'D'; a coluna CD = 10 {2, 6, 14, 10} (com os X do 14 e do 10) dá CD'. e = B'D' + CD'. D' sozinho acenderia o segmento também no 4, e as outras expressões ou não são mínimas ou não cobrem o 2 e o 8 juntos.
+  fonte: "Floyd, Sistemas Digitais: fundamentos e aplicações, capítulo Álgebra booleana e simplificação lógica (decodificador BCD para 7 segmentos)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T03-010
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    O segmento c de um display de 7 segmentos acende em todos os dígitos de 0 a 9 exceto o 2. Com as entradas BCD ABCD e as combinações 10 a 15 como irrelevâncias, quantos literais tem a soma de produtos mínima de c? Responda com um número inteiro de literais.
+  resposta: {valor: 3, unidade: "literais", tolerancia: 0}
+  explicacao: |
+    O único zero é o 0010. Agrupando os uns com os X: B (as linhas 01 e 11), C' (as colunas 00 e 01) e D (as colunas 01 e 11) cobrem tudo menos o 2. c = B + C' + D: 3 literais. Pelo produto de somas é imediato: um só zero ⇒ c = (A + B + C' + D), e o A cai porque as células com A = 1 e B = 0, C = 1, D = 0 são irrelevantes.
+  fonte: "Floyd, Sistemas Digitais: fundamentos e aplicações, capítulo Álgebra booleana e simplificação lógica (decodificador BCD para 7 segmentos)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T03-011
+  objetivo: O3
+  tipo: multipla
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Você vai acionar um display de 7 segmentos a partir de 4 bits BCD. Marque as afirmações corretas.
+  alternativas:
+    - "Para um display de anodo comum, o segmento acende com nível 0, então cada saída do decodificador projetado para catodo comum deve ser invertida"
+    - "Termos produto que aparecem em mais de um segmento, como B'D', podem ser gerados uma vez e compartilhados entre as saídas"
+    - "Cada segmento precisa de um mapa de 5 variáveis, porque há 7 saídas"
+    - "Em firmware, a mesma função pode ser feita com uma tabela de 10 bytes indexada pelo dígito, sem minimizar nada"
+  resposta: [0, 1, 3]
+  explicacao: |
+    O número de variáveis do mapa é o número de entradas (4), não o de saídas: são 7 mapas de 4 variáveis. No anodo comum, o segmento acende quando o pino vai a 0, então as saídas são complementadas. Compartilhar termos reduz portas num projeto de várias saídas. Em firmware, a tabela (0x3F, 0x06, 0x5B…) faz o papel do decodificador.
+  fonte: "Floyd, Sistemas Digitais: fundamentos e aplicações, capítulo Álgebra booleana e simplificação lógica (decodificador BCD para 7 segmentos); Nexperia, datasheet 74HC4511"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T03-012
+  objetivo: O4
+  tipo: vf
+  dificuldade: 2
+  bloom: analisar
+  enunciado: |
+    Verdadeiro ou falso: no mapa de F = A ⊕ B ⊕ C ⊕ D, nenhum 1 tem um vizinho também em 1, e por isso a soma de produtos mínima tem 8 termos de 4 literais.
+  resposta: true
+  explicacao: |
+    Mudar uma só variável muda a paridade, então o mapa é um tabuleiro de xadrez e não há grupo maior que uma célula: os 8 mintermos ficam inteiros. O mapa minimiza AND-OR de dois níveis e não enxerga a XOR; com 3 portas XOR o circuito é muito menor.
+  fonte: "Harris & Harris, Digital Design and Computer Architecture, capítulo Combinational Logic Design, seção Karnaugh Maps"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T03-013
+  objetivo: O4
+  tipo: unica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    O circuito F = A·B + B'·C, feito com portas reais, apresenta um pulso falso para 0 quando A = C = 1 e B muda de 1 para 0. Qual mudança elimina esse glitch sem alterar a função lógica?
+  alternativas:
+    - "Acrescentar o termo A·C, ficando F = A·B + B'·C + A·C"
+    - "Trocar a porta OR por uma NOR"
+    - "Acrescentar o termo B·B', ficando F = A·B + B'·C + B·B'"
+    - "Retirar o inversor de B"
+  resposta: 0
+  explicacao: |
+    A·C é o termo de consenso de A·B e B'·C: ele é logicamente redundante, mas vale 1 durante toda a transição de B (A e C não mudam) e mantém a saída em 1 enquanto o caminho do inversor atrasa. No mapa, é o grupo que cobre a fronteira entre os dois grupos vizinhos. B·B' vale sempre 0, e trocar portas ou tirar o inversor muda a função.
+  fonte: "Harris & Harris, Digital Design and Computer Architecture, capítulo Combinational Logic Design, seção Timing (Glitches)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T03-014
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    O circuito F = A·B + B'·C é feito com um inversor de 9 ns de atraso, duas AND e uma OR de 7 ns cada. Com A = C = 1, B cai de 1 para 0 em t = 0. Qual é a largura do pulso falso em 0 na saída? Responda em ns, sem casas decimais.
+  resposta: {valor: 9, unidade: "ns", tolerancia: 0.01}
+  explicacao: |
+    A·B cai em 7 ns e a saída cai em 7 + 7 = 14 ns. B' sobe em 9 ns, B'·C sobe em 9 + 7 = 16 ns e a saída volta a 1 em 16 + 7 = 23 ns. Glitch: 23 − 14 = 9 ns, igual ao atraso do inversor (o único elemento a mais num dos caminhos).
+  fonte: "Harris & Harris, Digital Design and Computer Architecture, capítulo Combinational Logic Design, seção Timing (Propagation and Contamination Delay, Glitches)"
+  origem: ia
+  revisao: rascunho

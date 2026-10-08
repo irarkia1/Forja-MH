@@ -1,0 +1,215 @@
+- id: Q-M1.1.T07-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Como se calcula a margem de ruído em nível alto (NM_H) na ligação de uma saída a uma entrada?
+  alternativas:
+    - "NM_H = V_IH(min) − V_IL(max)"
+    - "NM_H = V_OH(min) − V_IH(min)"
+    - "NM_H = V_CC − V_OH(min)"
+    - "NM_H = V_OH(min) − V_OL(max)"
+  resposta: 1
+  explicacao: |
+    A saída garante pelo menos V_OH(min) em nível alto e a entrada garante ler 1 a partir de V_IH(min): a diferença é o ruído que pode ser somado ao sinal sem que a entrada deixe de ler 1. Em nível baixo, NM_L = V_IL(max) − V_OL(max).
+  fonte: "Harris & Harris, Digital Design and Computer Architecture, capítulo From Zero to One, seção Beneath the Digital Abstraction (Noise Margins)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T07-002
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Em 4,5 V, uma saída 74HC com 4 mA garante V_OH(min) = 3,84 V e V_OL(max) = 0,33 V; uma entrada 74HC garante V_IH(min) = 3,15 V e V_IL(max) = 1,35 V. Qual é a margem de ruído em nível baixo? Responda em V, com 2 casas decimais.
+  resposta: {valor: 1.02, unidade: "V", tolerancia: 0.01}
+  explicacao: |
+    NM_L = V_IL(max) − V_OL(max) = 1,35 − 0,33 = 1,02 V. Em nível alto, NM_H = 3,84 − 3,15 = 0,69 V. Com cargas CMOS de µA, o V_OH real fica perto de V_CC − 0,1 V e a margem em nível alto cresce.
+  fonte: "Texas Instruments, datasheet SN74HC00 (Recommended Operating Conditions e Electrical Characteristics)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T07-003
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    A saída de um ESP32 (V_DD = 3,3 V, V_OH ≥ 0,8·V_DD) aciona uma entrada do ATmega328P de um Arduino Uno alimentado em 5 V (V_IH ≥ 0,6·V_CC). Qual é a margem de ruído em nível alto? Responda em V, com 2 casas decimais (o valor pode ser negativo).
+  resposta: {valor: -0.36, unidade: "V", tolerancia: 0.01}
+  explicacao: |
+    V_OH(min) = 0,8 × 3,3 = 2,64 V; V_IH(min) = 0,6 × 5 = 3,0 V. NM_H = 2,64 − 3,0 = −0,36 V: margem negativa, ligação fora da especificação. Na bancada costuma funcionar porque os valores típicos são melhores que os garantidos, mas pode falhar com outro lote, temperatura ou ruído. Use um buffer 74HCT em 5 V.
+  fonte: "Espressif, ESP32 Series Datasheet (DC Characteristics); Microchip, datasheet ATmega328P (Electrical Characteristics, DC Characteristics)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T07-004
+  objetivo: O2
+  tipo: vf
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: uma saída de 3,3 V em nível alto, ligada a uma entrada de um 74HCT alimentado em 5 V, é lida como 1 com folga, porque o V_IH(min) do 74HCT é 2,0 V.
+  resposta: true
+  explicacao: |
+    O 74HCT tem níveis de entrada TTL (V_IH = 2,0 V, V_IL = 0,8 V) mesmo alimentado em 5 V, e saída CMOS de 5 V. Por isso ele é o tradutor clássico de 3,3 V para 5 V. Um 74HC em 5 V, ao contrário, exige 3,5 V.
+  fonte: "Texas Instruments, datasheet SN74HCT00 (Recommended Operating Conditions); Tocci, Sistemas Digitais, capítulo Famílias lógicas e circuitos integrados (interfaceamento)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T07-005
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Para ler a saída de 5 V de um sensor num pino de 3,3 V, você usa um divisor com 1,8 kΩ do sinal até o pino e 3,3 kΩ do pino ao GND. Qual tensão chega ao pino quando o sensor está em nível alto? Responda em V, com 2 casas decimais.
+  resposta: {valor: 3.24, unidade: "V", tolerancia: 0.01}
+  explicacao: |
+    V = 5 × 3,3/(1,8 + 3,3) = 5 × 0,647 = 3,24 V: abaixo do máximo do pino (V_DD + 0,3 V) e acima do V_IH do ESP32 (2,475 V). A resistência de Thévenin de ≈ 1,16 kΩ com a capacitância do pino limita a velocidade; o divisor só funciona num sentido.
+  fonte: "Tocci, Widmer e Moss, Sistemas Digitais: princípios e aplicações, capítulo Famílias lógicas e circuitos integrados (interfaceamento com tensões diferentes)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T07-006
+  objetivo: O2
+  tipo: unica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um sensor I²C de 5 V (linhas SDA e SCL open-drain, bidirecionais) será ligado a um ESP32 de 3,3 V. Qual conversão de nível é adequada?
+  alternativas:
+    - "Um divisor resistivo em cada linha"
+    - "Um 74HC245 com o pino de direção fixo"
+    - "Um buffer 74HCT125 em cada linha, alimentado em 5 V"
+    - "Um MOSFET N (como o BSS138) em cada linha, com pull-ups para 3,3 V de um lado e para 5 V do outro"
+  resposta: 3
+  explicacao: |
+    A SDA muda de sentido durante a transação (o ACK e a leitura vêm do sensor), e os dois lados só puxam para baixo. O MOSFET com pull-ups dos dois lados (NXP AN10441) deixa qualquer lado puxar a linha para 0 e cada pull-up define o nível alto do seu lado. Divisor e buffers funcionam num sentido só, e o 245 com direção fixa também.
+  fonte: "NXP, AN10441: Level shifting techniques in I2C-bus design"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T07-007
+  objetivo: O2
+  tipo: multipla
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Você vai ligar a UART de um Arduino Uno (ATmega328P em 5 V, V_IH ≥ 3,0 V) à de um ESP32 (3,3 V, pinos não tolerantes a 5 V, V_OH ≥ 2,64 V). Marque as afirmações corretas.
+  alternativas:
+    - "Ligar o TX do Uno direto ao RX do ESP32 está fora da especificação, pois põe cerca de 5 V num pino que aceita no máximo V_DD + 0,3 V"
+    - "O TX do ESP32 ligado direto ao RX do Uno atende o V_IH do ATmega328P com folga"
+    - "Um buffer 74LVC alimentado em 3,3 V, cuja entrada tolera 5 V, pode receber o TX do Uno e entregar 3,3 V ao ESP32"
+    - "Um buffer 74HCT alimentado em 5 V pode receber o TX do ESP32 e entregar 5 V ao Uno"
+  resposta: [0, 2, 3]
+  explicacao: |
+    No sentido ESP32 → Uno, 2,64 V garantidos contra 3,0 V exigidos dão margem negativa (−0,36 V): pode funcionar, mas não é garantido. O 74LVC aceita 5 V na entrada mesmo alimentado em 3,3 V, e o 74HCT lê 2,0 V como 1 e entrega 5 V: um CI em cada sentido resolve a ligação.
+  fonte: "Microchip, datasheet ATmega328P (DC Characteristics); Espressif, ESP32 Series Datasheet (DC Characteristics); Texas Instruments, Logic Guide (famílias LVC e HCT)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T07-008
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Uma saída 74LS garante os níveis com I_OL = 8 mA e I_OH = −0,4 mA. Cada entrada 74LS puxa I_IL = −0,4 mA em nível baixo e I_IH = 20 µA em nível alto. Qual é o fan-out? Responda com um número inteiro de entradas.
+  resposta: {valor: 20, unidade: "entradas", tolerancia: 0}
+  explicacao: |
+    Nível baixo: 8 mA/0,4 mA = 20 entradas. Nível alto: 0,4 mA/20 µA = 20 entradas. O fan-out é o menor dos dois: 20. Em CMOS a entrada puxa cerca de 1 µA, e o limite passa a ser a capacitância.
+  fonte: "Floyd, Sistemas Digitais: fundamentos e aplicações, capítulo sobre tecnologias de circuitos integrados (fan-out e carga); Tocci, Sistemas Digitais, capítulo Famílias lógicas e circuitos integrados"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T07-009
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um pino de GPIO de 3,3 V em nível alto entrega V_OH = 3,1 V com a corrente desejada. Ele vai acender um LED vermelho (V_F = 1,9 V) com 4 mA, através de um resistor em série até o GND. Qual é o valor do resistor? Responda em Ω, arredondando para o inteiro mais próximo.
+  resposta: {valor: 300, unidade: "Ω", tolerancia: 0.01}
+  explicacao: |
+    R = (V_OH − V_F)/I = (3,1 − 1,9)/0,004 = 300 Ω (use 330 Ω da série E12, com um pouco menos de corrente). Usar 3,3 V em vez do V_OH sob carga superestima a corrente; e a corrente precisa respeitar o limite do pino e do chip, não o máximo absoluto.
+  fonte: "Espressif, ESP32 Series Datasheet (DC Characteristics); Floyd, Sistemas Digitais, capítulo sobre tecnologias de circuitos integrados (corrente de saída)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T07-010
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Os atrasos de uma saída 74HC são especificados com carga de 50 pF. A trilha que ela aciona tem 12 pF e cada entrada ligada nela, com seu pedaço de trilha, soma 5 pF. Quantas entradas, no máximo, podem ser ligadas sem passar da carga do datasheet? Responda com um número inteiro de entradas.
+  resposta: {valor: 7, unidade: "entradas", tolerancia: 0}
+  explicacao: |
+    (50 − 12)/5 = 7,6, e como não existe fração de entrada, são 7. Com mais carga, as bordas ficam mais lentas e o atraso passa dos valores do datasheet. Em CMOS é a capacitância, e não a corrente DC, que limita o fan-out.
+  fonte: "Texas Instruments, Understanding and Interpreting Standard-Logic Data Sheets (condições de teste com C_L); Floyd, Sistemas Digitais, capítulo sobre tecnologias de circuitos integrados"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T07-011
+  objetivo: O4
+  tipo: unica
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Para que serve uma entrada com Schmitt trigger, como a do 74HC14?
+  alternativas:
+    - "Para converter um sinal lento ou ruidoso em bordas limpas, usando dois limiares diferentes para subir e para descer"
+    - "Para aumentar a corrente de saída da porta"
+    - "Para permitir que a entrada receba 5 V com o CI alimentado em 3,3 V"
+    - "Para reduzir o atraso de propagação da porta"
+  resposta: 0
+  explicacao: |
+    Com histerese, a saída só sobe quando a entrada passa de V_T+ e só desce quando cai abaixo de V_T−. Um ruído menor que a histerese não provoca várias transições, o que é essencial para sinais de RC, botões e cabos longos. Tolerância a 5 V e corrente de saída são outras características.
+  fonte: "Nexperia, datasheet 74HC14 (Functional description e Transfer characteristic); Tocci, Sistemas Digitais, capítulo Famílias lógicas e circuitos integrados (dispositivos Schmitt-trigger)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T07-012
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Uma saída CMOS alimentada em 3,3 V faz 8 milhões de ciclos completos por segundo (8 MHz) e a capacitância total (interna mais carga) é de 30 pF. Qual é a potência dinâmica? Responda em mW, com 2 casas decimais.
+  resposta: {valor: 2.61, unidade: "mW", tolerancia: 0.01}
+  explicacao: |
+    P = C·V²·f = 30 × 10⁻¹² × 3,3² × 8 × 10⁶ = 30 × 10⁻¹² × 10,89 × 8 × 10⁶ ≈ 2,61 mW. Em 5 V seria (5/3,3)² ≈ 2,3 vezes mais: reduzir a tensão e o clock são as alavancas de economia.
+  fonte: "Harris & Harris, Digital Design and Computer Architecture, capítulo From Zero to One, seção Power Consumption"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T07-013
+  objetivo: O4
+  tipo: vf
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Verdadeiro ou falso: num CI 74HC, o atraso de propagação aumenta quando a capacitância de carga aumenta e quando a tensão de alimentação diminui.
+  resposta: true
+  explicacao: |
+    A saída carrega a carga com uma corrente limitada pela resistência dos transistores: mais capacitância leva mais tempo. Com menos tensão, os transistores conduzem menos corrente, então também ficam mais lentos. O datasheet do SN74HC00 mostra t_pd máximo de cerca de 20 ns em 4,5 V e de quase 100 ns em 2 V, com 50 pF.
+  fonte: "Texas Instruments, datasheet SN74HC00 (Switching Characteristics); Harris & Harris, Digital Design and Computer Architecture, capítulo Combinational Logic Design, seção Timing"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T07-014
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Um capacitor de 100 nF, carregado em 5 V, começa a descarregar por um resistor de 10 kΩ. Sua tensão vai à entrada de um inversor Schmitt com V_T+ = 2,5 V e V_T− = 1,5 V. Quanto tempo depois do início da descarga a saída do inversor muda? Responda em ms, com 2 casas decimais.
+  resposta: {valor: 1.2, unidade: "ms", tolerancia: 0.01}
+  explicacao: |
+    Descendo, o limiar que vale é V_T− = 1,5 V. v(t) = 5·e^(−t/τ), com τ = 10 kΩ × 100 nF = 1 ms. 1,5 = 5·e^(−t/τ) ⇒ t = τ·ln(5/1,5) ≈ 1,20 ms. Na subida, valeria V_T+: t = τ·ln 2 ≈ 0,69 ms. Usar o limiar errado é o erro mais comum.
+  fonte: "Nexperia, datasheet 74HC14 (Transfer characteristic); Tocci, Sistemas Digitais, capítulo Famílias lógicas e circuitos integrados (Schmitt trigger)"
+  origem: ia
+  revisao: rascunho

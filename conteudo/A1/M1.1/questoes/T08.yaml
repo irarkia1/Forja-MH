@@ -1,0 +1,220 @@
+- id: Q-M1.1.T08-001
+  objetivo: O1
+  tipo: vf
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: uma entrada CMOS desconectada lê sempre 0, porque não há corrente entrando nela.
+  resposta: false
+  explicacao: |
+    A entrada CMOS tem impedância altíssima, então sua tensão fica definida por fugas e acoplamento capacitivo: pode ler 0, 1, alternar com o ruído ou ficar perto de V_DD/2, onde o CI consome mais. Por isso toda entrada precisa de pull-up, pull-down ou de uma saída que a dirija.
+  fonte: "Texas Instruments, Implications of Slow or Floating CMOS Inputs (SCBA004)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T08-002
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um botão liga o pino ao GND e há um pull-up de 10 kΩ para 3,3 V. Que corrente passa pelo resistor enquanto o botão está apertado? Responda em mA, com 2 casas decimais.
+  resposta: {valor: 0.33, unidade: "mA", tolerancia: 0.01}
+  explicacao: |
+    Com o botão fechado, os 3,3 V ficam todos sobre o resistor: I = 3,3/10 000 = 0,33 mA (cerca de 1,1 mW). Solto, só a fuga da entrada passa. Num aparelho a bateria com botão mantido apertado, um pull-up maior economiza energia.
+  fonte: "Microchip, datasheet ATmega328P, seção I/O-Ports (pull-up); Floyd, Sistemas Digitais, capítulo sobre tecnologias de circuitos integrados"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T08-003
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Num nó com pull-up para 3,3 V, a fuga total para o GND (entrada do MCU, chave e placa) pode chegar a 5 µA. A entrada exige V_IH ≥ 2,475 V. Qual é o maior valor de pull-up que ainda garante a leitura de 1 com o botão solto? Responda em kΩ, arredondando para o inteiro mais próximo.
+  resposta: {valor: 165, unidade: "kΩ", tolerancia: 0.01}
+  explicacao: |
+    A fuga passa pelo pull-up e derruba a tensão: V = 3,3 − I·R ≥ 2,475 ⇒ R ≤ 0,825 V/5 µA = 165 kΩ. Na prática, use bem menos (10 a 100 kΩ), porque um resistor alto também deixa a linha sensível a ruído e lenta.
+  fonte: "Texas Instruments, Implications of Slow or Floating CMOS Inputs (SCBA004); Espressif, ESP32 Series Datasheet (DC Characteristics)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T08-004
+  objetivo: O1
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um botão ligado entre o GPIO36 de um ESP32 e o GND, configurado com INPUT_PULLUP, dá leituras aleatórias com o botão solto. Qual é a causa e a correção?
+  alternativas:
+    - "O pull-up interno é forte demais; trocar por pull-down interno"
+    - "O botão está com repique; resolver com debounce em firmware"
+    - "O GPIO36 é só de entrada e não tem pull-up interno; pôr um pull-up externo de 10 kΩ para 3,3 V"
+    - "O pino precisa ser configurado como saída open-drain"
+  resposta: 2
+  explicacao: |
+    No ESP32, os GPIO34 a GPIO39 são só de entrada e não têm resistores de pull-up nem de pull-down internos: o comando não tem efeito e a entrada flutua. O repique só aparece nas transições, não com o botão parado.
+  fonte: "Espressif, ESP32 Series Datasheet (Pin Description: GPIO34–39 só de entrada); ESP32 Technical Reference Manual, capítulo IO MUX and GPIO Matrix"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T08-005
+  objetivo: O2
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Quais estados uma saída open-drain consegue produzir sozinha, sem resistor externo?
+  alternativas:
+    - "Nível baixo (puxando para GND) e alta impedância"
+    - "Nível alto e nível baixo"
+    - "Nível alto e alta impedância"
+    - "Nível alto, nível baixo e alta impedância"
+  resposta: 0
+  explicacao: |
+    Só o transistor de baixo existe: ligado, puxa para GND; desligado, a saída fica solta. Quem produz o nível alto é o pull-up externo. Nível alto, baixo e Z juntos é a saída tri-state; alto e baixo, a push-pull.
+  fonte: "Tocci, Widmer e Moss, Sistemas Digitais: princípios e aplicações, capítulo Famílias lógicas e circuitos integrados (saídas em coletor aberto e dreno aberto)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T08-006
+  objetivo: O2
+  tipo: multipla
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Três sensores com saída de interrupção open-drain, ativa em baixo, estão ligados à mesma entrada do MCU, que tem um pull-up. Marque as afirmações corretas.
+  alternativas:
+    - "A linha vai a 0 se qualquer um dos sensores ativar sua interrupção"
+    - "A linha só fica em 1 quando os três sensores soltam a saída"
+    - "Se dois sensores puxarem a linha para 0 ao mesmo tempo, haverá um curto entre eles"
+    - "Se as saídas fossem push-pull, um sensor em 1 e outro em 0 ao mesmo tempo fariam um curto de V_DD a GND pelas saídas"
+  resposta: [0, 1, 3]
+  explicacao: |
+    É o wired-AND: a linha é o AND dos níveis (todos soltos → 1), ou seja, o OR das interrupções ativas em baixo. Dois open-drain puxando para 0 juntos não brigam, porque nenhum puxa para 1. Com push-pull, saídas em níveis opostos disputam a linha.
+  fonte: "Tocci, Widmer e Moss, Sistemas Digitais: princípios e aplicações, capítulo Famílias lógicas e circuitos integrados (wired-AND com saídas em coletor aberto)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T08-007
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Duas saídas push-pull de 3,3 V foram ligadas à mesma trilha por engano: uma está em 1 e a outra em 0. Cada saída se comporta como uma resistência de 25 Ω até seu trilho. Qual corrente circula entre elas? Responda em mA, arredondando para o inteiro mais próximo.
+  resposta: {valor: 66, unidade: "mA", tolerancia: 0.01}
+  explicacao: |
+    O caminho é V_DD → 25 Ω (transistor de cima da primeira) → trilha → 25 Ω (transistor de baixo da segunda) → GND: I = 3,3/50 = 66 mA, acima do máximo absoluto de muitos pinos. A tensão na trilha fica perto de 1,65 V, na região proibida. É por isso que barramentos usam open-drain ou tri-state.
+  fonte: "Harris & Harris, Digital Design and Computer Architecture, capítulo Combinational Logic Design, seção X's and Z's (contenção)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T08-008
+  objetivo: O2
+  tipo: unica
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Num barramento SPI com três escravos, tudo funciona até você ligar um módulo de cartão SD: a partir daí, as leituras dos outros dois escravos vêm erradas, mesmo com o CS do cartão em 1. Qual é a correção mais adequada?
+  alternativas:
+    - "Aumentar a frequência do clock SPI para reduzir o tempo de disputa"
+    - "Pôr um pull-up de 10 kΩ no MISO"
+    - "Ligar o MISO do cartão ao barramento por um buffer tri-state (como um 74HC125), com a habilitação ativa em baixo ligada ao CS do cartão"
+    - "Configurar o pino MISO do MCU como saída open-drain"
+  resposta: 2
+  explicacao: |
+    O sintoma indica que o MISO do módulo não vai para alta impedância com o CS inativo e disputa a linha com o escravo selecionado. O buffer tri-state só conduz quando o CS (ativo em baixo) está em 0, porque o OE do 74HC125 também é ativo em baixo. Um pull-up não vence uma saída push-pull, e o MISO é entrada no MCU.
+  fonte: "Nexperia, datasheet 74HC125 (Function table); Harris & Harris, Digital Design and Computer Architecture, capítulo Combinational Logic Design, seção X's and Z's (tristate buffer)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T08-009
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Num barramento I²C em 3,3 V, os dispositivos garantem V_OL ≤ 0,4 V absorvendo até 3 mA. Qual é o menor resistor de pull-up permitido? Responda em Ω, arredondando para o inteiro mais próximo.
+  resposta: {valor: 967, unidade: "Ω", tolerancia: 0.01}
+  explicacao: |
+    R_p(min) = (V_DD − V_OL(max))/I_OL = (3,3 − 0,4)/0,003 ≈ 967 Ω. Com menos que isso, quem puxa a linha para 0 teria de absorver mais de 3 mA, e o nível baixo ficaria acima de 0,4 V.
+  fonte: "NXP, UM10204: I2C-bus specification and user manual (Pull-up resistor sizing)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T08-010
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um barramento I²C no modo Fast (tempo de subida máximo de 300 ns, medido de 0,3·V_DD a 0,7·V_DD) tem capacitância total de 150 pF. Qual é o maior resistor de pull-up que respeita o tempo de subida? Responda em kΩ, com 2 casas decimais.
+  resposta: {valor: 2.36, unidade: "kΩ", tolerancia: 0.01}
+  explicacao: |
+    Na subida RC, o tempo de 0,3 a 0,7 de V_DD é R·C·ln(0,7/0,3) ≈ 0,8473·R·C. R_p(max) = 300 ns/(0,8473 × 150 pF) ≈ 2360 Ω = 2,36 kΩ. O "clássico" 4,7 kΩ deixaria a subida em ≈ 600 ns, fora do modo Fast.
+  fonte: "NXP, UM10204: I2C-bus specification and user manual (Pull-up resistor sizing e características dos modos Standard e Fast)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T08-011
+  objetivo: O3
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: num barramento I²C, diminuir o resistor de pull-up deixa a borda de subida mais rápida, mas aumenta a corrente que os dispositivos precisam absorver quando puxam a linha para 0.
+  resposta: true
+  explicacao: |
+    A constante de tempo R·C diminui, então a subida é mais rápida; mas com a linha em 0 a corrente é (V_DD − V_OL)/R, maior com R menor. O valor certo fica entre R_p(min), definido pela corrente, e R_p(max), definido pelo tempo de subida.
+  fonte: "NXP, UM10204: I2C-bus specification and user manual (Pull-up resistor sizing)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T08-012
+  objetivo: O4
+  tipo: vf
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: um botão ligado a uma entrada com interrupção por borda, sem nenhum filtro, pode gerar várias interrupções a cada aperto.
+  resposta: true
+  explicacao: |
+    O contato quica e produz uma rajada de transições por microssegundos a alguns milissegundos; cada borda pode disparar uma interrupção. Use RC com Schmitt trigger ou confirme o estado por amostragem em firmware.
+  fonte: "Jack Ganssle, A Guide to Debouncing"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T08-013
+  objetivo: O4
+  tipo: unica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Você vai implementar um I²C por bit-banging num STM32 usando dois GPIOs comuns, com pull-ups externos de 2,2 kΩ. Como configurar o pino da SDA?
+  alternativas:
+    - "Saída push-pull, escrevendo 1 e 0 conforme o bit"
+    - "Saída open-drain (OTYPER = 1): escrever 0 puxa a linha, escrever 1 solta e deixa o pull-up subir, e o pino continua podendo ser lido"
+    - "Entrada com pull-down interno, trocando para saída só quando for transmitir"
+    - "Modo analógico, para não carregar a linha"
+  resposta: 1
+  explicacao: |
+    O escravo também puxa a SDA para 0 (ACK e dados de leitura). Em push-pull, um 1 do MCU contra um 0 do escravo vira disputa. Em open-drain, os dois só puxam para baixo e a linha é o wired-AND, como a especificação exige. No STM32, OTYPER = 1 seleciona open-drain, e o registrador de entrada continua lendo o nível real da linha.
+  fonte: "ST, Reference Manual STM32 (capítulo General-purpose I/Os, GPIO: OTYPER); NXP, UM10204: I2C-bus specification and user manual"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T08-014
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Um debounce por hardware usa pull-up de 47 kΩ para 3,3 V, um capacitor C do pino ao GND e um inversor Schmitt com V_T+ = 2,0 V. Ao apertar, o botão descarrega C quase instantaneamente; ao soltar, C carrega pelo pull-up a partir de 0 V. Que valor de C faz a saída do inversor só mudar 20 ms depois de o botão ser solto? Responda em nF, arredondando para o inteiro mais próximo.
+  resposta: {valor: 457, unidade: "nF", tolerancia: 0.01}
+  explicacao: |
+    v(t) = 3,3·(1 − e^(−t/RC)) atinge 2,0 V em t = RC·ln(3,3/(3,3 − 2,0)) = RC·ln(2,538) ≈ 0,9316·RC. Com t = 20 ms: C = 0,02/(47 000 × 0,9316) ≈ 4,57 × 10⁻⁷ F ≈ 457 nF (use 470 nF). Na subida vale V_T+; na descida, valeria V_T−.
+  fonte: "Jack Ganssle, A Guide to Debouncing (debounce por RC e Schmitt trigger); Nexperia, datasheet 74HC14"
+  origem: ia
+  revisao: rascunho

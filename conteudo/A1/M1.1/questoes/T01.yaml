@@ -1,0 +1,230 @@
+- id: Q-M1.1.T01-001
+  objetivo: O1
+  tipo: vf
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Verdadeiro ou falso: uma XOR de 3 entradas, montada com duas XOR de 2 entradas em cascata, dá 1 quando o número de entradas em 1 é ímpar.
+  resposta: true
+  explicacao: |
+    A XOR é associativa: A ⊕ B ⊕ C = 1 para 001, 010, 100 e 111 — uma ou três entradas em 1. É a função de paridade ímpar, usada para gerar o bit de paridade da UART.
+  fonte: "Harris & Harris, Digital Design and Computer Architecture, capítulo From Zero to One, seção Logic Gates (Multiple-Input Gates)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T01-002
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um circuito calcula F = (A NAND B) XOR C. Em quantas das 8 combinações de A, B e C a saída F vale 1? Responda com um número inteiro de combinações.
+  resposta: {valor: 4, unidade: "combinações", tolerancia: 0}
+  explicacao: |
+    Com C = 0, F = (A·B)', que é 1 em 3 das 4 combinações de A e B. Com C = 1, a XOR inverte: F = A·B, que é 1 em 1 combinação. Total: 3 + 1 = 4.
+  fonte: "Floyd, Sistemas Digitais: fundamentos e aplicações, capítulo Portas lógicas (portas NAND e XOR)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T01-003
+  objetivo: O1
+  tipo: unica
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Uma porta NOR de 3 entradas (74HC27) tem as entradas A, B e C. Em que situação a saída vale 1?
+  alternativas:
+    - "Quando pelo menos uma entrada vale 0"
+    - "Quando as três entradas valem 1"
+    - "Quando as três entradas valem 0"
+    - "Quando um número ímpar de entradas vale 1"
+  resposta: 2
+  explicacao: |
+    NOR = OR invertido. A OR só vale 0 com todas as entradas em 0; invertendo, a NOR só vale 1 nesse caso. "Pelo menos uma em 0" descreve a NAND, e "número ímpar de uns" é a XOR.
+  fonte: "Tocci, Widmer e Moss, Sistemas Digitais: princípios e aplicações, capítulo Descrevendo circuitos lógicos (portas NOR)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T01-004
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um circuito de 4 entradas tem uma AND (A, B), uma XNOR (C, D) e uma OR que junta as duas saídas: F = A·B + (C ⊕ D)'. Em quantas das 16 combinações de entrada F vale 1? Responda com um número inteiro de combinações.
+  resposta: {valor: 10, unidade: "combinações", tolerancia: 0}
+  explicacao: |
+    A XNOR vale 1 em metade das combinações (C = D): 8 de 16. A·B vale 1 em 4 de 16. As duas valem 1 juntas em 4 × 2/4 = 2 combinações (A = B = 1 e C = D). Pela inclusão-exclusão: 8 + 4 − 2 = 10.
+  fonte: "Harris & Harris, Digital Design and Computer Architecture, capítulo Combinational Logic Design, seção Boolean Equations"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T01-005
+  objetivo: O2
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Qual destes CIs contém quatro portas NOR de 2 entradas?
+  alternativas:
+    - "74HC00"
+    - "74HC02"
+    - "74HC08"
+    - "74HC32"
+  resposta: 1
+  explicacao: |
+    74HC00 = 4 NAND, 74HC02 = 4 NOR, 74HC08 = 4 AND, 74HC32 = 4 OR (e 74HC04 = 6 inversores, 74HC86 = 4 XOR). Atenção: o 74HC02 também tem pinagem diferente dos outros três.
+  fonte: "Texas Instruments, datasheet SN74HC02 (primeira página: Quadruple 2-Input Positive-NOR Gates)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T01-006
+  objetivo: O2
+  tipo: multipla
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Num projeto você usa só 2 das 4 portas de um 74HC00 alimentado em 3,3 V. Marque as práticas corretas.
+  alternativas:
+    - "Ligar as entradas das duas portas não usadas a GND (ou a VCC)"
+    - "Deixar as saídas das portas não usadas desconectadas"
+    - "Deixar as entradas das portas não usadas soltas, porque um CI CMOS quase não consome corrente"
+    - "Colocar um capacitor cerâmico de 100 nF entre os pinos 14 e 7, perto do CI"
+  resposta: [0, 1, 3]
+  explicacao: |
+    Entradas CMOS soltas flutuam, captam ruído e podem ficar perto de VCC/2, fazendo os dois transistores da entrada conduzirem: aumenta o consumo e a saída oscila. Por isso toda entrada vai a VCC ou GND. Saídas não usadas ficam abertas, e o desacoplamento de 100 nF fica entre VCC (14) e GND (7).
+  fonte: "Texas Instruments, Implications of Slow or Floating CMOS Inputs (relatório de aplicação SCBA004); datasheet SN74HC00 (Pin Configuration and Functions)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T01-007
+  objetivo: O2
+  tipo: unica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Você precisa de um AND de 3 entradas (A, B, C) e só tem um 74HC08 (4 AND de 2 entradas, mesma pinagem do 74HC00). Qual ligação está correta?
+  alternativas:
+    - "A no pino 1, B no pino 2, C no pino 3; saída no pino 4"
+    - "A no pino 1, B no pino 2; pino 3 ligado ao pino 6; C no pino 5; saída no pino 4"
+    - "A no pino 1, B no pino 2, C no pino 4; saídas dos pinos 3 e 6 ligadas juntas"
+    - "A no pino 1, B no pino 2; pino 3 ligado ao pino 4; C no pino 5; saída no pino 6"
+  resposta: 3
+  explicacao: |
+    A porta 1 tem entradas nos pinos 1 e 2 e saída no 3; a porta 2 tem entradas nos pinos 4 e 5 e saída no 6. A·B sai no pino 3, entra no pino 4 junto com C no pino 5, e (A·B)·C sai no pino 6. Ligar duas saídas juntas causa disputa, e o pino 3 é saída, não entrada.
+  fonte: "Texas Instruments, datasheet SN74HC08 (Pin Configuration and Functions)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T01-008
+  objetivo: O3
+  tipo: vf
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Verdadeiro ou falso: qualquer função lógica pode ser implementada usando apenas portas NAND de 2 entradas.
+  resposta: true
+  explicacao: |
+    A NAND é uma porta universal: com ela se fazem NOT (entradas juntas), AND (NAND + inversor) e OR (entradas invertidas + NAND), e com NOT, AND e OR se faz qualquer função. A NOR também é universal. O projeto Nand2Tetris constrói um computador inteiro a partir da NAND.
+  fonte: "Tocci, Widmer e Moss, Sistemas Digitais: princípios e aplicações, capítulo Descrevendo circuitos lógicos (universalidade das portas NAND e NOR); Nand2Tetris, Project 1: Boolean Logic"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T01-009
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Qual é o menor número de portas NAND de 2 entradas necessário para implementar uma XOR de 2 entradas? Responda com um número inteiro de portas.
+  resposta: {valor: 4, unidade: "portas", tolerancia: 0}
+  explicacao: |
+    N1 = (A·B)'; N2 = (A·N1)'; N3 = (B·N1)'; Y = (N2·N3)'. Desenvolvendo: N2 = A' + B, N3 = A + B', Y = (A' + B)' + (A + B')' = A·B' + A'·B = A ⊕ B. Um único 74HC00 vira uma XOR.
+  fonte: "Nand2Tetris, Project 1: Boolean Logic (Xor a partir de Nand); Floyd, Sistemas Digitais, capítulo Portas lógicas"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T01-010
+  objetivo: O3
+  tipo: unica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Uma memória deve ser habilitada pelo sinal CS_N (ativo em 0) quando A15 = 1 e A14 = 0. Qual expressão gera CS_N?
+  alternativas:
+    - "CS_N = (A15 · A14')'"
+    - "CS_N = A15 · A14'"
+    - "CS_N = (A15 + A14')'"
+    - "CS_N = A15' + A14'"
+  resposta: 0
+  explicacao: |
+    A condição "habilitar" é A15·A14'. Como CS_N é ativo em 0, ele deve ser o complemento dela: CS_N = (A15·A14')' = A15' + A14 (De Morgan). Fisicamente, um inversor em A14 e uma NAND. Sem a inversão final, a memória ficaria habilitada justamente quando não deveria.
+  fonte: "Harris & Harris, Digital Design and Computer Architecture, capítulo Combinational Logic Design, seção Multilevel Combinational Logic (bubble pushing)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T01-011
+  objetivo: O3
+  tipo: multipla
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Um circuito tem três portas NAND de 2 entradas: N1 = (A·B)', N2 = (C·D)' e F = (N1·N2)'. Marque as afirmações corretas.
+  alternativas:
+    - "F = A·B + C·D"
+    - "F = (A + B)·(C + D)"
+    - "O circuito é uma soma de produtos em dois níveis, e cabe num único 74HC00"
+    - "Trocar as três NAND por NOR mantém a mesma função"
+  resposta: [0, 2]
+  explicacao: |
+    Por De Morgan, F = ((A·B)'·(C·D)')' = A·B + C·D: NAND-NAND equivale a AND-OR. Com NOR-NOR, o resultado seria ((A + B)' + (C + D)')' = (A + B)·(C + D), outra função: NOR-NOR equivale a OR-AND (produto de somas).
+  fonte: "Harris & Harris, Digital Design and Computer Architecture, capítulo Combinational Logic Design, seção Multilevel Combinational Logic"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T01-012
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Em C, com uint8_t a = 0xC5 e uint8_t b = 0x5A, qual é o valor de (uint8_t)~(a & b)? Responda em decimal, como número inteiro.
+  resposta: {valor: 191, unidade: "(adimensional)", tolerancia: 0}
+  explicacao: |
+    a & b = 1100 0101 & 0101 1010 = 0100 0000 = 0x40. O ~ inverte todos os bits (depois da promoção para int), e o cast para uint8_t guarda os 8 bits de baixo: 1011 1111 = 0xBF = 191. É uma NAND bit a bit sobre os 8 bits.
+  fonte: "Kernighan & Ritchie, The C Programming Language, seção Bitwise Operators"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T01-013
+  objetivo: O4
+  tipo: vf
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Verdadeiro ou falso: em C, com a = 0x0F e b = 0xF0, as expressões a & b e a && b dão o mesmo resultado.
+  resposta: false
+  explicacao: |
+    a & b é bit a bit: 0000 1111 & 1111 0000 = 0x00. a && b é lógico: os dois são diferentes de zero, então dá 1. Trocar um pelo outro é um erro clássico ao testar máscaras de registradores, como em if (PIND & (1 << 2)).
+  fonte: "Kernighan & Ritchie, The C Programming Language, seções Bitwise Operators e Relational and Logical Operators"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T01-014
+  objetivo: O4
+  tipo: unica
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Uma esteira tem um sensor de fim de curso e uma tampa de proteção. O motor deve ser desligado se o fim de curso for atingido ou a tampa for aberta, mesmo que o ESP32 que controla a esteira trave ou esteja reiniciando. Qual solução é a adequada?
+  alternativas:
+    - "Ler os dois sensores por interrupção no ESP32 e desligar o motor na rotina de interrupção"
+    - "Ler os dois sensores no laço principal a cada 1 ms e usar o watchdog para reiniciar o ESP32 se ele travar"
+    - "Ligar os sensores e o sinal de comando do ESP32 a portas lógicas que cortam o acionamento do motor, e o ESP32 apenas lê os sensores"
+    - "Usar um RTOS com uma tarefa de prioridade máxima dedicada aos sensores"
+  resposta: 2
+  explicacao: |
+    Qualquer solução em firmware falha quando o firmware falha (travamento, reset, bug de configuração do pino). Um intertravamento em hardware, como uma AND entre o comando do MCU e os sensores no estado seguro, funciona sem software e responde em nanossegundos. O firmware continua lendo os sensores para registrar e avisar.
+  fonte: "Harris & Harris, Digital Design and Computer Architecture, capítulo From Zero to One, seção Logic Gates; Floyd, Sistemas Digitais, capítulo Portas lógicas (aplicações)"
+  origem: ia
+  revisao: rascunho

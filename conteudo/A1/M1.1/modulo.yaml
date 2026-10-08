@@ -1,45 +1,128 @@
 id: M1.1
 ato: A1
 nome: "Eletrônica digital"
+missao: "Antes de acordar as máquinas da Floresta dos Microcontroladores, aprenda as runas de zeros e uns que correm nas veias delas: portas, relógios e memórias de um bit são o metal de que todo chip é forjado."
 horas: 150
 trilha: base
 ordem: 8
 requer: ["M0.2", "M0.4"]
 tags_chefe: []
+# Ordem didática: portas lógicas como CIs reais (a peça básica, já com pinagem e entradas não usadas) → mapas de Karnaugh (a ferramenta de projeto, retomando o M0.2 com irrelevâncias, várias saídas e glitches) → circuitos combinacionais (mux, decodificador, somador e comparador, projetados com o mapa) → famílias lógicas TTL e CMOS (a camada elétrica: níveis 3,3/5 V, conversão de nível, fan-out e o atraso de propagação que a temporização usa) → pull-up, pull-down, open-drain e tri-state (as saídas e entradas do GPIO, o debounce por RC e Schmitt e a saída tri-state que o 74HC595 usa) → latches e flip-flops (a memória de 1 bit, com setup/hold calculados a partir dos atrasos do T07) → contadores e registradores de deslocamento (flip-flops em cadeia: divisor de clock, 74HC595 e 74HC165 para expandir pinos) → máquinas de estado finito (o projeto sequencial geral, em hardware e em C) → analisador lógico, o laboratório de elite que fecha o módulo capturando o repique do botão, o contador, o 74HC595 e a FSM montados nos tópicos anteriores.
 topicos:
   - id: M1.1.T01
     nome: "Portas lógicas e tabelas-verdade"
     tipo: comum
     peso: 1
-  - id: M1.1.T02
-    nome: "Circuitos combinacionais (mux, decodificador, somador)"
-    tipo: comum
-    peso: 1
+    objetivos:
+      - id: O1
+        texto: "Construir a tabela-verdade e a expressão booleana de circuitos com portas NOT, AND, OR, NAND, NOR, XOR e XNOR, inclusive portas de mais de duas entradas"
+      - id: O2
+        texto: "Identificar os CIs 74HC00, 74HC02, 74HC04, 74HC08, 74HC32 e 74HC86 pela função e pela pinagem do datasheet e ligar a alimentação, o desacoplamento e as entradas não usadas corretamente"
+      - id: O3
+        texto: "Converter circuitos para só NAND ou só NOR e ler esquemas com lógica ativa em nível baixo (bolhas, barra sobre o nome, sufixo _N)"
+      - id: O4
+        texto: "Traduzir lógica de portas para expressões bit a bit em C e decidir entre resolver uma função com portas externas ou no firmware do microcontrolador"
   - id: M1.1.T03
     nome: "Mapas de Karnaugh"
     tipo: comum
     peso: 1
-  - id: M1.1.T04
-    nome: "Latches e flip-flops"
+    objetivos:
+      - id: O1
+        texto: "Montar mapas de Karnaugh de 2, 3 e 4 variáveis a partir de tabelas-verdade, listas de mintermos ou expressões e obter a soma de produtos mínima"
+      - id: O2
+        texto: "Usar condições de irrelevância (don't care) e obter o produto de somas mínimo agrupando os zeros"
+      - id: O3
+        texto: "Projetar funções de várias saídas, como o decodificador de BCD para display de 7 segmentos, com um mapa por saída"
+      - id: O4
+        texto: "Reconhecer os limites do método (5 ou mais variáveis, padrões de XOR) e identificar e eliminar glitches por hazard estático com o termo de consenso"
+  - id: M1.1.T02
+    nome: "Circuitos combinacionais (mux, decodificador, somador)"
     tipo: comum
     peso: 1
-  - id: M1.1.T05
-    nome: "Contadores e registradores de deslocamento"
-    tipo: comum
-    peso: 1
-  - id: M1.1.T06
-    nome: "Máquinas de estado finito"
-    tipo: comum
-    peso: 1
+    objetivos:
+      - id: O1
+        texto: "Usar multiplexadores e demultiplexadores (74HC151, 74HC4051) para selecionar sinais, ampliar as entradas de um MCU e implementar funções lógicas"
+      - id: O2
+        texto: "Usar decodificadores e codificadores (74HC138, codificador de prioridade 74HC148) para gerar sinais de seleção de chip e ler teclas"
+      - id: O3
+        texto: "Projetar o meio somador, o somador completo e o somador de n bits com propagação do vai-um e calcular o atraso do caminho crítico"
+      - id: O4
+        texto: "Projetar comparadores de igualdade e de magnitude e o subtrator em complemento de 2, detectando o vai-um e o estouro"
   - id: M1.1.T07
     nome: "Famílias lógicas TTL e CMOS, níveis e fan-out"
     tipo: comum
     peso: 1
+    objetivos:
+      - id: O1
+        texto: "Ler no datasheet os níveis V_IH, V_IL, V_OH e V_OL e calcular as margens de ruído na ligação entre dois dispositivos"
+      - id: O2
+        texto: "Verificar a compatibilidade entre lógicas de 3,3 V e 5 V (74HC, 74HCT, 74LVC, entradas tolerantes a 5 V) e escolher a conversão de nível adequada: divisor resistivo, buffer, MOSFET bidirecional ou CI tradutor"
+      - id: O3
+        texto: "Calcular o fan-out por corrente e por capacitância e a corrente que um pino de GPIO ou uma saída de porta fornece ou absorve, como ao acionar um LED"
+      - id: O4
+        texto: "Explicar o inversor CMOS, o consumo estático e o dinâmico (P = C·V²·f), o atraso de propagação, os tempos de transição e a entrada com histerese (Schmitt trigger)"
   - id: M1.1.T08
     nome: "Pull-up, pull-down, open-drain, tri-state"
     tipo: comum
     peso: 1
+    objetivos:
+      - id: O1
+        texto: "Explicar por que uma entrada CMOS não pode ficar flutuando e dimensionar resistores de pull-up e pull-down, internos ou externos, para botões e chaves"
+      - id: O2
+        texto: "Diferenciar as saídas push-pull, open-drain (coletor aberto) e tri-state e explicar a lógica wired-AND e o compartilhamento de uma linha por vários dispositivos"
+      - id: O3
+        texto: "Dimensionar o resistor de pull-up de um barramento open-drain como o I²C pelo tempo de subida e pela corrente máxima em nível baixo"
+      - id: O4
+        texto: "Projetar a leitura de um botão com debounce por RC e Schmitt trigger ou por firmware e escolher o modo de GPIO adequado do microcontrolador"
+  - id: M1.1.T04
+    nome: "Latches e flip-flops"
+    tipo: comum
+    peso: 1
+    objetivos:
+      - id: O1
+        texto: "Explicar o funcionamento dos latches SR e D e usar o latch SR para eliminar o repique de uma chave de duas posições"
+      - id: O2
+        texto: "Descrever os flip-flops D, JK e T disparados por borda, com entradas assíncronas de preset e clear (74HC74), e montar suas tabelas de transição"
+      - id: O3
+        texto: "Aplicar os tempos de setup, de hold e de propagação clock-saída para verificar um circuito síncrono e calcular a frequência máxima de clock"
+      - id: O4
+        texto: "Explicar a metaestabilidade e usar o sincronizador de dois flip-flops em entradas assíncronas, como um botão ou um sinal de outro domínio de clock"
+  - id: M1.1.T05
+    nome: "Contadores e registradores de deslocamento"
+    tipo: comum
+    peso: 1
+    objetivos:
+      - id: O1
+        texto: "Projetar e analisar contadores assíncronos e síncronos, binários e de módulo N, e calcular a divisão de frequência que eles produzem"
+      - id: O2
+        texto: "Usar CIs contadores (74HC161, 74HC163, 74HC393, 74HC4040) com carga, reset e cascateamento e reconhecer os glitches de decodificação dos contadores assíncronos"
+      - id: O3
+        texto: "Expandir as saídas de um MCU com o registrador de deslocamento 74HC595 (dados, clock de deslocamento, clock de armazenamento, OE e cascateamento) por bit-banging ou SPI"
+      - id: O4
+        texto: "Expandir as entradas com o 74HC165 e calcular o tempo de atualização de cadeias de registradores a partir da frequência de clock"
+  - id: M1.1.T06
+    nome: "Máquinas de estado finito"
+    tipo: comum
+    peso: 1
+    objetivos:
+      - id: O1
+        texto: "Modelar um comportamento como máquina de estados finita com diagrama de estados e tabela de transição, distinguindo as máquinas de Moore e de Mealy"
+      - id: O2
+        texto: "Implementar uma FSM em hardware com codificação binária, one-hot ou Gray, obtendo as equações de próximo estado e de saída"
+      - id: O3
+        texto: "Implementar FSMs em C com switch-case ou tabela de transição, acionadas por eventos e por um tick periódico, como o debounce de botão e o semáforo"
+      - id: O4
+        texto: "Simular a sequência de estados de uma FSM para uma entrada dada e detectar estados inalcançáveis, ilegais ou sem saída e a falta de reset"
   - id: M1.1.T09
     nome: "Analisador lógico"
     tipo: elite
     peso: 2
+    objetivos:
+      - id: O1
+        texto: "Configurar um analisador lógico de 8 canais no sigrok/PulseView (taxa de amostragem, número de amostras, canais e trigger) respeitando a regra de amostrar pelo menos 4 vezes mais rápido que o sinal"
+      - id: O2
+        texto: "Diferenciar o analisador lógico do osciloscópio e escolher o instrumento certo para cada medida (temporização, nível analógico, forma da borda, protocolo)"
+      - id: O3
+        texto: "Capturar e medir sinais digitais reais, como o repique de um botão, as saídas de um contador, a carga de um 74HC595 e as transições de uma FSM, conferindo período, largura de pulso e ordem dos eventos"
+      - id: O4
+        texto: "Usar os decodificadores de protocolo do PulseView (UART, SPI, I²C, paralelo) e conferir a captura com um simulador como Wokwi, Digital ou Falstad"

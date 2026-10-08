@@ -1,0 +1,220 @@
+- id: Q-M1.1.T09-001
+  objetivo: O1
+  tipo: vf
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: para capturar com folga um barramento SPI com clock de 2 MHz, o analisador lógico deve amostrar a pelo menos 8 MSa/s.
+  resposta: true
+  explicacao: |
+    A regra prática é amostrar pelo menos 4 vezes mais rápido que o sinal mais rápido: 4 × 2 MHz = 8 MSa/s. Com menos, as bordas ficam mal posicionadas e o decodificador pode errar bits; abaixo de 2 vezes, aparece aliasing.
+  fonte: "Saleae, central de suporte (artigos sobre escolha da taxa de amostragem digital); Tektronix, The XYZs of Logic Analyzers (resolução de tempo)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T09-002
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    No PulseView, você configura 50 milhões de amostras a 12 MSa/s. Quanto tempo de sinal a captura cobre? Responda em s, com 2 casas decimais.
+  resposta: {valor: 4.17, unidade: "s", tolerancia: 0.01}
+  explicacao: |
+    Duração = número de amostras/taxa = 50 × 10⁶/12 × 10⁶ ≈ 4,17 s. Nos analisadores baratos com fx2lafw, as amostras vão para a memória do PC; capturas maiores exigem mais RAM, e para eventos raros o trigger é melhor que uma captura longa.
+  fonte: "sigrok, documentação do PulseView (taxa de amostragem e número de amostras)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T09-003
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Numa captura a 4 MSa/s, um pulso aparece com exatamente 37 amostras em nível alto. Considerando que cada borda real pode estar em qualquer ponto entre duas amostras, qual é o maior erro possível entre a largura medida e a largura real? Responda em ns, sem casas decimais.
+  resposta: {valor: 250, unidade: "ns", tolerancia: 0.01}
+  explicacao: |
+    O período de amostragem é 1/4 MHz = 250 ns. A largura medida é 37 × 250 ns = 9,25 µs, mas a real pode estar entre 36 e 38 amostras (9,0 a 9,5 µs): erro de até ±1 período de amostragem, 250 ns. Para medir com erro relativo menor, aumente a taxa.
+  fonte: "Tektronix, The XYZs of Logic Analyzers (amostragem assíncrona e resolução de tempo)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T09-004
+  objetivo: O1
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Você quer capturar o repique de um botão com pull-up (solto = 1, apertado = 0), apertado num instante qualquer. Qual configuração do analisador é a adequada?
+  alternativas:
+    - "Trigger por nível alto no canal do botão, a 1 kHz, para cobrir vários segundos"
+    - "Sem trigger, a 24 MSa/s, com o máximo de amostras, procurando o aperto depois"
+    - "Trigger por nível alto no canal do botão, a 2 MSa/s"
+    - "Trigger por borda de descida no canal do botão, a cerca de 1 a 4 MSa/s, com uma parte da memória antes do trigger"
+  resposta: 3
+  explicacao: |
+    O aperto começa com uma descida: o trigger por borda de descida inicia a captura ali, e o pré-trigger mostra o sinal antes. A 1–4 MSa/s, transições de microssegundos aparecem e 100–200 mil amostras cobrem dezenas de milissegundos. Trigger por nível alto dispara na hora (o botão solto já está em 1), e 1 kHz perderia o repique.
+  fonte: "sigrok, documentação do PulseView (trigger e capture ratio); Jack Ganssle, A Guide to Debouncing"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T09-005
+  objetivo: O2
+  tipo: unica
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Qual destas medidas exige um osciloscópio, e não um analisador lógico?
+  alternativas:
+    - "Ver a sobretensão e as oscilações (ringing) na borda de subida de um clock"
+    - "Conferir a sequência de contagem nas quatro saídas de um contador"
+    - "Decodificar os bytes enviados por uma UART"
+    - "Medir o período de um PWM de 1 kHz"
+  resposta: 0
+  explicacao: |
+    O analisador compara a entrada com um limiar e só registra 0 ou 1; a forma da tensão, como a sobretensão e o ringing, some. Sequência de contagem, bytes de protocolo e período são informações de tempo e de ordem, que o analisador mede bem.
+  fonte: "Tektronix, The XYZs of Logic Analyzers (quando usar osciloscópio e quando usar analisador lógico)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T09-006
+  objetivo: O2
+  tipo: multipla
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Comparando um analisador lógico USB de 8 canais com um osciloscópio de bancada de 2 canais, marque as afirmações corretas.
+  alternativas:
+    - "O analisador mostra só 0 ou 1 conforme um limiar, e não a forma real da tensão"
+    - "O analisador tem mais canais e permite capturas muito mais longas"
+    - "O analisador barato mede com precisão o tempo de subida de uma borda de 5 ns"
+    - "Para ver a sobretensão numa borda, o analisador é o instrumento indicado"
+  resposta: [0, 1]
+  explicacao: |
+    O analisador ganha em número de canais, duração da captura e decodificação de protocolos. A 24 MSa/s, sua resolução é de 41,7 ns, muito maior que uma subida de 5 ns, e ele não registra tensão: forma da borda e sobretensão são trabalho do osciloscópio.
+  fonte: "Tektronix, The XYZs of Logic Analyzers; Tektronix, The XYZs of Oscilloscopes"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T09-007
+  objetivo: O2
+  tipo: vf
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Verdadeiro ou falso: um glitch de 20 ns numa linha sempre aparece numa captura feita a 24 MSa/s.
+  resposta: false
+  explicacao: |
+    A 24 MSa/s, as amostras estão separadas por 41,7 ns. Um pulso de 20 ns só é registrado se uma amostra cair dentro dele, o que acontece em cerca de metade das vezes (20/41,7) se a fase for aleatória. Para caçar glitches, use osciloscópio ou um analisador com detecção de glitch e taxa maior.
+  fonte: "Tektronix, The XYZs of Logic Analyzers (resolução de tempo e captura de glitches)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T09-008
+  objetivo: O2
+  tipo: unica
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Um sensor I²C ligado por fios de 50 cm funciona a 100 kHz, mas a 400 kHz o decodificador do PulseView mostra NACKs e bytes errados de vez em quando. Qual é o próximo passo mais adequado?
+  alternativas:
+    - "Aumentar a taxa do analisador lógico para a máxima e repetir a captura até o erro sumir"
+    - "Medir SDA e SCL com o osciloscópio para ver se as bordas de subida, limitadas pelo pull-up e pela capacitância dos fios, chegam ao nível alto a tempo"
+    - "Trocar o decodificador I²C por um decodificador UART, que é mais tolerante"
+    - "Concluir que o sensor está com defeito, porque o decodificador mostrou NACK"
+  resposta: 1
+  explicacao: |
+    O analisador mostrou o que aconteceu (NACK, byte errado), mas não por quê. A suspeita do T08 é a subida RC lenta do barramento open-drain: o osciloscópio mostra a forma da borda e se ela atinge o V_IH antes da amostragem. A correção costuma ser reduzir o pull-up, encurtar os fios ou baixar a velocidade.
+  fonte: "NXP, UM10204: I2C-bus specification and user manual (Pull-up resistor sizing); Tektronix, The XYZs of Logic Analyzers"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T09-009
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Na captura de um botão com pull-up, a primeira borda de descida aparece em t = 1,250 ms e a última transição do repique em t = 3,870 ms; depois disso, o sinal fica estável em 0. Qual é a duração do repique? Responda em ms, com 2 casas decimais.
+  resposta: {valor: 2.62, unidade: "ms", tolerancia: 0.01}
+  explicacao: |
+    3,870 − 1,250 = 2,62 ms. O debounce precisa de folga sobre o pior caso medido em vários apertos, como um tick de 5 ms com 4 leituras iguais (≈ 20 ms). Medir só um aperto não basta, porque o repique varia.
+  fonte: "Jack Ganssle, A Guide to Debouncing (medição do repique); sigrok, documentação do PulseView (cursores)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T09-010
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Dois 74HC595 estão em cascata, com DS do primeiro ligado ao MCU. Entre duas bordas de STCP, o analisador mostra 16 bordas de subida em SHCP, e o DS lido em cada uma (MSB primeiro) é 1, 0, 1, 1, 0, 0, 0, 1 e depois 0, 1, 0, 1, 0, 1, 0, 1. Qual valor, em decimal, aparece nas saídas Q7..Q0 do chip ligado ao MCU após o STCP? Responda com um número inteiro.
+  resposta: {valor: 85, unidade: "(adimensional)", tolerancia: 0}
+  explicacao: |
+    Os primeiros 8 bits (1011 0001 = 0xB1) são empurrados para o segundo chip pelos 8 últimos. O chip ligado ao MCU fica com o último byte: 0101 0101 = 0x55 = 85. O decodificador SPI do PulseView mostraria 0xB1 e 0x55, nessa ordem.
+  fonte: "Nexperia, datasheet 74HC595 (Functional description); sigrok, decodificador SPI"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T09-011
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Capturando um PWM a 2 MSa/s, cada período tem 37 amostras em nível alto e 113 em nível baixo. Qual é a frequência estimada do PWM? Responda em kHz, com 2 casas decimais.
+  resposta: {valor: 13.33, unidade: "kHz", tolerancia: 0.01}
+  explicacao: |
+    Período = 150 amostras × 0,5 µs = 75 µs ⇒ f = 1/75 µs ≈ 13,33 kHz; ciclo de trabalho = 37/150 ≈ 24,7 %. Cada contagem tem incerteza de ±1 amostra, cerca de 0,7 % no período.
+  fonte: "sigrok, documentação do PulseView (medidas com cursores e decodificador Timing)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T09-012
+  objetivo: O4
+  tipo: vf
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Verdadeiro ou falso: para traduzir os bits de uma linha serial em bytes, o decodificador UART do PulseView precisa da taxa de bits e do formato do quadro (bits de dados, paridade e bits de parada).
+  resposta: true
+  explicacao: |
+    A UART é assíncrona: não há clock na linha, e o decodificador amostra cada bit a partir do start bit usando a taxa configurada. Com a taxa errada (9600 em vez de 115 200), ele mostra bytes sem sentido ou erros de quadro.
+  fonte: "sigrok, documentação do decodificador de protocolo UART"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T09-013
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    O decodificador UART mostra bytes em formato 8N1 (1 start bit, 8 bits de dados, sem paridade, 1 stop bit) a 115 200 bit/s. Quanto tempo ocupa cada byte na linha? Responda em µs, com 1 casa decimal.
+  resposta: {valor: 86.8, unidade: "µs", tolerancia: 0.01}
+  explicacao: |
+    10 bits por quadro: 10/115 200 ≈ 86,8 µs. Para medir isso com folga, amostre a pelo menos 4 × 115,2 kHz ≈ 0,5 MSa/s; com 1 MSa/s há cerca de 8,7 amostras por bit.
+  fonte: "sigrok, documentação do decodificador de protocolo UART"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T09-014
+  objetivo: O4
+  tipo: multipla
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Você compara a captura real de um MCU com um 74HC595 e um botão com a mesma montagem simulada no Wokwi, cujo analisador exporta um VCD aberto no PulseView. Marque as afirmações corretas.
+  alternativas:
+    - "No simulador, portas e flip-flops são ideais ou têm atrasos simplificados, então detalhes de nanossegundos da captura real não aparecem"
+    - "O VCD do simulador pode passar pelos mesmos decodificadores de protocolo do PulseView usados na captura real"
+    - "Se os bytes SPI decodificados forem iguais na simulação e na bancada, os níveis de tensão da montagem real também estão necessariamente corretos"
+    - "O repique de um botão real varia de aperto para aperto, então a captura real deve ser repetida várias vezes em vez de comparada a uma única simulação"
+  resposta: [0, 1, 3]
+  explicacao: |
+    A simulação confirma a lógica: sequência de bits e ordem dos eventos. O analisador real também só vê 0 e 1 por limiar, então bytes iguais não provam que os níveis tenham margem (T07); isso se mede com multímetro ou osciloscópio. O repique físico é aleatório e precisa de várias capturas.
+  fonte: "Wokwi, documentação da peça Logic Analyzer; sigrok, documentação do PulseView (importação de VCD)"
+  origem: ia
+  revisao: rascunho

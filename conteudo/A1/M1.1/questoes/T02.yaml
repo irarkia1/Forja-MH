@@ -1,0 +1,225 @@
+- id: Q-M1.1.T02-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Quantas linhas de seleção tem um multiplexador de 16 entradas de dados?
+  alternativas:
+    - "2"
+    - "8"
+    - "16"
+    - "4"
+  resposta: 3
+  explicacao: |
+    n linhas de seleção escolhem entre 2ⁿ entradas: 2⁴ = 16. Um mux 8:1 (74HC151) tem 3 seleções; um 4:1, 2.
+  fonte: "Harris & Harris, Digital Design and Computer Architecture, capítulo Combinational Logic Design, seção Combinational Building Blocks (Multiplexers)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T02-002
+  objetivo: O1
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: o 74HC4051 é feito de chaves CMOS que conduzem nos dois sentidos, por isso serve tanto para levar 8 sinais analógicos a uma única entrada de ADC quanto para distribuir um sinal para 8 destinos.
+  resposta: true
+  explicacao: |
+    O 4051 é um mux/demux analógico: cada canal é uma chave com resistência de dezenas de ohms, que conduz tensões analógicas entre o pino comum e o canal selecionado, nos dois sentidos. O 74HC151, ao contrário, é um mux digital de sentido único, com saída regenerada.
+  fonte: "Nexperia, datasheet 74HC4051 (General description e Functional description)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T02-003
+  objetivo: O1
+  tipo: unica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    A função F(A, B, C) = Σm(1, 2, 6, 7) será feita com um mux 4:1, com A e B nas seleções (A é o bit mais significativo). Que valores devem ir às entradas de dados D0, D1, D2 e D3?
+  alternativas:
+    - "D0 = C, D1 = C', D2 = 0, D3 = 1"
+    - "D0 = C', D1 = C, D2 = 1, D3 = 0"
+    - "D0 = 1, D1 = 0, D2 = C, D3 = C'"
+    - "D0 = C, D1 = C, D2 = 0, D3 = 1"
+  resposta: 0
+  explicacao: |
+    Para AB = 00: m0 = 0 e m1 = 1 → F = C. AB = 01: m2 = 1, m3 = 0 → C'. AB = 10: m4 = m5 = 0 → 0. AB = 11: m6 = m7 = 1 → 1. Com a última variável nas entradas de dados, um mux de 4 entradas implementa qualquer função de 3 variáveis.
+  fonte: "Floyd, Sistemas Digitais: fundamentos e aplicações, capítulo Funções da lógica combinacional (multiplexador como gerador de funções lógicas)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T02-004
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um ESP32 lê 16 sensores analógicos com dois 74HC4051. Os dois compartilham as três linhas de seleção, os pinos de habilitação ficam fixos em GND e o pino comum de cada um vai a uma entrada de ADC diferente. Quantos pinos do ESP32 são usados? Responda com um número inteiro de pinos.
+  resposta: {valor: 5, unidade: "pinos", tolerancia: 0}
+  explicacao: |
+    3 GPIOs de seleção (comuns aos dois CIs) + 2 entradas de ADC = 5 pinos para 16 sensores. A cada valor de seleção, o firmware lê os dois ADCs: o canal k do primeiro e o canal k do segundo.
+  fonte: "Nexperia, datasheet 74HC4051 (Functional description); Floyd, Sistemas Digitais, capítulo Funções da lógica combinacional (multiplexadores)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T02-005
+  objetivo: O2
+  tipo: vf
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Verdadeiro ou falso: no 74HC138 habilitado, a saída correspondente ao código de entrada vai a 0 e as outras sete ficam em 1.
+  resposta: true
+  explicacao: |
+    As saídas Y0 a Y7 do 74HC138 são ativas em baixo. Isso combina com os sinais de seleção de chip (CS) dos periféricos, que também costumam ser ativos em baixo. Desabilitado, todas as saídas ficam em 1.
+  fonte: "Texas Instruments, datasheet SN74HC138 (Function Table)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T02-006
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    As linhas de endereço A15, A14 e A13 de um barramento vão às entradas A2, A1 e A0 de um 74HC138 habilitado. O processador acessa o endereço 0xA123. Qual saída Yn vai a 0? Responda com o índice n da saída, um número inteiro.
+  resposta: {valor: 5, unidade: "índice da saída", tolerancia: 0}
+  explicacao: |
+    0xA123 = 1010 0001 0010 0011. Os três bits mais altos são 101 = 5, então Y5 vai a 0. Cada saída cobre 2¹³ = 8 KiB; Y5 atende de 0xA000 a 0xBFFF.
+  fonte: "Floyd, Sistemas Digitais: fundamentos e aplicações, capítulo Funções da lógica combinacional (decodificadores); Texas Instruments, datasheet SN74HC138"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T02-007
+  objetivo: O2
+  tipo: unica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Num teclado de 8 teclas ligado a um 74HC148 (entradas e saídas ativas em baixo, entrada 7 com maior prioridade), as teclas 2 e 5 estão apertadas ao mesmo tempo, levando essas entradas a 0. Qual é o valor nas saídas A2 A1 A0?
+  alternativas:
+    - "101"
+    - "010"
+    - "101 e 010 alternando"
+    - "111"
+  resposta: 1
+  explicacao: |
+    O codificador de prioridade ignora a tecla 2 e codifica a 5 (maior índice). Como as saídas são ativas em baixo, o código sai complementado: 5 = 101 → 010. O sinal GS vai a 0 indicando que há tecla apertada; 111 nas saídas, com GS em 1, é o estado sem nenhuma tecla.
+  fonte: "Texas Instruments, datasheet SN74HC148 (Function Table)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T02-008
+  objetivo: O2
+  tipo: multipla
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Um MCU usa um 74HC138 para gerar os sinais CS (ativos em baixo) de até 8 dispositivos SPI, com 3 GPIOs nas entradas de endereço e 1 GPIO numa entrada de habilitação. Marque as afirmações corretas.
+  alternativas:
+    - "Quatro GPIOs substituem os oito pinos de CS que seriam necessários sem o decodificador"
+    - "Dois dispositivos podem ser selecionados ao mesmo tempo para receber o mesmo comando, escolhendo um código intermediário"
+    - "As saídas ativas em baixo do 138 casam diretamente com o CS ativo em baixo dos dispositivos"
+    - "Ao trocar de dispositivo, convém desabilitar o 138, mudar o endereço e só então habilitar, porque a mudança de vários bits pode gerar um pulso curto em outra saída"
+  resposta: [0, 2, 3]
+  explicacao: |
+    Um decodificador ativa uma única saída por vez, então não há seleção simultânea. Os bits de endereço nunca mudam exatamente juntos: ao passar de 011 para 100, o 138 pode ver por alguns ns 000 ou 111 e ativar brevemente outro CS. Desabilitar durante a troca evita esse pulso.
+  fonte: "Texas Instruments, datasheet SN74HC138 (Function Table e Switching Characteristics); Harris & Harris, Digital Design and Computer Architecture, capítulo Combinational Logic Design, seções Decoders e Timing"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T02-009
+  objetivo: O3
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Quais são as equações do meio somador de dois bits A e B?
+  alternativas:
+    - "S = A + B e C = A·B"
+    - "S = A·B e C = A ⊕ B"
+    - "S = A ⊕ B e C = A·B"
+    - "S = A ⊕ B e C = A + B"
+  resposta: 2
+  explicacao: |
+    1 + 1 = 10 em binário: a soma (bit de baixo) é 1 quando só uma das entradas é 1 (XOR), e o vai-um é 1 quando as duas são 1 (AND). A OR erraria o caso 1 + 1.
+  fonte: "Harris & Harris, Digital Design and Computer Architecture, capítulo Digital Building Blocks, seção Arithmetic Circuits (Addition: Half Adder)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T02-010
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um somador de 4 bits soma A = 1011 e B = 0110 com vai-um de entrada 0. Qual é o valor decimal das 4 saídas de soma S3 S2 S1 S0 (sem contar o vai-um de saída)? Responda com um número inteiro.
+  resposta: {valor: 1, unidade: "(adimensional)", tolerancia: 0}
+  explicacao: |
+    11 + 6 = 17 = 1 0001 em binário. As 4 saídas de soma mostram 0001 = 1 e o vai-um de saída vale 1: o resultado não cabe em 4 bits, e o vai-um é o quinto bit.
+  fonte: "Tocci, Widmer e Moss, Sistemas Digitais: princípios e aplicações, capítulo Aritmética digital: operações e circuitos (somador paralelo)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T02-011
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um somador de 16 bits com propagação do vai-um (ripple-carry) usa somadores completos que levam 12 ns da entrada ao vai-um de saída e 15 ns da entrada à soma. Qual é o pior atraso até a saída S15 ficar correta? Responda em ns, sem casas decimais.
+  resposta: {valor: 195, unidade: "ns", tolerancia: 0.01}
+  explicacao: |
+    O vai-um atravessa os estágios 0 a 14: 15 × 12 = 180 ns até chegar ao estágio 15, que ainda leva 15 ns para gerar S15: 195 ns. O vai-um final sai em 16 × 12 = 192 ns. O atraso cresce linearmente com o número de bits; somadores com vai-um antecipado reduzem isso.
+  fonte: "Harris & Harris, Digital Design and Computer Architecture, capítulo Digital Building Blocks, seção Arithmetic Circuits (Ripple-Carry Adder)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T02-012
+  objetivo: O4
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: dois números de 8 bits A e B são iguais se e somente se todos os bits de A XOR B forem 0, por isso um comparador de igualdade pode ser feito com 8 portas XNOR e uma AND de 8 entradas.
+  resposta: true
+  explicacao: |
+    Cada XNOR dá 1 quando os bits correspondentes são iguais, e a AND exige que todos sejam. Em C, a mesma ideia é (a ^ b) == 0. Para magnitude (maior ou menor), é preciso um comparador como o 74HC85 ou uma subtração.
+  fonte: "Harris & Harris, Digital Design and Computer Architecture, capítulo Digital Building Blocks, seção Arithmetic Circuits (Comparators)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T02-013
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um subtrator de 8 bits calcula A − B como A + (~B) + 1, com A = 0x30 e B = 0x50. Qual é o resultado de 8 bits interpretado como número sem sinal? Responda em decimal, como número inteiro.
+  resposta: {valor: 224, unidade: "(adimensional)", tolerancia: 0}
+  explicacao: |
+    ~0x50 = 0xAF. 0x30 + 0xAF + 1 = 0xE0 = 224, com vai-um de saída 0 (houve empréstimo, porque 48 < 80). Interpretado com sinal, 0xE0 é −32, que é exatamente 48 − 80.
+  fonte: "Tocci, Widmer e Moss, Sistemas Digitais: princípios e aplicações, capítulo Aritmética digital: operações e circuitos (subtração em complemento de 2)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T02-014
+  objetivo: O4
+  tipo: multipla
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Um somador de 8 bits calcula 0x70 + 0x50. Marque as afirmações corretas sobre o resultado e as flags.
+  alternativas:
+    - "O resultado de 8 bits é 0xC0, com vai-um de saída (C) igual a 0"
+    - "Lidos como números com sinal, dois positivos deram um resultado negativo, então o estouro (V) vale 1"
+    - "Lido como número com sinal, o resultado vale −64"
+    - "Lido como número sem sinal, o resultado está errado, porque o vai-um foi perdido"
+  resposta: [0, 1, 2]
+  explicacao: |
+    112 + 80 = 192 = 0xC0: cabe em 8 bits sem sinal (C = 0), então a leitura sem sinal está certa. Com sinal, 0xC0 = −64, e 112 + 80 = 192 não cabe em int8_t (máximo 127): V = 1. Em hardware, V = vai-um que entra no bit 7 (1) XOR vai-um que sai dele (0) = 1.
+  fonte: "Harris & Harris, Digital Design and Computer Architecture, capítulo Digital Building Blocks, seção Arithmetic Circuits; Tocci, Sistemas Digitais, capítulo Aritmética digital: operações e circuitos (overflow)"
+  origem: ia
+  revisao: rascunho

@@ -1,0 +1,251 @@
+- id: Q-M1.1.T06-001
+  objetivo: O1
+  tipo: vf
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Verdadeiro ou falso: numa máquina de Moore, as saídas dependem apenas do estado atual, e não diretamente das entradas.
+  resposta: true
+  explicacao: |
+    Na Moore, a saída é função só do estado (escrita dentro do círculo do diagrama) e muda apenas na borda do clock. Na Mealy, ela é função do estado e da entrada (escrita na seta) e pode mudar no meio do ciclo, junto com a entrada.
+  fonte: "Harris & Harris, Digital Design and Computer Architecture, capítulo Sequential Logic Design, seção Finite State Machines (Moore and Mealy Machines)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T06-002
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Uma máquina de Moore deve detectar a sequência 101 numa entrada serial, com sobreposição (em 10101 ela detecta duas vezes). Qual é o menor número de estados? Responda com um número inteiro de estados.
+  resposta: {valor: 4, unidade: "estados", tolerancia: 0}
+  explicacao: |
+    S0 (nada útil), S1 (viu 1), S2 (viu 10) e S3 (viu 101, saída 1). A Moore precisa de um estado só para a saída em 1; a versão Mealy faz o mesmo com 3 estados, pondo a saída 1 na transição de S2 com entrada 1.
+  fonte: "Floyd, Sistemas Digitais: fundamentos e aplicações, capítulo Contadores (máquinas de estado de Moore e de Mealy); Harris & Harris, capítulo Sequential Logic Design, seção Finite State Machines"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T06-003
+  objetivo: O1
+  tipo: multipla
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Comparando máquinas de Moore e de Mealy que implementam o mesmo comportamento, marque as afirmações corretas.
+  alternativas:
+    - "A Mealy reage à entrada no mesmo ciclo, enquanto a Moore só reage na borda seguinte"
+    - "A Mealy costuma precisar de menos estados"
+    - "A saída da Moore copia glitches e ruído da entrada, o que não acontece na Mealy"
+    - "A saída da Moore fica estável durante todo o ciclo de clock, porque só muda quando o estado muda"
+  resposta: [0, 1, 3]
+  explicacao: |
+    Na Mealy a entrada passa pela lógica de saída diretamente, então a reação é imediata, mas glitches e ruído da entrada também chegam à saída. Na Moore, a saída só depende dos flip-flops de estado: é estável no ciclo e atrasada de uma borda. É o inverso do que diz a afirmação sobre glitches.
+  fonte: "Harris & Harris, Digital Design and Computer Architecture, capítulo Sequential Logic Design, seção Finite State Machines (Moore and Mealy Machines)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T06-004
+  objetivo: O2
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Quantos flip-flops uma FSM de 10 estados usa com codificação one-hot?
+  alternativas:
+    - "4"
+    - "5"
+    - "10"
+    - "1024"
+  resposta: 2
+  explicacao: |
+    One-hot usa um flip-flop por estado, com só um deles em 1 de cada vez. Com codificação binária seriam ⌈log₂ 10⌉ = 4. O one-hot gasta mais flip-flops, mas a lógica de próximo estado fica mais simples, o que compensa em FPGA.
+  fonte: "Harris & Harris, Digital Design and Computer Architecture, capítulo Sequential Logic Design, seção Finite State Machines (State Encodings)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T06-005
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Uma FSM de 5 estados é implementada com codificação binária usando o menor número possível de flip-flops. Quantos códigos de estado ficam sem uso? Responda com um número inteiro de códigos.
+  resposta: {valor: 3, unidade: "códigos", tolerancia: 0}
+  explicacao: |
+    5 estados exigem ⌈log₂ 5⌉ = 3 flip-flops, que formam 2³ = 8 códigos: 8 − 5 = 3 sem uso. O projeto precisa dizer para onde vai cada um deles, para a máquina não travar se cair lá por ruído ou na partida.
+  fonte: "Tocci, Widmer e Moss, Sistemas Digitais: princípios e aplicações, capítulo Contadores e registradores (estados não usados e contadores autocorretores)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T06-006
+  objetivo: O2
+  tipo: unica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Uma FSM de 2 bits (Q1 Q0) percorre o ciclo Gray 00 → 01 → 11 → 10 → 00, avançando um passo a cada borda quando E = 1 e ficando parada quando E = 0. Quais são as equações de próximo estado?
+  alternativas:
+    - "Q1⁺ = E·(Q1 ⊕ Q0) + E'·Q1 e Q0⁺ = E·Q0' + E'·Q0"
+    - "Q1⁺ = Q0 e Q0⁺ = Q1'"
+    - "Q1⁺ = E·Q1' + E'·Q1 e Q0⁺ = E·Q0' + E'·Q0"
+    - "Q1⁺ = E·Q0 + E'·Q1 e Q0⁺ = E·Q1' + E'·Q0"
+  resposta: 3
+  explicacao: |
+    Com E = 1: 00 → 01, 01 → 11, 11 → 10, 10 → 00. Q1⁺ vale 0, 1, 1, 0 = Q0; Q0⁺ vale 1, 1, 0, 0 = Q1'. Com E = 0, cada bit mantém o valor. Juntando com um mux 2:1 por bit: Q1⁺ = E·Q0 + E'·Q1 e Q0⁺ = E·Q1' + E'·Q0. As equações com XOR descrevem um contador binário; as sem E ignoram a habilitação.
+  fonte: "Harris & Harris, Digital Design and Computer Architecture, capítulo Sequential Logic Design, seção Finite State Machines (State Encodings)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T06-007
+  objetivo: O2
+  tipo: vf
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Verdadeiro ou falso: numa FSM de 4 estados com codificação one-hot, existem 12 códigos ilegais dos 4 flip-flops, e se a lógica de próximo estado não tratar esses códigos, um ruído que crie um deles pode deixar a máquina presa ou com dois estados "ativos" ao mesmo tempo.
+  resposta: true
+  explicacao: |
+    4 flip-flops formam 16 códigos, dos quais só 4 têm exatamente um bit em 1: sobram 12 (0000 e os com dois ou mais bits em 1). Num one-hot típico, cada bit de próximo estado é um OR de termos; com 0000, nenhum termo ativa e a máquina para; com dois bits em 1, ela pode seguir dois caminhos. Ferramentas de síntese oferecem codificação "segura" que volta ao reset.
+  fonte: "Harris & Harris, Digital Design and Computer Architecture, capítulo Sequential Logic Design, seção Finite State Machines (State Encodings: one-hot)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T06-008
+  objetivo: O3
+  tipo: vf
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: numa FSM em C chamada a cada tick de timer, o jeito certo de esperar 3 segundos num estado é chamar delay(3000) dentro desse estado.
+  resposta: false
+  explicacao: |
+    Um delay bloqueia a FSM e todo o resto do firmware durante 3 s. O certo é contar ticks numa variável e mudar de estado quando o contador atingir o valor (3 s/10 ms = 300 ticks, por exemplo), devolvendo o controle ao laço principal a cada chamada.
+  fonte: "Miro Samek, Practical UML Statecharts in C/C++, capítulo sobre implementações padrão de máquinas de estado; Jack Ganssle, A Guide to Debouncing (debounce por software com tick)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T06-009
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um semáforo em C é uma FSM chamada a cada tick de 100 ms, com verde por 30 s, amarelo por 3 s e vermelho por 25 s. Quantos ticks dura um ciclo completo (verde, amarelo e vermelho)? Responda com um número inteiro de ticks.
+  resposta: {valor: 580, unidade: "ticks", tolerancia: 0}
+  explicacao: |
+    30 s = 300 ticks, 3 s = 30 ticks e 25 s = 250 ticks: 580 ticks, ou 58 s. Cada estado compara o contador de ticks com seu limite e, ao atingir, troca de estado e zera o contador.
+  fonte: "Harris & Harris, Digital Design and Computer Architecture, capítulo Sequential Logic Design, seção Finite State Machines (FSM Design Example: semáforo)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T06-010
+  objetivo: O3
+  tipo: unica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Uma FSM em C usa a tabela de transição abaixo, com estado inicial DESL e eventos 0 = TICK e 1 = BOTAO:
+
+    ```c
+    static const uint8_t prox[3][2] = {
+        /* DESL    */ { DESL, LIGANDO },
+        /* LIGANDO */ { LIG,  DESL    },
+        /* LIG     */ { LIG,  DESL    },
+    };
+    // a cada evento: estado = prox[estado][evento];
+    ```
+
+    Em qual estado a máquina termina depois da sequência de eventos BOTAO, BOTAO, BOTAO, TICK, TICK, BOTAO, TICK?
+  alternativas:
+    - "DESL"
+    - "LIGANDO"
+    - "LIG"
+    - "Indefinido, porque a tabela não trata TICK em LIG"
+  resposta: 0
+  explicacao: |
+    DESL —BOTAO→ LIGANDO —BOTAO→ DESL —BOTAO→ LIGANDO —TICK→ LIG —TICK→ LIG —BOTAO→ DESL —TICK→ DESL. A tabela trata todas as combinações de estado e evento, o que é uma das vantagens de implementar a FSM como dado.
+  fonte: "Miro Samek, Practical UML Statecharts in C/C++, capítulo sobre implementações padrão de máquinas de estado (tabela de estados)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T06-011
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    O detector de 101 de Moore (S0: 0→S0, 1→S1; S1: 0→S2, 1→S1; S2: 0→S0, 1→S3; S3: 0→S2, 1→S1; saída 1 só em S3) parte de S0 e recebe a entrada 0 1 0 1 0 1 1 0 1, um bit por clock. Quantas vezes a saída vai a 1? Responda com um número inteiro.
+  resposta: {valor: 3, unidade: "detecções", tolerancia: 0}
+  explicacao: |
+    Estados após cada bit: S0, S1, S2, S3, S2, S3, S1, S2, S3. A máquina chega a S3 depois do 4º, do 6º e do 9º bit: 3 detecções (as duas primeiras se sobrepõem em 10101).
+  fonte: "Harris & Harris, Digital Design and Computer Architecture, capítulo Sequential Logic Design, seção Finite State Machines"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T06-012
+  objetivo: O4
+  tipo: unica
+  dificuldade: 2
+  bloom: analisar
+  enunciado: |
+    Uma FSM tem estado de reset A e as transições A: 0→A, 1→B; B: 0→C, 1→A; C: 0→A, 1→B; D: 0→A, 1→C. Qual estado é inalcançável a partir do reset?
+  alternativas:
+    - "A"
+    - "B"
+    - "C"
+    - "D"
+  resposta: 3
+  explicacao: |
+    A partir de A alcançam-se B (com 1) e, de B, C (com 0); de C só se volta a A ou B. Nenhuma transição leva a D: ele é inalcançável, um erro de projeto ou lógica morta. Uma busca em largura a partir do reset encontra isso automaticamente.
+  fonte: "Harris & Harris, Digital Design and Computer Architecture, capítulo Sequential Logic Design, seção Finite State Machines (FSM Review)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T06-013
+  objetivo: O4
+  tipo: unica
+  dificuldade: 3
+  bloom: avaliar
+  enunciado: |
+    Uma FSM de 2 bits usa os códigos 00, 01 e 10. Pelas equações de próximo estado, o código 11, não usado, vai para 11 com qualquer entrada, e o circuito não tem reset. Qual é a avaliação correta?
+  alternativas:
+    - "Não há problema, porque o código 11 nunca é usado pela máquina"
+    - "Se a máquina cair em 11 por ruído ou na partida, ficará presa ali; é preciso um reset e equações que levem 11 a um estado válido"
+    - "Basta reduzir a frequência do clock para a máquina sair de 11"
+    - "O código 11 vai se corrigir sozinho na próxima mudança da entrada"
+  resposta: 1
+  explicacao: |
+    Sem reset, o estado inicial ao ligar é qualquer um dos 4 códigos, e ruído também pode criar o 11. Como 11 vai para 11 com qualquer entrada, é um estado sem saída. O projeto robusto tem reset e define que códigos ilegais levam ao estado seguro, como o default de um switch em C.
+  fonte: "Tocci, Widmer e Moss, Sistemas Digitais: princípios e aplicações, capítulo Contadores e registradores (estados não usados); Harris & Harris, capítulo Sequential Logic Design, seção Finite State Machines"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.1.T06-014
+  objetivo: O4
+  tipo: multipla
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Revise esta FSM de controle de bomba, chamada a cada tick, com estado inicial OCIOSO:
+
+    ```c
+    switch (estado) {
+    case OCIOSO:   if (botao) estado = ENCHENDO; break;
+    case ENCHENDO: bomba_on();  if (nivel_alto) estado = CHEIO;
+    case CHEIO:    bomba_off(); if (!nivel_alto) estado = OCIOSO; break;
+    }
+    ```
+
+    Marque as afirmações corretas.
+  alternativas:
+    - "Como falta o break no caso ENCHENDO, a execução continua no caso CHEIO e chama bomba_off() logo depois de bomba_on()"
+    - "Como falta o break, o código não compila"
+    - "Um caso default que leve a um estado seguro, com a bomba desligada, protege contra um valor inválido na variável de estado"
+    - "Como a função é chamada a cada tick, a variável de estado não precisa de valor inicial definido"
+  resposta: [0, 2]
+  explicacao: |
+    A falta de break é legal em C (fall-through) e compila; no máximo gera um aviso com -Wimplicit-fallthrough. O efeito é desligar a bomba no mesmo passo em que foi ligada e, com o nível ainda baixo, voltar a OCIOSO: a bomba nunca enche o tanque. Sem default, um estado corrompido não executa nada. E toda FSM precisa de estado inicial definido.
+  fonte: "Kernighan & Ritchie, The C Programming Language, seção Switch; Miro Samek, Practical UML Statecharts in C/C++, capítulo sobre implementações padrão de máquinas de estado"
+  origem: ia
+  revisao: rascunho
