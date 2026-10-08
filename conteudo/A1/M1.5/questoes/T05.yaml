@@ -1,0 +1,225 @@
+- id: Q-M1.5.T05-001
+  objetivo: O1
+  tipo: vf
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Verdadeiro ou falso: no CAN de alta velocidade, o nível recessivo (1 lógico) é aquele em que CANH e CANL ficam ambos perto de 2,5 V, com diferença próxima de zero, e nenhum transceptor está dirigindo o barramento.
+  resposta: true
+  explicacao: |
+    No recessivo, as terminações igualam CANH e CANL (~2,5 V). No dominante (0), o transceptor puxa o CANH para ~3,5 V e o CANL para ~1,5 V (diferença de ~2 V). Como o recessivo é a ausência de sinal, o barramento é um wired-AND: qualquer dominante prevalece.
+  fonte: "Texas Instruments, SLOA101 Introduction to the Controller Area Network (CAN); NXP, TJA1050 datasheet"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T05-002
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Numa rede CAN desligada, três nós ficaram com o jumper de terminação de 120 Ω ligado. Que resistência o multímetro mede entre CANH e CANL? Responda em Ω, com um número inteiro.
+  resposta: {valor: 40, unidade: "Ω", tolerancia: 0.01}
+  explicacao: |
+    Três resistores de 120 Ω em paralelo: 120/3 = 40 Ω. O correto são duas terminações, uma em cada ponta: 60 Ω. Uma terminação a mais carrega os transmissores e reduz a diferença no dominante.
+  fonte: "Texas Instruments, SLOA101 Introduction to the Controller Area Network (CAN)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T05-003
+  objetivo: O1
+  tipo: unica
+  dificuldade: 3
+  bloom: avaliar
+  enunciado: |
+    Uma máquina agrícola precisa de uma rede CAN com 200 m de cabo entre os nós das pontas. Qual taxa é a escolha mais segura, pela relação entre taxa de bits e comprimento?
+  alternativas:
+    - "1 Mbit/s, para ter a menor latência"
+    - "500 kbit/s, que a regra prática limita a uns 100 m"
+    - "250 kbit/s ou menos, que a regra prática admite até uns 250 m"
+    - "Qualquer taxa, porque o CAN é diferencial e o comprimento só afeta o ruído"
+  resposta: 2
+  explicacao: |
+    Na arbitragem e no ACK, o sinal precisa ir até o nó mais distante e voltar antes do ponto de amostragem. Pela regra prática (1 Mbit/s ≈ 40 m, 500 kbit/s ≈ 100 m, 250 kbit/s ≈ 250 m, 125 kbit/s ≈ 500 m), 200 m pede 250 kbit/s ou menos. Ser diferencial resolve o ruído, não o atraso de propagação.
+  fonte: "Robert Bosch GmbH, CAN Specification 2.0, Bit Timing Requirements; Texas Instruments, SLOA101"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T05-004
+  objetivo: O2
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Dois nós começam a transmitir no mesmo instante, um com o identificador 0x100 e o outro com 0x0FF. O que acontece?
+  alternativas:
+    - "Os dois quadros colidem e ambos são retransmitidos depois de um tempo aleatório"
+    - "O 0x100 vence, porque tem o maior identificador"
+    - "O barramento entra em bus-off até um dos nós desistir"
+    - "O 0x0FF vence sem perder nenhum bit, e o 0x100 vira receptor e tenta de novo depois"
+  resposta: 3
+  explicacao: |
+    Na arbitragem, o 0 (dominante) prevalece; o identificador menor tem um 0 onde o maior tem 1 na primeira diferença (aqui, logo no bit 8). Quem manda 1 e lê 0 para na hora; o quadro vencedor continua intacto. Não há colisão destrutiva nem espera aleatória, como no Ethernet antigo.
+  fonte: "Robert Bosch GmbH, CAN Specification 2.0, Basic Concepts (Bus Arbitration); Texas Instruments, SLOA101, Arbitration"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T05-005
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Três nós disputam o barramento com os identificadores 0x2F0, 0x2E8 e 0x2EC. Qual identificador vence a arbitragem? Dê o valor convertido para decimal (por exemplo, 0x010 seria respondido como 16).
+  resposta: {valor: 744, unidade: "valor decimal", tolerancia: 0}
+  explicacao: |
+    Em binário: 0x2F0 = 010 1111 0000; 0x2E8 = 010 1110 1000; 0x2EC = 010 1110 1100. O 0x2F0 perde no bit 4 (manda 1, lê 0); o 0x2EC perde no bit 2. Vence o 0x2E8 = 744, o menor.
+  fonte: "Robert Bosch GmbH, CAN Specification 2.0, Basic Concepts (Bus Arbitration)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T05-006
+  objetivo: O2
+  tipo: multipla
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Sobre o identificador e a arbitragem no CAN, marque as afirmações corretas.
+  alternativas:
+    - "O identificador indica a prioridade e o conteúdo da mensagem; todos os nós recebem o quadro e cada um decide, por filtros, se ele interessa"
+    - "O identificador é o endereço do nó de destino, e só ele recebe o quadro"
+    - "Dois nós não devem transmitir quadros de dados com o mesmo identificador, porque a arbitragem não os separa e o conflito vira erro no campo de dados"
+    - "Entre um quadro de dados e um quadro remoto com o mesmo identificador, o quadro remoto vence porque o RTR dele é dominante"
+  resposta: [0, 2]
+  explicacao: |
+    O CAN é orientado a mensagens: o ID diz o que é e quão urgente é, e cada nó filtra. Com o mesmo ID, os dois chegam juntos aos dados, e o primeiro bit diferente vira erro de bit. O RTR é dominante (0) no quadro de **dados** e recessivo no remoto: o de dados vence.
+  fonte: "Texas Instruments, SLOA101, Arbitration e CAN Message Types; Robert Bosch GmbH, CAN Specification 2.0, Message Transfer"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T05-007
+  objetivo: O2
+  tipo: unica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Os nós 0x65A, 0x658 e 0x6A0 começam juntos. Numerando os bits do identificador de 10 (MSB) a 0 (LSB), em que bit o 0x6A0 perde a arbitragem?
+  alternativas:
+    - "No bit 10, o primeiro transmitido"
+    - "No bit 1"
+    - "No bit 5"
+    - "No bit 7"
+  resposta: 3
+  explicacao: |
+    0x6A0 = 110 1010 0000 e 0x65A = 110 0101 1010: os três primeiros bits (10, 9 e 8) são iguais; no bit 7, o 0x6A0 manda 1 e lê o 0 dos outros. Depois, no bit 1, o 0x65A perde para o 0x658, que vence.
+  fonte: "Robert Bosch GmbH, CAN Specification 2.0, Basic Concepts (Bus Arbitration)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T05-008
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Quantos bits tem um quadro de dados CAN 2.0A com 8 bytes de dados, sem contar os bits de stuffing e contando os 3 bits de intermissão? Responda com um número inteiro.
+  resposta: {valor: 111, unidade: "bits", tolerancia: 0}
+  explicacao: |
+    SOF 1 + ID 11 + RTR 1 + IDE 1 + r0 1 + DLC 4 + dados 64 + CRC 15 + delimitador 1 + ACK 1 + delimitador 1 + EOF 7 = 108, mais 3 de intermissão = 111 (47 + 8·N). Com o pior caso de 24 bits de stuffing, chega a 135.
+  fonte: "Robert Bosch GmbH, CAN Specification 2.0 Part A, Message Transfer (Data Frame e Interframe Space)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T05-009
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um quadro CAN 2.0A tem identificador 0x200, DLC = 2 e dados 0x00 0x00. O CRC-15 desse quadro é 0x4259. Quantos bits de stuffing o transmissor insere entre o SOF e o fim do CRC? Responda com um número inteiro.
+  resposta: {valor: 5, unidade: "bits", tolerancia: 0}
+  explicacao: |
+    Bits: SOF 0 · ID 01000000000 · RTR 0 · IDE 0 · r0 0 · DLC 0010 · 16 zeros · CRC 100001001011001. Contando sequências de 5 iguais (o stuff bit inicia a sequência seguinte): uma dentro do ID, outra logo depois do RTR (fim do ID mais RTR) e três nos 16 zeros dos dados — 5 no total. Um código C e um script Python independentes deram o mesmo resultado.
+  fonte: "Robert Bosch GmbH, CAN Specification 2.0, Coding"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T05-010
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 4
+  bloom: aplicar
+  enunciado: |
+    Uma rede CAN 2.0A a 500 kbit/s tem 800 quadros/s de 8 bytes e 400 quadros/s de 4 bytes. Use para cada quadro o pior caso: 47 + 8·N bits mais ⌊(34 + 8·N − 1)/4⌋ bits de stuffing. Qual é a carga do barramento? Responda em %, com 1 casa decimal.
+  resposta: {valor: 29.2, unidade: "%", tolerancia: 0.01}
+  explicacao: |
+    8 bytes: 47 + 64 + 24 = 135 bits. 4 bytes: 47 + 32 + ⌊65/4⌋ = 47 + 32 + 16 = 95 bits. Carga = (800 × 135 + 400 × 95)/500 000 = (108 000 + 38 000)/500 000 = 29,2 %.
+  fonte: "Robert Bosch GmbH, CAN Specification 2.0, Message Transfer e Coding"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T05-011
+  objetivo: O3
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: no CAN, o bit inserido pelo stuffing conta como o primeiro bit da sequência seguinte; por isso, depois de 00000 vem um 1 inserido, e se os próximos bits forem 1111, um novo bit 0 é inserido depois deles.
+  resposta: true
+  explicacao: |
+    Depois de 00000, o transmissor insere 1. Esse 1 mais os quatro 1 seguintes formam cinco iguais, e entra um 0. É por isso que o pior caso tem um stuff bit a cada 4 bits depois do primeiro grupo de 5.
+  fonte: "Robert Bosch GmbH, CAN Specification 2.0, Coding"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T05-012
+  objetivo: O4
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Em que modo o MCP2515 fica logo depois do comando RESET pelo SPI?
+  alternativas:
+    - "Modo de configuração, o único em que os registradores CNF, de máscara e de filtro podem ser escritos"
+    - "Modo normal, já transmitindo e recebendo"
+    - "Modo de loopback, para autoteste"
+    - "Modo de sono, até receber um quadro"
+  resposta: 0
+  explicacao: |
+    Depois do reset, o OPMOD do CANSTAT indica configuração (100). O firmware ajusta o tempo de bit e os filtros e então pede o modo normal pelo REQOP do CANCTRL, conferindo o OPMOD.
+  fonte: "Microchip, MCP2515 datasheet, Modes of Operation (Configuration Mode)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T05-013
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um módulo MCP2515 tem cristal de 16 MHz e precisa de 125 kbit/s com 16 TQ por bit. Sabendo que TQ = 2·(BRP + 1)/F_OSC, qual valor de BRP vai no CNF1? Responda com um número inteiro.
+  resposta: {valor: 3, unidade: "valor", tolerancia: 0}
+  explicacao: |
+    Bit = 1/125 000 = 8 µs; 16 TQ → TQ = 0,5 µs. 2·(BRP + 1)/16 MHz = 0,5 µs → BRP + 1 = 4 → BRP = 3. Com um cristal de 8 MHz seria BRP = 1: usar a configuração de 8 MHz num módulo de 16 MHz dobra a taxa.
+  fonte: "Microchip, MCP2515 datasheet, Bit Timing (Time Quanta e CNF1)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T05-014
+  objetivo: O4
+  tipo: multipla
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Um único nó com MCP2515 em modo normal manda quadros num barramento sem nenhum outro nó. O TEC sobe até 128 e para aí; o EFLG indica error passive. Marque as interpretações corretas.
+  alternativas:
+    - "Ninguém dá o ACK, o transmissor vê erro de ACK e retransmite; o TEC sobe 8 a cada erro até o estado error passive"
+    - "O nó deve chegar a bus-off em seguida, porque o TEC continua subindo indefinidamente"
+    - "A especificação não incrementa o TEC de um transmissor error passive por erro de ACK, e por isso o nó fica parado em 128 sem ir a bus-off"
+    - "O estado error passive indica que o cristal do MCP2515 está errado"
+  resposta: [0, 2]
+  explicacao: |
+    Sem outro nó, não há ACK. Cada erro de transmissão soma 8 ao TEC até 128 (passivo). A regra de exceção da especificação impede que um nó sozinho chegue a bus-off só por falta de ACK. Para testar com um só módulo, use o modo loopback. Cristal errado daria erros com outros nós, não este padrão.
+  fonte: "Robert Bosch GmbH, CAN Specification 2.0, Fault Confinement; Microchip, MCP2515 datasheet, Error Detection (Error States)"
+  origem: ia
+  revisao: rascunho

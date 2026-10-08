@@ -1,0 +1,230 @@
+- id: Q-M1.5.T03-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    No modo SPI 2 (CPOL = 1, CPHA = 0), em que borda do SCK os dados são amostrados?
+  alternativas:
+    - "Na borda de descida, a primeira depois do repouso em nível alto"
+    - "Na borda de subida, a primeira depois do repouso em nível baixo"
+    - "Na borda de subida, a segunda de cada pulso"
+    - "Nas duas bordas, um bit em cada uma"
+  resposta: 0
+  explicacao: |
+    CPOL = 1: o SCK repousa em alto, então a primeira borda é de descida. CPHA = 0: amostra na primeira borda e desloca na segunda (subida). O SPI clássico transfere um bit por pulso; amostrar nas duas bordas é coisa de interfaces DDR.
+  fonte: "Motorola/NXP, SPI Block Guide, Transmission Formats (Clock Phase and Polarity Controls, CPHA = 0 Transfer Format)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T03-002
+  objetivo: O1
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: os modos SPI 0 e 3 amostram os dados na borda de subida do SCK. Por isso muitos escravos, como o BME280, aceitam os dois e descobrem qual está em uso pelo nível do SCK quando o CS cai.
+  resposta: true
+  explicacao: |
+    Modo 0: repouso baixo, a subida é a 1ª borda e CPHA = 0 amostra na 1ª. Modo 3: repouso alto, a subida é a 2ª borda e CPHA = 1 amostra na 2ª. Nos dois, o dado muda na descida e é lido na subida. O datasheet do BME280 diz que os modos '00' e '11' são aceitos e detectados automaticamente.
+  fonte: "Bosch Sensortec, BME280 datasheet, Digital interfaces (SPI interface); Motorola/NXP, SPI Block Guide, Transmission Formats"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T03-003
+  objetivo: O1
+  tipo: unica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    O diagrama de tempo de um conversor A/D mostra o SCK em nível baixo antes da queda do CS. Os tempos de setup e hold do DIN estão marcados em torno das bordas de descida do SCK, e o DOUT muda logo depois de cada subida. Qual modo SPI o mestre deve usar?
+  alternativas:
+    - "Modo 0"
+    - "Modo 1"
+    - "Modo 2"
+    - "Modo 3"
+  resposta: 1
+  explicacao: |
+    Repouso baixo → CPOL = 0. Com repouso baixo, a 1ª borda de cada pulso é a subida e a 2ª é a descida. O dado é deslocado na subida (1ª) e amostrado na descida (2ª) → CPHA = 1 → modo 1.
+  fonte: "Motorola/NXP, SPI Block Guide, CPHA = 1 Transfer Format; Analog Devices, Introduction to SPI Interface"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T03-004
+  objetivo: O1
+  tipo: multipla
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Um sensor que só funciona no modo 0 foi configurado por engano no modo 1. Quais sintomas são típicos?
+  alternativas:
+    - "O valor lido chega deslocado de um bit, como 0x60 lido como 0xC0 ou 0x30"
+    - "O valor lido muda de uma leitura para outra, porque o mestre amostra justamente quando o escravo troca o bit"
+    - "O sensor responde com NACK, e o mestre recebe um erro de barramento"
+    - "O CS deixa de funcionar e o sensor fica sempre selecionado"
+  resposta: [0, 1]
+  explicacao: |
+    Com a fase errada, o mestre amostra meio período fora do lugar: na borda em que o escravo troca o dado. O resultado é o byte deslocado de um bit ou instável, conforme os atrasos. O SPI não tem ACK/NACK (isso é do I²C), e o modo não muda o CS, que é um GPIO.
+  fonte: "Motorola/NXP, SPI Block Guide, Transmission Formats; Analog Devices, Introduction to SPI Interface"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T03-005
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Num ATmega328P a 16 MHz, o SPI está com SPI2X = 1, SPR1 = 0 e SPR0 = 1. Qual é a frequência do SCK? Responda em kHz, com um número inteiro.
+  resposta: {valor: 2000, unidade: "kHz", tolerancia: 0}
+  explicacao: |
+    SPI2X:SPR1:SPR0 = 101 → f_osc/8. 16 MHz/8 = 2 MHz = 2000 kHz. Com SPI2X = 0, os mesmos SPR dariam f/16 = 1 MHz: o SPI2X dobra a frequência.
+  fonte: "Microchip, ATmega328P datasheet, SPI, Register Description (SPCR, SPSR: relação entre SCK e a frequência do oscilador)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T03-006
+  objetivo: O2
+  tipo: unica
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Um ATmega328P configurado como mestre SPI funciona por alguns segundos e depois para de gerar o SCK. O bit MSTR do SPCR aparece zerado. O CS do sensor está no D9, e o D10 (PB2) não foi configurado. Qual é a causa mais provável?
+  alternativas:
+    - "O D9 não pode ser CS porque não é o pino SS do hardware"
+    - "O PB2 (SS) ficou como entrada; quando foi a nível baixo por ruído, o hardware entendeu que outro mestre assumiu e passou o SPI para escravo"
+    - "O SPIF não foi limpo e o SPI desligou por segurança"
+    - "O sensor mandou um byte com o bit 7 em 1, que reconfigura o SPCR"
+  resposta: 1
+  explicacao: |
+    No modo mestre, o SS como entrada em nível baixo provoca a falha de modo (*mode fault*): o MSTR é zerado e o SPIF é ligado. Deixe o PB2 como saída (pode até servir de CS) ou garanta um pull-up. Qualquer GPIO serve de CS, e o SPIF não desliga o periférico.
+  fonte: "Microchip, ATmega328P datasheet, SPI, SS Pin Functionality (Master Mode); Motorola/NXP, SPI Block Guide, Mode Fault Error"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T03-007
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Qual valor de SPCR configura o SPI do ATmega328P como mestre, sem interrupção, MSB primeiro, modo 0 e SCK = f_osc/128 (com SPI2X = 0)? Dê o valor do registrador convertido para decimal (por exemplo, 0x10 seria respondido como 16).
+  resposta: {valor: 83, unidade: "valor decimal", tolerancia: 0}
+  explicacao: |
+    SPE (bit 6) = 0x40, MSTR (bit 4) = 0x10, SPR1:SPR0 = 11 (f/128) = 0x03; SPIE, DORD, CPOL e CPHA em 0. SPCR = 0x40 + 0x10 + 0x03 = 0x53 = 83.
+  fonte: "Microchip, ATmega328P datasheet, SPI, Register Description (SPCR)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T03-008
+  objetivo: O2
+  tipo: vf
+  dificuldade: 3
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: no modo mestre, o SPI do ATmega328P baixa o pino SS (PB2) sozinho no início de cada byte e o sobe no fim, e por isso o CS do escravo pode ser ligado direto nele sem nenhum código.
+  resposta: false
+  explicacao: |
+    No AVR, o SS do mestre não é acionado pelo hardware: o firmware controla o CS como um GPIO comum, baixando-o antes do primeiro byte e subindo-o só depois do SPIF do último. Assim a transação pode ter quantos bytes quiser, como a rajada do BME280. Alguns MCUs maiores têm CS por hardware, com regras próprias.
+  fonte: "Microchip, ATmega328P datasheet, SPI, SS Pin Functionality"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T03-009
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Cinco 74HC595 estão em cadeia (daisy chain) num SPI de 4 MHz. Quanto tempo de SCK leva uma atualização completa, sem contar pausas entre bytes? Responda em µs, com um número inteiro.
+  resposta: {valor: 10, unidade: "µs", tolerancia: 0.01}
+  explicacao: |
+    A cadeia é um registrador de 5 × 8 = 40 bits: 40 pulsos/4 MHz = 10 µs. O primeiro byte enviado termina no 595 mais distante, e todos atualizam juntos na subida do RCLK.
+  fonte: "Nexperia, 74HC595 datasheet; Analog Devices, Introduction to SPI Interface (daisy chain)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T03-010
+  objetivo: O3
+  tipo: multipla
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Num barramento SPI com um cartão microSD e um BME280, o chip ID do BME280 só sai certo quando o cartão é retirado. Quais medidas resolvem ou ajudam a diagnosticar?
+  alternativas:
+    - "Baixar a frequência do SCK, porque o cartão SD reduz a velocidade do barramento por clock stretching"
+    - "Capturar o MISO com o CS do cartão alto para ver se ele continua dirigindo a linha"
+    - "Pôr um buffer tri-state (74HC125) no MISO do cartão, habilitado pelo CS dele"
+    - "Ligar os dois CS ao mesmo GPIO para que os dois respondam juntos"
+  resposta: [1, 2]
+  explicacao: |
+    O sintoma indica um MISO que não vai para alta impedância com o CS alto (comum em módulos de SD com conversor de nível). A captura confirma; o 74HC125 isola a linha quando o cartão não está selecionado. O SPI não tem clock stretching (isso é do I²C), e dois escravos selecionados ao mesmo tempo brigam no MISO.
+  fonte: "Analog Devices, Introduction to SPI Interface; Nexperia, 74HC125 datasheet"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T03-011
+  objetivo: O3
+  tipo: unica
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Você precisa ligar um BME280 (VDDIO de 3,3 V, SPI até 10 MHz) a um Arduino Uno de 5 V, no mesmo barramento SPI de um 74HC595 alimentado com 5 V. Qual solução é a mais adequada?
+  alternativas:
+    - "Ligar tudo direto, porque o BME280 tolera 5 V nas entradas por ter diodos de proteção"
+    - "Alimentar o BME280 com 5 V para igualar os níveis"
+    - "Ligar o SCK, o MOSI e o CS do BME280 por um tradutor de nível de 3,3 V (como um 74LVC245 alimentado com 3,3 V) e levar o MISO de 3,3 V direto ao AVR, sabendo que a margem sobre o V_IH de 3,0 V é pequena"
+    - "Usar divisores resistivos de 10 kΩ/20 kΩ em todas as linhas, inclusive no MISO"
+  resposta: 2
+  explicacao: |
+    As entradas do BME280 não toleram 5 V: os diodos de proteção conduzem e podem danificar o chip; alimentá-lo com 5 V passa do máximo absoluto. O tradutor resolve as linhas que saem do Uno. O MISO de 3,3 V passa do V_IH do AVR a 5 V (0,6·VCC = 3,0 V) com pouca folga. Um divisor no MISO baixaria ainda mais o nível, e divisores de 10 kΩ com a capacitância dos pinos deixam as bordas lentas demais para alguns MHz.
+  fonte: "Bosch Sensortec, BME280 datasheet, Electrical specification e Absolute maximum ratings; Microchip, ATmega328P datasheet, DC Characteristics"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T03-012
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Uma rajada lê os 8 bytes de dados do BME280 (0xF7 a 0xFE), mais o byte de controle, com SCK de 2 MHz e sem pausas entre bytes. Quanto tempo de SCK ela leva? Responda em µs, com um número inteiro.
+  resposta: {valor: 36, unidade: "µs", tolerancia: 0.01}
+  explicacao: |
+    1 byte de controle (0xF7 | 0x80) + 8 bytes de enchimento = 9 bytes = 72 pulsos. 72/2 MHz = 36 µs. Na prática somam-se as pausas entre bytes e o tempo do CS.
+  fonte: "Bosch Sensortec, BME280 datasheet, SPI interface (SPI read) e Data readout"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T03-013
+  objetivo: O4
+  tipo: unica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    No SPI do BME280, qual byte de controle inicia uma **escrita** no registrador ctrl_meas (endereço 0xF4)?
+  alternativas:
+    - "0xF4"
+    - "0xF5"
+    - "0x74"
+    - "0x7A"
+  resposta: 2
+  explicacao: |
+    Na escrita, o bit 7 do byte de controle é 0 e os 7 bits restantes são o endereço sem o bit 7: 0xF4 & 0x7F = 0x74. Mandar 0xF4 (bit 7 = 1) iniciaria uma leitura de ctrl_meas.
+  fonte: "Bosch Sensortec, BME280 datasheet, SPI interface (SPI write)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T03-014
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Um driver lê a rajada do BME280 (1 byte de controle + 8 bytes de dados) com SCK de 8 MHz. O laço de polling deixa uma pausa de 0,625 µs entre bytes consecutivos (8 pausas), e baixar e subir o CS, com a chamada da função, custa mais 1 µs no total. Qual é a taxa efetiva de dados úteis (só os 8 bytes de dados)? Responda em kB/s (1 kB = 1000 bytes), com 1 casa decimal.
+  resposta: {valor: 533.3, unidade: "kB/s", tolerancia: 0.01}
+  explicacao: |
+    Cada byte = 8/8 MHz = 1 µs → 9 µs; pausas = 8 × 0,625 = 5 µs; CS e chamada = 1 µs. Total = 15 µs para 8 bytes úteis: 8/15 µs = 533,3 kB/s, contra 1000 kB/s do SCK puro. O DMA de MCUs maiores elimina as pausas.
+  fonte: "Microchip, ATmega328P datasheet, SPI (SPIF); Bosch Sensortec, BME280 datasheet, Data readout"
+  origem: ia
+  revisao: rascunho

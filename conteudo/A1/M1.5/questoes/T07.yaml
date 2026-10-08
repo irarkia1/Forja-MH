@@ -1,0 +1,235 @@
+- id: Q-M1.5.T07-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Um dispositivo USB 2.0 liga um resistor de 1,5 kΩ do D+ a 3,3 V. Que velocidade ele anuncia ao host?
+  alternativas:
+    - "Low speed (1,5 Mbit/s)"
+    - "High speed (480 Mbit/s), já na conexão"
+    - "Nenhuma: o resistor só indica que o dispositivo está alimentado"
+    - "Full speed (12 Mbit/s)"
+  resposta: 3
+  explicacao: |
+    O pull-up de 1,5 kΩ no D+ indica full speed; no D−, low speed. Um dispositivo high speed também começa como full speed e só negocia o HS (chirp) durante o reset.
+  fonte: "USB-IF, Universal Serial Bus Specification Revision 2.0, Electrical; Craig Peacock, USB in a NutShell, Hardware (Speed Identification)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T07-002
+  objetivo: O1
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: na codificação NRZI do USB, um bit 0 é representado por uma troca de estado (J ↔ K) e um bit 1 mantém o estado anterior.
+  resposta: true
+  explicacao: |
+    No USB, o 0 troca e o 1 mantém. Por isso uma sequência longa de 1 não tem bordas, e o bit stuffing insere um 0 depois de seis 1 seguidos para o receptor não perder o sincronismo.
+  fonte: "USB-IF, Universal Serial Bus Specification Revision 2.0, Electrical (Data Encoding/Decoding e Bit Stuffing)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T07-003
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um campo de dados USB contém 20 bits 1 seguidos. Quantos bits de stuffing o transmissor insere nesse trecho? Responda com um número inteiro.
+  resposta: {valor: 3, unidade: "bits", tolerancia: 0}
+  explicacao: |
+    Um 0 é inserido depois de cada seis 1 seguidos, e a contagem recomeça: depois do 6º, do 12º e do 18º bit → 3 bits inseridos; sobram dois 1 sem stuffing. No CAN, a regra é diferente: 5 bits iguais, de qualquer valor.
+  fonte: "USB-IF, Universal Serial Bus Specification Revision 2.0, Electrical (Bit Stuffing)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T07-004
+  objetivo: O1
+  tipo: multipla
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Sobre a camada física do USB 2.0, marque as afirmações corretas.
+  alternativas:
+    - "O host tem resistores de pull-down de 15 kΩ em D+ e D−; um dispositivo é detectado quando puxa uma das linhas para cima"
+    - "O reset do barramento é um estado SE0 (D+ e D− em 0) mantido por pelo menos 10 ms"
+    - "Um analisador lógico de 24 MSa/s decodifica com folga o USB full speed, porque amostra o dobro de 12 Mbit/s"
+    - "Um firmware pode forçar uma nova enumeração desligando o pull-up do D+ por um instante"
+  resposta: [0, 1, 3]
+  explicacao: |
+    Os pull-downs de 15 kΩ do host e o pull-up de 1,5 kΩ do dispositivo fazem a detecção. SE0 longo é reset; SE0 curto, fim de pacote. Desligar o pull-up simula a desconexão. Com 2 amostras por bit, o decodificador não recupera o sincronismo com segurança: para FS, são precisos 48 MSa/s ou mais, e um analisador de 24 MSa/s fica restrito ao low speed.
+  fonte: "USB-IF, Universal Serial Bus Specification Revision 2.0, Electrical; Craig Peacock, USB in a NutShell, Hardware"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T07-005
+  objetivo: O2
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Numa captura USB, um pacote começa com o PID 0x69. Que pacote é esse?
+  alternativas:
+    - "Um token IN: o host pede dados a um endpoint do dispositivo"
+    - "Um handshake ACK"
+    - "Um pacote de dados DATA0"
+    - "Um token SETUP"
+  resposta: 0
+  explicacao: |
+    0x69 = 0110 1001: tipo 1001 (IN) nos 4 bits baixos e o complemento (0110) nos altos. SETUP = 0x2D, DATA0 = 0xC3, ACK = 0xD2.
+  fonte: "USB-IF, Universal Serial Bus Specification Revision 2.0, Protocol Layer (Packet Field Formats); Craig Peacock, USB in a NutShell, USB Protocols"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T07-006
+  objetivo: O2
+  tipo: multipla
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Sobre os tipos de transferência USB, marque as afirmações corretas.
+  alternativas:
+    - "Bulk tem entrega garantida, mas não tem garantia de tempo: usa a banda que sobrar"
+    - "Isócrona retransmite os pacotes com erro até acertar, por isso é usada em pendrives"
+    - "Interrupt garante uma latência máxima porque o host consulta o endpoint a cada intervalo definido no descritor"
+    - "Interrupt permite ao dispositivo mandar dados sem ser consultado pelo host"
+  resposta: [0, 2]
+  explicacao: |
+    Bulk: entrega certa, tempo incerto (pendrives, dados da CDC). Isócrona: tempo garantido, sem retransmissão (áudio, vídeo). Interrupt: o host pergunta a cada bInterval; o dispositivo nunca transmite sem ser consultado, nem nas "interrupções".
+  fonte: "Craig Peacock, USB in a NutShell, Endpoint Types"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T07-007
+  objetivo: O2
+  tipo: unica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    No Wireshark com usbmon, você vê o host mandar tokens IN a um endpoint bulk do seu dispositivo CDC, e o dispositivo responder NAK seguidamente durante segundos. O que isso indica?
+  alternativas:
+    - "O endpoint está com erro e precisa ser reiniciado"
+    - "O cabo está corrompendo os pacotes, e o CRC falhou"
+    - "O host vai desconectar o dispositivo depois de 3 NAKs"
+    - "O dispositivo não tem dados para mandar naquele momento; é o comportamento normal de um endpoint IN ocioso"
+  resposta: 3
+  explicacao: |
+    NAK significa "agora não": sem dados no buffer IN, o dispositivo responde NAK, e o host tenta de novo. Erro de endpoint seria STALL; erro de CRC não gera handshake (o host não recebe resposta válida). NAK não leva à desconexão.
+  fonte: "USB-IF, Universal Serial Bus Specification Revision 2.0, Protocol Layer (Handshake Packets); Craig Peacock, USB in a NutShell, USB Protocols"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T07-008
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Num descritor de dispositivo capturado, os bytes nos offsets 8 e 9 (idVendor) aparecem no fio como `86 1A`. Qual é o idVendor? Dê o valor convertido para decimal (por exemplo, 0x0010 seria respondido como 16).
+  resposta: {valor: 6790, unidade: "valor decimal", tolerancia: 0}
+  explicacao: |
+    Os campos de 16 bits do USB são little endian: o primeiro byte é o baixo. idVendor = 0x1A86 = 6790, o VID da WCH, fabricante do CH340.
+  fonte: "USB-IF, Universal Serial Bus Specification Revision 2.0, USB Device Framework (Standard USB Descriptor Definitions); Craig Peacock, USB in a NutShell, USB Descriptors"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T07-009
+  objetivo: O3
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Qual é o pacote de setup (8 bytes, na ordem do fio) com que o host atribui o endereço 7 a um dispositivo?
+  alternativas:
+    - "80 06 00 01 00 00 12 00"
+    - "00 05 07 00 00 00 00 00"
+    - "00 09 07 00 00 00 00 00"
+    - "00 05 00 07 00 00 00 00"
+  resposta: 1
+  explicacao: |
+    SET_ADDRESS: bmRequestType 0x00 (host → dispositivo), bRequest 0x05, wValue = 7 em little endian (07 00), wIndex 0, wLength 0. O primeiro é um GET_DESCRIPTOR de dispositivo; o 0x09 é SET_CONFIGURATION; o último põe o 7 no byte alto do wValue (endereço 0x0700).
+  fonte: "USB-IF, Universal Serial Bus Specification Revision 2.0, USB Device Framework (Standard Device Requests); Craig Peacock, USB in a NutShell, USB Requests"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T07-010
+  objetivo: O3
+  tipo: multipla
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Sobre a enumeração de um dispositivo USB, marque as afirmações corretas.
+  alternativas:
+    - "O host lê o começo do descritor de dispositivo no endereço 0 para descobrir o bMaxPacketSize0 antes de continuar"
+    - "Os endpoints de dados só passam a funcionar depois do SET_CONFIGURATION"
+    - "O dispositivo escolhe o próprio endereço e o informa ao host no descritor"
+    - "O descritor de configuração traz, em sequência, os descritores de interface e de endpoint, e o wTotalLength diz o tamanho do conjunto"
+  resposta: [0, 1, 3]
+  explicacao: |
+    O tamanho do pacote do endpoint 0 vem no byte 7 do descritor, e o host precisa dele para as transferências de controle seguintes. O endereço é atribuído pelo host com SET_ADDRESS. O host lê primeiro 9 bytes da configuração para saber o wTotalLength e depois pede tudo; só com SET_CONFIGURATION os endpoints de dados são ativados.
+  fonte: "Craig Peacock, USB in a NutShell, The Enumeration Process e USB Descriptors"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T07-011
+  objetivo: O3
+  tipo: vf
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Verdadeiro ou falso: logo depois do reset do barramento, um dispositivo USB responde no endereço 0, e é nele que o host faz as primeiras requisições da enumeração.
+  resposta: true
+  explicacao: |
+    O endereço 0 é o padrão depois do reset. Como o host reseta um dispositivo por vez, só um responde no endereço 0 em cada momento. Depois do SET_ADDRESS, o dispositivo passa a usar o endereço novo.
+  fonte: "Craig Peacock, USB in a NutShell, The Enumeration Process"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T07-012
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um dispositivo full speed usa transferências bulk com o máximo teórico de 19 pacotes de 64 bytes por quadro de 1 ms, sozinho no barramento. Qual é o tempo mínimo para transferir 1 048 576 bytes (1 MiB)? Responda em ms, com 1 casa decimal.
+  resposta: {valor: 862.3, unidade: "ms", tolerancia: 0.01}
+  explicacao: |
+    19 × 64 = 1216 bytes por ms. 1 048 576/1216 = 862,3 ms. Na prática leva mais: o host divide a banda, e o firmware nem sempre tem o pacote pronto a cada token IN.
+  fonte: "Craig Peacock, USB in a NutShell, Endpoint Types (Bulk Transfers)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T07-013
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Um sensor precisa mandar ao PC 48 amostras de 16 bits a cada 1 ms (96 000 bytes/s) como dispositivo HID full speed. Cada endpoint interrupt IN tem pacote de 64 bytes e bInterval de 1 ms. Quantos endpoints, no mínimo, são necessários? Responda com um número inteiro.
+  resposta: {valor: 2, unidade: "endpoints", tolerancia: 0}
+  explicacao: |
+    Um endpoint interrupt FS leva no máximo 64 bytes por ms = 64 000 bytes/s. 96 000/64 000 = 1,5 → 2 endpoints (ou relatórios divididos entre eles). Alternativas: bulk (CDC ou classe própria) ou um dispositivo high speed.
+  fonte: "Craig Peacock, USB in a NutShell, Endpoint Types (Interrupt Transfers); USB-IF, Device Class Definition for Human Interface Devices (HID)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T07-014
+  objetivo: O4
+  tipo: unica
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Um registrador de dados com ESP32-S3 (USB full speed nativo) precisa mandar medições contínuas a ~50 KB/s para um programa no PC, em Linux e Windows, sem instalar driver. Qual escolha é a mais adequada?
+  alternativas:
+    - "Classe específica do fabricante (0xFF), porque é a mais rápida"
+    - "MSC, gravando um arquivo CSV que o PC lê enquanto o firmware escreve nele"
+    - "CDC-ACM: driver nativo nos dois sistemas, transferência bulk com folga para 50 KB/s, e o programa lê uma porta serial"
+    - "HID LS com relatórios de 8 bytes"
+  resposta: 2
+  explicacao: |
+    A CDC-ACM usa driver nativo (aparece como /dev/ttyACM0 ou COMx) e bulk FS, que passa de 1 MB/s em teoria. A 0xFF exige driver ou libusb/WinUSB. O MSC não permite o firmware escrever no sistema de arquivos montado pelo PC. O HID LS fica em 800 B/s.
+  fonte: "USB-IF, Class Definitions for Communication Devices; Craig Peacock, USB in a NutShell, Endpoint Types"
+  origem: ia
+  revisao: rascunho

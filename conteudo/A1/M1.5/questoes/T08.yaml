@@ -1,0 +1,225 @@
+- id: Q-M1.5.T08-001
+  objetivo: O1
+  tipo: vf
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Verdadeiro ou falso: no formato I²S da Philips, o WS (word select) em nível baixo indica o canal esquerdo, e em nível alto, o canal direito.
+  resposta: true
+  explicacao: |
+    A especificação define WS = 0 para o canal 1 (esquerdo) e WS = 1 para o canal 2 (direito). No formato justificado à esquerda de muitos codecs, a convenção costuma ser a contrária, por isso convém conferir no datasheet.
+  fonte: "Philips Semiconductors, I²S bus specification (1986, revisada em 1996), Word select"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T08-002
+  objetivo: O1
+  tipo: unica
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    No formato I²S da Philips, onde fica o bit mais significativo (MSB) da palavra de um canal em relação à troca do WS?
+  alternativas:
+    - "Um período de SCK depois da troca do WS; o bit que sai junto com a troca é o LSB do canal anterior"
+    - "Exatamente na mesma borda da troca do WS, sem atraso"
+    - "No fim do slot, alinhado à próxima troca do WS"
+    - "Depois de um pulso de sincronismo de um bit no WS"
+  resposta: 0
+  explicacao: |
+    O WS muda um SCK antes do MSB. Sem atraso é o justificado à esquerda; alinhado ao fim é o justificado à direita (pelo LSB); o pulso curto de sincronismo é o TDM/DSP.
+  fonte: "Philips Semiconductors, I²S bus specification, Serial data e Word select"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T08-003
+  objetivo: O1
+  tipo: multipla
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Sobre os formatos de áudio digital derivados do I²S, marque as afirmações corretas.
+  alternativas:
+    - "No justificado à direita, o receptor precisa saber a largura da palavra, porque o LSB fica alinhado ao fim do slot"
+    - "No TDM, um quadro tem vários slots, o que permite pôr 4, 8 ou mais canais numa única linha de dados"
+    - "O I²S exige que transmissor e receptor tenham exatamente a mesma largura de palavra, senão os dados são perdidos"
+    - "Ligar um dispositivo em I²S a outro em justificado à esquerda costuma dar valores dobrados ou pela metade e sinais trocados"
+  resposta: [0, 1, 3]
+  explicacao: |
+    Com o LSB alinhado ao fim, a posição do MSB depende da largura. O TDM divide o quadro em N slots. No I²S, como o MSB vem primeiro, larguras diferentes convivem: o receptor ignora os bits a mais ou completa com zeros. A diferença de um bit de atraso entre I²S e justificado à esquerda desloca a palavra: valor ×2 ou ÷2, com o MSB indo parar no lugar errado.
+  fonte: "Philips Semiconductors, I²S bus specification; Cirrus Logic, WM8960 datasheet, Digital Audio Interface"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T08-004
+  objetivo: O1
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: como o I²S transmite o MSB primeiro, um receptor configurado para 16 bits consegue ler, no mesmo slot, um transmissor de 24 bits, recebendo os 16 bits mais significativos da amostra.
+  resposta: true
+  explicacao: |
+    A especificação diz que o receptor ignora os bits além da sua capacidade e que o transmissor que manda menos bits que o receptor espera tem os bits faltantes completados com zero. O que precisa bater é o slot (SCKs por canal) e o formato.
+  fonte: "Philips Semiconductors, I²S bus specification, Serial data"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T08-005
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Qual é a frequência do SCK num link I²S estéreo a 48 kHz com slots de 32 bits? Responda em kHz, com um número inteiro.
+  resposta: {valor: 3072, unidade: "kHz", tolerancia: 0}
+  explicacao: |
+    f_SCK = f_s × bits por slot × canais = 48 000 × 32 × 2 = 3 072 000 Hz = 3072 kHz. O WS fica em 48 kHz.
+  fonte: "Philips Semiconductors, I²S bus specification, Timing"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T08-006
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um codec pede MCLK = 256·f_s. Qual é a frequência do MCLK para f_s = 44,1 kHz? Responda em MHz, com 4 casas decimais.
+  resposta: {valor: 11.2896, unidade: "MHz", tolerancia: 0.001}
+  explicacao: |
+    256 × 44 100 = 11 289 600 Hz = 11,2896 MHz. Para 48 kHz seria 12,288 MHz. As duas famílias não são múltiplas uma da outra, por isso existem cristais dedicados e PLLs de áudio.
+  fonte: "Cirrus Logic, WM8960 datasheet, Clocking and Sample Rates"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T08-007
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um ESP32 grava dois INMP441 em estéreo (16 kHz, slots de 32 bits) e guarda no cartão só os 24 bits úteis de cada amostra, empacotados em 3 bytes. Qual é a taxa de gravação no cartão? Responda em kB/s (1 kB = 1000 bytes), com um número inteiro.
+  resposta: {valor: 96, unidade: "kB/s", tolerancia: 0}
+  explicacao: |
+    16 000 quadros/s × 2 canais × 3 bytes = 96 000 bytes/s = 96 kB/s. Na linha SD do I²S passam 16 000 × 32 × 2 = 1,024 Mbit/s (128 kB/s): os 8 bits baixos de cada slot não são guardados.
+  fonte: "TDK InvenSense, INMP441 datasheet, I²S Data Interface"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T08-008
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Uma amostra de 16 bits vale 0xC000. Qual é o nível de pico dela em dBFS (referência: fundo de escala de 32 768)? Responda em dBFS, com 2 casas decimais (o valor é negativo).
+  resposta: {valor: -6.02, unidade: "dBFS", tolerancia: 0.01}
+  explicacao: |
+    0xC000 em complemento de dois de 16 bits = −16 384. |−16 384|/32 768 = 0,5 → 20·log₁₀(0,5) = −6,02 dBFS.
+  fonte: "AES17 (definição de fundo de escala); Philips Semiconductors, I²S bus specification, Serial data (complemento de dois)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T08-009
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Qual é a faixa dinâmica teórica (6,02·N + 1,76) de um conversor ideal de 24 bits? Responda em dB, com 2 casas decimais.
+  resposta: {valor: 146.24, unidade: "dB", tolerancia: 0.01}
+  explicacao: |
+    6,02 × 24 + 1,76 = 146,24 dB. É o limite da quantização; microfones MEMS ficam muito abaixo (o INMP441 anuncia SNR de cerca de 61 dB).
+  fonte: "Analog Devices, MT-001 Taking the Mystery out of the Infamous Formula SNR = 6.02N + 1.76dB"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T08-010
+  objetivo: O3
+  tipo: unica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um ESP32 lê do INMP441 um slot de 32 bits (int32_t) com valor 0xFFF00000. Qual é a amostra de 24 bits depois do deslocamento aritmético `>> 8`?
+  alternativas:
+    - "+16 773 120"
+    - "+4096"
+    - "−4096"
+    - "−1 048 576"
+  resposta: 2
+  explicacao: |
+    0xFFF00000 >> 8 (aritmético) = 0xFFFFF000 = −4096. O +16 773 120 é 0xFFF000 lido sem extensão de sinal (deslocar um uint32_t). −1 048 576 é o slot inteiro lido como int32_t, sem o deslocamento.
+  fonte: "TDK InvenSense, INMP441 datasheet, I²S Data Interface"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T08-011
+  objetivo: O3
+  tipo: multipla
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Um produto de detecção de som usa o INMP441 (24 bits, SNR de cerca de 61 dB) e precisa economizar memória. Marque as afirmações corretas.
+  alternativas:
+    - "Guardar só os 16 bits mais significativos de cada amostra perde pouca informação útil, porque 16 bits já dão ~98 dB de faixa, mais que o SNR do microfone"
+    - "Em 24 bits, o valor 0x800000 é o maior valor positivo"
+    - "Os bits menos significativos dos 24 são, na prática, ruído do microfone"
+    - "Um nível de +3 dBFS indica um sinal mais forte que o fundo de escala, ainda sem saturação"
+  resposta: [0, 2]
+  explicacao: |
+    Com SNR de ~61 dB, uns 10 bits efetivos já descrevem o sinal; 16 bits sobram. Em 24 bits, 0x800000 é o mais negativo (−8 388 608), e o maior é 0x7FFFFF. Nada passa de 0 dBFS: acima disso o valor não cabe na palavra e há corte.
+  fonte: "TDK InvenSense, INMP441 datasheet, Specifications; Analog Devices, MT-001"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T08-012
+  objetivo: O4
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Dois INMP441 compartilham SCK, WS e SD para gravar em estéreo. Como ficam os pinos L/R?
+  alternativas:
+    - "Os dois em GND; o MCU separa os canais pela ordem de chegada"
+    - "Os dois flutuando, para cada um escolher sozinho um canal livre"
+    - "Os dois em VDD; o WS escolhe qual dos dois fala"
+    - "Um em GND (transmite no canal esquerdo, WS = 0) e o outro em VDD (canal direito, WS = 1)"
+  resposta: 3
+  explicacao: |
+    O L/R escolhe em qual metade do quadro cada microfone transmite; na outra metade, o SD fica em alta impedância. Com os dois no mesmo canal, eles brigam na linha; flutuando, o canal é imprevisível.
+  fonte: "TDK InvenSense, INMP441 datasheet, Data Output Mode (L/R)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T08-013
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    O DMA do I²S grava num buffer duplo de 2 × 512 quadros a 48 kHz. Quanto tempo a CPU tem para processar cada metade antes que o DMA volte a escrever nela? Responda em ms, com 2 casas decimais.
+  resposta: {valor: 10.67, unidade: "ms", tolerancia: 0.01}
+  explicacao: |
+    Enquanto a CPU processa uma metade, o DMA enche a outra: o prazo é 512/48 000 = 10,67 ms. Se o processamento levar mais que isso (inclusive no pior caso, com Wi-Fi), blocos se perdem.
+  fonte: "Espressif, ESP-IDF, I2S (dma_desc_num e dma_frame_num)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T08-014
+  objetivo: O4
+  tipo: multipla
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Um ESP32 lê um INMP441 a 16 kHz e envia o áudio por Wi-Fi; de vez em quando, aparecem estalos na gravação. Quais medidas são adequadas?
+  alternativas:
+    - "Aumentar o número ou o tamanho dos buffers de DMA para cobrir o pior atraso da tarefa que lê o I²S"
+    - "Ler cada amostra numa ISR por amostra, para reduzir a latência"
+    - "Contar os blocos perdidos (atrasos do buffer duplo) para medir o problema em vez de adivinhá-lo"
+    - "Ligar um MCLK de 256·f_s ao INMP441, que precisa dele para não perder amostras"
+  resposta: [0, 2]
+  explicacao: |
+    Os estalos vêm de blocos perdidos quando a CPU atrasa (pilha de Wi-Fi, escrita em flash). Buffers maiores cobrem o pior caso, e contar as perdas confirma o diagnóstico. Uma ISR por amostra (62,5 µs) só piora a carga. O INMP441 não tem entrada de MCLK.
+  fonte: "Espressif, ESP-IDF, I2S; TDK InvenSense, INMP441 datasheet, Pin Function Descriptions"
+  origem: ia
+  revisao: rascunho

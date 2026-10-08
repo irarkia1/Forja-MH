@@ -1,0 +1,225 @@
+- id: Q-M1.5.T06-001
+  objetivo: O1
+  tipo: vf
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Verdadeiro ou falso: um receptor RS-485 só garante a leitura correta quando a tensão diferencial entre A e B passa de +200 mV ou fica abaixo de −200 mV; entre esses dois valores, o estado lido é indefinido.
+  resposta: true
+  explicacao: |
+    Os limiares de ±200 mV são da norma TIA/EIA-485-A. Com o barramento ocioso e só as terminações, a diferença vai a 0 V, dentro da faixa indefinida. Por isso existe a polarização de falha segura, ou o transceptor com fail-safe embutido.
+  fonte: "Texas Instruments, The RS-485 Design Guide (SLLA272), Signal Levels e Failsafe"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T06-002
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    O padrão RS-485 garante 32 cargas unitárias por barramento. Quantos nós cabem se todos usarem transceptores de 1/4 de carga unitária? Responda com um número inteiro.
+  resposta: {valor: 128, unidade: "nós", tolerancia: 0}
+  explicacao: |
+    32 UL/(1/4 UL por nó) = 128 nós. Um transceptor de 1/4 UL tem resistência de entrada de cerca de 48 kΩ, quatro vezes os 12 kΩ da carga unitária. Repetidores permitem ir além.
+  fonte: "Texas Instruments, The RS-485 Design Guide (SLLA272), Bus Loading"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T06-003
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um barramento RS-485 tem 120 Ω de terminação em cada ponta. No mestre, um resistor de 470 Ω puxa um fio para 5 V e outro de 470 Ω puxa o outro fio para o GND. Com todos os transmissores desligados, qual é a tensão diferencial no barramento? Responda em mV, com um número inteiro.
+  resposta: {valor: 300, unidade: "mV", tolerancia: 0.01}
+  explicacao: |
+    As duas terminações em paralelo dão 60 Ω, em série com os dois resistores de 470 Ω: V_diff = 5 × 60/(470 + 470 + 60) = 300/1000 = 0,300 V = 300 mV. É mais que os 200 mV exigidos, então o receptor lê o repouso com folga.
+  fonte: "Texas Instruments, The RS-485 Design Guide (SLLA272), Failsafe; Modbus over Serial Line V1.02, Line Polarization"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T06-004
+  objetivo: O1
+  tipo: multipla
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Um instalador montou uma rede Modbus RTU com 8 medidores. Marque as práticas corretas para a camada física.
+  alternativas:
+    - "Ligar os medidores em estrela, cada um com o seu cabo até um borne central, e pôr uma terminação de 120 Ω em cada medidor"
+    - "Ligar os medidores em cadeia (daisy chain), com derivações curtas, e pôr uma terminação de 120 Ω só em cada ponta do tronco"
+    - "Usar par trançado para A e B e levar também o terra de sinal entre os nós"
+    - "Pôr resistores de polarização em todos os nós, para que cada um tenha a sua própria falha segura"
+  resposta: [1, 2]
+  explicacao: |
+    O barramento é uma linha de transmissão: tronco único, derivações curtas e uma terminação em cada extremidade. Na estrela as reflexões não têm como ser casadas, e oito terminações (15 Ω em paralelo) sobrecarregam os transmissores. O terra comum mantém a faixa de modo comum de −7 a +12 V. A polarização vai num só ponto, porque cada par de resistores soma carga.
+  fonte: "Texas Instruments, The RS-485 Design Guide (SLLA272), Network Topology, Bus Termination and Stub Length e Grounding and Isolation"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T06-005
+  objetivo: O2
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    No MAX485, o DE (habilita o transmissor) é ativo em nível alto e o /RE (habilita o receptor) é ativo em nível baixo. Com os dois ligados ao mesmo GPIO, o que acontece quando o GPIO vai a 1?
+  alternativas:
+    - "O transmissor e o receptor ficam ambos desligados"
+    - "O receptor fica ligado e o transmissor desligado"
+    - "O transmissor e o receptor ficam ambos ligados"
+    - "O transmissor fica ligado e o receptor desligado (RO em alta impedância)"
+  resposta: 3
+  explicacao: |
+    DE = 1 liga o transmissor; /RE = 1 desliga o receptor. Com o GPIO em 0 é o contrário: recebe e não transmite. Como o RO fica em alta impedância durante a transmissão, o RXD do MCU precisa de um pull-up externo.
+  fonte: "Analog Devices (Maxim), MAX481/MAX483/MAX485/MAX487–MAX491/MAX1487 datasheet, tabelas de função"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T06-006
+  objetivo: O2
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: no ATmega328P, o momento certo de desligar o DE do transceptor RS-485 é quando o UDRE0 sobe depois de escrever o último byte em UDR0.
+  resposta: false
+  explicacao: |
+    O UDRE0 sobe quando o último byte passa do UDR0 para o registrador de deslocamento, isto é, quando ele **começa** a sair. O momento certo é o TXC0 (ou a ISR USART_TX_vect), que indica que o stop bit do último byte saiu. Desligar no UDRE0 corta o último caractere, e o escravo descarta o quadro pelo CRC.
+  fonte: "Microchip, ATmega328P datasheet, USART0, Data Transmission – The USART Transmitter (Transmit Flags and Interrupts)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T06-007
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Um firmware Modbus RTU a 9600 baud, 8E1, desliga o DE assim que o UDRE0 sobe depois do último byte. Quanto tempo de sinal deixa de ir para o barramento? Responda em ms, com 3 casas decimais.
+  resposta: {valor: 1.146, unidade: "ms", tolerancia: 0.01}
+  explicacao: |
+    O UDRE0 sobe quando o último byte entra no registrador de deslocamento, então o caractere inteiro ainda vai sair: 11 bits × (1/9600 s) = 1,146 ms. Todo esse caractere (o byte alto do CRC) é perdido.
+  fonte: "Microchip, ATmega328P datasheet, USART0, Data Transmission – The USART Transmitter; Modbus over Serial Line V1.02, RTU Transmission Mode"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T06-008
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Calcule o CRC-16/MODBUS do pedido `01 03 00 0A 00 02` (ler 2 holding registers a partir do endereço 10 do escravo 1). Dê o valor de 16 bits que sai do algoritmo, antes de separar os bytes para a transmissão, em decimal (por exemplo, 0x0102 seria respondido como 258).
+  resposta: {valor: 2532, unidade: "valor decimal", tolerancia: 0}
+  explicacao: |
+    O algoritmo do Modbus (init 0xFFFF, polinômio refletido 0xA001) dá 0x09E4 = 2532. No fio, o byte baixo vai primeiro: `01 03 00 0A 00 02 E4 09`.
+  fonte: "Modbus over Serial Line V1.02, RTU Transmission Mode (CRC Checking) e apêndice de geração do CRC"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T06-009
+  objetivo: O3
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    O mestre mandou `0A 03 00 00 00 02` + CRC ao escravo 10, que tem os valores 250 e 300 nos registradores 0 e 1. Qual é a resposta normal (sem o CRC)?
+  alternativas:
+    - "0A 03 02 00 FA 01 2C"
+    - "0A 03 04 FA 00 2C 01"
+    - "0A 03 04 00 FA 01 2C"
+    - "0A 03 00 00 00 02 00 FA 01 2C"
+  resposta: 2
+  explicacao: |
+    Resposta da função 03: endereço, função, contagem de **bytes** (2 registradores × 2 = 4) e os valores em big endian: 250 = 0x00FA, 300 = 0x012C. A contagem 02 conta registradores em vez de bytes, a ordem FA 00 está em little endian, e repetir início e quantidade é o formato da resposta da função 16, não da 03. O CRC fica 60 8F.
+  fonte: "Modbus Application Protocol Specification V1.1b3, 03 (0x03) Read Holding Registers"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T06-010
+  objetivo: O3
+  tipo: multipla
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Um escravo Modbus RTU recebe pedidos com o próprio endereço. Marque as afirmações corretas sobre as respostas.
+  alternativas:
+    - "Se o CRC do pedido não confere, o escravo responde com a exceção 04 para o mestre saber do erro"
+    - "Um pedido da função 03 com quantidade 200 deve gerar a exceção 03 (valor de dado ilegal), porque o limite é 125"
+    - "Uma resposta de exceção à função 06 começa com o endereço e o byte 0x86"
+    - "A resposta normal à função 06 é o eco do pedido"
+  resposta: [1, 2, 3]
+  explicacao: |
+    Com CRC errado, o escravo fica calado: não dá para confiar nem no endereço, e o mestre trata como timeout. A quantidade fora de 1 a 125 é a exceção 03. A exceção tem a função com o bit 7 ligado (0x06 | 0x80 = 0x86) seguida do código. A função 06 responde repetindo o pedido.
+  fonte: "Modbus Application Protocol Specification V1.1b3, Function codes descriptions e MODBUS Exception Responses"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T06-011
+  objetivo: O3
+  tipo: unica
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    O manual de um inversor diz: "Potência ativa: holding register 40 001". Que endereço vai no campo de início de um pedido da função 03?
+  alternativas:
+    - "0x0000"
+    - "0x0001"
+    - "0x9C41"
+    - "0x9C40"
+  resposta: 0
+  explicacao: |
+    Na numeração dos manuais, o 4 indica holding register e a contagem começa em 1; no quadro, o endereço começa em 0. "40 001" é o endereço 0x0000. 0x9C41 é 40 001 em hexadecimal, um erro comum. Errar por um é o erro mais frequente de quem integra Modbus.
+  fonte: "Modbus Application Protocol Specification V1.1b3, MODBUS Data model"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T06-012
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Qual é o intervalo t3,5 do Modbus RTU a 9600 baud com caracteres de 11 bits (8E1)? Responda em ms, com 2 casas decimais.
+  resposta: {valor: 4.01, unidade: "ms", tolerancia: 0.01}
+  explicacao: |
+    Caractere = 11/9600 = 1,146 ms; t3,5 = 3,5 × 1,146 = 4,01 ms. Acima de 19 200 baud a especificação fixa t3,5 = 1,750 ms e t1,5 = 750 µs.
+  fonte: "Modbus over Serial Line V1.02, RTU Transmission Mode (MODBUS Message RTU Framing)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T06-013
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Um gateway lê 20 holding registers de cada um de 12 escravos, a 19 200 baud, 8E1. Cada escravo processa o pedido em 8 ms. Considere a transação como pedido + t3,5 + processamento + resposta + t3,5, com t3,5 = 3,5 caracteres. Quanto tempo leva uma varredura completa dos 12 escravos? Responda em ms, com 1 casa decimal.
+  resposta: {valor: 508.5, unidade: "ms", tolerancia: 0.01}
+  explicacao: |
+    Caractere = 11/19 200 = 0,5729 ms; t3,5 = 2,005 ms. Pedido = 8 bytes; resposta = 5 + 2 × 20 = 45 bytes. Transação = 53 × 0,5729 + 2 × 2,005 + 8 = 30,36 + 4,01 + 8 = 42,375 ms. Varredura = 12 × 42,375 = 508,5 ms: cada valor é atualizado cerca de 2 vezes por segundo.
+  fonte: "Modbus over Serial Line V1.02, RTU Transmission Mode; Modbus Application Protocol Specification V1.1b3, 03 (0x03) Read Holding Registers"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T06-014
+  objetivo: O4
+  tipo: multipla
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Você escreve a varredura de um mestre Modbus RTU com 15 escravos. Quais políticas são adequadas?
+  alternativas:
+    - "Ao receber uma exceção 02, retentar o mesmo pedido três vezes antes de desistir"
+    - "Ao estourar o timeout de resposta, retentar 2 ou 3 vezes e depois marcar o escravo como offline, sem travar a varredura dos outros"
+    - "Testar de tempos em tempos um escravo marcado como offline, para detectar a volta dele"
+    - "Depois de um pedido de escrita por broadcast (endereço 0), esperar a resposta do escravo mais lento antes do próximo pedido"
+  resposta: [1, 2]
+  explicacao: |
+    Uma exceção é uma resposta válida: retentar não muda nada, é preciso corrigir o pedido. O timeout pode ser ruído ou um escravo ausente: algumas retentativas e depois marcá-lo como offline, voltando a testá-lo de vez em quando. Ninguém responde a um broadcast: o mestre espera um turnaround delay e segue.
+  fonte: "Modbus over Serial Line V1.02, MODBUS Master / Slaves protocol principle"
+  origem: ia
+  revisao: rascunho

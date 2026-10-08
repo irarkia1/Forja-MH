@@ -1,0 +1,225 @@
+- id: Q-M1.5.T01-001
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Quanto dura um quadro UART no formato 8E1 (8 dados, paridade par, 1 stop) a 19 200 baud? Responda em µs, com 1 casa decimal.
+  resposta: {valor: 572.9, unidade: "µs", tolerancia: 0.01}
+  explicacao: |
+    8E1 tem 1 start + 8 dados + 1 paridade + 1 stop = 11 bits. t = 11/19 200 s = 572,9 µs. Em 8N1 (10 bits) seriam 520,8 µs: a paridade custa um bit a mais por byte.
+  fonte: "Microchip, ATmega328P datasheet, USART0, Frame Formats"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T01-002
+  objetivo: O1
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: uma condição de break é a linha mantida em nível baixo por mais tempo que um quadro inteiro, e o receptor do ATmega328P a vê como um byte 0x00 com erro de quadro (FE0 = 1).
+  resposta: true
+  explicacao: |
+    Com a linha em 0 o quadro inteiro, todos os bits de dados são 0 e o stop bit também é lido como 0, o que liga o FE0. É assim que se detecta o break (usado, por exemplo, como início de quadro no LIN) e também um fio de TX solto com o RX puxado para baixo.
+  fonte: "Microchip, ATmega328P datasheet, USART0, Receiver Error Flags; LIN Specification Package (break field)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T01-003
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Use o modelo simplificado do roteiro: o receptor detecta a borda do start bit com incerteza de 1/16 de bit e amostra o meio de cada bit; o erro acumulado no meio do stop bit precisa ficar abaixo de meio bit. Qual é a diferença total máxima entre as taxas do transmissor e do receptor num quadro 8E1? Responda em %, com 2 casas decimais.
+  resposta: {valor: 4.17, unidade: "%", tolerancia: 0.01}
+  explicacao: |
+    8E1 tem 11 bits; o meio do stop bit fica 10,5 bits depois da borda. Δ < (0,5 − 0,0625)/10,5 = 0,4375/10,5 = 4,17 %. Em 8N1 (9,5 bits) seriam 4,61 %: quanto mais longo o quadro, menor a margem. Essa é a diferença somada dos dois lados, por isso a regra prática fica perto de ±2 % para cada um.
+  fonte: "Microchip, ATmega328P datasheet, USART0, Asynchronous Data Reception (Asynchronous Operational Range)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T01-004
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um enlace a 115 200 baud, 8N1, sem pausas entre bytes, manda pacotes com 2 bytes de cabeçalho, 32 bytes de carga e 2 bytes de CRC, tudo codificado em COBS (1 byte de sobrecarga para até 254 bytes) e seguido do delimitador 0x00. Qual é o throughput efetivo de carga? Responda em bytes/s, arredondando para o inteiro mais próximo.
+  resposta: {valor: 9701, unidade: "bytes/s", tolerancia: 0.002}
+  explicacao: |
+    Antes do COBS: 2 + 32 + 2 = 36 bytes; o COBS acrescenta 1 (36 ≤ 254) e o delimitador mais 1: 38 bytes no fio = 380 bits. Tempo do pacote = 380/115 200 = 3,299 ms. Carga útil: 32 bytes/3,299 ms = 9701 bytes/s, contra 11 520 bytes/s brutos (84 %).
+  fonte: "Cheshire e Baker, Consistent Overhead Byte Stuffing; Microchip, ATmega328P datasheet, USART0, Frame Formats"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T01-005
+  objetivo: O2
+  tipo: vf
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Verdadeiro ou falso: no RS-232, o nível de repouso da linha (mark, 1 lógico) é uma tensão negativa, entre −3 V e −15 V.
+  resposta: true
+  explicacao: |
+    O RS-232 usa lógica invertida: 1 (mark, repouso) é negativo e 0 (space) é positivo, de +3 a +15 V. Um MAX3232 gera cerca de ±5,5 V com bombas de carga. Ligar essa linha direto a um pino de MCU o danifica.
+  fonte: "Texas Instruments, MAX3232 datasheet (3-V to 5.5-V Multichannel RS-232 Line Driver/Receiver)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T01-006
+  objetivo: O2
+  tipo: multipla
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Sobre o controle de fluxo numa ligação UART, marque as afirmações corretas.
+  alternativas:
+    - "O CTS é uma saída de quem transmite, que avisa ao receptor que há dados a caminho"
+    - "O XON/XOFF usa os bytes 0x11 e 0x13 no próprio canal de dados, por isso não serve para dados binários sem um esquema de escape"
+    - "O controle de fluxo por hardware dispensa o GND comum entre os dois lados"
+    - "Mesmo depois de o receptor desativar o RTS, alguns bytes ainda podem chegar, e o limiar de parada precisa deixar folga na fila"
+  resposta: [1, 3]
+  explicacao: |
+    O CTS é uma **entrada** do transmissor, ligada ao RTS do receptor: o transmissor só começa um byte com o CTS ativo. Bytes já na FIFO ou em trânsito no conversor USB ainda chegam depois do "pare" (patinagem), por isso se para com a fila a 3/4, não cheia. O XON (0x11) e o XOFF (0x13) viajam junto com os dados. Qualquer sinal precisa do GND comum como referência.
+  fonte: "FTDI, AN232B-04 Data Throughput, Latency and Handshaking; pySerial, documentação da classe Serial (rtscts, xonxoff)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T01-007
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um MCU recebe dados contínuos a 115 200 baud, 8N1, e o laço principal pode passar até 5 ms sem esvaziar a fila da ISR de recepção. Quantos bytes, no máximo, chegam nesse intervalo? Responda com um número inteiro, arredondando para cima.
+  resposta: {valor: 58, unidade: "bytes", tolerancia: 0}
+  explicacao: |
+    115 200/10 = 11 520 bytes/s; em 5 ms, 57,6 bytes → 58. Uma fila de 64 bytes ficaria quase cheia: com controle de fluxo, o RTS teria de ser desativado bem antes, e sem ele a fila precisa ser maior ou o laço, mais curto.
+  fonte: "Microchip, ATmega328P datasheet, USART0, Frame Formats; FTDI, AN232B-04 Data Throughput, Latency and Handshaking"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T01-008
+  objetivo: O3
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um registro Intel HEX tem os bytes `03 00 30 00 02 33 7A` seguidos do checksum (complemento de dois da soma de todos os bytes do registro). Qual é o checksum?
+  alternativas:
+    - "0xE2"
+    - "0x7A"
+    - "0x1E"
+    - "0x1F"
+  resposta: 2
+  explicacao: |
+    Soma = 0x03 + 0x00 + 0x30 + 0x00 + 0x02 + 0x33 + 0x7A = 0xE2. Complemento de dois: 0x100 − 0xE2 = 0x1E. Conferência: 0xE2 + 0x1E = 0x100, cujo byte baixo é 0x00. O 0xE2 é a soma, e o 0x1F é o complemento de um mais 2.
+  fonte: "Intel, Hexadecimal Object File Format Specification; M1.2.T09"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T01-009
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Calcule o CRC-8 com gerador x⁸ + x² + x + 1 (POLY = 0x07), valor inicial 0x00, sem reflexão e sem XOR final, de uma mensagem de um único byte, 0xA3. Dê o resultado convertido para decimal (por exemplo, um CRC 0x1F seria respondido como 31).
+  resposta: {valor: 96, unidade: "valor decimal", tolerancia: 0}
+  explicacao: |
+    Acrescente 8 zeros: 1010 0011 0000 0000. XOR com o gerador 1 0000 0111 alinhado ao 1 mais alto: no bit 15 → 0010 0000 1000 0000; no bit 13 → 0000 0000 0110 0000. Não sobra 1 acima do bit 7: o resto é 0110 0000 = 0x60 = 96. O algoritmo bit a bit do roteiro (com 0x07) dá o mesmo.
+  fonte: "Ross N. Williams, A Painless Guide to CRC Error Detection Algorithms, A Fully Worked Example; Greg Cook, Catalogue of parametrised CRC algorithms (CRC-8/SMBUS)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T01-010
+  objetivo: O3
+  tipo: multipla
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    O manual de um equipamento diz só "CRC-16, polinômio 0x1021". Sua implementação dá 0x31C3 para a cadeia "123456789" (é o CRC-16/XMODEM), mas o equipamento rejeita todos os quadros que você manda. Quais causas são plausíveis?
+  alternativas:
+    - "O equipamento usa valor inicial 0xFFFF (CRC-16/IBM-3740, o \"CCITT-FALSE\")"
+    - "O polinômio 0x1021 só detecta erros de 1 bit, e o equipamento descarta os quadros por isso"
+    - "O equipamento usa entrada e saída refletidas (CRC-16/KERMIT)"
+    - "O equipamento espera o CRC com o byte baixo primeiro, e você manda o alto primeiro"
+  resposta: [0, 2, 3]
+  explicacao: |
+    O mesmo polinômio aparece com INIT, reflexão e XOR final diferentes (XMODEM 0x31C3, CCITT-FALSE 0x29B1, KERMIT 0x2189 para "123456789"), e a ordem dos bytes do CRC no quadro também varia. O modelo de Rocksoft existe por isso. Um CRC-16 detecta todo erro de 1 bit, todo surto de até 16 bits e quase todos os outros; o polinômio não é a causa.
+  fonte: "Ross N. Williams, A Painless Guide to CRC Error Detection Algorithms, A Parameterized Model For CRC Algorithms; Greg Cook, Catalogue of parametrised CRC algorithms"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T01-011
+  objetivo: O3
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    O CRC-16/XMODEM e o CRC-16/IBM-3740 (o "CCITT-FALSE") têm o mesmo polinômio, 0x1021, e dão resultados diferentes. Qual parâmetro do modelo de Rocksoft muda entre eles?
+  alternativas:
+    - "A reflexão da entrada e da saída"
+    - "O XOR final"
+    - "A largura do registrador"
+    - "O valor inicial do registrador: 0x0000 no XMODEM e 0xFFFF no CCITT-FALSE"
+  resposta: 3
+  explicacao: |
+    Os dois são sem reflexão, com XOR final 0 e 16 bits; só o INIT muda. O KERMIT é que difere do XMODEM pela reflexão. Um INIT diferente de zero também faz o CRC perceber zeros a mais no começo da mensagem.
+  fonte: "Greg Cook, Catalogue of parametrised CRC algorithms; Ross N. Williams, A Painless Guide to CRC Error Detection Algorithms, Initial and Final Values"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T01-012
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um bloco de 300 bytes, nenhum deles 0x00, é codificado em COBS e seguido do delimitador 0x00. Quantos bytes vão para o fio? Responda com um número inteiro.
+  resposta: {valor: 303, unidade: "bytes", tolerancia: 0}
+  explicacao: |
+    Sem zeros, o COBS corta blocos de no máximo 254 bytes de dados, cada um com 1 byte de código: um bloco de 254 (código 0xFF) e um de 46 (código 0x2F). 300 + 2 códigos + 1 delimitador = 303 bytes.
+  fonte: "Cheshire e Baker, Consistent Overhead Byte Stuffing"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T01-013
+  objetivo: O4
+  tipo: unica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Qual é a codificação COBS (sem o delimitador final) dos dados `45 00 00 2C 4C 79 00 05`?
+  alternativas:
+    - "45 01 01 2C 4C 79 01 05"
+    - "02 45 01 04 2C 4C 79 02 05"
+    - "02 45 00 00 04 2C 4C 79 02 05"
+    - "08 45 01 01 2C 4C 79 01 05"
+  resposta: 1
+  explicacao: |
+    Blocos terminados por zero: [45]0 → 02 45; []0 → 01; [2C 4C 79]0 → 04 2C 4C 79; [05] no fim → 02 05. Resultado: 02 45 01 04 2C 4C 79 02 05, sem nenhum 0x00, com 1 byte a mais que a entrada.
+  fonte: "Cheshire e Baker, Consistent Overhead Byte Stuffing"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T01-014
+  objetivo: O4
+  tipo: unica
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Um PC fala com um MCU por um conversor FT232 (latency timer de 16 ms) a 57 600 baud, 8N1. O pedido tem 8 bytes, a resposta tem 40 bytes e o MCU leva até 20 ms para processar. Qual timeout de resposta no PC é a escolha mais sensata, antes de retentar?
+  alternativas:
+    - "3 ms, o tempo de 3,5 caracteres do Modbus"
+    - "10 ms, o tempo dos 48 bytes no fio"
+    - "Cerca de 100 ms, a soma de fio, processamento e latência do conversor com margem de 2×"
+    - "5 s, para nunca dar falso timeout"
+  resposta: 2
+  explicacao: |
+    Fio: 48 bytes × 10 bits/57 600 = 8,3 ms; processamento: 20 ms; latency timer: até 16 ms; total ≈ 44 ms, e com margem de 2× chega perto de 100 ms. Os 3 ms e os 10 ms dariam timeouts falsos sempre; 5 s deixaria o sistema parado muito tempo a cada pacote perdido e tornaria as retentativas inúteis.
+  fonte: "FTDI, AN232B-04 Data Throughput, Latency and Handshaking; pySerial, documentação da classe Serial (timeout)"
+  origem: ia
+  revisao: rascunho

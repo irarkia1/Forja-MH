@@ -1,0 +1,235 @@
+- id: Q-M1.5.T09-001
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Quanto tempo dura uma captura de 50 milhões de amostras a 12 MSa/s? Responda em s, com 2 casas decimais.
+  resposta: {valor: 4.17, unidade: "s", tolerancia: 0.01}
+  explicacao: |
+    Duração = amostras/taxa = 50 × 10⁶/12 × 10⁶ = 4,17 s. Com trigger e pré-trigger bem escolhidos, capturas curtas bastam para pegar o evento.
+  fonte: "sigrok, wiki PulseView; Tektronix, The XYZs of Logic Analyzers"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T09-002
+  objetivo: O1
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Você quer decodificar no PulseView o tráfego de um barramento CAN de 125 kbit/s com um analisador lógico barato (limiar de ~1,4 V, entradas de 0 a 5 V). Onde liga a ponteira?
+  alternativas:
+    - "No CANH, porque ele carrega o sinal positivo"
+    - "No CANL, com o GND do analisador no CANH"
+    - "Entre os resistores de terminação, no ponto médio"
+    - "No pino RXD do transceptor (lado do controlador), com o GND comum"
+  resposta: 3
+  explicacao: |
+    O CANH oscila entre ~2,5 e ~3,5 V, sempre acima do limiar: o analisador leria 1 o tempo todo. O RXD do transceptor dá o sinal lógico do barramento (0 = dominante), que o decodificador CAN do sigrok espera. Ligar o GND do analisador no CANL ou no CANH cria um caminho de terra indevido.
+  fonte: "NXP, TJA1050 datasheet; sigrok, wiki Protocol decoder: can"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T09-003
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Você quer medir o t_LOW de um I²C em Fast-mode (mínimo de 1,3 µs) com erro de no máximo 5 %, considerando que o erro é de um período de amostragem. Qual é a menor taxa de amostragem? Responda em MSa/s, com 1 casa decimal.
+  resposta: {valor: 15.4, unidade: "MSa/s", tolerancia: 0.01}
+  explicacao: |
+    Período ≤ 5 % de 1,3 µs = 65 ns → taxa ≥ 1/65 ns = 15,4 MSa/s. Um clone de 24 MSa/s chega lá com poucos canais ativos; para decodificar só, 4× o SCL (1,6 MSa/s) bastaria.
+  fonte: "NXP, UM10204, tabela de características de tempo do SDA e do SCL; Saleae, artigo sobre taxa de amostragem"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T09-004
+  objetivo: O1
+  tipo: multipla
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Quais configurações de trigger são adequadas para começar a captura no início de uma transação?
+  alternativas:
+    - "SPI: borda de descida no CS"
+    - "I²C: borda de subida no SCL"
+    - "I²C: borda de descida no SDA com o SCL em nível alto (a condição de START)"
+    - "UART: borda de subida no RX, que marca o start bit"
+  resposta: [0, 2]
+  explicacao: |
+    A queda do CS abre a transação SPI. No I²C, o START é o SDA caindo com o SCL alto; uma subida do SCL acontece em todo bit. Na UART, o start bit é uma borda de **descida** (a linha repousa em 1).
+  fonte: "sigrok, wiki PulseView (triggers); NXP, UM10204, START and STOP conditions"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T09-005
+  objetivo: O2
+  tipo: unica
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    No PulseView, o decodificador `modbus` é empilhado sobre o `uart`. O que isso significa?
+  alternativas:
+    - "O modbus lê os canais diretamente e o uart só desenha os bits"
+    - "O uart transforma as amostras em bytes e entrega esses bytes ao modbus, que os interpreta como quadros Modbus"
+    - "Os dois decodificam os mesmos bits em paralelo e o PulseView mostra o que tiver menos erros"
+    - "O modbus substitui o uart, que deixa de aparecer"
+  resposta: 1
+  explicacao: |
+    Decodificadores empilhados formam camadas: o de baixo (uart) converte níveis em bytes, e o de cima (modbus) recebe esses objetos e gera anotações de mais alto nível. É o mesmo mecanismo do decodificador próprio deste tópico.
+  fonte: "sigrok, wiki Protocol decoder HOWTO e Protocol decoder API"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T09-006
+  objetivo: O2
+  tipo: vf
+  dificuldade: 2
+  bloom: lembrar
+  enunciado: |
+    Verdadeiro ou falso: no sigrok-cli, `-P uart:rx=D0:baudrate=9600,modbus` empilha o decodificador modbus sobre o uart, e `-A modbus` limita a saída às anotações do modbus.
+  resposta: true
+  explicacao: |
+    Na opção -P, decodificadores separados por vírgula formam uma pilha, e as opções de cada um vêm depois de dois-pontos. O -A escolhe quais anotações imprimir. Com --protocol-decoder-samplenum, cada linha traz também as amostras de início e fim.
+  fonte: "sigrok, wiki sigrok-cli"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T09-007
+  objetivo: O2
+  tipo: multipla
+  dificuldade: 3
+  bloom: entender
+  enunciado: |
+    Sobre um decodificador próprio do libsigrokdecode (API versão 3) empilhado sobre o `uart`, marque as afirmações corretas.
+  alternativas:
+    - "A classe declara `inputs = ['uart']` para receber a saída do decodificador UART"
+    - "O método `decode(self, ss, es, data)` recebe, para cada byte, um `data` como `['DATA', rxtx, (valor, bits)]`, além de outros tipos que ele pode ignorar"
+    - "Os campos `ss` e `es` são as horas de início e fim em microssegundos"
+    - "As anotações são criadas com `self.put(ss, es, self.out_ann, [índice, [textos]])`, depois de registrar a saída com `self.register(srd.OUTPUT_ANN)`"
+  resposta: [0, 1, 3]
+  explicacao: |
+    `inputs` liga o decodificador à saída de outro. Os decodificadores empilhados recebem os objetos do de baixo em `decode`. `ss` e `es` são **números de amostra**, não tempos; o tempo é amostra/taxa. As anotações vão por `put`, com o índice da tabela `annotations` e textos do mais longo ao mais curto.
+  fonte: "sigrok, wiki Protocol decoder API; libsigrokdecode, decoders/uart/pd.py"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T09-008
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Numa UART nominal de 9600 baud, 8N1, você captura o caractere 'U' (0x55) a 1 MSa/s. Da borda de descida do start bit até a borda de descida do bit 7 (8 bits), contam-se 868 amostras. Qual é o baud real do transmissor? Responda em baud, arredondando para o inteiro mais próximo.
+  resposta: {valor: 9217, unidade: "baud", tolerancia: 0.002}
+  explicacao: |
+    Bit = 868/8 = 108,5 amostras = 108,5 µs → 1/108,5 µs = 9217 baud, −4,0 % em relação a 9600: fora da margem do T01. Medir 8 bits reduz o erro de medida para ±2 amostras em 868 (±0,23 %).
+  fonte: "Microchip, ATmega328P datasheet, USART0, Asynchronous Operational Range; sigrok, wiki PulseView (cursores)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T09-009
+  objetivo: O3
+  tipo: unica
+  dificuldade: 2
+  bloom: analisar
+  enunciado: |
+    Ao ler o chip ID de um BME280 (esperado 0x60), o decodificador SPI do PulseView mostra 0x30 no MISO. Trocando o modo no decodificador de 0 para 1, ele passa a mostrar 0x60. O que isso indica?
+  alternativas:
+    - "O sensor é um BMP280, cujo chip ID é diferente"
+    - "Há ruído no MISO e a leitura é aleatória"
+    - "A fase de amostragem está errada: o firmware e o sensor estão em modos diferentes (ou o decodificador estava configurado errado)"
+    - "O CS está invertido"
+  resposta: 2
+  explicacao: |
+    Um valor deslocado de um bit que se corrige com outro CPHA é o sintoma clássico de modo errado. Confira o modo do firmware (o BME280 aceita 0 e 3) e o do decodificador. O BMP280 responderia 0x58, e não um valor deslocado.
+  fonte: "Motorola/NXP, SPI Block Guide, Transmission Formats; Bosch Sensortec, BME280 datasheet, SPI interface"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T09-010
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 4
+  bloom: aplicar
+  enunciado: |
+    Uma resposta Modbus RTU capturada começa com `01 03 02 01 2C` (escravo 1, um registrador = 300). Calcule o CRC-16/MODBUS desses 5 bytes. Dê o valor de 16 bits que sai do algoritmo (antes de separar os bytes para o fio), em decimal (por exemplo, 0x0102 seria respondido como 258).
+  resposta: {valor: 2488, unidade: "valor decimal", tolerancia: 0}
+  explicacao: |
+    Com init 0xFFFF e o polinômio refletido 0xA001, o CRC é 0x09B8 = 2488. No fio, byte baixo primeiro: `B8 09`. Se a captura mostrar outros dois bytes, a resposta chegou corrompida ou o escravo calcula o CRC de outro jeito.
+  fonte: "Modbus over Serial Line V1.02, RTU Transmission Mode (CRC Checking)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T09-011
+  objetivo: O3
+  tipo: unica
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Numa captura do RXD de um transceptor CAN, aparecem seis bits dominantes seguidos no meio de um quadro, e logo depois o mesmo quadro é transmitido de novo. O que aconteceu?
+  alternativas:
+    - "Um nó detectou um erro e mandou um error frame; o transmissor repetiu o quadro"
+    - "O quadro tinha seis bits 0 seguidos nos dados, o que é normal"
+    - "O barramento entrou em bus-off"
+    - "Foi um quadro remoto pedindo os dados de novo"
+  resposta: 0
+  explicacao: |
+    Com o bit stuffing, nunca há seis bits iguais seguidos dentro de um quadro válido; o error frame usa justamente essa violação (6 dominantes) para avisar a todos. Com seis 0 nos dados, o transmissor teria inserido um bit recessivo. Em bus-off, o nó para de transmitir, e não retransmite.
+  fonte: "Robert Bosch GmbH, CAN Specification 2.0, Error Handling e Coding"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T09-012
+  objetivo: O4
+  tipo: unica
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    No decodificador `forja_cobs`, o que acontece quando chega um byte 0x00 e não há nenhum byte acumulado no quadro?
+  alternativas:
+    - "Ele gera a anotação de erro \"COBS inválido\""
+    - "Ele gera um pacote vazio válido"
+    - "Nada: um 0x00 repetido é só sincronismo e é ignorado"
+    - "Ele para de decodificar até o fim da captura"
+  resposta: 2
+  explicacao: |
+    Vários 0x00 seguidos são permitidos e servem para ressincronizar; só um 0x00 que fecha bytes acumulados dispara a decodificação do COBS e a conferência do CRC. O receptor C do T01 faz o mesmo.
+  fonte: "Cheshire e Baker, Consistent Overhead Byte Stuffing; sigrok, wiki Protocol decoder API"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T09-013
+  objetivo: O4
+  tipo: vf
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Verdadeiro ou falso: se a captura começar no meio de um quadro COBS, o `forja_cobs` marca um erro no primeiro "quadro" (incompleto) e decodifica normalmente os quadros seguintes, porque o 0x00 só aparece como delimitador.
+  resposta: true
+  explicacao: |
+    O COBS garante que 0x00 nunca aparece dentro dos dados codificados, então todo 0x00 é uma fronteira de quadro. O pedaço inicial falha no COBS ou no CRC, e a partir do 0x00 seguinte tudo volta ao normal. Um enquadramento por cabeçalho e comprimento não tem essa ressincronização garantida.
+  fonte: "Cheshire e Baker, Consistent Overhead Byte Stuffing"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T09-014
+  objetivo: O4
+  tipo: multipla
+  dificuldade: 4
+  bloom: criar
+  enunciado: |
+    Você quer adaptar o `forja_cobs` a um protocolo próprio idêntico, mas com CRC-16/MODBUS. Quais mudanças são necessárias?
+  alternativas:
+    - "Trocar a função de CRC por uma refletida, com init 0xFFFF e o polinômio refletido 0xA001"
+    - "Montar o CRC recebido a partir do byte baixo primeiro (`d[-1] << 8 | d[-2]`), se o protocolo seguir a ordem do Modbus"
+    - "Trocar `inputs = ['uart']` por `inputs = ['modbus']`"
+    - "Remover a decodificação COBS, porque o CRC-16/MODBUS já delimita os quadros"
+  resposta: [0, 1]
+  explicacao: |
+    Mudam o algoritmo do CRC e, se for o caso, a ordem dos bytes do CRC no quadro. A entrada continua sendo o uart (o decodificador modbus do sigrok espera quadros Modbus RTU, separados por silêncio). O CRC verifica, não delimita: o COBS e o 0x00 continuam fazendo o enquadramento.
+  fonte: "sigrok, wiki Protocol decoder API; Modbus over Serial Line V1.02, CRC Checking"
+  origem: ia
+  revisao: rascunho

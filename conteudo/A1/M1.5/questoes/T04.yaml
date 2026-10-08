@@ -1,0 +1,230 @@
+- id: Q-M1.5.T04-001
+  objetivo: O1
+  tipo: vf
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Verdadeiro ou falso: no 1-Wire, os bytes são transmitidos com o bit menos significativo primeiro, e a linha em repouso fica em nível alto pelo resistor de pull-up.
+  resposta: true
+  explicacao: |
+    A linha DQ é open-drain com pull-up (4,7 kΩ no DS18B20): o repouso é 1, e mestre e escravos só puxam para 0. Comandos e dados vão LSB primeiro, como na UART.
+  fonte: "Maxim, AN126 1-Wire Communication Through Software; Maxim, DS18B20 datasheet, 1-Wire Bus System"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T04-002
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Na velocidade padrão, cada slot de bit do 1-Wire dura cerca de 70 µs (tempos A + B da AN126). Quanto tempo leva só a leitura dos 64 bits de uma ROM, sem contar o reset e o comando? Responda em ms, com 2 casas decimais.
+  resposta: {valor: 4.48, unidade: "ms", tolerancia: 0.01}
+  explicacao: |
+    64 slots × 70 µs = 4480 µs = 4,48 ms. Com o reset (~0,96 ms) e o comando Read ROM (8 slots, 0,56 ms), a operação toda leva cerca de 6 ms. O 1-Wire troca velocidade por um único fio.
+  fonte: "Maxim, AN126 1-Wire Communication Through Software (tabela de tempos recomendados)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T04-003
+  objetivo: O1
+  tipo: unica
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Num slot de leitura do 1-Wire na velocidade padrão, o que o mestre faz e quando ele amostra a linha?
+  alternativas:
+    - "Mantém a linha em 0 por 60 µs e amostra no fim do pulso"
+    - "Espera o escravo puxar a linha, sem gerar nenhuma borda, e amostra quando ela cair"
+    - "Puxa a linha para 0 por cerca de 6 µs, solta e amostra cerca de 15 µs depois da borda de descida"
+    - "Amostra a linha a cada 1 µs durante o slot inteiro e decide pela maioria"
+  resposta: 2
+  explicacao: |
+    O mestre inicia todo slot com uma borda de descida (A = 6 µs), solta a linha e amostra depois de E = 9 µs, ou seja, ~15 µs depois da descida; o escravo mantém 0 para o bit 0 ou deixa subir para o bit 1. Os 60 µs em 0 são a escrita de um 0. O escravo nunca começa um slot sozinho.
+  fonte: "Maxim, AN126 1-Wire Communication Through Software (Read Bit)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T04-004
+  objetivo: O1
+  tipo: multipla
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Numa captura do 1-Wire na velocidade padrão, quais leituras dos pulsos estão corretas?
+  alternativas:
+    - "Um pulso de 0 do mestre de cerca de 480 µs, seguido de um pulso de 0 de 60 a 240 µs vindo do escravo, é o reset com o pulso de presença"
+    - "Um pulso de 0 de cerca de 6 µs do mestre, seguido de linha alta pelo resto do slot, é a escrita de um bit 1"
+    - "Um pulso de 0 de cerca de 60 µs do mestre é a escrita de um bit 1"
+    - "Se um escravo puxa a linha logo depois do pulso de reset, ele está pedindo a interrupção do mestre"
+  resposta: [0, 1]
+  explicacao: |
+    O reset é H = 480 µs em 0; o escravo responde com o pulso de presença, que o mestre amostra em I = 70 µs. A escrita de 1 é um pulso curto (A = 6 µs); a de 0 é um pulso longo (C = 60 µs). O pulso logo depois do reset é a presença, e não um pedido de interrupção.
+  fonte: "Maxim, AN126 1-Wire Communication Through Software; Maxim, DS18B20 datasheet, 1-Wire Signaling"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T04-005
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Calcule o CRC-8 Dallas/Maxim (x⁸ + x⁵ + x⁴ + 1, LSB primeiro, valor inicial 0) dos 7 primeiros bytes de uma ROM, `28 61 64 12 3C 7C 2F`, na ordem em que são transmitidos. Dê o CRC convertido para decimal (por exemplo, 0x1F seria respondido como 31).
+  resposta: {valor: 39, unidade: "valor decimal", tolerancia: 0}
+  explicacao: |
+    Com o algoritmo de deslocamento à direita e o polinômio refletido 0x8C (o da AN27), o resultado é 0x27 = 39. A ROM completa é `28 61 64 12 3C 7C 2F 27`, e o CRC dos 8 bytes dá 0.
+  fonte: "Maxim, AN27 Understanding and Using Cyclic Redundancy Checks with Maxim 1-Wire and iButton Products"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T04-006
+  objetivo: O2
+  tipo: vf
+  dificuldade: 2
+  bloom: analisar
+  enunciado: |
+    Verdadeiro ou falso: se a linha DQ estiver em curto com o GND, o mestre lê o scratchpad do DS18B20 como nove bytes 0x00, e o teste do CRC-8 Maxim aprova essa leitura.
+  resposta: true
+  explicacao: |
+    Com valor inicial 0 e sem XOR final, o CRC de oito bytes 0x00 é 0x00, igual ao nono byte lido. O CRC não protege contra esse caso: um driver robusto também confere a presença no reset (com a linha em curto, ela "existe" sempre) e recusa leituras todas zero.
+  fonte: "Maxim, AN27 Understanding and Using Cyclic Redundancy Checks with Maxim 1-Wire and iButton Products; Ross N. Williams, A Painless Guide to CRC Error Detection Algorithms, Initial and Final Values"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T04-007
+  objetivo: O2
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Na implementação do CRC-8 do 1-Wire que desloca o registrador para a direita (LSB primeiro), que constante é usada no XOR?
+  alternativas:
+    - "0x31"
+    - "0x07"
+    - "0x8C"
+    - "0xA001"
+  resposta: 2
+  explicacao: |
+    O gerador x⁸ + x⁵ + x⁴ + 1 é 0x31 na forma normal (sem o bit 8); refletido, para o deslocamento à direita, fica 0x8C. O 0x07 é o CRC-8/SMBUS, e o 0xA001 é o CRC-16 do Modbus refletido.
+  fonte: "Maxim, AN27 Understanding and Using Cyclic Redundancy Checks with Maxim 1-Wire and iButton Products; Greg Cook, Catalogue of parametrised CRC algorithms (CRC-8/MAXIM-DOW)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T04-008
+  objetivo: O3
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Qual comando de ROM o mestre usa para falar com todos os dispositivos do fio ao mesmo tempo, sem mandar nenhum código de ROM?
+  alternativas:
+    - "Skip ROM (0xCC)"
+    - "Match ROM (0x55)"
+    - "Read ROM (0x33)"
+    - "Search ROM (0xF0)"
+  resposta: 0
+  explicacao: |
+    O Skip ROM endereça todos. Com um só dispositivo, dispensa a ROM; com vários, serve para comandos sem resposta, como mandar todos os DS18B20 converterem juntos. O Match ROM escolhe um, o Read ROM lê a ROM de um único dispositivo e o Search ROM enumera.
+  fonte: "Maxim, DS18B20 datasheet, ROM Commands"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T04-009
+  objetivo: O3
+  tipo: multipla
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Durante um Search ROM, para cada posição de bit o mestre lê dois slots (o bit e o complemento) dos dispositivos que ainda participam. Marque as interpretações corretas.
+  alternativas:
+    - "Leu 0 e 0: há participantes com 0 e com 1 naquela posição (discrepância)"
+    - "Leu 1 e 1: todos os participantes têm 1 naquela posição"
+    - "Leu 0 e 1: todos os participantes têm 0 naquela posição"
+    - "Depois de ler os dois slots, o mestre escreve o bit escolhido, e quem tem o outro valor sai da busca até o próximo reset"
+  resposta: [0, 2, 3]
+  explicacao: |
+    O wired-AND faz o bit lido ser 0 se algum participante tem 0, e o complemento ser 0 se algum tem 1. 00 = discrepância; 01 = todos 0; 10 = todos 1; 11 = ninguém respondeu (erro). O bit escrito pelo mestre poda a árvore.
+  fonte: "Maxim, AN187 1-Wire Search Algorithm"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T04-010
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 4
+  bloom: aplicar
+  enunciado: |
+    Cada passada do Search ROM tem um reset (960 µs), o comando 0xF0 (8 slots) e 64 posições de 3 slots (bit, complemento e escrita), com 70 µs por slot. Quanto tempo leva enumerar 5 dispositivos (uma passada por dispositivo)? Responda em ms, com 1 casa decimal.
+  resposta: {valor: 74.8, unidade: "ms", tolerancia: 0.01}
+  explicacao: |
+    Uma passada: 0,96 + 8 × 0,07 + 64 × 3 × 0,07 = 0,96 + 0,56 + 13,44 = 14,96 ms. Cinco passadas: 74,8 ms. Por isso a busca se faz uma vez, na inicialização, e as ROMs ficam guardadas.
+  fonte: "Maxim, AN187 1-Wire Search Algorithm; Maxim, AN126 1-Wire Communication Through Software"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T04-011
+  objetivo: O3
+  tipo: unica
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Um mestre manda Read ROM (0x33) num fio com dois DS18B20. O que acontece?
+  alternativas:
+    - "O DS18B20 de menor número de série responde primeiro e o outro espera a vez"
+    - "Os dois respondem ao mesmo tempo; o mestre lê o AND bit a bit das duas ROMs, e o CRC quase nunca confere"
+    - "Nenhum responde, porque o Read ROM exige o Match ROM antes"
+    - "O mestre lê as duas ROMs em sequência, 128 bits no total"
+  resposta: 1
+  explicacao: |
+    O Read ROM não tem arbitragem: todos transmitem juntos e o wired-AND mistura os bits. Para vários dispositivos, use o Search ROM para descobrir as ROMs e o Match ROM para falar com cada um.
+  fonte: "Maxim, DS18B20 datasheet, ROM Commands (Read ROM)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T04-012
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Os dois primeiros bytes do scratchpad de um DS18B20 em 12 bits são LSB = 0x5E e MSB = 0xFF. Qual é a temperatura? Responda em °C, com 3 casas decimais.
+  resposta: {valor: -10.125, unidade: "°C", tolerancia: 0.001}
+  explicacao: |
+    0xFF5E em complemento de dois de 16 bits = −162. −162 × 0,0625 °C = −10,125 °C, o mesmo valor da tabela do datasheet.
+  fonte: "Maxim, DS18B20 datasheet, Operation—Measuring Temperature (tabela de relação temperatura × dado)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T04-013
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Quatro DS18B20 em 10 bits (conversão máxima de 187,5 ms) recebem um Skip ROM + Convert T juntos. Depois da conversão, cada um é lido com reset (0,96 ms) + Match ROM (1 byte de comando + 8 bytes de ROM) + Read Scratchpad (1 byte de comando + 9 bytes lidos), a 70 µs por bit. Quanto tempo leva o ciclo completo, desprezando o próprio Convert T? Responda em ms, com 1 casa decimal.
+  resposta: {valor: 233.9, unidade: "ms", tolerancia: 0.01}
+  explicacao: |
+    Cada leitura: 0,96 + 19 bytes × 8 × 0,07 = 0,96 + 10,64 = 11,6 ms. Ciclo: 187,5 + 4 × 11,6 = 233,9 ms. Convertendo um por vez seriam 4 × 187,5 = 750 ms só de conversão.
+  fonte: "Maxim, DS18B20 datasheet, Configuration Register (tempo de conversão) e ROM Commands"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T04-014
+  objetivo: O4
+  tipo: multipla
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Um DS18B20 em alimentação parasita (VDD no GND, pull-up de 4,7 kΩ), com cabo de 10 m, às vezes devolve 85,0 °C com CRC correto. Quais explicações e correções são plausíveis?
+  alternativas:
+    - "Durante a conversão, o pull-up de 4,7 kΩ não fornece a corrente que o sensor precisa, ele reinicia e o registrador volta ao valor de ligação (85 °C); usar um pull-up forte por MOSFET durante a conversão, ou ligar o VDD"
+    - "85 °C é o valor de erro do CRC, e um CRC correto prova que o problema é do próprio sensor"
+    - "A leitura pode ter sido feita antes de a conversão terminar; esperar o tempo máximo da resolução configurada antes do Read Scratchpad"
+    - "Reduzir a resolução para 9 bits elimina a necessidade do pull-up forte"
+  resposta: [0, 2]
+  explicacao: |
+    0x0550 (85 °C) é o valor de ligação do registrador: aparece quando nada foi convertido ou quando o sensor reiniciou. Na alimentação parasita, a conversão exige o pull-up forte; com VDD ligado, o problema some. O CRC confere porque o scratchpad é válido, só que com o valor de ligação. Uma resolução menor encurta a conversão, mas não muda a corrente necessária.
+  fonte: "Maxim, DS18B20 datasheet, Powering the DS18B20 e Operation—Measuring Temperature"
+  origem: ia
+  revisao: rascunho

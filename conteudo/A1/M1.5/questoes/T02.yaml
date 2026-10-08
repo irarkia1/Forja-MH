@@ -1,0 +1,230 @@
+- id: Q-M1.5.T02-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    O MPU6050 tem endereço de 7 bits 0x68. Qual é o primeiro byte depois do START numa **leitura** desse escravo?
+  alternativas:
+    - "0x68"
+    - "0xD0"
+    - "0x69"
+    - "0xD1"
+  resposta: 3
+  explicacao: |
+    O byte de endereço é o endereço de 7 bits deslocado uma posição para a esquerda, com o bit R/W no fim: 0x68 << 1 = 0xD0; leitura (R/W = 1) → 0xD1. O 0xD0 é o da escrita; 0x69 é o outro endereço do MPU6050 (com AD0 em VCC).
+  fonte: "NXP, UM10204 I²C-bus specification and user manual, The slave address and R/W bit; TDK InvenSense, MPU-6000/MPU-6050 Product Specification, I²C Interface"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T02-002
+  objetivo: O1
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: no I²C, o SDA só pode mudar enquanto o SCL está em nível baixo; uma mudança do SDA com o SCL alto é interpretada como condição de START (descida) ou de STOP (subida).
+  resposta: true
+  explicacao: |
+    Os dados são lidos com o SCL alto, por isso precisam estar estáveis nesse intervalo (*Data validity*). As únicas transições permitidas com o SCL alto são justamente as que definem START e STOP. Um ruído no SDA com o SCL alto pode virar um START ou um STOP falso.
+  fonte: "NXP, UM10204, Data validity e START and STOP conditions"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T02-003
+  objetivo: O1
+  tipo: unica
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Durante uma leitura, o escravo acabou de transmitir um byte de dado para o mestre. Quem controla o SDA no nono pulso de SCL (o bit de ACK/NACK)?
+  alternativas:
+    - "O mestre, que recebeu o byte: puxa o SDA para 0 (ACK) se quer mais bytes ou o deixa solto (NACK) no último"
+    - "O escravo, que confirma que o byte foi enviado"
+    - "Ninguém: o bit fica sempre em 1 pelo pull-up nas leituras"
+    - "Os dois ao mesmo tempo, e o wired-AND decide"
+  resposta: 0
+  explicacao: |
+    Quem **recebe** o byte gera o ACK. Na leitura, o receptor é o mestre: ACK para pedir o próximo byte, NACK no último para o escravo soltar o SDA e o mestre poder gerar o STOP.
+  fonte: "NXP, UM10204, Acknowledge (ACK) and Not Acknowledge (NACK)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T02-004
+  objetivo: O1
+  tipo: multipla
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Para ler o registrador 0x75 de um sensor I²C, um mestre faz: START, endereço + W, 0x75, repeated START, endereço + R, um byte de dado, NACK, STOP. Marque as afirmações corretas.
+  alternativas:
+    - "O byte 0x75 é o ponteiro de registrador, escrito antes da leitura"
+    - "O repeated START mantém o barramento com o mestre entre a escrita do ponteiro e a leitura, sem um STOP no meio"
+    - "O endereço é enviado uma vez só, porque o repeated START já carrega a direção da leitura"
+    - "O NACK no fim indica ao mestre que o escravo não tem o registrador 0x75"
+  resposta: [0, 1]
+  explicacao: |
+    O padrão de leitura de registrador é escrever o ponteiro e, com um Sr, ler. O endereço vai duas vezes: com W e depois com R. O NACK final é do **mestre**, avisando o escravo de que não quer mais bytes; não é erro.
+  fonte: "NXP, UM10204, Byte format e Acknowledge (ACK) and Not Acknowledge (NACK); TDK InvenSense, MPU-6050 Product Specification, I²C Communications Protocol"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T02-005
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um barramento I²C em Fast-mode (t_r máximo de 300 ns) tem capacitância de 150 pF. Qual é o maior resistor de pull-up que respeita o tempo de subida, pela fórmula R_p(máx) = t_r/(0,8473·C_b)? Responda em Ω, arredondando para o inteiro mais próximo.
+  resposta: {valor: 2360, unidade: "Ω", tolerancia: 0.002}
+  explicacao: |
+    R_p(máx) = 300 × 10⁻⁹/(0,8473 × 150 × 10⁻¹²) = 2360 Ω. O fator 0,8473 = ln(0,7/0,3) vem da subida de 30 % a 70 % de V_DD numa carga RC. Um 2,2 kΩ serve; um 4,7 kΩ, não.
+  fonte: "NXP, UM10204, Pull-up resistor sizing"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T02-006
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Num barramento Fast-mode Plus a 5 V, os dispositivos garantem V_OL ≤ 0,4 V com até 20 mA. Qual é o menor resistor de pull-up permitido? Responda em Ω, com um número inteiro.
+  resposta: {valor: 230, unidade: "Ω", tolerancia: 0.01}
+  explicacao: |
+    R_p(mín) = (V_DD − V_OL)/I_OL = (5 − 0,4)/0,020 = 230 Ω. Em Standard e Fast-mode, com 3 mA, o mínimo a 5 V seria 1533 Ω.
+  fonte: "NXP, UM10204, Pull-up resistor sizing e a tabela de características dos estágios de E/S"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T02-007
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Três módulos I²C, cada um com pull-ups de 4,7 kΩ no SDA, e a placa principal com mais 10 kΩ estão no mesmo barramento. Qual é o pull-up equivalente no SDA? Responda em Ω, arredondando para o inteiro mais próximo.
+  resposta: {valor: 1354, unidade: "Ω", tolerancia: 0.002}
+  explicacao: |
+    Resistores em paralelo: 1/R = 3/4700 + 1/10 000 → R = 1354 Ω. Com 3,3 V e 3 mA, o mínimo é 967 Ω: ainda passa. Mais dois módulos de 4,7 kΩ derrubariam o equivalente para cerca de 860 Ω, abaixo do mínimo.
+  fonte: "NXP, UM10204, Pull-up resistor sizing; Texas Instruments, I2C Bus Pullup Resistor Calculation (SLVA689)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T02-008
+  objetivo: O2
+  tipo: multipla
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Um barramento I²C de 3,3 V a 400 kHz liga um MCU a quatro sensores por 60 cm de fio e falha de vez em quando. O osciloscópio mostra bordas de subida de cerca de 600 ns (30 % a 70 %), com pull-up equivalente de 4,7 kΩ. Quais ações são adequadas?
+  alternativas:
+    - "Reduzir o pull-up para um valor entre cerca de 1 kΩ e 2,2 kΩ, conferindo que fica acima de (3,3 − 0,4)/3 mA ≈ 967 Ω"
+    - "Ligar também os pull-ups internos do MCU, que resolvem a subida lenta sozinhos"
+    - "Baixar o clock para 100 kHz, cujo limite de t_r é 1000 ns"
+    - "Trocar o fio por um par trançado mais longo, para reduzir a capacitância"
+  resposta: [0, 2]
+  explicacao: |
+    t_r = 0,8473·R_p·C_b: com 600 ns e 4,7 kΩ, C_b ≈ 150 pF; para 300 ns, R_p ≤ 2,36 kΩ, sem passar do mínimo de corrente. Outra saída é o Standard-mode (1000 ns). Os internos (20–50 kΩ) mal mudam um equivalente de 4,7 kΩ. Fio mais longo aumenta a capacitância.
+  fonte: "NXP, UM10204, Pull-up resistor sizing e Bus speeds"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T02-009
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Com o ATmega328P a 16 MHz e o prescaler do TWI em 1 (TWPS = 0), que valor de TWBR dá f_SCL = 400 kHz pela fórmula f_SCL = F_CPU/(16 + 2·TWBR·4^TWPS)? Responda com um número inteiro.
+  resposta: {valor: 12, unidade: "valor", tolerancia: 0}
+  explicacao: |
+    16 + 2·TWBR = 16 MHz/400 kHz = 40 → TWBR = 12. Para 100 kHz, 16 + 2·TWBR = 160 → TWBR = 72. A frequência real ainda depende do tempo de subida, que alonga o período.
+  fonte: "Microchip, ATmega328P datasheet, 2-wire Serial Interface, Bit Rate Generator Unit"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T02-010
+  objetivo: O3
+  tipo: unica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Depois de enviar o endereço + W, o driver TWI do ATmega328P lê o código de status 0x20 em TWSR & 0xF8. O que isso significa e o que o driver deve fazer?
+  alternativas:
+    - "START enviado; o driver deve escrever o endereço no TWDR"
+    - "SLA+W enviado e o escravo respondeu NACK: ninguém atendeu naquele endereço; gerar STOP e reportar o erro"
+    - "Arbitragem perdida; liberar o barramento sem gerar STOP"
+    - "Dado enviado e ACK recebido; enviar o próximo byte"
+  resposta: 1
+  explicacao: |
+    0x20 = SLA+W com NACK. 0x08 é START enviado, 0x38 é arbitragem perdida e 0x28 é dado com ACK. Um NACK no endereço quase sempre é endereço errado, escravo sem alimentação ou dormindo.
+  fonte: "Microchip, ATmega328P datasheet, 2-wire Serial Interface, Master Transmitter Mode (tabela de códigos de status); avr-libc, <util/twi.h>"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T02-011
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    O driver lê os 14 bytes do MPU6050 a partir de 0x3B numa rajada: endereço + W, ponteiro, repeated START, endereço + R e 14 dados, cada byte com 9 bits, mais cerca de um período de SCL para cada uma das condições START, repeated START e STOP. Quanto tempo leva a 400 kHz? Responda em µs, com um número inteiro.
+  resposta: {valor: 390, unidade: "µs", tolerancia: 0.01}
+  explicacao: |
+    (3 + 14) bytes × 9 bits = 153 períodos + 3 condições = 156 períodos. 156/400 kHz = 390 µs. Ler os 14 registradores um por um custaria 14 × (4 × 9 + 3) = 546 períodos, além de misturar dados de medidas diferentes.
+  fonte: "NXP, UM10204, Byte format; TDK InvenSense, MPU-6050 Product Specification, I²C Communications Protocol"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T02-012
+  objetivo: O4
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Depois de um reset do mestre no meio de uma leitura, o SDA ficou preso em nível baixo e todo START falha. Qual é o procedimento recomendado pela especificação para liberar o barramento?
+  alternativas:
+    - "Pôr o SDA do mestre em saída alta para vencer o escravo"
+    - "Enviar o endereço 0x00 (general call) várias vezes"
+    - "Gerar até nove pulsos de SCL com o SDA solto e depois um STOP; se não resolver, resetar o escravo"
+    - "Desligar os pull-ups por alguns segundos"
+  resposta: 2
+  explicacao: |
+    O escravo travou no meio de um byte de leitura, segurando um bit 0. Com até nove clocks ele termina o byte, vê o NACK e solta o SDA. Forçar saída alta cria um curto contra o escravo. Sem SDA livre não dá para mandar nenhum endereço, e tirar os pull-ups não solta um escravo que puxa a linha para 0.
+  fonte: "NXP, UM10204, Bus clear"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T02-013
+  objetivo: O4
+  tipo: vf
+  dificuldade: 3
+  bloom: avaliar
+  enunciado: |
+    Verdadeiro ou falso: um mestre I²C deve tratar como erro qualquer intervalo em que o SCL continua em nível baixo depois de o mestre o soltar, porque só o mestre pode controlar o clock.
+  resposta: false
+  explicacao: |
+    O escravo pode segurar o SCL em baixo para pedir tempo (*clock stretching*): é parte da especificação. O mestre precisa esperar o SCL subir, com um timeout maior que o maior stretching legítimo dos escravos. O TWI do AVR faz essa espera no hardware.
+  fonte: "NXP, UM10204, Clock stretching e Clock synchronization"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.5.T02-014
+  objetivo: O4
+  tipo: multipla
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Num barramento com dois módulos GY-521 (MPU6050, ambos com AD0 em GND) e um BME280 em 0x76, o varredor encontra 0x68 e 0x76, e as leituras de aceleração saem incoerentes de vez em quando. Quais diagnósticos e correções são plausíveis?
+  alternativas:
+    - "Os dois MPU6050 respondem no mesmo endereço; ligar o AD0 de um deles em VCC para que ele passe a 0x69"
+    - "O varredor está com defeito, porque ele devia mostrar 0x68 duas vezes"
+    - "Com dois escravos respondendo juntos, o wired-AND mistura os dados (um bit 0 de qualquer um prevalece), e as leituras ficam erradas"
+    - "O BME280 está causando o problema, porque o endereço 0x76 é reservado"
+  resposta: [0, 2]
+  explicacao: |
+    Dois escravos no mesmo endereço dão ACK juntos e transmitem ao mesmo tempo; no open-drain, prevalece o 0 de qualquer um. O varredor só testa se **alguém** responde no endereço, então ele aparece uma vez. 0x76 está dentro da faixa válida (0x08 a 0x77).
+  fonte: "NXP, UM10204, The slave address and R/W bit e Reserved addresses in I²C-bus address space; TDK InvenSense, MPU-6050 Product Specification (pino AD0)"
+  origem: ia
+  revisao: rascunho

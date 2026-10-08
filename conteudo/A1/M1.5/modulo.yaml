@@ -1,45 +1,128 @@
 id: M1.5
 ato: A1
 nome: "Protocolos de comunicação embarcada"
+missao: "Na Vila da Forja, as máquinas já acordam sozinhas, mas ainda não conversam: aprenda as línguas do fio, da serial ao CAN, conte os bits que viajam em cada uma, confira cada pacote pelo CRC e ponha o analisador lógico para escutar as conversas que ninguém mais ouve."
 horas: 160
 trilha: firmware
 ordem: 12
 requer: ["M1.2"]
 tags_chefe: []
+# Ordem didática: UART a fundo (o terreno conhecido do M1.2, agora no nível do pacote: tempo de quadro, tolerância de baud, RS-232, CRC e checksums, framing com SLIP/COBS e timeouts; as ferramentas de integridade usadas em todo o resto do módulo) → RS-485 e Modbus RTU (a mesma UART num par diferencial e multiponto, com o primeiro protocolo de aplicação de verdade e o CRC-16 recém-aprendido) → SPI (o primeiro barramento síncrono: o clock vai no fio, os quatro modos e o CS; base do MCP2515 e do I²S) → I²S e áudio digital (o primo do SPI que transmite sem parar: clocks derivados da taxa de amostragem e DMA) → I²C (endereçamento, open-drain, ACK/NACK, stretching e pull-ups calculados pela capacitância) → 1-Wire (um único fio open-drain, tempos em microssegundos, CRC-8 e busca binária de endereços, que reaproveitam o I²C e o CRC) → CAN (o barramento wired-AND levado ao extremo: arbitragem sem perda, bit stuffing e CRC-15, com o MCP2515 pendurado no SPI) → USB (o protocolo mais em camadas do módulo, que junta NRZI, bit stuffing, CRC, pacotes e enumeração) → decodificar protocolos no analisador lógico (o laboratório que fecha o módulo: capturar todos os anteriores, empilhar decodificadores, diagnosticar defeitos e escrever um decodificador próprio em Python).
 topicos:
   - id: M1.5.T01
     nome: "UART a fundo"
     tipo: elite
     peso: 2
-  - id: M1.5.T02
-    nome: "I2C"
-    tipo: elite
-    peso: 2
-  - id: M1.5.T03
-    nome: "SPI"
-    tipo: elite
-    peso: 2
-  - id: M1.5.T04
-    nome: "1-Wire"
-    tipo: comum
-    peso: 1
-  - id: M1.5.T05
-    nome: "CAN"
-    tipo: comum
-    peso: 1
+    objetivos:
+      - id: O1
+        texto: "Calcular o tempo de quadro, o throughput efetivo e a tolerância de baud entre transmissor e receptor a partir do formato do quadro (dados, paridade, stop bits, break e tempo ocioso)"
+      - id: O2
+        texto: "Distinguir os níveis TTL e RS-232 da mesma UART, escolher o transceptor e aplicar o controle de fluxo por hardware (RTS/CTS) ou por software (XON/XOFF)"
+      - id: O3
+        texto: "Calcular e verificar checksums e CRCs (soma, complemento de dois, XOR, CRC-16 e CRC-32) a partir dos parâmetros do modelo de Rocksoft: largura, polinômio, valor inicial, reflexão e XOR final"
+      - id: O4
+        texto: "Implementar o enquadramento de pacotes sobre a UART com SLIP ou COBS e CRC, com máquina de estados de recepção, timeouts entre bytes e de resposta e descarte de quadros corrompidos"
   - id: M1.5.T06
     nome: "RS-485 e Modbus RTU"
     tipo: comum
     peso: 1
-  - id: M1.5.T07
-    nome: "USB (classes, enumeração)"
-    tipo: comum
-    peso: 1
+    objetivos:
+      - id: O1
+        texto: "Explicar a camada física do RS-485 (sinal diferencial, faixa de modo comum, carga unitária, half e full duplex) e dimensionar a terminação e a polarização de falha segura (fail-safe)"
+      - id: O2
+        texto: "Controlar o pino DE/RE de um transceptor como o MAX485 na ordem certa, usando o fim de transmissão (TXC) para liberar o barramento"
+      - id: O3
+        texto: "Montar e interpretar quadros Modbus RTU (endereço, código de função, dados e CRC-16) das funções 03, 06 e 16 e as respostas de exceção"
+      - id: O4
+        texto: "Aplicar os intervalos t1,5 e t3,5, calcular o tempo de uma transação e de um ciclo de varredura e tratar timeouts e retentativas no mestre"
+  - id: M1.5.T03
+    nome: "SPI"
+    tipo: elite
+    peso: 2
+    objetivos:
+      - id: O1
+        texto: "Explicar os quatro modos do SPI (CPOL e CPHA), identificando em que borda cada lado amostra e desloca, e ler o modo exigido no diagrama de tempo de um datasheet"
+      - id: O2
+        texto: "Configurar o SPI do ATmega328P por registrador (SPCR, SPSR e SPDR) com o divisor de clock adequado e controlar o CS por GPIO respeitando os tempos de setup e hold do escravo"
+      - id: O3
+        texto: "Ligar vários escravos com CS individual ou em cadeia (daisy chain) e resolver conflitos de MISO, de modo e de nível lógico no mesmo barramento"
+      - id: O4
+        texto: "Ler e escrever registradores de um sensor SPI como o BME280 (bit de leitura, leitura em rajada e conferência do chip ID) e calcular a taxa efetiva da transferência"
   - id: M1.5.T08
     nome: "I2S e áudio digital"
     tipo: comum
     peso: 1
+    objetivos:
+      - id: O1
+        texto: "Descrever os sinais do I²S (SCK, WS, SD e MCLK), o atraso de um bit entre a troca do WS e o MSB e as variantes justificada à esquerda, justificada à direita e TDM"
+      - id: O2
+        texto: "Calcular as frequências de SCK, WS e MCLK e a taxa de dados a partir da taxa de amostragem, da largura do slot e do número de canais"
+      - id: O3
+        texto: "Interpretar amostras em complemento de dois de 16, 24 e 32 bits e converter entre valor da amostra, dBFS e faixa dinâmica teórica"
+      - id: O4
+        texto: "Ligar microfones e amplificadores I²S comuns (INMP441, MAX98357A) a um MCU, escolher o canal pelo pino de seleção e usar DMA com buffer duplo para não perder amostras"
+  - id: M1.5.T02
+    nome: "I2C"
+    tipo: elite
+    peso: 2
+    objetivos:
+      - id: O1
+        texto: "Ler uma transação I²C no fio (START, endereço de 7 bits com R/W, ACK e NACK, dados, repeated START e STOP) e dizer quem controla o SDA em cada bit"
+      - id: O2
+        texto: "Dimensionar o resistor de pull-up pelo tempo de subida e pela capacitância do barramento nos modos Standard, Fast e Fast-mode Plus e conferir o limite de corrente em nível baixo"
+      - id: O3
+        texto: "Implementar um mestre I²C no TWI do ATmega328P com os códigos de status, repeated START para ler registradores e timeouts que não travam o firmware"
+      - id: O4
+        texto: "Diagnosticar falhas de barramento (NACK de endereço, conflito de endereços, clock stretching, SDA presa em nível baixo) e liberar o barramento com nove pulsos de clock"
+  - id: M1.5.T04
+    nome: "1-Wire"
+    tipo: comum
+    peso: 1
+    objetivos:
+      - id: O1
+        texto: "Descrever a camada física e os tempos do 1-Wire na velocidade padrão (reset e presença, slots de escrita e de leitura) e o pull-up necessário"
+      - id: O2
+        texto: "Calcular e verificar o CRC-8 Dallas/Maxim (polinômio x⁸ + x⁵ + x⁴ + 1) da ROM de 64 bits e do scratchpad"
+      - id: O3
+        texto: "Explicar os comandos de ROM (Read, Match, Skip e Search) e o algoritmo de busca que enumera vários dispositivos no mesmo fio"
+      - id: O4
+        texto: "Ler o DS18B20 (comando de conversão, tempo por resolução e alimentação parasita) e converter o valor do scratchpad em temperatura"
+  - id: M1.5.T05
+    nome: "CAN"
+    tipo: comum
+    peso: 1
+    objetivos:
+      - id: O1
+        texto: "Explicar a camada física do CAN de alta velocidade (CANH e CANL, níveis dominante e recessivo, terminação de 120 Ω nas pontas) e a relação entre taxa de bits e comprimento do barramento"
+      - id: O2
+        texto: "Simular a arbitragem bit a bit pelo identificador e explicar por que o quadro de menor identificador vence sem destruir a mensagem"
+      - id: O3
+        texto: "Descrever os quadros de dados CAN 2.0A e 2.0B, aplicar o bit stuffing e calcular o CRC-15, o tempo de quadro e a carga do barramento"
+      - id: O4
+        texto: "Configurar o MCP2515 pelo SPI (modo de configuração, CNF1 a CNF3, filtros e máscaras) e interpretar os contadores de erro e os estados error passive e bus-off"
+  - id: M1.5.T07
+    nome: "USB (classes, enumeração)"
+    tipo: comum
+    peso: 1
+    objetivos:
+      - id: O1
+        texto: "Descrever a camada física e as velocidades do USB (D+ e D−, NRZI, bit stuffing e o pull-up de 1,5 kΩ que anuncia a velocidade)"
+      - id: O2
+        texto: "Explicar a hierarquia de dispositivo, configuração, interface e endpoint, os quatro tipos de transferência e os pacotes de token, dados e handshake"
+      - id: O3
+        texto: "Acompanhar a enumeração (reset, GET_DESCRIPTOR, SET_ADDRESS e SET_CONFIGURATION) e ler os campos do descritor de dispositivo"
+      - id: O4
+        texto: "Escolher a classe adequada (CDC-ACM, HID ou MSC) para um produto, explicar por que um conversor aparece como ttyACM ou ttyUSB e calcular a vazão máxima de transferências bulk e interrupt"
   - id: M1.5.T09
     nome: "Decodificar protocolos no analisador lógico"
     tipo: elite
     peso: 2
+    objetivos:
+      - id: O1
+        texto: "Escolher a taxa de amostragem, o trigger e a profundidade de memória para capturar UART, SPI, I²C, 1-Wire e CAN reais e medir na captura os tempos exigidos pelos datasheets"
+      - id: O2
+        texto: "Empilhar decodificadores no PulseView e usar o sigrok-cli para capturar, decodificar e exportar anotações em lote"
+      - id: O3
+        texto: "Diagnosticar defeitos a partir da captura (baud errado, modo SPI errado, NACK, clock stretching, erro de quadro CAN, CRC inválido) e conferir o CRC à mão"
+      - id: O4
+        texto: "Escrever um decodificador de protocolo próprio em Python para o libsigrokdecode, empilhado sobre o decodificador UART, para o quadro COBS com CRC do T01"
