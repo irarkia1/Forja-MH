@@ -3,8 +3,10 @@
 #
 #   bash implantacao/atualizar.sh
 #
-# Só CÓDIGO e CONTEÚDO sobem. O banco de produção nunca é tocado, mas um
-# backup é feito antes, porque migração nova roda sozinha na subida.
+# Só CÓDIGO e CONTEÚDO sobem, e só o que está COMMITADO: o pacote sai de um
+# `git archive HEAD` numa pasta temporária, então arquivos em edição na pasta
+# de trabalho nunca vão junto (nem precisam ser escondidos). O banco de produção
+# nunca é tocado, mas um backup é feito antes, porque migração nova roda sozinha.
 set -euo pipefail
 
 SERVIDOR="${SERVIDOR:-root@143.95.166.153}"
@@ -15,8 +17,7 @@ cd "$RAIZ"
 ssh_() { ssh -p "$PORTA" "$SERVIDOR" "$@"; }
 
 if [ -n "$(git status --porcelain -- apps packages conteudo ferramentas 2>/dev/null)" ]; then
-  echo "AVISO: há mudanças não commitadas. Sobe assim mesmo? [s/N]"
-  read -r r; [ "$r" = "s" ] || exit 1
+  echo "  (há mudanças não commitadas: ficam fora; sobe só o commit $(git rev-parse --short HEAD))"
 fi
 
 # Node 22 local: o do PATH, ou o do nvm (o nvm não convive com set -eu).
@@ -24,6 +25,14 @@ if ! node -v 2>/dev/null | grep -q '^v22'; then
   set +eu; export NVM_DIR="$HOME/.nvm"; . "$NVM_DIR/nvm.sh" >/dev/null; nvm use "$(cat .nvmrc)" >/dev/null; set -eu
 fi
 node -v | grep -q '^v22' || { echo "Precisa do Node 22 local."; exit 1; }
+
+# Cópia limpa do HEAD; node_modules por hardlink (os links dos workspaces são
+# relativos e passam a apontar para dentro da cópia).
+PACOTE="$(mktemp -d)"
+trap 'rm -rf "$PACOTE"' EXIT
+git archive HEAD | tar x -C "$PACOTE"
+cp -al node_modules "$PACOTE/node_modules"
+cd "$PACOTE"
 
 echo "--- 1/6 verificação local (tipos, testes, conteúdo) ---"
 LOG="$(mktemp)"
@@ -40,7 +49,7 @@ ssh_ 'if [ -f /opt/forja/data/estudos.db ]; then
 else echo "  (ainda não há banco)"; fi'
 
 echo "--- 4/6 enviando código ---"
-tar czf - --exclude=./node_modules --exclude=./data --exclude=./.git --exclude=./estudos.cpp . \
+tar czf - --exclude=./node_modules . \
   | ssh_ 'rm -rf /opt/forja/app.novo && mkdir -p /opt/forja/app.novo && tar xzf - -C /opt/forja/app.novo'
 
 echo "--- 5/6 dependências ---"
