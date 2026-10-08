@@ -54,7 +54,7 @@ const MINIMO = 12 * 3600;
 
 const andar = (seg: number) => (agora = new Date(agora.getTime() + seg * 1000));
 
-async function chamar(method: 'GET' | 'POST' | 'PUT', url: string, body?: unknown) {
+async function chamar(method: 'GET' | 'POST' | 'PUT' | 'DELETE', url: string, body?: unknown) {
   const r = await app.inject({ method, url, payload: body as object, headers: { cookie } });
   return { status: r.statusCode, json: r.json() as any, raw: r.body };
 }
@@ -519,5 +519,73 @@ describe('painel', () => {
     expect(p.atos[0]).toMatchObject({ id: 'A0', topicos: 3, derrotados: 0 });
     expect(p.trilhas[0]).toMatchObject({ trilha: 'base' });
     expect(p.qualidade.combates).toBe(0);
+  });
+});
+
+describe('pausa no estudo', () => {
+  it('pausada não conta tempo nem cobra check-in; retomar volta a contar', async () => {
+    const s = (await chamar('POST', '/api/sessoes', { topico_id: 'M0.1.T01' })).json;
+    for (let i = 0; i < 4; i++) { andar(30); await chamar('POST', `/api/sessoes/${s.id}/pulso`, { visivel: true }); }
+    const p = await chamar('POST', `/api/sessoes/${s.id}/pausa`, { pausar: true });
+    expect(p.json).toMatchObject({ pausada: true, segundosSessao: 120 });
+    // 2 horas parado: nada conta e o check-in não vence.
+    for (let i = 0; i < 240; i++) {
+      andar(30);
+      const q = await chamar('POST', `/api/sessoes/${s.id}/pulso`, { visivel: true });
+      expect(q.json.checkinNecessario).toBe(false);
+      expect(q.json.perdeuCheckin).toBe(false);
+    }
+    const r = await chamar('POST', `/api/sessoes/${s.id}/pausa`, { pausar: false });
+    expect(r.json).toMatchObject({ pausada: false, segundosSessao: 120 });
+    andar(30);
+    const v = await chamar('POST', `/api/sessoes/${s.id}/pulso`, { visivel: true });
+    expect(v.json.segundosSessao).toBe(150);
+    const fim = await chamar('POST', `/api/sessoes/${s.id}/encerrar`);
+    expect(fim.json.segundosSessao).toBe(150);
+  });
+
+  it('prova não tem pausa (a rota só existe para sessões de estudo)', async () => {
+    const r = await chamar('POST', '/api/tentativas/1/pausa', { pausar: true });
+    expect(r.status).toBe(404);
+  });
+});
+
+describe('caderno', () => {
+  const conteudo = [[{ t: 'Lei de Ohm: ' , b: true }, { t: 'V = R·I', c: 'amarelo' }], [{ t: 'cuidado com a unidade', c: 'vermelho' }]];
+
+  it('página do tópico: rascunho vazio, salvar, ler e listar', async () => {
+    const vazio = await chamar('GET', '/api/topicos/M0.1.T01/caderno');
+    expect(vazio.json).toMatchObject({ id: null, titulo: 'Camadas', conteudo: [] });
+    const s = await chamar('PUT', '/api/topicos/M0.1.T01/caderno', { conteudo });
+    expect(s.status).toBe(200);
+    expect(s.json.conteudo).toEqual(conteudo);
+    await chamar('PUT', '/api/topicos/M0.1.T01/caderno', { conteudo: [[{ t: 'troquei' }]] });
+    const l = await chamar('GET', '/api/caderno');
+    expect(l.json.cores).toEqual(['amarelo', 'vermelho', 'preto', 'branco', 'azul']);
+    expect(l.json.paginas).toHaveLength(1);
+    expect(l.json.paginas[0]).toMatchObject({ topicoId: 'M0.1.T01', moduloId: 'M0.1', resumo: 'troquei' });
+  });
+
+  it('páginas livres: criar, renomear, apagar; cor fora das 5 é recusada', async () => {
+    const c = await chamar('POST', '/api/caderno', { titulo: 'Dúvidas gerais', conteudo });
+    expect(c.json).toMatchObject({ titulo: 'Dúvidas gerais', topico: null });
+    const u = await chamar('PUT', `/api/caderno/${c.json.id}`, { titulo: 'Dúvidas' });
+    expect(u.json.titulo).toBe('Dúvidas');
+    expect(u.json.conteudo).toEqual(conteudo);
+    const ruim = await chamar('PUT', `/api/caderno/${c.json.id}`, { conteudo: [[{ t: 'x', c: 'verde' }]] });
+    expect(ruim.status).toBe(400);
+    expect((await chamar('DELETE', `/api/caderno/${c.json.id}`)).status).toBe(200);
+    expect((await chamar('GET', `/api/caderno/${c.json.id}`)).status).toBe(404);
+  });
+
+  it('não lê página de outro usuário', async () => {
+    const c = await chamar('POST', '/api/caderno', { titulo: 'Minha', conteudo });
+    const config = { ...lerConfig({}), fatorTempo: 1 };
+    await criarUsuario({ db, config, agora: () => agora, rng: Math.random, dado: () => 0 }, 'outro', 'senha-forte-2');
+    const r = await app.inject({ method: 'POST', url: '/api/login', payload: { login: 'outro', senha: 'senha-forte-2' } });
+    cookie = String(r.headers['set-cookie']).split(';')[0]!;
+    expect((await chamar('GET', `/api/caderno/${c.json.id}`)).status).toBe(404);
+    expect((await chamar('DELETE', `/api/caderno/${c.json.id}`)).status).toBe(404);
+    expect((await chamar('GET', '/api/caderno')).json.paginas).toHaveLength(0);
   });
 });

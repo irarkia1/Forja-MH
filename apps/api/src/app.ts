@@ -20,6 +20,7 @@ import * as provas from './servicos/provas';
 import * as skills from './servicos/skills';
 import * as chefes from './servicos/chefes';
 import { painel } from './servicos/painel';
+import * as caderno from './servicos/caderno';
 
 const COOKIE = 'forja_sessao';
 
@@ -46,7 +47,7 @@ export async function criarApp(o: OpcoesApp): Promise<{ app: FastifyInstance; ct
     rng: o.rng ?? (() => randomInt(0, 2 ** 32) / 2 ** 32),
     dado: o.dado ?? (() => randomInt(CONFIG.dado.min, CONFIG.dado.max + 1)),
   };
-  const app = Fastify({ logger: o.log ? { level: 'info' } : false, trustProxy: true, bodyLimit: 256 * 1024 });
+  const app = Fastify({ logger: o.log ? { level: 'info' } : false, trustProxy: true, bodyLimit: 1024 * 1024 });
   await app.register(cookie);
 
   app.setErrorHandler((erro, _req, res) => {
@@ -118,6 +119,25 @@ export async function criarApp(o: OpcoesApp): Promise<{ app: FastifyInstance; ct
       estudo.pulso(ctx, req.usuarioId, IdNum.parse(req.params).id, z.object({ visivel: z.boolean() }).parse(req.body).visivel),
     );
     r.post('/api/sessoes/:id/checkin', async (req) => estudo.checkin(ctx, req.usuarioId, IdNum.parse(req.params).id));
+    r.get('/api/caderno', async (req) => caderno.listar(ctx, req.usuarioId));
+    r.get('/api/caderno/:id', async (req) => caderno.ler(ctx, req.usuarioId, IdNum.parse(req.params).id));
+    r.post('/api/caderno', async (req) => {
+      const b = z.object({ titulo: z.string().max(120), conteudo: caderno.Conteudo.default([]) }).parse(req.body);
+      return caderno.criar(ctx, req.usuarioId, b.titulo, b.conteudo);
+    });
+    r.put('/api/caderno/:id', async (req) => {
+      const b = z.object({ titulo: z.string().max(120).optional(), conteudo: caderno.Conteudo.optional() }).parse(req.body);
+      return caderno.atualizar(ctx, req.usuarioId, IdNum.parse(req.params).id, b);
+    });
+    r.delete('/api/caderno/:id', async (req) => caderno.apagar(ctx, req.usuarioId, IdNum.parse(req.params).id));
+    r.get('/api/topicos/:id/caderno', async (req) => caderno.doTopico(ctx, req.usuarioId, Id.parse(req.params).id));
+    r.put('/api/topicos/:id/caderno', async (req) =>
+      caderno.salvarDoTopico(ctx, req.usuarioId, Id.parse(req.params).id, z.object({ conteudo: caderno.Conteudo }).parse(req.body).conteudo),
+    );
+
+    r.post('/api/sessoes/:id/pausa', async (req) =>
+      estudo.pausar(ctx, req.usuarioId, IdNum.parse(req.params).id, z.object({ pausar: z.boolean() }).parse(req.body).pausar),
+    );
     r.post('/api/sessoes/:id/encerrar', async (req) => estudo.encerrar(ctx, req.usuarioId, IdNum.parse(req.params).id));
 
     r.post('/api/tentativas', async (req) => {

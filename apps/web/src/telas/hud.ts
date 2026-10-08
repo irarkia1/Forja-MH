@@ -27,8 +27,9 @@ export function hud(): { el: HTMLElement; destruir: () => void } {
         h('span.mudo', {}, p.proximoMarco ? `${num(p.horasTotais)} / ${p.proximoMarco.toLocaleString('pt-BR')} h` : `${num(p.horasTotais)} h`),
       ),
       h('div.espaco'),
-      h('a.btn', { href: '#/painel', style: 'text-decoration:none' }, '📊 Painel'),
-      h('a.btn', { href: '#/skills', style: 'text-decoration:none' + (p.pontosLivres > 0 ? ';border-color:var(--destaque);color:var(--destaque)' : '') }, '✨ Skills', p.pontosLivres > 0 ? h('span.selo', { style: 'color:var(--destaque);border-color:var(--destaque)' }, String(p.pontosLivres)) : null),
+      h('a.btn', { href: '#/caderno', title: 'Caderno', style: 'text-decoration:none' }, '📓', h('span.rotulo', {}, ' Caderno')),
+      h('a.btn', { href: '#/painel', title: 'Painel', style: 'text-decoration:none' }, '📊', h('span.rotulo', {}, ' Painel')),
+      h('a.btn', { href: '#/skills', title: 'Skills', style: 'text-decoration:none' + (p.pontosLivres > 0 ? ';border-color:var(--destaque);color:var(--destaque)' : '') }, '✨', h('span.rotulo', {}, ' Skills'), p.pontosLivres > 0 ? h('span.selo', { style: 'color:var(--destaque);border-color:var(--destaque)' }, String(p.pontosLivres)) : null),
       eu()?.papel === 'admin' ? h('a.btn', { href: '#/admin', style: 'border-style:dashed;border-color:var(--energia);color:var(--energia);text-decoration:none' }, '🔧 Admin') : null,
       fatorTempo > 1 ? h('span.selo.dev', { title: 'Modo de desenvolvimento: cada segundo conta mais' }, `DEV ×${fatorTempo}`) : null,
       h('button.btn.fantasma', {

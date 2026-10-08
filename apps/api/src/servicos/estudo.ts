@@ -20,6 +20,7 @@ interface LinhaSessao {
   pendente_seg: number;
   segundos_validos: number;
   checkins_perdidos: number;
+  pausada: number;
 }
 
 const seg = (a: string, b: Date) => (b.getTime() - new Date(a).getTime()) / 1000;
@@ -43,6 +44,13 @@ export function sessaoAberta(ctx: Contexto, uid: number): LinhaSessao | undefine
 function avancar(ctx: Contexto, s: LinhaSessao, visivel: boolean, agora: Date): LinhaSessao & { perdeuCheckin: boolean } {
   const { pulsoMaxIntervaloSeg, checkinSeg, checkinPrazoSeg } = CONFIG.estudo;
   const n = { ...s, perdeuCheckin: false };
+  // Pausada: nada conta e o relógio do check-in fica parado (recomeça ao retomar).
+  if (s.pausada) {
+    n.ultimo_pulso = agora.toISOString();
+    n.ultimo_checkin = agora.toISOString();
+    n.ultimo_visivel = 0;
+    return n;
+  }
   const intervalo = seg(s.ultimo_pulso, agora);
   if (s.ultimo_visivel && intervalo > 0 && intervalo <= pulsoMaxIntervaloSeg) {
     n.pendente_seg += Math.round(intervalo * ctx.config.fatorTempo);
@@ -75,9 +83,9 @@ function consolidar(ctx: Contexto, s: LinhaSessao, agora: Date): void {
 
 function salvar(ctx: Contexto, s: LinhaSessao): void {
   exec(ctx.db, `UPDATE sessao_estudo SET fim=:fim, ultimo_pulso=:up, ultimo_visivel=:uv, ultimo_checkin=:uc, pendente_seg=:pend,
-      segundos_validos=:val, checkins_perdidos=:perd WHERE id=:id`, {
+      segundos_validos=:val, checkins_perdidos=:perd, pausada=:pa WHERE id=:id`, {
     id: s.id, fim: s.fim, up: s.ultimo_pulso, uv: s.ultimo_visivel, uc: s.ultimo_checkin, pend: s.pendente_seg,
-    val: s.segundos_validos, perd: s.checkins_perdidos,
+    val: s.segundos_validos, perd: s.checkins_perdidos, pa: s.pausada,
   });
 }
 
@@ -89,7 +97,8 @@ function vista(ctx: Contexto, s: LinhaSessao, extra: { perdeuCheckin?: boolean }
     aberta: !s.fim,
     segundosSessao: s.segundos_validos + s.pendente_seg,
     estudadoSeg: p.segundos_estudo + s.pendente_seg,
-    checkinNecessario: !s.fim && seg(s.ultimo_checkin, ctx.agora()) >= CONFIG.estudo.checkinSeg,
+    pausada: Boolean(s.pausada),
+    checkinNecessario: !s.fim && !s.pausada && seg(s.ultimo_checkin, ctx.agora()) >= CONFIG.estudo.checkinSeg,
     prazoCheckin: new Date(new Date(s.ultimo_checkin).getTime() + (CONFIG.estudo.checkinSeg + CONFIG.estudo.checkinPrazoSeg) * 1000).toISOString(),
     perdeuCheckin: Boolean(extra.perdeuCheckin),
   };
@@ -131,6 +140,24 @@ export function checkin(ctx: Contexto, uid: number, id: number) {
     if (s.fim) throw new ErroApp(409, 'sessao_encerrada', 'Essa sessão já foi encerrada.');
     const n = avancar(ctx, s, true, agora);
     if (!n.perdeuCheckin) consolidar(ctx, n, agora);
+    salvar(ctx, n);
+    return vista(ctx, n, { perdeuCheckin: n.perdeuCheckin });
+  });
+}
+
+// Pausar consolida o que já valeu; retomar recomeça a contagem e o check-in do zero.
+export function pausar(ctx: Contexto, uid: number, id: number, pausar: boolean) {
+  return transacao(ctx.db, () => {
+    const agora = ctx.agora();
+    const s = sessao(ctx, uid, id);
+    if (s.fim) throw new ErroApp(409, 'sessao_encerrada', 'Essa sessão já foi encerrada.');
+    if (Boolean(s.pausada) === pausar) return vista(ctx, s);
+    const n = avancar(ctx, s, !pausar, agora);
+    if (pausar && !n.perdeuCheckin) consolidar(ctx, n, agora);
+    n.pausada = pausar ? 1 : 0;
+    n.ultimo_visivel = pausar ? 0 : 1;
+    n.ultimo_pulso = agora.toISOString();
+    n.ultimo_checkin = agora.toISOString();
     salvar(ctx, n);
     return vista(ctx, n, { perdeuCheckin: n.perdeuCheckin });
   });

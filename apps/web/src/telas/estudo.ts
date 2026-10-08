@@ -1,4 +1,5 @@
-import { api, ErroApi, type DetalheTopico, type Luta, type Sessao } from '../api';
+import { api, ErroApi, type DetalheTopico, type Luta, type PaginaCaderno, type Sessao } from '../api';
+import { criarEditor } from './caderno';
 import { fatorTempo, recarregarEu } from '../estado';
 import { barra, h, markdown, modal, relogio, tempo, toast } from '../ui';
 import type { Navegar } from './mapa';
@@ -8,7 +9,10 @@ const MIN_NOTA = 80;
 
 // Tela de estudo: roteiro + cronômetro com pulso (a autoridade é o servidor).
 export async function telaEstudo(topicoId: string, nav: Navegar) {
-  const t = await api.get<DetalheTopico>(`topicos/${topicoId}`);
+  const [t, pagina] = await Promise.all([
+    api.get<DetalheTopico>(`topicos/${topicoId}`),
+    api.get<PaginaCaderno>(`topicos/${topicoId}/caderno`),
+  ]);
   const derrotado = t.estado === 'derrotado';
   let sessao: Sessao | null = null;
   let estudado = t.estudadoSeg;
@@ -16,6 +20,7 @@ export async function telaEstudo(topicoId: string, nav: Navegar) {
   let ultimaBase = performance.now();
   let encerrado = false;
   let checkinAberto = false;
+  let pausada = false;
   let notaSalva = Boolean(t.nota);
   let temEvidencia = t.evidencias.length > 0;
 
@@ -23,6 +28,7 @@ export async function telaEstudo(topicoId: string, nav: Navegar) {
   const sessaoEl = h('div.mudo', { style: 'font-size:13px' });
   const statusEl = h('div.mudo', { style: 'font-size:13px' }, 'Abrindo sessão…');
   const guarda = h('div');
+  const botaoPausa = h('button.btn', { type: 'button', disabled: true, onclick: () => void alternarPausa() }, '❚❚ Pausar');
   const atacar = h('button.btn.principal', { disabled: true, onclick: () => void atacarAgora() }, '⚔ Atacar');
   const motivo = h('div.mudo', { style: 'font-size:13px' });
 
@@ -77,6 +83,10 @@ export async function telaEstudo(topicoId: string, nav: Navegar) {
       )
     : null;
 
+  const caderno = criarEditor(pagina.conteudo, async (c) => {
+    await api.put<PaginaCaderno>(`topicos/${topicoId}/caderno`, { conteudo: c });
+  }, { altura: 140, rotulo: `Caderno de ${t.nome}` });
+
   // A guarda acompanha o mostrador (servidor + estimativa entre pulsos).
   function pintarGuarda(seg: number): void {
     const falta = Math.max(0, t.exigidoSeg - seg);
@@ -99,6 +109,10 @@ export async function telaEstudo(topicoId: string, nav: Navegar) {
 
   function aplicar(s: Sessao): void {
     sessao = s;
+    pausada = s.pausada;
+    botaoPausa.disabled = false;
+    botaoPausa.textContent = pausada ? '▶ Retomar' : '❚❚ Pausar';
+    botaoPausa.classList.toggle('principal', pausada);
     estudado = s.estudadoSeg;
     sessaoSeg = s.segundosSessao;
     ultimaBase = performance.now();
@@ -111,7 +125,7 @@ export async function telaEstudo(topicoId: string, nav: Navegar) {
     if (!sessao || encerrado) return;
     try {
       aplicar(await api.post<Sessao>(`sessoes/${sessao.id}/pulso`, { visivel: document.visibilityState === 'visible' }));
-      statusEl.textContent = document.visibilityState === 'visible' ? '● contando (pulso a cada 30 s)' : '❚❚ pausado: aba oculta';
+      statusEl.textContent = pausada ? '❚❚ em pausa: o tempo não conta' : document.visibilityState === 'visible' ? '● contando (pulso a cada 30 s)' : '❚❚ pausado: aba oculta';
     } catch (e) {
       statusEl.textContent = e instanceof ErroApi ? e.message : '⚠ sem conexão: este trecho pode não contar';
       if (e instanceof ErroApi && e.codigo === 'sessao_encerrada') await abrir();
@@ -133,6 +147,20 @@ export async function telaEstudo(topicoId: string, nav: Navegar) {
         aplicar(await api.post<Sessao>(`sessoes/${sessao.id}/checkin`));
         toast('Check-in feito.', 'ok');
       } catch { /* o próximo pulso tenta de novo */ }
+    }
+  }
+
+  // Pausa só no estudo: guarda o que já valeu e para de contar até retomar.
+  async function alternarPausa(): Promise<void> {
+    if (!sessao || encerrado) return;
+    botaoPausa.disabled = true;
+    try {
+      aplicar(await api.post<Sessao>(`sessoes/${sessao.id}/pausa`, { pausar: !pausada }));
+      statusEl.textContent = pausada ? '❚❚ em pausa: o tempo não conta' : '● contando (pulso a cada 30 s)';
+      toast(pausada ? 'Pausado. O tempo não conta até você retomar.' : 'Retomado. Voltou a contar.', 'info', 2500);
+    } catch (e) {
+      botaoPausa.disabled = false;
+      toast(e instanceof ErroApi ? e.message : 'Falha ao pausar.', 'erro');
     }
   }
 
@@ -170,7 +198,7 @@ export async function telaEstudo(topicoId: string, nav: Navegar) {
   const intervalo = setInterval(() => void pulso(), PULSO_MS);
   // Mostrador local entre pulsos (o servidor corrige a cada pulso).
   const mostrador = setInterval(() => {
-    const visivel = document.visibilityState === 'visible' && sessao && !encerrado;
+    const visivel = document.visibilityState === 'visible' && sessao && !encerrado && !pausada;
     const extra = visivel ? ((performance.now() - ultimaBase) / 1000) * fatorTempo : 0;
     relogioEl.textContent = relogio(estudado + Math.min(extra, 90 * fatorTempo));
     pintarGuarda(estudado + Math.min(extra, 90 * fatorTempo));
@@ -191,9 +219,16 @@ export async function telaEstudo(topicoId: string, nav: Navegar) {
         fatorTempo > 1
           ? h('div.aviso.erro', {}, h('b', {}, `Modo de teste: tempo ×${fatorTempo}.`), ` Cada segundo conta ${fatorTempo}. Para estudar de verdade, suba o servidor sem FORJA_FATOR_TEMPO.`)
           : null,
-        h('section.cartao', {}, h('h4', {}, '⏱ TEMPO VÁLIDO NO TÓPICO'), relogioEl, sessaoEl, statusEl, h('div', { style: 'height:10px' }), guarda),
+        h('section.cartao', {}, h('h4', {}, '⏱ TEMPO VÁLIDO NO TÓPICO'), relogioEl, sessaoEl,
+          h('div', { style: 'display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:4px' }, statusEl, botaoPausa),
+          h('div', { style: 'height:10px' }), guarda),
         objetivos,
         h('section.cartao', {}, h('h4', {}, '✍ NOTA PESSOAL'), nota, h('div', { style: 'display:flex;justify-content:space-between;align-items:center;margin-top:8px;gap:8px' }, contagem, salvarNota)),
+        h('section.cartao', {},
+          h('div', { style: 'display:flex;justify-content:space-between;align-items:baseline;gap:8px' },
+            h('h4', {}, '📓 CADERNO'), h('a', { href: '#/caderno', style: 'font-size:13px' }, 'abrir caderno')),
+          h('p.mudo', { style: 'font-size:12px;margin:0 0 6px' }, 'Anote à vontade. Selecione um trecho e escolha a cor do marca-texto.'),
+          caderno.el),
         cartaoEvidencia,
         h('section.cartao', {}, atacar, h('div', { style: 'height:8px' }), motivo),
       ),
@@ -209,6 +244,7 @@ export async function telaEstudo(topicoId: string, nav: Navegar) {
       clearInterval(mostrador);
       document.removeEventListener('visibilitychange', visibilidade);
       window.removeEventListener('pagehide', saindo);
+      caderno.destruir();
       void encerrar();
     },
   };

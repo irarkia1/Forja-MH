@@ -27,6 +27,7 @@ export const api = {
   get: <T>(c: string) => chamar<T>('GET', c),
   post: <T>(c: string, corpo: unknown = {}) => chamar<T>('POST', c, corpo),
   put: <T>(c: string, corpo: unknown) => chamar<T>('PUT', c, corpo),
+  del: <T>(c: string) => chamar<T>('DELETE', c),
   beacon: (c: string) => navigator.sendBeacon?.(`api/${c}`),
 };
 
@@ -69,7 +70,7 @@ export interface Fase {
   chefe: { estado: 'bloqueado' | 'liberado' | 'vencido'; questoes: number; cooldownAte: string | null; adaptacao: number; poder: number; perfuracao: number };
 }
 
-export interface Sessao { id: number; topicoId: string; aberta: boolean; segundosSessao: number; estudadoSeg: number; checkinNecessario: boolean; prazoCheckin: string; perdeuCheckin: boolean }
+export interface Sessao { id: number; topicoId: string; aberta: boolean; pausada: boolean; segundosSessao: number; estudadoSeg: number; checkinNecessario: boolean; prazoCheckin: string; perdeuCheckin: boolean }
 export interface DetalheTopico extends TopicoFase {
   modulo: { id: string; nome: string };
   objetivos: { id: string; texto: string }[];
@@ -121,3 +122,19 @@ export interface SkillTela {
   requer?: { skill: string; nivel: number }[];
 }
 export interface ArvoreSkills { pontos: { total: number; gastos: number; livres: number }; energia: { atual: number; max: number }; skills: SkillTela[] }
+
+export type CorCaderno = 'amarelo' | 'vermelho' | 'preto' | 'branco' | 'azul';
+export interface Trecho { t: string; c?: CorCaderno; b?: boolean }
+export type ConteudoCaderno = Trecho[][];
+export interface PaginaCaderno {
+  id: number | null;
+  titulo: string;
+  topico: { id: string; nome: string; moduloId: string; moduloNome: string } | null;
+  conteudo: ConteudoCaderno;
+  criadaEm: string | null;
+  atualizadaEm: string | null;
+}
+export interface ItemCaderno {
+  id: number; titulo: string; topicoId: string | null; moduloId: string | null; topicoNome: string | null;
+  resumo: string; cores: CorCaderno[]; atualizadaEm: string; marcas: { t: string; c: CorCaderno }[];
+}
