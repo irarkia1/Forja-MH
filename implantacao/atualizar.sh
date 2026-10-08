@@ -28,7 +28,7 @@ node -v | grep -q '^v22' || { echo "Precisa do Node 22 local."; exit 1; }
 
 # Cópia limpa do HEAD; node_modules por hardlink (os links dos workspaces são
 # relativos e passam a apontar para dentro da cópia).
-PACOTE="$(mktemp -d)"
+PACOTE="$(mktemp -d "$(dirname "$RAIZ")/.forja-pacote.XXXXXX")"  # mesmo disco: hardlink funciona
 trap 'rm -rf "$PACOTE"' EXIT
 git archive HEAD | tar x -C "$PACOTE"
 cp -al node_modules "$PACOTE/node_modules"
