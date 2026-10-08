@@ -1,0 +1,225 @@
+- id: Q-M1.2.T07-001
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Quanto dura um bit numa linha serial a 9600 baud? Responda em µs, com 1 casa decimal.
+  resposta: {valor: 104.2, unidade: "µs", tolerancia: 0.01}
+  explicacao: |
+    T_bit = 1/9600 s ≈ 104,17 × 10⁻⁶ s ≈ 104,2 µs. Num quadro 8N1 (10 bits), cada caractere leva ~1,04 ms.
+  fonte: "Microchip, ATmega328P datasheet, USART0, Frame Formats; SparkFun, Serial Communication"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T07-002
+  objetivo: O1
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Você vai ligar um ATmega328P na protoboard a um conversor USB-serial de 5 V. Como ficam as ligações?
+  alternativas:
+    - "TX do conversor no TXD do chip e RX no RXD; o GND é opcional porque a USB já aterra"
+    - "TX do conversor no RXD (PD0) do chip, RX do conversor no TXD (PD1) e os GNDs ligados entre si"
+    - "Só o TX do conversor no RXD, porque a transmissão do chip usa o pino de RESET"
+    - "TX e RX ligados juntos aos dois pinos do chip, porque a linha é bidirecional"
+  resposta: 1
+  explicacao: |
+    A ligação é cruzada (quem transmite liga em quem recebe) e precisa de referência comum: sem GND ligado, os níveis não têm significado. Cada sentido usa um fio próprio; o RESET só entra na história no reset automático pelo DTR.
+  fonte: "SparkFun, Serial Communication; Microchip, ATmega328P datasheet, Pin Descriptions (PD0/RXD e PD1/TXD)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T07-003
+  objetivo: O1
+  tipo: multipla
+  dificuldade: 3
+  bloom: entender
+  enunciado: |
+    Sobre o quadro serial assíncrono do USART0 do ATmega328P, marque as afirmações corretas.
+  alternativas:
+    - "O start bit é um nível alto, e a linha ociosa fica em nível baixo"
+    - "Uma porta RS-232 de PC (±3 a ±15 V, lógica invertida) não pode ser ligada direto ao pino, e precisa de um conversor como o MAX232"
+    - "Os bits de dados são transmitidos do menos significativo para o mais significativo"
+    - "A linha ociosa fica em nível alto, e o start bit é um nível baixo"
+  resposta: [1, 2, 3]
+  explicacao: |
+    No quadro assíncrono, a linha repousa em 1; o start bit (0) marca o início, os dados vão LSB primeiro e o stop bit (1) devolve a linha ao repouso. O RS-232 usa tensões negativas e lógica invertida: ligá-lo direto danifica o pino.
+  fonte: "Microchip, ATmega328P datasheet, USART0, Frame Formats; SparkFun, Serial Communication"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T07-004
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Quanto tempo leva para transmitir 64 caracteres em 8N1 a 9600 baud, sem pausas entre eles? Responda em ms, com 1 casa decimal.
+  resposta: {valor: 66.7, unidade: "ms", tolerancia: 0.01}
+  explicacao: |
+    Cada caractere tem 10 bits (start + 8 + stop): 64 × 10 = 640 bits; 640/9600 s ≈ 66,7 ms. Um `printf` longo por polling prende a CPU esse tempo todo, e um `Serial.print` com o buffer cheio também.
+  fonte: "Microchip, ATmega328P datasheet, USART0, Frame Formats"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T07-005
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Qual valor de UBRR0 configura 9600 baud no modo normal (U2X0 = 0) com clock de 16 MHz? Responda com um número inteiro.
+  resposta: {valor: 103, unidade: "valor", tolerancia: 0}
+  explicacao: |
+    UBRR0 = f_clk/(16·baud) − 1 = 16 × 10⁶/(16 × 9600) − 1 = 103,17 → 103. A taxa real é 16 × 10⁶/(16 × 104) = 9615,4 baud (+0,16 %), o mesmo valor da tabela *Examples of Baud Rate Setting*.
+  fonte: "Microchip, ATmega328P datasheet, USART0, Clock Generation e Examples of Baud Rate Setting"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T07-006
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Com clock de 16 MHz, modo normal (U2X0 = 0) e o UBRR0 arredondado para o inteiro mais próximo, qual é o erro da taxa real em relação a 115 200 baud? Responda em %, com 2 casas decimais (negativo se ficar abaixo).
+  resposta: {valor: -3.55, unidade: "%", tolerancia: 0.01}
+  explicacao: |
+    UBRR0 exato = 16 × 10⁶/(16 × 115 200) − 1 = 7,68 → 8. Taxa real = 16 × 10⁶/(16 × 9) = 111 111 baud. Erro = 111 111/115 200 − 1 = −3,55 %, bem fora da margem recomendada. Com U2X, UBRR0 = 16 e o erro cai para +2,12 %.
+  fonte: "Microchip, ATmega328P datasheet, USART0, Examples of Baud Rate Setting"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T07-007
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um ATmega328P roda a 8 MHz e precisa de 38 400 baud no modo normal. Com o UBRR0 arredondado para o inteiro mais próximo, qual é o erro da taxa real? Responda em %, com 2 casas decimais.
+  resposta: {valor: 0.16, unidade: "%", tolerancia: 0.02}
+  explicacao: |
+    UBRR0 = 8 × 10⁶/(16 × 38 400) − 1 = 12,02 → 12. Taxa real = 8 × 10⁶/(16 × 13) = 38 461,5 baud → erro = +0,16 %. Isso supondo um clock exato de 8 MHz: com o RC interno, o erro do oscilador soma-se a esse.
+  fonte: "Microchip, ATmega328P datasheet, USART0, Clock Generation e Examples of Baud Rate Setting"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T07-008
+  objetivo: O2
+  tipo: multipla
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Considere a recomendação do datasheet para quadros de 8 bits de dados: erro de até cerca de ±2,0 % no modo normal e ±1,5 % no U2X. Com o UBRR0 arredondado para o inteiro mais próximo, quais configurações ficam dentro da recomendação?
+  alternativas:
+    - "8 MHz, 57 600 baud, modo U2X"
+    - "16 MHz, 9600 baud, modo normal"
+    - "16 MHz, 115 200 baud, modo normal"
+    - "18,432 MHz, 115 200 baud, modo normal"
+  resposta: [1, 3]
+  explicacao: |
+    16 MHz/9600 normal: UBRR0 = 103, erro +0,16 %. 16 MHz/115 200 normal: UBRR0 = 8, −3,55 %. 18,432 MHz/115 200 normal: 18,432 × 10⁶/(16 × 115 200) = 10 exatos → UBRR0 = 9, erro 0 % (é para isso que existem os cristais "de UART"). 8 MHz/57 600 U2X: 16,36 → 16 → 58 823,5 baud, +2,12 %, acima de 1,5 %.
+  fonte: "Microchip, ATmega328P datasheet, USART0, Asynchronous Operational Range e Examples of Baud Rate Setting"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T07-009
+  objetivo: O3
+  tipo: vf
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Verdadeiro ou falso: no USART0, o bit UDRE0 do UCSR0A em 1 indica que o registrador UDR0 está vazio e pode receber o próximo byte a transmitir.
+  resposta: true
+  explicacao: |
+    UDRE0 (*USART Data Register Empty*) = 1: pode escrever em UDR0. O TXC0 indica que o último bit saiu do registrador de deslocamento (útil antes de dormir ou de desligar um transceptor RS-485), e o RXC0 indica byte recebido.
+  fonte: "Microchip, ATmega328P datasheet, USART0, Register Description (UCSR0A)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T07-010
+  objetivo: O3
+  tipo: unica
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Com o `stdout` ligado à UART, `printf("%f", 3.3)` imprime só um ponto de interrogação. Por quê?
+  alternativas:
+    - "A versão padrão do vfprintf do avr-libc não formata ponto flutuante; é preciso ligar com -Wl,-u,vfprintf -lprintf_flt -lm"
+    - "O ATmega328P não tem instruções de ponto flutuante, então o compilador recusa o float"
+    - "O baud está errado e o caractere chega corrompido"
+    - "O printf só aceita inteiros sem sinal no AVR"
+  resposta: 0
+  explicacao: |
+    O avr-libc oferece três versões do vfprintf: mínima, padrão (sem float, mostra '?') e com float. A escolha é feita no link. O AVR calcula float por software normalmente; o que falta é o código de formatação, que custa mais ~1,5 KB de flash.
+  fonte: "avr-libc, <stdio.h>: Standard IO facilities (vfprintf)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T07-011
+  objetivo: O3
+  tipo: unica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Um programa faz, num laço, `c = uart_tira(); processa(c);` (o uart_tira espera RXC0 por polling) e também deveria piscar um LED a cada 500 ms, conferindo um contador de milissegundos. O LED só muda quando chega um caractere. Qual é a causa?
+  alternativas:
+    - "O LED está ligado no pino TXD e a transmissão o apaga"
+    - "O contador de milissegundos para enquanto a UART está habilitada"
+    - "O RXC0 só liga depois de um segundo caractere"
+    - "O uart_tira bloqueia o laço até chegar um byte; enquanto nada chega, a verificação do LED não roda"
+  resposta: 3
+  explicacao: |
+    A recepção por polling com espera é bloqueante, como um `delay`. Soluções: testar o RXC0 sem esperar (`if (UCSR0A & (1 << RXC0))`) ou, melhor, receber por interrupção num buffer circular e consultar a fila sem bloquear.
+  fonte: "Microchip, ATmega328P datasheet, USART0, Receiving Frames with 5 to 8 Data Bits; Elliot Williams, Make: AVR Programming, capítulo Serial I/O"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T07-012
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um buffer circular de 32 posições usa índices de 8 bits, com `cabeca` (escrita pela ISR) = 5 e `cauda` (lida pelo laço principal) = 20, depois de a cabeça ter dado a volta. Quantos bytes aguardam leitura? Responda com um número inteiro.
+  resposta: {valor: 17, unidade: "bytes", tolerancia: 0}
+  explicacao: |
+    Quantidade = (cabeca − cauda) mod 32 = (5 − 20) mod 32 = −15 + 32 = 17. Com tamanho potência de 2, isso é `(uint8_t)(cabeca - cauda) & 31`.
+  fonte: "Elliot Williams, Make: AVR Programming, capítulo Serial I/O; ArduinoCore-avr, HardwareSerial.cpp (available)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T07-013
+  objetivo: O4
+  tipo: multipla
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Sobre uma ISR `USART_RX_vect` que guarda os bytes num buffer circular, marque as afirmações corretas.
+  alternativas:
+    - "O UCSR0A deve ser lido antes do UDR0, porque as flags de erro se referem ao byte no topo do buffer e somem com a leitura do dado"
+    - "FE0 = 1 indica que o stop bit foi lido como 0, o que costuma indicar baud errado ou uma condição de break"
+    - "DOR0 = 1 indica que o buffer circular do software encheu"
+    - "Se só a ISR escreve a cabeça e só o laço principal escreve a cauda, índices de 8 bits dispensam seção atômica"
+  resposta: [0, 1, 3]
+  explicacao: |
+    As flags FE0, DOR0 e UPE0 acompanham o byte no buffer de recepção do hardware e devem ser lidas antes do UDR0. O DOR0 é um estouro do **hardware** (2 bytes no buffer, um no registrador de deslocamento e um novo start bit); a fila do software cheia é um descarte que o próprio código precisa contar. Com um escritor por índice e leituras de 8 bits atômicas, não há corrida.
+  fonte: "Microchip, ATmega328P datasheet, USART0, Receiver Error Flags"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T07-014
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Um ATmega328P a 16 MHz recebe dados contínuos em 8N1 a 115 200 baud, e cada execução da ISR de recepção (com entrada, prólogo e retorno) gasta 60 ciclos. Que fração da CPU a recepção ocupa? Responda em %, com 2 casas decimais.
+  resposta: {valor: 4.32, unidade: "%", tolerancia: 0.01}
+  explicacao: |
+    Bytes por segundo = 115 200/10 = 11 520. Carga = 11 520 × 60/16 × 10⁶ = 0,0432 = 4,32 %. Pouco — mas outra ISR que segure a CPU por mais que alguns tempos de caractere (~87 µs cada) leva ao estouro do hardware (DOR0).
+  fonte: "Microchip, ATmega328P datasheet, USART0 e AVR CPU Core (Interrupt Response Time)"
+  origem: ia
+  revisao: rascunho

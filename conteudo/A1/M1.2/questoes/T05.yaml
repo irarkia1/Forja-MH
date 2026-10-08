@@ -1,0 +1,230 @@
+- id: Q-M1.2.T05-001
+  objetivo: O1
+  tipo: vf
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Verdadeiro ou falso: no ATmega328P, basta ligar o bit INT0 no registrador EIMSK para que a ISR do INT0 passe a ser executada nas bordas configuradas.
+  resposta: false
+  explicacao: |
+    Além da habilitação local (EIMSK), a habilitação global precisa estar ligada: o bit I do SREG, que o `sei()` liga. Depois do reset, o bit I é 0. As três condições são a flag do evento, a habilitação local e o bit I.
+  fonte: "Microchip, ATmega328P datasheet, AVR CPU Core, seção Reset and Interrupt Handling; capítulo External Interrupts"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T05-002
+  objetivo: O1
+  tipo: unica
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    O que a instrução `reti`, que termina uma ISR, faz além do que o `ret` comum faz?
+  alternativas:
+    - "Restaura automaticamente o SREG e os registradores salvos no prólogo"
+    - "Limpa todas as flags de interrupção pendentes"
+    - "Reinicia o contador de programa no vetor de reset"
+    - "Religa o bit I do SREG, liberando novas interrupções"
+  resposta: 3
+  explicacao: |
+    Ao entrar na interrupção, o hardware empilha o PC e zera o bit I. O `reti` desempilha o PC, como o `ret`, e religa o I. Salvar e restaurar o SREG e os registradores é trabalho do prólogo e do epílogo que o avr-gcc gera, não do hardware. As flags pendentes continuam pendentes e serão atendidas em seguida.
+  fonte: "Microchip, ATmega328P datasheet, AVR CPU Core (Reset and Interrupt Handling) e Instruction Set Summary"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T05-003
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Na tabela de vetores do ATmega328P, cada vetor ocupa 2 palavras (um `jmp` de 4 bytes) e o vetor nº 1 é o RESET, no endereço 0. Em que endereço de byte, como aparece no `avr-objdump`, está o vetor nº 12 (TIMER1 COMPA)? Responda em decimal, com um número inteiro.
+  resposta: {valor: 44, unidade: "valor", tolerancia: 0}
+  explicacao: |
+    Endereço de byte = (nº − 1) × 4 = 11 × 4 = 44 = 0x2C. O datasheet lista o endereço de palavra, 0x0016 = 22, que é a metade. Confundir as duas escalas é comum ao comparar o datasheet com o objdump.
+  fonte: "Microchip, ATmega328P datasheet, capítulo Interrupts (Reset and Interrupt Vectors in ATmega328 and ATmega328P)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T05-004
+  objetivo: O1
+  tipo: multipla
+  dificuldade: 3
+  bloom: entender
+  enunciado: |
+    Quando o ATmega328P aceita uma interrupção, quais destas ações o próprio hardware executa, antes de qualquer instrução da ISR?
+  alternativas:
+    - "Empilha o endereço de retorno (PC)"
+    - "Zera o bit I do SREG"
+    - "Empilha o SREG e os registradores r0 e r1"
+    - "Desvia para o endereço do vetor correspondente"
+  resposta: [0, 1, 3]
+  explicacao: |
+    O hardware empilha o PC (2 bytes no ATmega328P), zera o I e salta para o vetor, em 4 ciclos; o `jmp` do vetor leva mais 3. O SREG e os registradores são salvos pelo prólogo gerado pelo compilador (`push r1`, `push r0`, `in r0, SREG`…), visível no `avr-objdump`. Diferente do Cortex-M, que empilha um quadro inteiro por hardware (M1.3.T06).
+  fonte: "Microchip, ATmega328P datasheet, AVR CPU Core, Interrupt Response Time; avr-libc, <avr/interrupt.h>: Interrupts"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T05-005
+  objetivo: O2
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    No registrador EICRA, os bits ISC01:ISC00 = 10 configuram o INT0 para disparar:
+  alternativas:
+    - "enquanto o pino estiver em nível baixo"
+    - "na borda de descida"
+    - "em qualquer mudança de nível"
+    - "na borda de subida"
+  resposta: 1
+  explicacao: |
+    00 = nível baixo, 01 = qualquer mudança, 10 = borda de descida, 11 = borda de subida. Com um botão ligado ao GND e pull-up, a borda de descida é o aperto.
+  fonte: "Microchip, ATmega328P datasheet, capítulo External Interrupts (EICRA, Interrupt 0 Sense Control)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T05-006
+  objetivo: O2
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Você quer uma interrupção de mudança de pino no A2 do Uno (PC2). Além de ligar o PCIE1 no PCICR, em que registrador o pino é escolhido?
+  alternativas:
+    - "PCMSK1"
+    - "PCMSK0"
+    - "EIMSK"
+    - "PCMSK2"
+  resposta: 0
+  explicacao: |
+    Cada porta tem uma máscara: PCMSK0 para a porta B (PCINT0–7), PCMSK1 para a porta C (PCINT8–14) e PCMSK2 para a porta D (PCINT16–23). PC2 é o PCINT10, bit 2 do PCMSK1, e o vetor é o `PCINT1_vect`. O EIMSK só habilita o INT0 e o INT1.
+  fonte: "Microchip, ATmega328P datasheet, capítulo External Interrupts (PCICR, PCMSK1)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T05-007
+  objetivo: O2
+  tipo: multipla
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Sobre a escolha entre INT0/INT1 e as interrupções de mudança de pino (PCINT) no ATmega328P, marque as afirmações corretas.
+  alternativas:
+    - "O INT0 pode ser remapeado para qualquer pino da porta D pelo registrador EICRA"
+    - "No Arduino Uno, attachInterrupt funciona só nos pinos D2 e D3"
+    - "A PCINT dispara nas duas bordas, e a ISR precisa comparar o PINx com a leitura anterior para saber o que mudou"
+    - "Há um único vetor de PCINT por porta, compartilhado pelos pinos habilitados naquela porta"
+  resposta: [1, 2, 3]
+  explicacao: |
+    A PCINT não tem seleção de borda e agrupa os pinos por porta (PCINT0_vect, PCINT1_vect, PCINT2_vect). O INT0 é fixo no PD2 e o INT1 no PD3; o EICRA só escolhe a sensibilidade. O `attachInterrupt` do núcleo AVR usa só o INT0 e o INT1, por isso funciona em D2 e D3.
+  fonte: "Microchip, ATmega328P datasheet, capítulo External Interrupts; Arduino, referência de attachInterrupt()"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T05-008
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    No EICRA, os bits são ISC11 (bit 3), ISC10 (bit 2), ISC01 (bit 1) e ISC00 (bit 0). Que valor configura o INT0 para borda de subida e o INT1 para qualquer mudança? Responda em decimal, com um número inteiro.
+  resposta: {valor: 7, unidade: "valor", tolerancia: 0}
+  explicacao: |
+    INT0 em subida: ISC01:ISC00 = 11 → bits 1 e 0 → 3. INT1 em qualquer mudança: ISC11:ISC10 = 01 → bit 2 → 4. EICRA = 3 + 4 = 7 = 0b0000_0111.
+  fonte: "Microchip, ATmega328P datasheet, capítulo External Interrupts (EICRA)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T05-009
+  objetivo: O3
+  tipo: vf
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: declarar um contador como `volatile` garante que `contador++` no laço principal não perca incrementos feitos por uma ISR.
+  resposta: false
+  explicacao: |
+    O `volatile` só obriga o compilador a ler e escrever a memória a cada acesso. O `++` continua sendo ler, somar e escrever, em várias instruções; se a ISR rodar no meio, uma das alterações se perde. Para isso é preciso uma seção atômica (ATOMIC_BLOCK ou cli/sei).
+  fonte: "avr-libc, <util/atomic.h> Atomically and Non-Atomically Executed Code Blocks; avr-libc, Frequently Asked Questions"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T05-010
+  objetivo: O3
+  tipo: unica
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Qual a diferença de `ATOMIC_BLOCK(ATOMIC_RESTORESTATE)` em relação a escrever simplesmente `cli(); ...; sei();`?
+  alternativas:
+    - "ATOMIC_RESTORESTATE desliga só a interrupção que usa a variável, e não as outras"
+    - "ATOMIC_RESTORESTATE copia a variável para a pilha antes de ler"
+    - "ATOMIC_RESTORESTATE devolve o bit I ao valor que ele tinha antes do bloco, em vez de sempre ligá-lo no fim"
+    - "Não há diferença; é só uma forma mais legível de escrever cli e sei"
+  resposta: 2
+  explicacao: |
+    O bloco guarda o SREG, executa `cli`, roda o corpo e restaura o SREG. Se as interrupções já estavam desligadas (por exemplo, numa função chamada de dentro de uma ISR ou na inicialização), elas continuam desligadas. Um `sei()` fixo no fim as ligaria indevidamente. Com ATOMIC_FORCEON, o comportamento é o de `cli`/`sei`.
+  fonte: "avr-libc, <util/atomic.h> Atomically and Non-Atomically Executed Code Blocks"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T05-011
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Uma ISR incrementa um `volatile uint16_t` que vale 0x00FF. O laço principal lê a variável sem seção atômica; o avr-gcc lê primeiro o byte baixo e depois o alto. A ISR roda exatamente entre as duas leituras. Que valor o laço principal obtém? Responda em decimal, com um número inteiro.
+  resposta: {valor: 511, unidade: "valor", tolerancia: 0}
+  explicacao: |
+    O byte baixo é lido antes da ISR: 0xFF. A ISR muda a variável para 0x0100. O byte alto é lido depois: 0x01. Resultado: 0x01FF = 511, um valor que a variável nunca teve (ela passou de 255 para 256). Com ATOMIC_BLOCK, as duas leituras ficam juntas.
+  fonte: "avr-libc, <util/atomic.h> Atomically and Non-Atomically Executed Code Blocks; Elliot Williams, Make: AVR Programming, capítulo Hardware Interrupts"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T05-012
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Uma ISR gasta 60 ciclos (do evento ao fim do `reti`) e é chamada 25 000 vezes por segundo num ATmega328P a 16 MHz. Que fração da CPU ela ocupa? Responda em %, com 1 casa decimal.
+  resposta: {valor: 9.4, unidade: "%", tolerancia: 0.01}
+  explicacao: |
+    Carga = 25 000 × 60/16 000 000 = 0,09375 ≈ 9,4 %. Sobra pouco mais de 90 % para o resto do programa e para as outras ISRs. Dobrar a taxa ou o tamanho da ISR dobra a carga.
+  fonte: "Microchip, ATmega328P datasheet, AVR CPU Core, Interrupt Response Time"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T05-013
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Num ATmega328P a 8 MHz, sem outra ISR em execução, a resposta à interrupção leva 4 ciclos, o `jmp` do vetor 3 ciclos e o prólogo gerado pelo avr-gcc 10 ciclos. Quanto tempo passa do evento até a primeira instrução útil da ISR? Responda em µs, com 2 casas decimais.
+  resposta: {valor: 2.13, unidade: "µs", tolerancia: 0.01}
+  explicacao: |
+    4 + 3 + 10 = 17 ciclos; a 8 MHz, cada ciclo dura 125 ns: 17 × 0,125 µs = 2,125 µs ≈ 2,13 µs. Se a instrução em curso tiver vários ciclos, ou se outra ISR estiver rodando, a latência aumenta.
+  fonte: "Microchip, ATmega328P datasheet, AVR CPU Core, Interrupt Response Time"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T05-014
+  objetivo: O4
+  tipo: unica
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Num Uno a 9600 baud, a função ligada por `attachInterrupt` a um sensor faz `Serial.print` de uma mensagem de 40 caracteres. Com o núcleo AVR atual, o programa não trava, mas, quando os pulsos do sensor ficam frequentes, o `loop()` quase não roda, pulsos deixam de ser contados e o `millis()` atrasa. Qual é a explicação?
+  alternativas:
+    - "O sensor gera bounce, e o excesso de interrupções reinicia o chip a cada pulso"
+    - "O Serial.print estoura a pilha porque cada caractere vira uma chamada recursiva"
+    - "O attachInterrupt desliga o Timer0 enquanto a função ligada a ele estiver registrada"
+    - "Dentro da ISR o bit I está em 0; o Serial.print então transmite por polling, cerca de 1 ms por caractere, e a ISR passa dezenas de ms ocupando a CPU, com as outras interrupções esperando"
+  resposta: 3
+  explicacao: |
+    Com o I em 0, a ISR da UART não pode esvaziar o buffer. O `HardwareSerial` atual percebe isso e envia byte a byte, esperando o registrador de dados esvaziar: a 9600 baud, 40 caracteres levam ~42 ms. Durante esse tempo, nenhuma outra ISR roda: estouros do Timer0 se perdem (o `millis` atrasa) e pulsos do sensor viram uma única flag pendente. Núcleos antigos travavam de vez. A regra continua: a ISR só sinaliza (flag `volatile`) e o laço principal imprime.
+  fonte: "Arduino, referência de attachInterrupt() (seção sobre ISRs); ArduinoCore-avr, HardwareSerial.cpp (write e flush com interrupções desligadas)"
+  origem: ia
+  revisao: rascunho

@@ -1,0 +1,235 @@
+- id: Q-M1.2.T08-001
+  objetivo: O1
+  tipo: vf
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Verdadeiro ou falso: no núcleo Arduino AVR, chamar `digitalRead` num pino que está gerando PWM com `analogWrite` desliga o PWM desse pino.
+  resposta: true
+  explicacao: |
+    Em `wiring_digital.c`, tanto `digitalWrite` quanto `digitalRead` chamam `turnOffPWM(timer)` quando o pino tem timer associado, zerando os bits COM do canal. O pino passa a seguir o PORTx.
+  fonte: "ArduinoCore-avr, wiring_digital.c (digitalRead e turnOffPWM)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T08-002
+  objetivo: O1
+  tipo: unica
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Num sketch Arduino para Uno, o que acontece antes de o `setup()` ser chamado?
+  alternativas:
+    - "Nada: o `setup()` é a primeira função executada depois do reset"
+    - "Só a inicialização da Serial a 9600 baud"
+    - "O bootloader configura todos os timers e o ADC antes de saltar para o sketch"
+    - "O `main()` do núcleo chama `init()`, que liga as interrupções e configura os três timers e o ADC"
+  resposta: 3
+  explicacao: |
+    O `main.cpp` do núcleo chama `init()` (wiring.c): `sei()`, Timer0 em Fast PWM com a interrupção de estouro do `millis`, Timer1 e Timer2 em Phase Correct de 8 bits, ADC com prescaler 128. Só então vêm `setup()` e o laço com `loop()`. A Serial só é configurada no `Serial.begin`, e o bootloader não deixa os periféricos configurados para o sketch.
+  fonte: "ArduinoCore-avr, main.cpp e wiring.c (init)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T08-003
+  objetivo: O1
+  tipo: multipla
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Lendo o `digitalWrite` do núcleo Arduino AVR, marque o que ele faz.
+  alternativas:
+    - "Escreve 1 no PINx para inverter o pino, que é a forma mais rápida"
+    - "Chama turnOffPWM quando o pino tem um timer associado"
+    - "Consulta tabelas em PROGMEM para descobrir porta, máscara de bit e timer do pino"
+    - "Desliga as interrupções enquanto altera o registrador da porta e depois restaura o SREG"
+  resposta: [1, 2, 3]
+  explicacao: |
+    A função lê `digital_pin_to_timer_PGM`, `digital_pin_to_bit_mask_PGM` e `digital_pin_to_port_PGM`, desliga o PWM se houver, salva o SREG, executa `cli`, faz `*out |= bit` ou `*out &= ~bit` e restaura o SREG. Ela não inverte pelo PINx; escreve um nível definido.
+  fonte: "ArduinoCore-avr, wiring_digital.c e variants/standard/pins_arduino.h"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T08-004
+  objetivo: O1
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Num Uno, o que `analogWrite(7, 200)` faz, sabendo que o pino 7 não tem saída de timer?
+  alternativas:
+    - "Configura o pino como saída e o coloca em nível alto, porque 200 ≥ 128"
+    - "Gera PWM por software com uma ISR do Timer2"
+    - "Não faz nada, porque a função retorna ao perceber que o pino não tem PWM"
+    - "Gera PWM no pino 6, que é o mais próximo com timer"
+  resposta: 0
+  explicacao: |
+    O `analogWrite` sempre chama `pinMode(pino, OUTPUT)`. Sem timer no pino, cai no caso padrão: valor < 128 → `digitalWrite(LOW)`, senão `digitalWrite(HIGH)`. Nenhum aviso é dado.
+  fonte: "ArduinoCore-avr, wiring_analog.c (analogWrite)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T08-005
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Um `digitalWrite` medido gasta 62 ciclos num Uno a 16 MHz. Quanto tempo isso representa? Responda em µs, com 2 casas decimais.
+  resposta: {valor: 3.88, unidade: "µs", tolerancia: 0.01}
+  explicacao: |
+    62 × 62,5 ns = 3875 ns ≈ 3,88 µs. O `PORTB |= (1 << 5)` equivalente vira um `sbi` de 2 ciclos: 0,125 µs.
+  fonte: "ArduinoCore-avr, wiring_digital.c; medição no simavr descrita no roteiro deste tópico"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T08-006
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Se o `digitalWrite` gasta 62 ciclos e o `sbi` equivalente gasta 2, quantas vezes o `digitalWrite` é mais lento? Responda com um número inteiro.
+  resposta: {valor: 31, unidade: "vezes", tolerancia: 0.01}
+  explicacao: |
+    62/2 = 31. A diferença vem das consultas às tabelas na flash, do teste de PWM, do salvamento do SREG e da chamada de função, que o acesso direto com pino constante dispensa.
+  fonte: "ArduinoCore-avr, wiring_digital.c; Microchip, AVR Instruction Set Manual (SBI: 2 ciclos)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T08-007
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Uma biblioteca de display envia 8192 bits por quadro e gasta 3 chamadas de `digitalWrite` por bit, cada uma de 62 ciclos, num ATmega328P a 16 MHz. Só com essas chamadas, quanto tempo leva um quadro? Responda em ms, com 1 casa decimal.
+  resposta: {valor: 95.2, unidade: "ms", tolerancia: 0.01}
+  explicacao: |
+    8192 × 3 × 62 = 1 523 712 ciclos; ÷ 16 × 10⁶ ≈ 0,0952 s = 95,2 ms, ou seja, ~10 quadros por segundo no máximo. Com `sbi`/`cbi` (2 ciclos), o mesmo trecho cairia para ~3 ms.
+  fonte: "ArduinoCore-avr, wiring_digital.c"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T08-008
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Num Uno, um laço com 1000 pares `digitalWrite(13, HIGH); digitalWrite(13, LOW);` levou 7800 µs, medidos com `micros()`. Desprezando o custo do laço, quantos ciclos de clock gasta cada `digitalWrite`? Responda com um número inteiro.
+  resposta: {valor: 62, unidade: "ciclos", tolerancia: 0.01}
+  explicacao: |
+    São 2000 chamadas: 7800 µs/2000 = 3,9 µs por chamada; 3,9 µs × 16 ciclos/µs = 62,4 ≈ 62 ciclos. Como o `micros()` tem resolução de 4 µs, é preciso repetir muitas vezes para a medida ter sentido.
+  fonte: "Arduino, referência de micros(); ArduinoCore-avr, wiring_digital.c"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T08-009
+  objetivo: O3
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Num Arduino Uno, ao usar a biblioteca Servo, quais pinos perdem o `analogWrite`?
+  alternativas:
+    - "5 e 6"
+    - "3 e 11"
+    - "9 e 10"
+    - "Nenhum, porque a Servo gera os pulsos por software"
+  resposta: 2
+  explicacao: |
+    No Uno, a Servo usa o Timer1, que é o timer do PWM de D9 e D10. O Timer0 (D5 e D6) é do `millis`, e o Timer2 (D3 e D11) é usado pelo `tone()`. A documentação da biblioteca traz esse aviso.
+  fonte: "Arduino, documentação da biblioteca Servo; ArduinoCore-avr, pins_arduino.h"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T08-010
+  objetivo: O3
+  tipo: vf
+  dificuldade: 3
+  bloom: avaliar
+  enunciado: |
+    Verdadeiro ou falso: num sketch para Uno, é possível ligar a interrupção de comparação A do Timer0 (`OCIE0A`) e definir `ISR(TIMER0_COMPA_vect)` para ter uma ISR de ~1 kHz sem quebrar o `millis()`, desde que não se altere o modo nem o prescaler do Timer0.
+  resposta: true
+  explicacao: |
+    O núcleo usa só a interrupção de estouro (`TIMER0_OVF_vect`). Em Fast PWM com N = 64, o contador passa pelo valor de OCR0A uma vez por volta (~976 Hz), e a ISR de comparação roda sem afetar o estouro. A ressalva: o OCR0A é o mesmo do PWM de D6, então `analogWrite(6, ...)` passa a mexer no instante da ISR.
+  fonte: "ArduinoCore-avr, wiring.c; Microchip, ATmega328P datasheet, 8-bit Timer/Counter0 (Output Compare Unit)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T08-011
+  objetivo: O3
+  tipo: multipla
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Em quais destas combinações, num sketch para Uno, há conflito entre o seu código e o núcleo ou uma biblioteca?
+  alternativas:
+    - "Usar `Serial` e definir a sua própria `ISR(USART_RX_vect)`"
+    - "Mudar os bits CS02:0 do TCCR0B e continuar usando `delay()`"
+    - "Definir `ISR(TIMER2_COMPB_vect)` num sketch que não usa `tone()` nem `analogWrite` em D3 ou D11"
+    - "Usar SoftwareSerial e definir a sua própria `ISR(PCINT0_vect)`"
+  resposta: [0, 1, 3]
+  explicacao: |
+    A SoftwareSerial define todos os vetores de PCINT, e a `Serial` define o `USART_RX_vect`: duas definições do mesmo vetor dão erro de link (*multiple definition*). Mudar o prescaler do Timer0 muda a escala do `millis`/`delay`. O Timer2 sem `tone` e sem PWM em D3/D11 está livre (o `init()` só o configura, sem ligar interrupções), então a ISR de comparação B não conflita com nada.
+  fonte: "ArduinoCore-avr, wiring.c e HardwareSerial; Arduino, documentação de SoftwareSerial e tone()"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T08-012
+  objetivo: O4
+  tipo: unica
+  dificuldade: 2
+  bloom: avaliar
+  enunciado: |
+    Em qual destas situações o acesso direto a registrador é claramente a melhor escolha?
+  alternativas:
+    - "Um menu de configuração em que o usuário escolhe, em tempo de execução, qual pino aciona o relé"
+    - "Uma ISR de 20 kHz que precisa ligar e desligar um pino fixo a cada execução"
+    - "Um protótipo que vai rodar também num ESP32 na semana que vem"
+    - "Um LED de status que pisca uma vez por segundo"
+  resposta: 1
+  explicacao: |
+    Numa ISR frequente, cada microssegundo vira latência e carga de CPU: 4 µs de `digitalWrite` a 20 kHz são 8 % da CPU só para mexer num pino, contra 0,25 % com `sbi`. Pino escolhido em tempo de execução e código portável favorecem a biblioteca; o LED de 1 Hz não sente diferença.
+  fonte: "Arduino, Port Manipulation (vantagens e desvantagens); ArduinoCore-avr, wiring_digital.c"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T08-013
+  objetivo: O4
+  tipo: unica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Uma camada de abstração define `static inline void pino_liga(volatile uint8_t *porta, uint8_t bit) { *porta |= (uint8_t)(1u << bit); }`. O que o avr-gcc com `-Os` gera para a chamada `pino_liga(&PORTB, 5);`?
+  alternativas:
+    - "Uma chamada de função (call) com o endereço de PORTB em r24 e o bit em r22"
+    - "Uma leitura com lds, uma operação or e uma escrita com sts"
+    - "Uma consulta a uma tabela na flash, como no digitalWrite"
+    - "Uma única instrução sbi 0x05, 5"
+  resposta: 3
+  explicacao: |
+    Com a função inline e os argumentos constantes, o compilador conhece o endereço (PORTB, E/S 0x05) e o bit, e reduz tudo ao `sbi`, conferido com `avr-objdump -d`. Se o ponteiro fosse uma variável em tempo de execução, sairia uma leitura-modificação-escrita genérica.
+  fonte: "avr-libc, Frequently Asked Questions (passar registradores de E/S para funções); M1.3.T08 (leitura de avr-objdump)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T08-014
+  objetivo: O4
+  tipo: unica
+  dificuldade: 4
+  bloom: criar
+  enunciado: |
+    O firmware de um sensor roda hoje num ATmega328P e deve ser portado para ESP32 no M1.6. Ele tem uma ISR de 10 kHz que pulsa um pino e uma lógica de aplicação que liga LEDs e lê botões. Qual organização equilibra desempenho e portabilidade?
+  alternativas:
+    - "Usar só registradores do AVR em todo o código, porque é o mais rápido"
+    - "Usar só digitalWrite em todo o código, inclusive na ISR, porque o ESP32 também tem digitalWrite"
+    - "Criar uma interface fina (led_liga, botao_apertado, pulso_ligado…) com uma implementação por plataforma em static inline, usando registradores na versão AVR, e escrever a aplicação só com essa interface"
+    - "Copiar o código para um projeto novo do ESP32 e reescrever tudo do zero"
+  resposta: 2
+  explicacao: |
+    A camada fina dá nomes do domínio, custo zero no AVR (vira `sbi`/`cbi`) e um único ponto a reescrever na mudança de plataforma. Registradores espalhados prendem o código ao AVR; `digitalWrite` na ISR de 10 kHz gasta ~4 % da CPU só ali; reescrever do zero desperdiça a lógica já testada.
+  fonte: "Arduino, Port Manipulation; Elliot Williams, Make: AVR Programming, capítulo Bit Twiddling"
+  origem: ia
+  revisao: rascunho

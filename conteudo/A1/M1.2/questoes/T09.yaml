@@ -1,0 +1,225 @@
+- id: Q-M1.2.T09-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    O que faz o comando `avr-objcopy -O ihex -R .eeprom main.elf main.hex`?
+  alternativas:
+    - "Compila o main.c e gera o executável main.elf"
+    - "Gera, a partir do ELF, um arquivo Intel HEX só com o conteúdo da flash, deixando a seção .eeprom de fora"
+    - "Grava o main.elf na flash do chip pela porta USB"
+    - "Mostra quanto de flash e de SRAM o programa ocupa"
+  resposta: 1
+  explicacao: |
+    O `avr-objcopy` converte formatos: `-O ihex` escolhe o Intel HEX e `-R .eeprom` remove a seção da EEPROM, que vai para um `.eep` separado. Compilar é com o avr-gcc, gravar com o avrdude e medir com o avr-size.
+  fonte: "avr-libc, A simple project; GNU binutils, objcopy"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T09-002
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Uma linha Intel HEX tem 2 bytes de dados (0x0C e 0x94) no endereço 0x0000, tipo 00. O checksum é o complemento de dois (em 8 bits) da soma de todos os bytes da linha antes dele: contagem, os dois bytes de endereço, o tipo e os dados. Qual é o checksum? Responda em decimal, com um número inteiro.
+  resposta: {valor: 94, unidade: "valor", tolerancia: 0}
+  explicacao: |
+    Soma = 0x02 + 0x00 + 0x00 + 0x00 + 0x0C + 0x94 = 0xA2. Complemento de dois: 0x100 − 0xA2 = 0x5E = 94. A linha completa é `:020000000C945E`. O avrdude confere esse byte e recusa linhas corrompidas.
+  fonte: "Intel, Hexadecimal Object File Format Specification; avr-libc, A simple project"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T09-003
+  objetivo: O1
+  tipo: vf
+  dificuldade: 2
+  bloom: lembrar
+  enunciado: |
+    Verdadeiro ou falso: num Makefile, as linhas de comando de uma regra precisam começar com um caractere de tabulação; espaços no lugar dela dão erro.
+  resposta: true
+  explicacao: |
+    O make exige tabulação no início das linhas de receita; com espaços, ele reclama de *missing separator*. Editores configurados para trocar tab por espaços são a causa mais comum.
+  fonte: "GNU make manual (Rule Syntax); avr-libc, A simple project"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T09-004
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    No circuito mínimo, o cristal de 16 MHz tem um capacitor de 22 pF de cada pino ao GND, e a capacitância parasita (pinos, trilhas, protoboard) é estimada em 5 pF. Com C_L = C1·C2/(C1 + C2) + C_parasita, qual é a capacitância de carga vista pelo cristal? Responda em pF, sem casas decimais.
+  resposta: {valor: 16, unidade: "pF", tolerancia: 0.01}
+  explicacao: |
+    Os dois capacitores ficam em série do ponto de vista do cristal: 22 × 22/(22 + 22) = 11 pF; mais 5 pF de parasitas = 16 pF. O valor deve casar com a C_L da folha de dados do cristal; se não casar, a frequência fica um pouco deslocada.
+  fonte: "Microchip, AVR042: AVR Hardware Design Considerations (oscilador a cristal); ATmega328P datasheet, Low Power Crystal Oscillator"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T09-005
+  objetivo: O2
+  tipo: unica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Que opções do avrdude gravam um Arduino Uno pela USB, usando o bootloader Optiboot?
+  alternativas:
+    - "`-c usbasp -P usb`"
+    - "`-c stk500v1 -b 19200`"
+    - "`-c arduino -P /dev/ttyACM0 -b 115200`"
+    - "`-c avrisp -b 9600`"
+  resposta: 2
+  explicacao: |
+    O Optiboot fala o protocolo STK500 v1 a 115 200 baud: programador `arduino`, com a porta serial da placa. O `usbasp` é um gravador ISP; o `stk500v1` a 19 200 baud é o Arduino usado como gravador (ArduinoISP), que grava outro chip.
+  fonte: "AVRDUDE, manual (opções -c, -P, -b); ArduinoCore-avr, boards.txt (uno.upload)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T09-006
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Pelo datasheet, na gravação serial (ISP), o clock SCK precisa ser menor que 1/4 do clock do chip. Qual é o maior SCK permitido para um ATmega328P novo, com os fuses de fábrica? Responda em kHz, com um número inteiro.
+  resposta: {valor: 250, unidade: "kHz", tolerancia: 0.01}
+  explicacao: |
+    De fábrica, o chip roda a 1 MHz (RC de 8 MHz ÷ 8). 1 MHz/4 = 250 kHz é o limite (use menos, por margem). Por isso gravadores rápidos falham com chips novos e é preciso aumentar o `-B` do avrdude até ajustar os fuses.
+  fonte: "Microchip, ATmega328P datasheet, Memory Programming, Serial Downloading; AVRDUDE, manual (opção -B)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T09-007
+  objetivo: O2
+  tipo: multipla
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Sobre a gravação de um ATmega328P com avrdude, marque as afirmações corretas.
+  alternativas:
+    - "Um Arduino com o sketch ArduinoISP é usado com o programador stk500v1 (ou avrisp) a 19 200 baud"
+    - "Pelo bootloader Optiboot também é possível gravar os fuses de clock"
+    - "A assinatura esperada para o ATmega328P é 1E 95 0F"
+    - "A gravação por ISP começa com um chip erase, que apaga também o bootloader"
+  resposta: [0, 2, 3]
+  explicacao: |
+    O ISP faz chip erase antes de gravar a flash. O ArduinoISP emula um STK500 v1 a 19 200 baud. O bootloader só grava a flash (e a EEPROM, se suportado): fuses exigem ISP (ou alta tensão). 1E 95 0F é a assinatura do 328P; o 328 sem P é 1E 95 14.
+  fonte: "AVRDUDE, manual; Arduino, Arduino as ISP and Arduino Bootloaders; Microchip, ATmega328P datasheet, Signature Bytes"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T09-008
+  objetivo: O2
+  tipo: unica
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Um ATmega328P novo, montado na protoboard com desacoplamento, pull-up de reset e cristal de 16 MHz, está ligado a um USBasp. O avrdude responde "initialization failed" e "Device signature = 0x000000". As ligações do ICSP foram conferidas com o multímetro e o chip tem 5 V. O que tentar primeiro?
+  alternativas:
+    - "Usar -F para ignorar a assinatura e gravar assim mesmo"
+    - "Gravar os fuses de cristal externo, porque o chip ainda não está usando o cristal"
+    - "Trocar o cristal por um de 20 MHz"
+    - "Reduzir o clock de gravação com -B (por exemplo, -B 10), porque o chip de fábrica roda a 1 MHz e o SCK precisa ser menor que 250 kHz"
+  resposta: 3
+  explicacao: |
+    Com o chip a 1 MHz (fuses de fábrica, ignorando o cristal), um SCK rápido impede a comunicação. Reduzindo o SCK com `-B`, a assinatura aparece e aí se gravam os fuses de cristal. O `-F` só ignora a comparação da assinatura: com 0x000000 nada funciona. Gravar fuses exige comunicação, e trocar o cristal não muda nada, porque ele ainda não está em uso.
+  fonte: "Microchip, ATmega328P datasheet, Serial Downloading; AVRDUDE, manual (opções -B e -F)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T09-009
+  objetivo: O3
+  tipo: vf
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Verdadeiro ou falso: nos fuses do ATmega328P, um bit em 0 significa "programado" (função ativa) e um bit em 1 significa "não programado".
+  resposta: true
+  explicacao: |
+    É a convenção de todo AVR: CKDIV8 = 0 liga a divisão por 8; SPIEN = 0 habilita o ISP; BOOTRST = 0 faz o reset ir para o bootloader. Ler fuses como bits "normais" é a origem de muitos chips travados.
+  fonte: "Microchip, ATmega328P datasheet, Memory Programming, Fuse Bits"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T09-010
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    O lfuse de fábrica do ATmega328P é 0x62 (CKDIV8 no bit 7 programado, RC interno de 8 MHz). Que valor de lfuse mantém o RC interno e todo o resto, mas deixa o chip rodando a 8 MHz (sem a divisão por 8)? Responda em decimal, com um número inteiro.
+  resposta: {valor: 226, unidade: "valor", tolerancia: 0}
+  explicacao: |
+    0x62 = 0110 0010. Desprogramar o CKDIV8 é pôr o bit 7 em 1: 1110 0010 = 0xE2 = 226. O resto (CKOUT = 1, SUT = 10, CKSEL = 0010) fica igual.
+  fonte: "Microchip, ATmega328P datasheet, Fuse Low Byte e System Clock Prescaler"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T09-011
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    O hfuse tem, do bit 7 ao 0: RSTDISBL, DWEN, SPIEN, WDTON, EESAVE, BOOTSZ1, BOOTSZ0, BOOTRST (0 = programado). Você quer: ISP habilitado, reset e debugWIRE e watchdog forçado desligados, EEPROM preservada no chip erase, BOOTSZ = 11 e reset no endereço 0 (sem bootloader). Qual é o hfuse? Responda em decimal, com um número inteiro.
+  resposta: {valor: 215, unidade: "valor", tolerancia: 0}
+  explicacao: |
+    RSTDISBL 1, DWEN 1, SPIEN 0, WDTON 1, EESAVE 0, BOOTSZ1 1, BOOTSZ0 1, BOOTRST 1 → 1101 0111 = 0xD7 = 215.
+  fonte: "Microchip, ATmega328P datasheet, Fuse High Byte"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T09-012
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 4
+  bloom: aplicar
+  enunciado: |
+    Você vai instalar um bootloader de 1 KB (512 palavras, BOOTSZ1:0 = 10) num ATmega328P, com o reset indo para o bootloader, ISP habilitado, EEPROM apagada no chip erase e os demais bits não programados. Qual é o hfuse? Responda em decimal, com um número inteiro.
+  resposta: {valor: 220, unidade: "valor", tolerancia: 0}
+  explicacao: |
+    RSTDISBL 1, DWEN 1, SPIEN 0, WDTON 1, EESAVE 1, BOOTSZ1 1, BOOTSZ0 0, BOOTRST 0 → 1101 1100 = 0xDC = 220. Para comparar: o Uno usa 0xDE (BOOTSZ = 11, 512 bytes) e o Nano antigo 0xDA (BOOTSZ = 01, 2 KB).
+  fonte: "Microchip, ATmega328P datasheet, Fuse High Byte e Boot Size Configuration"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T09-013
+  objetivo: O4
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    No circuito mínimo do ATmega328P na protoboard, onde vão os capacitores de desacoplamento de 100 nF?
+  alternativas:
+    - "Um em cada par VCC/GND (pinos 7/8 e 20/22), o mais perto possível dos pinos"
+    - "Um só, na entrada de 5 V da protoboard, longe do chip"
+    - "Em série com o VCC, para filtrar a alimentação"
+    - "Entre o RESET e o VCC, no lugar do resistor de pull-up"
+  resposta: 0
+  explicacao: |
+    O desacoplamento fornece a corrente dos picos de comutação pelo caminho mais curto; longe do chip, a indutância dos fios anula o efeito. Em série, o capacitor bloquearia a alimentação contínua. O RESET precisa do pull-up de 10 kΩ ao VCC.
+  fonte: "Microchip, AVR042: AVR Hardware Design Considerations; Arduino, From Arduino to a Microcontroller on a Breadboard"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T09-014
+  objetivo: O4
+  tipo: multipla
+  dificuldade: 2
+  bloom: lembrar
+  enunciado: |
+    Quais destes itens fazem parte do circuito mínimo recomendado para um ATmega328P com cristal de 16 MHz?
+  alternativas:
+    - "Um capacitor de cerca de 22 pF de cada pino do cristal (9 e 10) ao GND"
+    - "LED ligado direto do PB5 ao GND, sem resistor, para indicar a gravação"
+    - "AVCC (pino 20) ligado ao 5 V, mesmo sem usar o ADC"
+    - "Resistor de 10 kΩ do RESET (pino 1) ao VCC"
+  resposta: [0, 2, 3]
+  explicacao: |
+    O AVCC alimenta o ADC e a porta C e deve estar no VCC (±0,3 V). O pull-up mantém o chip fora do reset. Os capacitores de carga fazem o cristal oscilar na frequência certa. LED sem resistor ultrapassa a corrente do pino e ainda carrega o SCK do ISP.
+  fonte: "Microchip, AVR042: AVR Hardware Design Considerations; ATmega328P datasheet, Pin Descriptions (AVCC)"
+  origem: ia
+  revisao: rascunho

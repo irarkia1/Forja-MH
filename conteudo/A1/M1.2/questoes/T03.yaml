@@ -1,0 +1,225 @@
+- id: Q-M1.2.T03-001
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Um PWM de 0 a 5 V tem ciclo de trabalho de 30 %. Qual é o seu valor médio? Responda em V, com 1 casa decimal.
+  resposta: {valor: 1.5, unidade: "V", tolerancia: 0.01}
+  explicacao: |
+    V_média = D × V_alto = 0,30 × 5 V = 1,5 V. É o que um multímetro em DC mostra e o que aparece na saída de um filtro RC bem dimensionado.
+  fonte: "Elliot Williams, Make: AVR Programming, capítulo Pulse-Width Modulation"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T03-002
+  objetivo: O1
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: com o mesmo prescaler e TOP = 255, o Phase Correct PWM de um timer de 8 bits tem aproximadamente metade da frequência do Fast PWM.
+  resposta: true
+  explicacao: |
+    O Fast PWM conta 0 → 255 uma vez por período (256 contagens): f = f_clk/(N·256). O Phase Correct sobe e desce (0 → 255 → 0, 510 contagens): f = f_clk/(N·510). A razão é 256/510 ≈ 0,502. É por isso que o Arduino tem 976,56 Hz em D5/D6 e 490,20 Hz nos outros pinos, todos com N = 64.
+  fonte: "Microchip, ATmega328P datasheet, 8-bit Timer/Counter0 with PWM (Fast PWM Mode e Phase Correct PWM Mode)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T03-003
+  objetivo: O1
+  tipo: multipla
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Sobre o PWM dos timers do ATmega328P em modo não invertido, marque as afirmações corretas.
+  alternativas:
+    - "Em Fast PWM, OCRnx = 0 deixa o pino sempre em nível baixo (0 %)"
+    - "Em modo PWM, um novo valor escrito em OCRnx só passa a valer no limite do período, o que evita pulsos tortos"
+    - "Em Phase Correct, o pulso fica centrado no período, porque o pino muda na comparação da subida e na da descida"
+    - "Em Fast PWM, OCRnx igual a TOP deixa o pino sempre em nível alto"
+  resposta: [1, 2, 3]
+  explicacao: |
+    Com OCRnx = 0, o Fast PWM ainda liga o pino no BOTTOM e o desliga na contagem seguinte: sobra um pulso estreito de 1/(TOP + 1). Com OCRnx = TOP, o pino fica sempre em 1. O OCRnx é duplamente bufferizado nos modos PWM. No Phase Correct, a contagem simétrica centraliza o pulso.
+  fonte: "Microchip, ATmega328P datasheet, 8-bit Timer/Counter0 with PWM, Fast PWM Mode e Phase Correct PWM Mode"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T03-004
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    No Fast PWM não invertido (COMnx1:0 = 10), em que momento o pino OCnx vai para nível alto?
+  alternativas:
+    - "Quando TCNTn é igual a OCRnx"
+    - "Quando a CPU escreve em OCRnx"
+    - "Só quando a ISR de estouro é executada"
+    - "No início de cada período, quando o contador passa por BOTTOM (0)"
+  resposta: 3
+  explicacao: |
+    No modo não invertido, o pino é ligado no BOTTOM e desligado quando TCNTn = OCRnx. No invertido (COMnx1:0 = 11), o contrário. Tudo é feito pelo hardware, sem ISR.
+  fonte: "Microchip, ATmega328P datasheet, 8-bit Timer/Counter0 with PWM, Compare Output Mode, Fast PWM Mode"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T03-005
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    O Timer/Counter2 está em Fast PWM de 8 bits (TOP = 255) com prescaler 8, a 16 MHz. Qual é a frequência do PWM? Responda em Hz, com 1 casa decimal.
+  resposta: {valor: 7812.5, unidade: "Hz", tolerancia: 0.01}
+  explicacao: |
+    f = f_clk/(N·(1 + TOP)) = 16 × 10⁶/(8 × 256) = 7812,5 Hz.
+  fonte: "Microchip, ATmega328P datasheet, 8-bit Timer/Counter2, Fast PWM Mode"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T03-006
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Uma ventoinha de 4 fios pede PWM de 25 kHz. Com o Timer/Counter1 em Fast PWM com TOP em ICR1 (modo 14) e prescaler 1, a 16 MHz, que valor vai em ICR1? Responda com um número inteiro.
+  resposta: {valor: 639, unidade: "valor", tolerancia: 0}
+  explicacao: |
+    f = f_clk/(N·(1 + ICR1)) → 1 + ICR1 = 16 × 10⁶/25 000 = 640 → ICR1 = 639. A resolução fica em log₂ 640 ≈ 9,3 bits, e 40 % de ciclo de trabalho seria OCR1B = 255.
+  fonte: "Microchip, ATmega328P datasheet, 16-bit Timer/Counter1 with PWM, Fast PWM Mode"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T03-007
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    O Timer/Counter2 está em Phase Correct PWM de 8 bits, modo não invertido, com OCR2B = 51. Qual é o ciclo de trabalho no pino OC2B? Responda em %, sem casas decimais.
+  resposta: {valor: 20, unidade: "%", tolerancia: 0.01}
+  explicacao: |
+    No Phase Correct, D = OCR/TOP = 51/255 = 0,20 = 20 %. Em Fast PWM, o mesmo 51 daria (51 + 1)/256 = 20,3 %: as fórmulas são diferentes.
+  fonte: "Microchip, ATmega328P datasheet, 8-bit Timer/Counter2, Phase Correct PWM Mode"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T03-008
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Para controlar um servo com pulsos centrados, você usa o Timer/Counter1 em Phase Correct PWM com TOP em ICR1 (modo 10), prescaler 8, a 16 MHz. Que valor de ICR1 dá exatamente 50 Hz? Responda com um número inteiro.
+  resposta: {valor: 20000, unidade: "valor", tolerancia: 0}
+  explicacao: |
+    No Phase Correct, f = f_clk/(2·N·TOP) → TOP = 16 × 10⁶/(2 × 8 × 50) = 20 000. Usar a fórmula do Fast PWM daria 39 999, e o servo receberia 25 Hz. Nesse modo, no não invertido, o pino fica alto enquanto TCNT1 < OCR1A, na descida e na subida: largura = 2 × OCR1A × 0,5 µs = OCR1A µs (1500 para 1,5 ms).
+  fonte: "Microchip, ATmega328P datasheet, 16-bit Timer/Counter1 with PWM, Phase Correct PWM Mode"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T03-009
+  objetivo: O3
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    No Arduino Uno com o núcleo padrão, qual é a frequência do `analogWrite` no pino 9?
+  alternativas:
+    - "Cerca de 490 Hz"
+    - "Cerca de 976 Hz"
+    - "Cerca de 62,5 kHz"
+    - "Exatamente 1 kHz"
+  resposta: 0
+  explicacao: |
+    O `init()` deixa o Timer1 em Phase Correct de 8 bits com N = 64: 16 × 10⁶/(2 × 64 × 255) ≈ 490,2 Hz em D9 e D10 (o mesmo vale para D3 e D11, no Timer2). Só D5 e D6 (Timer0, Fast PWM) têm 976,56 Hz.
+  fonte: "Arduino, referência de analogWrite(); ArduinoCore-avr, wiring.c (init)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T03-010
+  objetivo: O3
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Para o Timer/Counter1 em Fast PWM com TOP em ICR1 (modo 14), que bits WGM devem ser ligados?
+  alternativas:
+    - "WGM12 e WGM10, ambos em TCCR1B"
+    - "WGM13 e WGM10 em TCCR1A"
+    - "WGM11 em TCCR1A, e WGM13 e WGM12 em TCCR1B"
+    - "WGM13, WGM12, WGM11 e WGM10, todos em TCCR1A"
+  resposta: 2
+  explicacao: |
+    Modo 14 = 1110 em binário: WGM13 = 1, WGM12 = 1, WGM11 = 1, WGM10 = 0. WGM11 e WGM10 ficam em TCCR1A; WGM13 e WGM12, em TCCR1B. Modo 15 (TOP = OCR1A) seria 1111; modo 5 (Fast PWM de 8 bits), 0101.
+  fonte: "Microchip, ATmega328P datasheet, 16-bit Timer/Counter1 with PWM, Waveform Generation Mode Bit Description"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T03-011
+  objetivo: O3
+  tipo: multipla
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Num sketch Arduino para Uno, marque as afirmações corretas.
+  alternativas:
+    - "`TCCR1B = (TCCR1B & 0xF8) | 0x01;` leva o PWM de D9 e D10 para cerca de 31,4 kHz, e o analogWrite continua funcionando"
+    - "`analogWrite(pino, 255)` faz um digitalWrite em nível alto em vez de usar o comparador"
+    - "`analogWrite` gera PWM em qualquer pino digital do Uno"
+    - "Mudar os bits CS do TCCR0B altera também o millis() e o delay()"
+  resposta: [0, 1, 3]
+  explicacao: |
+    O Timer0 é a base do `millis`: mudar o prescaler dele muda a escala de tempo. Com o Timer1 em N = 1 e Phase Correct de 8 bits: 16 × 10⁶/510 ≈ 31,37 kHz. No `wiring_analog.c`, 0 e 255 viram `digitalWrite`. Só os pinos com saída OCnx (3, 5, 6, 9, 10, 11) geram PWM; nos outros, o `analogWrite` vira 0 ou 1 conforme o valor (abaixo ou acima de 128).
+  fonte: "ArduinoCore-avr, wiring.c e wiring_analog.c; Ken Shirriff, Secrets of Arduino PWM"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T03-012
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um servo é comandado pelo Timer/Counter1 em Fast PWM (modo 14), prescaler 8, a 16 MHz, de modo que cada contagem vale 0,5 µs e o pulso dura (OCR1A + 1) contagens. Que OCR1A gera um pulso de 1,8 ms? Responda com um número inteiro.
+  resposta: {valor: 3599, unidade: "valor", tolerancia: 0}
+  explicacao: |
+    1,8 ms/0,5 µs = 3600 contagens → OCR1A = 3600 − 1 = 3599. Na faixa típica de 1 a 2 ms, isso fica perto de 144° num servo de 180°.
+  fonte: "Elliot Williams, Make: AVR Programming, capítulo Driving Servo Motors; Microchip, ATmega328P datasheet, Timer/Counter1 Fast PWM Mode"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T03-013
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um PWM de 5 V a 62,5 kHz, com ciclo de trabalho de 25 %, passa por um RC de 10 kΩ e 1 µF. Usando ΔV ≈ V·D·(1 − D)/(f·R·C), estime a ondulação de pico a pico na saída. Responda em mV, com 1 casa decimal.
+  resposta: {valor: 1.5, unidade: "mV", tolerancia: 0.01}
+  explicacao: |
+    ΔV ≈ 5 × 0,25 × 0,75/(62 500 × 10 000 × 10⁻⁶) = 0,9375/625 = 1,5 mV, em cima de uma média de 1,25 V. Com o PWM padrão de 490 Hz, a ondulação seria 128 vezes maior (≈ 191 mV).
+  fonte: "M0.5.T03 (PWM filtrado por RC); Elliot Williams, Make: AVR Programming, capítulo Pulse-Width Modulation"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T03-014
+  objetivo: O4
+  tipo: unica
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Um motor DC, ligado por MOSFET de nível lógico ao pino 10 de um Uno com `analogWrite`, emite um apito agudo em velocidades baixas e médias. Qual mudança elimina o apito sem perder o controle de velocidade e sem afetar o millis()?
+  alternativas:
+    - "Baixar a frequência do PWM para cerca de 50 Hz com o Timer1"
+    - "Pôr o Timer1 em Fast PWM com TOP em ICR1 = 799 e prescaler 1, ou seja, 20 kHz, acima da faixa audível"
+    - "Mudar o prescaler do Timer0 para 1 e usar o pino 5"
+    - "Ligar um capacitor de 1000 µF entre o gate do MOSFET e o GND"
+  resposta: 1
+  explicacao: |
+    O apito é a bobina vibrando na frequência do PWM (490 Hz). A 20 kHz o som sai da faixa audível, e o Timer1 com ICR1 = 799 ainda dá ~9,6 bits de resolução. 50 Hz faz o motor trepidar. Mexer no Timer0 quebra o `millis`. Um capacitor enorme no gate tornaria a comutação lentíssima e aqueceria o MOSFET.
+  fonte: "Microchip, ATmega328P datasheet, Timer/Counter1 Fast PWM Mode; Ken Shirriff, Secrets of Arduino PWM"
+  origem: ia
+  revisao: rascunho

@@ -1,0 +1,225 @@
+- id: Q-M1.2.T06-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Qual dos timers do ATmega328P é de 16 bits?
+  alternativas:
+    - "Timer/Counter0"
+    - "Timer/Counter1"
+    - "Timer/Counter2"
+    - "Nenhum deles conta até 65 535; os três são de 8 bits"
+  resposta: 1
+  explicacao: |
+    O Timer/Counter1 é o único de 16 bits (TCNT1, OCR1A, OCR1B e ICR1 de 16 bits). O Timer0 e o Timer2 são de 8 bits; o Timer2 tem ainda o modo assíncrono para cristal de relógio.
+  fonte: "Microchip, ATmega328P datasheet, capítulo 16-bit Timer/Counter1 with PWM"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T06-002
+  objetivo: O1
+  tipo: vf
+  dificuldade: 2
+  bloom: lembrar
+  enunciado: |
+    Verdadeiro ou falso: o prescaler do Timer/Counter2 oferece as divisões /32 e /128, que não existem no prescaler compartilhado pelo Timer/Counter0 e pelo Timer/Counter1.
+  resposta: true
+  explicacao: |
+    O Timer0 e o Timer1 compartilham o prescaler com 1, 8, 64, 256 e 1024. O Timer2 tem prescaler próprio, com 1, 8, 32, 64, 128, 256 e 1024, e por isso a codificação dos seus bits CS22:0 é diferente. Copiar os bits CS do Timer0 para o Timer2 dá outra divisão.
+  fonte: "Microchip, ATmega328P datasheet, Timer/Counter0 and Timer/Counter1 Prescalers; 8-bit Timer/Counter2 with PWM and Asynchronous Operation (TCCR2B)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T06-003
+  objetivo: O1
+  tipo: multipla
+  dificuldade: 3
+  bloom: entender
+  enunciado: |
+    Sobre o Timer/Counter0 do ATmega328P em modo CTC com TOP em OCR0A, marque as afirmações corretas.
+  alternativas:
+    - "A flag OCF0A é limpa escrevendo 1 nela ou automaticamente ao entrar na ISR TIMER0_COMPA_vect"
+    - "O timer só começa a contar quando os bits CS02:0 deixam de ser 000"
+    - "A flag de estouro TOV0 liga a cada comparação com OCR0A, e por isso a ISR de estouro serve de base de tempo no CTC"
+    - "O contador vai de 0 até OCR0A e volta a 0, de modo que cada ciclo tem OCR0A + 1 contagens"
+  resposta: [0, 1, 3]
+  explicacao: |
+    No CTC, o contador zera ao igualar OCR0A, então conta de 0 a OCR0A (OCR0A + 1 estados). As flags do AVR são limpas escrevendo 1 ou ao executar o vetor. Com CS = 000, o timer fica parado. O TOV0 só liga quando o contador passa pelo valor máximo (0xFF), o que no CTC com OCR0A < 255 não acontece: a ISR certa é a de comparação.
+  fonte: "Microchip, ATmega328P datasheet, 8-bit Timer/Counter0 with PWM, Clear Timer on Compare Match (CTC) Mode"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T06-004
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    O Timer/Counter0 conta em modo Normal (0 a 255) com prescaler 64, a 16 MHz. De quanto em quanto tempo ele estoura? Responda em ms, com 3 casas decimais.
+  resposta: {valor: 1.024, unidade: "ms", tolerancia: 0.01}
+  explicacao: |
+    Período = N × 256/f_clk = 64 × 256/16 MHz = 16 384/16 × 10⁶ s = 1,024 ms. É o estouro que o núcleo do Arduino usa para o `millis()`.
+  fonte: "Microchip, ATmega328P datasheet, 8-bit Timer/Counter0 with PWM, Normal Mode; ArduinoCore-avr, wiring.c"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T06-005
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Com o Timer/Counter1 em CTC (TOP = OCR1A) e prescaler 256, a 16 MHz, que valor de OCR1A gera uma interrupção por segundo? Responda com um número inteiro.
+  resposta: {valor: 62499, unidade: "valor", tolerancia: 0}
+  explicacao: |
+    Contagens = 16 × 10⁶/(256 × 1) = 62 500. Como o contador vai de 0 a OCR1A, OCR1A = 62 500 − 1 = 62 499. Com prescaler 64 seriam 250 000 contagens, que não cabem em 16 bits.
+  fonte: "Microchip, ATmega328P datasheet, 16-bit Timer/Counter1 with PWM, Clear Timer on Compare Match (CTC) Mode"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T06-006
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    O Timer/Counter0 está em CTC com o pino OC0A no modo toggle (COM0A0 = 1), prescaler 8 e OCR0A = 99, a 16 MHz. Qual é a frequência da onda quadrada no pino D6? Responda em Hz, com um número inteiro.
+  resposta: {valor: 10000, unidade: "Hz", tolerancia: 0.01}
+  explicacao: |
+    No modo toggle, o pino inverte a cada comparação; uma onda completa precisa de duas: f = f_clk/(2·N·(1 + OCR0A)) = 16 × 10⁶/(2 × 8 × 100) = 10 000 Hz. A comparação acontece a 20 kHz.
+  fonte: "Microchip, ATmega328P datasheet, 8-bit Timer/Counter0 with PWM, Clear Timer on Compare Match (CTC) Mode"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T06-007
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Você quer uma ISR a 7 kHz com o Timer/Counter0 em CTC, a 16 MHz. Usando o menor prescaler possível e arredondando o número de contagens para o inteiro mais próximo, qual é o erro da frequência obtida em relação à desejada? Responda em %, com 2 casas decimais (negativo se ficar abaixo).
+  resposta: {valor: -0.79, unidade: "%", tolerancia: 0.01}
+  explicacao: |
+    Contagens = 16 × 10⁶/(N × 7000): com N = 8 dá 285,7 (não cabe em 8 bits); com N = 64 dá 35,71 → 36 → OCR0A = 35. f = 16 × 10⁶/(64 × 36) = 6944,4 Hz. Erro = (6944,4 − 7000)/7000 = −0,79 %. O Timer1 com N = 1 (2286 contagens) erraria só 0,006 %.
+  fonte: "Microchip, ATmega328P datasheet, 8-bit Timer/Counter0 with PWM, Clear Timer on Compare Match (CTC) Mode"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T06-008
+  objetivo: O2
+  tipo: unica
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Você precisa de uma interrupção exata a 50 Hz num ATmega328P a 16 MHz. Qual configuração em CTC atende?
+  alternativas:
+    - "Timer0, prescaler 1024, OCR0A = 255"
+    - "Timer2, prescaler 1024, OCR2A = 312"
+    - "Timer1, prescaler 8, OCR1A = 39 999"
+    - "Timer1, prescaler 1, OCR1A = 319 999"
+  resposta: 2
+  explicacao: |
+    Contagens = 16 × 10⁶/(N × 50). Com N = 8: 40 000 → OCR1A = 39 999, que cabe em 16 bits e é exato. O Timer0 com N = 1024 e OCR = 255 chega a 61,04 Hz, no máximo. OCR2A = 312 não cabe em 8 bits (e 1024 × 313 nem daria 50 Hz exatos), e 319 999 não cabe em 16 bits.
+  fonte: "Microchip, ATmega328P datasheet, 16-bit Timer/Counter1 with PWM, CTC Mode"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T06-009
+  objetivo: O3
+  tipo: vf
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Verdadeiro ou falso: no Arduino Uno, o `millis()` é atualizado pela interrupção de estouro do Timer/Counter0, que ocorre a cada 1,024 ms, e não exatamente a cada 1 ms.
+  resposta: true
+  explicacao: |
+    O núcleo deixa o Timer0 em Fast PWM com prescaler 64 (para atender também o `analogWrite` de D5 e D6). A ISR `TIMER0_OVF_vect` em `wiring.c` soma 1 ms e acumula a sobra de 24 µs, somando um ms extra quando a sobra passa de 1000 µs.
+  fonte: "ArduinoCore-avr, wiring.c (TIMER0_OVF_vect, MILLIS_INC, FRACT_INC, FRACT_MAX)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T06-010
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    O `millis()` do Arduino é um `unsigned long` de 32 bits que conta milissegundos. Depois de quanto tempo ele volta a 0? Responda em dias, com 1 casa decimal.
+  resposta: {valor: 49.7, unidade: "dias", tolerancia: 0.01}
+  explicacao: |
+    2³² ms = 4 294 967 296 ms = 4 294 967,3 s; ÷ 86 400 s/dia ≈ 49,7 dias. Um aparelho que fica ligado meses passa por esse estouro: o código precisa comparar intervalos por subtração sem sinal.
+  fonte: "Arduino, referência de millis(); ArduinoCore-avr, wiring.c"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T06-011
+  objetivo: O3
+  tipo: unica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Num Uno, o teste `if (millis() == 5000) { ... }` dentro do `loop()` às vezes nunca é verdadeiro, mesmo com o laço rodando rápido. Por quê?
+  alternativas:
+    - "Porque o millis() do núcleo AVR soma às vezes 2 ms de uma vez (para compensar o estouro de 1,024 ms) e pode pular o valor 5000"
+    - "Porque o millis() só é atualizado quando o loop() termina"
+    - "Porque o millis() começa em 1, e não em 0, depois do reset"
+    - "Porque a comparação entre unsigned long e int é sempre falsa"
+  resposta: 0
+  explicacao: |
+    A cada ~42 estouros, a fração acumulada passa de 1000 µs e a ISR soma 2 ms numa vez só: alguns valores nunca aparecem. Além disso, o laço pode estar ocupado justamente no ms 5000. O certo é testar intervalos: `if (millis() - inicio >= 5000)`.
+  fonte: "ArduinoCore-avr, wiring.c (TIMER0_OVF_vect)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T06-012
+  objetivo: O4
+  tipo: multipla
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Durante um `delay(500)` num sketch Arduino, o que é verdade?
+  alternativas:
+    - "As ISRs continuam rodando, inclusive a do Timer0, que atualiza o millis()"
+    - "O millis() fica congelado e volta a contar depois do delay"
+    - "Um _delay_ms do avr-libc teria o mesmo efeito de bloquear o laço, e ainda exige argumento constante em tempo de compilação"
+    - "O loop() não lê botões nem trata nada até o delay terminar"
+  resposta: [0, 2, 3]
+  explicacao: |
+    O `delay()` é um laço que consulta o `micros()`: o programa principal fica preso, mas as interrupções continuam ligadas, e o `millis()` avança (é ele que o `delay` usa para medir). O `_delay_ms` do avr-libc também prende a CPU e precisa de uma constante conhecida na compilação para calcular o número de voltas.
+  fonte: "ArduinoCore-avr, wiring.c (delay); avr-libc, <util/delay.h>: Convenience functions for busy-wait delay loops"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T06-013
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um contador de milissegundos de 16 bits sem sinal estourou: `anterior` = 65 000 e `agora` = 464. Quanto vale `(uint16_t)(agora - anterior)`? Responda com um número inteiro.
+  resposta: {valor: 1000, unidade: "ms", tolerancia: 0}
+  explicacao: |
+    Na aritmética módulo 2¹⁶: 464 − 65 000 = −64 536 → −64 536 + 65 536 = 1000. É exatamente o tempo que passou (536 ms até o estouro mais 464 depois). Por isso `if (agora - anterior >= intervalo)` funciona através do estouro.
+  fonte: "Arduino, exemplo BlinkWithoutDelay; ISO C (aritmética sem sinal módulo 2^n), revisada no M0.6.T01"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T06-014
+  objetivo: O4
+  tipo: unica
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Um aparelho usa `if (millis() >= anterior + 60000) { anterior = millis(); envia(); }` e funciona por semanas. Perto do 49º dia de funcionamento, ele passa a enviar sem parar, a cada volta do loop, por cerca de um minuto. Qual é a causa?
+  alternativas:
+    - "O Timer0 perde precisão com o tempo e começa a contar mais rápido"
+    - "O millis() trava em 2³² − 1 e a comparação fica sempre verdadeira até o reset"
+    - "O watchdog do ATmega328P reinicia o chip a cada 49 dias"
+    - "Quando anterior + 60000 passa de 2³², a soma volta a um valor pequeno, e millis(), ainda perto do máximo, é maior que ela a cada volta até também estourar"
+  resposta: 3
+  explicacao: |
+    Com `anterior` perto de 2³², a soma `anterior + 60000` estoura e vira um número pequeno; `millis()` ainda grande é maior, e a condição fica verdadeira em toda volta (e `anterior` continua grande) até o próprio `millis()` estourar. Com `if (millis() - anterior >= 60000)`, a subtração módulo 2³² dá o intervalo certo sempre. O millis não trava: ele volta a 0.
+  fonte: "Arduino, referência de millis() e exemplo BlinkWithoutDelay"
+  origem: ia
+  revisao: rascunho

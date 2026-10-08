@@ -1,0 +1,230 @@
+- id: Q-M1.2.T01-001
+  objetivo: O1
+  tipo: vf
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Verdadeiro ou falso: o ATmega328P tem 32 KB de flash, 2 KB de SRAM e 1 KB de EEPROM.
+  resposta: true
+  explicacao: |
+    São os números da primeira página do datasheet (*Features*). O "328" do nome lembra os 32 KB de flash da família (ATmega48/88/168/328: 4, 8, 16 e 32 KB). Os 2 KB de SRAM são o limite que mais aperta na prática: variáveis, pilha e textos sem PROGMEM disputam esse espaço.
+  fonte: "Microchip, ATmega328P datasheet, seção Features"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T01-002
+  objetivo: O1
+  tipo: unica
+  dificuldade: 2
+  bloom: lembrar
+  enunciado: |
+    Qual destes periféricos o ATmega328P NÃO tem?
+  alternativas:
+    - "Interface TWI (compatível com I²C)"
+    - "USART"
+    - "Conversor digital-analógico (DAC)"
+    - "Comparador analógico"
+  resposta: 2
+  explicacao: |
+    O ATmega328P tem USART, SPI, TWI (I²C), ADC de 10 bits e comparador analógico, mas não tem DAC. Para gerar uma tensão "analógica", usa-se PWM com filtro RC (T03) ou um DAC externo. O `analogWrite` do Arduino, apesar do nome, é PWM.
+  fonte: "Microchip, ATmega328P datasheet, seções Features e Overview (Block Diagram)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T01-003
+  objetivo: O1
+  tipo: multipla
+  dificuldade: 3
+  bloom: entender
+  enunciado: |
+    Sobre o ATmega328P no encapsulamento DIP-28, marque as afirmações corretas.
+  alternativas:
+    - "O Timer/Counter1 é de 16 bits; os Timer/Counter0 e 2 são de 8 bits"
+    - "Há dois USARTs independentes, um para o USB e outro livre"
+    - "O pino PC6 é o RESET e só vira GPIO se o fuse RSTDISBL for programado"
+    - "O ADC tem 6 canais disponíveis nos pinos (ADC0 a ADC5)"
+  resposta: [0, 2, 3]
+  explicacao: |
+    No DIP-28 saem ADC0–ADC5 (os canais ADC6 e ADC7 só existem nos encapsulamentos TQFP e QFN). O Timer1 é o único de 16 bits. Há um só USART (o USART0), que no Arduino está ligado ao conversor USB-serial. PC6 é o RESET; programar RSTDISBL o transforma em GPIO, mas impede a gravação por ISP.
+  fonte: "Microchip, ATmega328P datasheet, seções Pin Configurations, Pin Descriptions e Features"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T01-004
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    A flash de programa do ATmega328P (32 KB) é organizada em palavras de 16 bits, porque as instruções AVR têm 16 ou 32 bits. Quantas palavras ela tem? Responda com um número inteiro.
+  resposta: {valor: 16384, unidade: "palavras", tolerancia: 0}
+  explicacao: |
+    32 KB = 32 768 bytes; ÷ 2 bytes por palavra = 16 384 palavras = 2¹⁴. Por isso o contador de programa do ATmega328P tem 14 bits e o datasheet fala em "16K x 16".
+  fonte: "Microchip, ATmega328P datasheet, capítulo AVR Memories (In-System Reprogrammable Flash Program Memory)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T01-005
+  objetivo: O2
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    O LED "L" da placa Arduino Uno está no pino D13. A que porta e bit do ATmega328P ele corresponde?
+  alternativas:
+    - "PB5"
+    - "PD5"
+    - "PC5"
+    - "PB3"
+  resposta: 0
+  explicacao: |
+    D8–D13 são PB0–PB5, então D13 = PB5 (também o SCK do SPI). D0–D7 são PD0–PD7 e A0–A5 são PC0–PC5. PD5 é o D5, PC5 é o A5 e PB3 é o D11.
+  fonte: "Arduino, Port Manipulation; ArduinoCore-avr, variants/standard/pins_arduino.h"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T01-006
+  objetivo: O2
+  tipo: unica
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    O pino D9 do Uno aceita `analogWrite`. De que saída de timer vem esse PWM?
+  alternativas:
+    - "OC0A, do Timer/Counter0"
+    - "OC2B, do Timer/Counter2"
+    - "OC0B, do Timer/Counter0"
+    - "OC1A, do Timer/Counter1"
+  resposta: 3
+  explicacao: |
+    D9 = PB1, cuja função alternativa é OC1A, a saída de comparação A do Timer1 (16 bits). D10 = PB2 = OC1B. OC0A e OC0B saem em D6 e D5; OC2A e OC2B em D11 e D3. Mexer no Timer1 por registrador, portanto, muda o PWM de D9 e D10.
+  fonte: "Microchip, ATmega328P datasheet, capítulo I/O-Ports, seção Alternate Port Functions"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T01-007
+  objetivo: O2
+  tipo: multipla
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Você vai reconfigurar o Timer/Counter2 por registrador. Quais pinos do Arduino Uno têm o PWM afetado?
+  alternativas:
+    - "D9"
+    - "D6"
+    - "D3"
+    - "D11"
+  resposta: [2, 3]
+  explicacao: |
+    As saídas do Timer2 são OC2A = PB3 = D11 e OC2B = PD3 = D3. D9 é OC1A (Timer1) e D6 é OC0A (Timer0, o mesmo que o Arduino usa para o millis). Além disso, a biblioteca Tone também usa o Timer2: são conflitos que o T08 discute.
+  fonte: "Microchip, ATmega328P datasheet, seção Alternate Port Functions; ArduinoCore-avr, pins_arduino.h"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T01-008
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Qual é o período do clock de um ATmega328P rodando a 16 MHz? Responda em ns, com 1 casa decimal.
+  resposta: {valor: 62.5, unidade: "ns", tolerancia: 0.01}
+  explicacao: |
+    T = 1/f = 1/(16 × 10⁶ Hz) = 62,5 × 10⁻⁹ s = 62,5 ns. Como quase todas as instruções AVR levam 1 ciclo, o chip executa até 16 milhões de instruções por segundo.
+  fonte: "Microchip, ATmega328P datasheet, seção Features (throughput de 1 MIPS por MHz)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T01-009
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um ATmega328P novo, com os fuses de fábrica, executa um laço de 4000 iterações que gasta 5 ciclos por iteração. Quanto tempo o laço leva? Responda em ms, sem casas decimais.
+  resposta: {valor: 20, unidade: "ms", tolerancia: 0.01}
+  explicacao: |
+    Com os fuses de fábrica, o clock é o RC interno de 8 MHz dividido por 8 (CKDIV8 programado) = 1 MHz, ou seja, 1 µs por ciclo. 4000 × 5 = 20 000 ciclos = 20 ms. A 16 MHz o mesmo laço levaria 1,25 ms.
+  fonte: "Microchip, ATmega328P datasheet, capítulo System Clock and Clock Options (Calibrated Internal RC Oscillator, System Clock Prescaler)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T01-010
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Um programa compilado com `F_CPU = 16000000UL` chama `_delay_ms(300)`, mas é gravado por ISP num ATmega328P novo, ainda com os fuses de fábrica. Quanto dura o atraso na prática? Responda em s, com 1 casa decimal.
+  resposta: {valor: 4.8, unidade: "s", tolerancia: 0.01}
+  explicacao: |
+    O `_delay_ms` é um laço de espera cujo número de voltas o compilador calcula a partir de `F_CPU`. Ele conta 300 ms × 16 MHz = 4,8 milhões de ciclos. Com o chip a 1 MHz (RC de 8 MHz ÷ 8), esses ciclos levam 4,8 s, 16 vezes mais que o pedido. A correção é ajustar os fuses (T09) ou compilar com o `F_CPU` real.
+  fonte: "avr-libc, <util/delay.h>: Convenience functions for busy-wait delay loops; Microchip, ATmega328P datasheet, System Clock Prescaler"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T01-011
+  objetivo: O3
+  tipo: unica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Um colega tem um Arduino Pro Mini de 3,3 V (ATmega328P a 8 MHz), mas escolheu "Arduino Uno" na IDE, gravou pelo adaptador serial com o bootloader certo e abriu o Monitor Serial em 9600 baud. O LED do Blink pisca a cada 2 s em vez de 1 s, e a serial mostra lixo. Qual é o diagnóstico?
+  alternativas:
+    - "O regulador de 3,3 V não dá conta, e o chip reinicia por brown-out a cada segundo"
+    - "O código foi compilado com F_CPU = 16 MHz, e o chip roda a 8 MHz: todos os tempos dobram e o baud real fica na metade"
+    - "O Pro Mini não tem bootloader, então o programa nunca foi gravado"
+    - "O ressonador do Pro Mini está com defeito e oscila numa harmônica"
+  resposta: 1
+  explicacao: |
+    Escolher a placa na IDE define o `F_CPU`. Compilado para 16 MHz e executado a 8 MHz, o `delay` dura o dobro e o UBRR calculado para 9600 baud gera 4800 baud, que o PC lê como lixo. Se o programa não tivesse sido gravado, o LED não piscaria; um brown-out reiniciaria o programa e não dobraria os tempos de forma tão regular.
+  fonte: "Microchip, ATmega328P datasheet, System Clock and Clock Options e USART0 (Clock Generation); Arduino, documentação do Pro Mini"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T01-012
+  objetivo: O4
+  tipo: vf
+  dificuldade: 3
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: depois de gravar um programa num Arduino Uno por um programador ISP com o avrdude (`-U flash:w:...`), o bootloader continua na flash, e a placa ainda pode ser programada pela USB.
+  resposta: false
+  explicacao: |
+    A gravação por ISP começa com um *chip erase*, que apaga a flash inteira, inclusive o bootloader. Depois disso, a placa só volta a aceitar gravação pela USB se o bootloader for regravado (na IDE, "Burn Bootloader", que também ajusta os fuses).
+  fonte: "Microchip, ATmega328P datasheet, capítulo Memory Programming; Elliot Williams, Make: AVR Programming, capítulo Programming AVRs"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T01-013
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um Arduino Nano antigo usa um bootloader que ocupa 2 KB no fim dos 32 KB de flash do ATmega328P. Qual é o tamanho máximo do sketch? Responda em bytes, com um número inteiro.
+  resposta: {valor: 30720, unidade: "bytes", tolerancia: 0}
+  explicacao: |
+    32 768 − 2048 = 30 720 bytes, exatamente o `upload.maximum_size` do Nano no boards.txt. Com o Optiboot de 512 bytes, como no Uno, sobram 32 256 bytes.
+  fonte: "ArduinoCore-avr, boards.txt (nano e uno, upload.maximum_size); Microchip, ATmega328P datasheet, Boot Loader Support"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T01-014
+  objetivo: O4
+  tipo: multipla
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    A gravação pela USB de um Arduino falha com o erro do avrdude "not in sync". Marque as causas plausíveis.
+  alternativas:
+    - "O sketch foi compilado com o F_CPU errado"
+    - "Um módulo ligado em D0 (RXD) disputa a linha com o conversor USB-serial"
+    - "A placa é um Nano com o bootloader antigo (57 600 baud), mas foi escolhida a opção do bootloader novo (115 200 baud)"
+    - "O bootloader foi apagado numa gravação anterior por ISP"
+  resposta: [1, 2, 3]
+  explicacao: |
+    "Not in sync" quer dizer que o bootloader não respondeu ao protocolo STK500: a linha RX está ocupada por outro circuito, a taxa não bate com a do bootloader ou não há bootloader. O `F_CPU` do sketch só afeta o programa depois de gravado; a gravação é feita pelo bootloader, que já está compilado com o clock certo.
+  fonte: "ArduinoCore-avr, boards.txt (nano: atmega328 e atmega328old); Arduino, esquemático do Uno Rev3"
+  origem: ia
+  revisao: rascunho

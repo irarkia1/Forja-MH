@@ -1,45 +1,128 @@
 id: M1.2
 ato: A1
 nome: "Primeiro MCU (AVR/Arduino)"
+missao: "Acorde a primeira máquina da Vila da Forja: comece pelo Arduino que todo aprendiz conhece e desça, registrador por registrador, até falar com o ATmega328P sozinho, sem placa e sem IDE, só com avr-gcc, avrdude e o datasheet."
 horas: 120
 trilha: firmware
 ordem: 9
 requer: ["M1.1", "M0.6"]
 tags_chefe: []
+# Ordem didática: arquitetura do ATmega328 (o chip por trás da placa: pinos, clock, fuses, bootloader; a CPU e as memórias já vistas no M1.3) → GPIO e debounce (o primeiro periférico, de digitalWrite a DDRx/PORTx/PINx, e o primeiro problema real: o botão que quica) → interrupções (INT0/INT1 e mudança de pino tiram o botão do polling e preparam as ISRs de todos os periféricos seguintes) → timers (CTC e ISR periódica: a base de tempo de 1 ms, o millis por dentro e o fim do código bloqueante) → PWM (é um modo dos mesmos timers, agora ligado a um pino) → UART (com timers e interrupções dominados, o canal de depuração próprio, com buffer circular) → ADC (medir e mandar pela sua própria UART, controlando o PWM com um potenciômetro) → biblioteca × registrador (com todos os periféricos conhecidos, ler o núcleo do Arduino, medir o custo e decidir) → ATmega328 sem Arduino (o laboratório que fecha o módulo: avr-gcc, Makefile, avrdude, fuses e o chip sozinho na protoboard).
 topicos:
   - id: M1.2.T01
     nome: "Arquitetura do ATmega328"
     tipo: comum
     peso: 1
+    objetivos:
+      - id: O1
+        texto: "Identificar os recursos do ATmega328P (flash, SRAM, EEPROM, portas B, C e D, timers, USART, ADC, SPI e TWI) no diagrama de blocos, na pinagem e no resumo de registradores do datasheet"
+      - id: O2
+        texto: "Relacionar os pinos da placa Arduino Uno/Nano (D0–D13, A0–A5) às portas e bits do ATmega328P e às funções alternativas de cada pino"
+      - id: O3
+        texto: "Explicar as fontes de clock, o prescaler do sistema e os fuses de clock e de boot, e calcular o período de clock e o tempo de trechos de código"
+      - id: O4
+        texto: "Descrever o que a placa Arduino acrescenta ao chip (regulador, cristal de 16 MHz, conversor USB-serial, bootloader e reset automático) e o caminho do sketch até a flash"
   - id: M1.2.T02
     nome: "GPIO e debounce"
     tipo: elite
     peso: 2
-  - id: M1.2.T03
-    nome: "PWM"
-    tipo: elite
-    peso: 2
-  - id: M1.2.T04
-    nome: "ADC"
-    tipo: elite
-    peso: 2
+    objetivos:
+      - id: O1
+        texto: "Configurar pinos como entrada, entrada com pull-up ou saída escrevendo nos registradores DDRx e PORTx, e ler o estado do pino pelo PINx"
+      - id: O2
+        texto: "Manipular bits de porta com máscaras (|=, &= ~, ^= e escrita em PINx) sem alterar os outros pinos e traduzir pinMode, digitalWrite e digitalRead para registradores"
+      - id: O3
+        texto: "Explicar o bounce de contatos mecânicos e implementar o debounce por espera, por contador de amostras e por registrador de deslocamento"
+      - id: O4
+        texto: "Dimensionar resistores de LED e de pull-up e respeitar os limites de corrente por pino e por chip do ATmega328P"
   - id: M1.2.T05
     nome: "Interrupções"
     tipo: comum
     peso: 1
+    objetivos:
+      - id: O1
+        texto: "Explicar o caminho de uma interrupção no AVR (flag, habilitação local, bit I do SREG, vetor, ISR e RETI) e escrever ISRs com a macro ISR do avr-libc"
+      - id: O2
+        texto: "Configurar as interrupções externas INT0 e INT1 (EICRA, EIMSK) e as interrupções de mudança de pino (PCICR, PCMSKx) e escolher entre elas"
+      - id: O3
+        texto: "Compartilhar dados entre ISR e laço principal com volatile e acesso atômico (ATOMIC_BLOCK) e reconhecer condições de corrida"
+      - id: O4
+        texto: "Calcular a latência e a carga de CPU das ISRs e aplicar as regras de ISR curta (sem espera, sem Serial, só sinalizar ao laço principal)"
   - id: M1.2.T06
     nome: "Timers"
     tipo: comum
     peso: 1
+    objetivos:
+      - id: O1
+        texto: "Descrever os Timer/Counter0, 1 e 2 (largura, prescalers e registradores TCNTn, OCRnx, TCCRnx, TIMSKn e TIFRn) e os modos Normal e CTC"
+      - id: O2
+        texto: "Calcular o prescaler e o valor de OCR para gerar um evento periódico, e o período e o erro resultantes"
+      - id: O3
+        texto: "Implementar uma base de tempo de 1 ms com CTC e ISR e explicar como o millis() do Arduino usa o estouro do Timer0"
+      - id: O4
+        texto: "Comparar código bloqueante (delay, _delay_ms) com código não bloqueante baseado em millis e máquina de estados, incluindo o estouro do contador"
+  - id: M1.2.T03
+    nome: "PWM"
+    tipo: elite
+    peso: 2
+    objetivos:
+      - id: O1
+        texto: "Explicar o PWM (período, ciclo de trabalho e valor médio) e os modos Fast PWM e Phase Correct PWM dos timers do ATmega328P"
+      - id: O2
+        texto: "Calcular a frequência e o ciclo de trabalho a partir de f_clk, prescaler, TOP e OCRnx, e escolher esses valores para uma frequência alvo"
+      - id: O3
+        texto: "Configurar o PWM por registradores (bits WGM, COM e CS, ICR1) e relacionar analogWrite aos timers e pinos do Arduino Uno"
+      - id: O4
+        texto: "Aplicar o PWM a LEDs, servos e motores com transistor, considerando resolução, frequência audível e filtragem RC"
   - id: M1.2.T07
     nome: "UART serial"
     tipo: comum
     peso: 1
+    objetivos:
+      - id: O1
+        texto: "Descrever o quadro assíncrono (start, dados, paridade e stop), o nível lógico do USART0 e o caminho até o PC pelo conversor USB-serial"
+      - id: O2
+        texto: "Calcular UBRR0 nos modos normal e U2X, a taxa real e o erro percentual, e decidir se o erro é aceitável"
+      - id: O3
+        texto: "Implementar transmissão e recepção por polling (UDRE0, RXC0) e ligar a saída ao printf do avr-libc"
+      - id: O4
+        texto: "Implementar a recepção por interrupção com buffer circular e tratar os erros de quadro e de sobrescrita"
+  - id: M1.2.T04
+    nome: "ADC"
+    tipo: elite
+    peso: 2
+    objetivos:
+      - id: O1
+        texto: "Descrever o ADC de aproximações sucessivas do ATmega328P (multiplexador, amostragem e retenção, referências AREF, AVCC e 1,1 V) e seus registradores ADMUX, ADCSRA e ADC"
+      - id: O2
+        texto: "Converter entre tensão de entrada e código do ADC e calcular a resolução (LSB) para cada referência"
+      - id: O3
+        texto: "Calcular o prescaler do ADC, o tempo de conversão e a taxa de amostragem e escolher entre conversão única, contínua e disparada por timer"
+      - id: O4
+        texto: "Melhorar a medida com média de amostras, impedância de fonte adequada, filtragem e calibração, e medir VCC pela referência interna de 1,1 V"
   - id: M1.2.T08
     nome: "Biblioteca × registrador"
     tipo: comum
     peso: 1
+    objetivos:
+      - id: O1
+        texto: "Ler o código-fonte do núcleo Arduino AVR (wiring_digital.c, wiring.c, wiring_analog.c) e explicar o que pinMode, digitalWrite, analogWrite e millis fazem por baixo"
+      - id: O2
+        texto: "Medir e comparar o custo em ciclos, tempo e bytes de flash das funções Arduino e do acesso direto a registradores"
+      - id: O3
+        texto: "Identificar conflitos entre bibliotecas e acesso direto (timer do millis, PWM desligado por digitalWrite, vetores de interrupção já ocupados) e evitá-los"
+      - id: O4
+        texto: "Decidir quando usar a biblioteca ou o registrador e escrever uma camada fina de abstração com funções static inline e macros"
   - id: M1.2.T09
     nome: "ATmega328 sem Arduino (bare metal, avrdude)"
     tipo: elite
     peso: 2
+    objetivos:
+      - id: O1
+        texto: "Compilar, ligar e converter um programa com avr-gcc, avr-objcopy e avr-size e automatizar o processo com um Makefile"
+      - id: O2
+        texto: "Gravar a flash com avrdude pelo bootloader (programador arduino) e por ISP (usbasp, ArduinoISP), escolhendo programador, porta e velocidade"
+      - id: O3
+        texto: "Ler e gravar os fuses com segurança, calculando os valores de lfuse, hfuse e efuse para o clock e o bootloader desejados"
+      - id: O4
+        texto: "Montar o ATmega328P mínimo em protoboard (alimentação, desacoplamento, reset, cristal e ICSP) e diagnosticar falhas de gravação"

@@ -1,0 +1,230 @@
+- id: Q-M1.2.T02-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    No ATmega328P, um pino com DDxn = 0 e PORTxn = 1 está configurado como:
+  alternativas:
+    - "saída em nível alto"
+    - "entrada flutuante (alta impedância)"
+    - "entrada com o pull-up interno ligado"
+    - "saída em nível baixo"
+  resposta: 2
+  explicacao: |
+    DDxn = 0 faz do pino uma entrada; numa entrada, PORTxn = 1 liga o pull-up interno (20 a 50 kΩ). Com DDxn = 1, PORTxn passa a ser o nível da saída. Esse é o `pinMode(pino, INPUT_PULLUP)` do Arduino.
+  fonte: "Microchip, ATmega328P datasheet, capítulo I/O-Ports, seção Configuring the Pin"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T02-002
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Você quer PB0, PB1 e PB5 como saídas e os demais pinos da porta B como entradas. Que valor deve ser escrito em DDRB? Responda em decimal, com um número inteiro.
+  resposta: {valor: 35, unidade: "valor", tolerancia: 0}
+  explicacao: |
+    DDRB = (1 << 0) | (1 << 1) | (1 << 5) = 1 + 2 + 32 = 35 = 0x23 = 0b0010_0011. Cada bit 1 em DDRB torna o pino correspondente uma saída.
+  fonte: "Microchip, ATmega328P datasheet, capítulo I/O-Ports, Register Description (DDRB)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T02-003
+  objetivo: O4
+  tipo: vf
+  dificuldade: 3
+  bloom: avaliar
+  enunciado: |
+    Verdadeiro ou falso: como o limite absoluto do ATmega328P é de 40 mA por pino de E/S, é seguro manter oito LEDs a 35 mA cada, acesos continuamente, em oito pinos diferentes.
+  resposta: false
+  explicacao: |
+    Os 40 mA são limite de dano (*Absolute Maximum Ratings*), não de operação. Além disso, oito pinos a 35 mA somam 280 mA, acima dos 200 mA permitidos pelos pinos VCC e GND e das somas por grupo de portas das notas da *DC Characteristics*. Projete para no máximo 20 mA por pino e use transistores para correntes maiores.
+  fonte: "Microchip, ATmega328P datasheet, Electrical Characteristics (Absolute Maximum Ratings e DC Characteristics)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T02-004
+  objetivo: O1
+  tipo: multipla
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Marque as afirmações corretas sobre as portas do ATmega328P.
+  alternativas:
+    - "Depois do reset, todos os pinos de E/S são entradas flutuantes"
+    - "O bit PUD do registrador MCUCR desliga todos os pull-ups de uma vez"
+    - "Escrever 1 num bit de PINx de um pino configurado como entrada inverte o bit de PORTx e, portanto, liga ou desliga o pull-up"
+    - "Ler PINx na instrução seguinte à escrita em PORTx sempre devolve o valor novo, sem precisar de nop"
+  resposta: [0, 1, 2]
+  explicacao: |
+    Os registradores DDRx e PORTx zeram no reset (entradas sem pull-up). PUD é o desligamento global dos pull-ups. A escrita de 1 em PINxn inverte PORTxn independentemente de DDRxn; numa entrada, PORTxn controla o pull-up. A leitura passa por um sincronizador com até ~1,5 ciclo de atraso, e por isso o exemplo do datasheet põe um `nop` entre a escrita e a leitura.
+  fonte: "Microchip, ATmega328P datasheet, capítulo I/O-Ports (Configuring the Pin, Toggling the Pin, Reading the Pin Value)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T02-005
+  objetivo: O2
+  tipo: vf
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: a linha `PORTB = (1 << PORTB5);` liga o pino PB5 sem alterar o estado dos outros pinos da porta B.
+  resposta: false
+  explicacao: |
+    A atribuição escreve o byte inteiro: PB5 vai a 1 e os outros sete bits vão a 0 (saídas desligadas, pull-ups desligados). Para mexer só em PB5, use `PORTB |= (1 << PORTB5);`.
+  fonte: "Elliot Williams, Make: AVR Programming, capítulo Bit Twiddling"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T02-006
+  objetivo: O2
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Qual trecho equivale a `pinMode(7, INPUT_PULLUP);` num Arduino Uno?
+  alternativas:
+    - "`DDRD |= _BV(DDD7); PORTD |= _BV(PORTD7);`"
+    - "`DDRD &= ~_BV(DDD7); PORTD |= _BV(PORTD7);`"
+    - "`DDRB &= ~_BV(DDB7); PORTB |= _BV(PORTB7);`"
+    - "`DDRD &= ~_BV(DDD7); PIND |= _BV(PIND7);`"
+  resposta: 1
+  explicacao: |
+    O pino 7 do Uno é PD7. Entrada com pull-up = DDRD bit 7 em 0 e PORTD bit 7 em 1. DDRD em 1 faria uma saída; PB7 é o pino do ressonador; e `PIND |= ...` faz uma leitura-modificação-escrita em PIND que pode inverter vários bits de PORTD.
+  fonte: "Arduino, Port Manipulation e referência de pinMode(); Microchip, ATmega328P datasheet, Configuring the Pin"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T02-007
+  objetivo: O2
+  tipo: unica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Uma ISR altera o pino PB0. No laço principal, você quer inverter PB5 sem nenhum risco de desfazer uma alteração que a ISR faça em PB0 no meio da operação. Que linha usar?
+  alternativas:
+    - "`PORTB ^= (1 << PORTB5);`"
+    - "`PORTB = PORTB ^ (1 << PORTB5);`"
+    - "`PORTB = PINB ^ (1 << PORTB5);`"
+    - "`PINB = (1 << PINB5);`"
+  resposta: 3
+  explicacao: |
+    O `^=` é uma leitura-modificação-escrita (in, eor, out): se a ISR rodar entre a leitura e a escrita, o valor antigo de PB0 é regravado e a mudança da ISR se perde. Escrever 1 em PINB5 inverte PORTB5 no hardware, numa única escrita que não toca nos outros bits. Usar PINB como origem é pior ainda, porque copia para PORTB o nível dos pinos de entrada e muda os pull-ups.
+  fonte: "Microchip, ATmega328P datasheet, capítulo I/O-Ports, seção Toggling the Pin"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T02-008
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    PORTD vale 0b1010_0101. O programa executa `PORTD &= ~((1 << 0) | (1 << 2));` e depois `PORTD |= (1 << 4);`. Qual é o valor final de PORTD? Responda em decimal, com um número inteiro.
+  resposta: {valor: 176, unidade: "valor", tolerancia: 0}
+  explicacao: |
+    0xA5 com os bits 0 e 2 zerados: 0xA5 & ~0x05 = 0xA0. Ligando o bit 4: 0xA0 | 0x10 = 0xB0 = 0b1011_0000 = 176. Os bits que a máscara não cita ficam intactos.
+  fonte: "Elliot Williams, Make: AVR Programming, capítulo Bit Twiddling"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T02-009
+  objetivo: O3
+  tipo: unica
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Um programa conta as bordas de descida de um botão sem nenhum debounce. Ao apertar o botão uma vez, o que costuma acontecer?
+  alternativas:
+    - "O contador às vezes sobe mais de 1, porque os contatos quicam e geram várias bordas"
+    - "O contador nunca muda, porque o MCU é rápido demais para ver o botão"
+    - "O contador sobe sempre exatamente 1, porque o Schmitt trigger da entrada elimina o bounce"
+    - "O MCU reinicia, porque o bounce gera um pulso no RESET"
+  resposta: 0
+  explicacao: |
+    Os contatos mecânicos batem e se separam várias vezes durante centenas de µs a alguns ms. O MCU lê o pino milhões de vezes por segundo e vê cada quique como um novo aperto. O Schmitt trigger limpa bordas lentas e ruído pequeno, não transições completas.
+  fonte: "Jack Ganssle, A Guide to Debouncing"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T02-010
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um debounce por contador amostra o botão a cada 4 ms e só aceita um novo estado depois de 5 amostras iguais seguidas. Quanto tempo de nível estável é necessário para aceitar a mudança? Responda em ms, sem casas decimais.
+  resposta: {valor: 20, unidade: "ms", tolerancia: 0.01}
+  explicacao: |
+    Tempo de confirmação ≈ N × T = 5 × 4 ms = 20 ms, na faixa recomendada de 10–20 ms, acima do bounce da maioria das chaves.
+  fonte: "Jack Ganssle, A Guide to Debouncing (algoritmos de software)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T02-011
+  objetivo: O3
+  tipo: multipla
+  dificuldade: 3
+  bloom: avaliar
+  enunciado: |
+    Sobre os métodos de debounce, marque as afirmações corretas.
+  alternativas:
+    - "No debounce por contador, um quique reinicia a contagem de amostras iguais"
+    - "No registrador de deslocamento, comparar o histórico com o padrão 0x80 detecta só a borda de aperto, uma vez por aperto"
+    - "O debounce por espera (_delay_ms depois da borda) funciona, mas deixa a CPU parada enquanto espera"
+    - "O Schmitt trigger das entradas do ATmega328P dispensa qualquer debounce"
+  resposta: [0, 1, 2]
+  explicacao: |
+    A espera bloqueia o programa (o T06 trata disso). O Schmitt trigger não filtra transições completas, que é o que o bounce produz. No contador, qualquer leitura igual ao estado aceito zera a contagem. O padrão 0x80 (um 1 antigo seguido de sete 0) só aparece na transição; com o botão parado apertado, o histórico fica 0x00.
+  fonte: "Jack Ganssle, A Guide to Debouncing; Microchip, ATmega328P datasheet, I/O-Ports (Schmitt trigger na entrada)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T02-012
+  objetivo: O3
+  tipo: unica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Um debounce por contador amostra a cada 1 ms com N = 3. Com um botão específico, ele às vezes conta dois apertos. No osciloscópio, o bounce desse botão dura até 6 ms e tem trechos de até 4 ms parado num nível antes de quicar de novo. Qual é o diagnóstico?
+  alternativas:
+    - "A amostragem de 1 ms é lenta demais e perde os quiques"
+    - "O pull-up interno é fraco; trocar por 1 kΩ resolve sem mexer no software"
+    - "N·T = 3 ms é menor que os trechos estáveis de 4 ms dentro do bounce: o algoritmo aceita um estado falso; é preciso N·T maior que esses trechos, por exemplo 10 ms"
+    - "O contador de 8 bits estoura durante o bounce"
+  resposta: 2
+  explicacao: |
+    O contador aceita qualquer nível que fique N·T sem mudar. Se o bounce tem trechos estáveis de 4 ms e o critério é 3 ms, um trecho no meio do bounce é aceito como aperto ou soltura, e o próximo trecho gera outro evento. Amostrar mais devagar não é o problema (ao contrário), o pull-up não muda o tempo mecânico do contato e o contador vai só até N.
+  fonte: "Jack Ganssle, A Guide to Debouncing"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T02-013
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um LED vermelho (V_F = 1,8 V) deve ser aceso com 12 mA por um pino do ATmega328P alimentado com 5 V. Desprezando a queda interna da saída, qual resistor em série é necessário? Responda em Ω, sem casas decimais.
+  resposta: {valor: 267, unidade: "Ω", tolerancia: 0.01}
+  explicacao: |
+    R = (5 − 1,8) V/0,012 A ≈ 266,7 Ω ≈ 267 Ω; na prática, o valor comercial de 270 Ω. Como a saída tem algumas dezenas de ohms internos (V_OH cai com a corrente), a corrente real fica um pouco menor.
+  fonte: "Microchip, ATmega328P datasheet, DC Characteristics (V_OH); Elliot Williams, Make: AVR Programming, capítulo Digital Output"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T02-014
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Com um pino em entrada com pull-up interno e VCC = 5,0 V, você liga um multímetro na escala de corrente entre o pino e o GND e lê 0,125 mA. Qual é a resistência do pull-up? Responda em kΩ, sem casas decimais.
+  resposta: {valor: 40, unidade: "kΩ", tolerancia: 0.01}
+  explicacao: |
+    O multímetro em corrente é quase um curto: toda a tensão fica no pull-up. R_PU = 5,0 V/0,125 mA = 40 kΩ, dentro da faixa de 20 a 50 kΩ da *DC Characteristics*. É também a corrente gasta por um botão apertado com pull-up interno.
+  fonte: "Microchip, ATmega328P datasheet, DC Characteristics (R_PU, I/O Pin Pull-up Resistor)"
+  origem: ia
+  revisao: rascunho

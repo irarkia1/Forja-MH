@@ -1,0 +1,220 @@
+- id: Q-M1.2.T04-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    No ADMUX do ATmega328P, os bits REFS1:REFS0 = 01 selecionam qual referência do ADC?
+  alternativas:
+    - "A tensão aplicada externamente no pino AREF"
+    - "A referência interna de 1,1 V"
+    - "O AVCC, com um capacitor externo no pino AREF"
+    - "O GND, para medir o offset"
+  resposta: 2
+  explicacao: |
+    00 = AREF externo; 01 = AVCC (com capacitor de 100 nF do AREF ao GND); 11 = interna de 1,1 V; 10 é reservado. É a configuração do `analogReference(DEFAULT)` do Arduino. O GND é uma entrada do multiplexador (MUX = 1111), não uma referência.
+  fonte: "Microchip, ATmega328P datasheet, Analog-to-Digital Converter, Register Description (ADMUX)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T04-002
+  objetivo: O1
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: com a referência AVCC selecionada (o padrão do Arduino), pode-se ligar uma fonte de 3,3 V ao pino AREF para melhorar a resolução das medidas abaixo de 3,3 V.
+  resposta: false
+  explicacao: |
+    Com AVCC ou 1,1 V selecionados, a referência interna é ligada ao pino AREF; uma fonte externa ali entra em curto com ela. Para usar 3,3 V como referência, selecione primeiro AREF externo (`analogReference(EXTERNAL)` ou REFS1:0 = 00) e só então ligue a fonte. A documentação do Arduino traz o mesmo aviso.
+  fonte: "Microchip, ATmega328P datasheet, Analog-to-Digital Converter, ADC Voltage Reference; Arduino, referência de analogReference()"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T04-003
+  objetivo: O1
+  tipo: multipla
+  dificuldade: 3
+  bloom: entender
+  enunciado: |
+    Sobre os registradores do ADC do ATmega328P, marque as afirmações corretas.
+  alternativas:
+    - "O ADCH deve ser lido antes do ADCL, para travar o resultado"
+    - "MUX3:0 = 1110 seleciona como entrada a referência interna de 1,1 V (bandgap)"
+    - "O bit ADSC, escrito em 1 para iniciar uma conversão, volta a 0 sozinho quando ela termina"
+    - "Com ADLAR = 1, os 8 bits mais significativos do resultado ficam no ADCH"
+  resposta: [1, 2, 3]
+  explicacao: |
+    O ADSC lê 1 durante a conversão e 0 no fim. ADLAR alinha à esquerda: lendo só o ADCH, tem-se um resultado de 8 bits. A ordem correta é ADCL primeiro: a leitura do ADCL trava o par até o ADCH ser lido (a palavra `ADC` em C já faz isso). MUX = 14 é o bandgap, usado para medir o VCC.
+  fonte: "Microchip, ATmega328P datasheet, Analog-to-Digital Converter, Register Description e ADC Conversion Result"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T04-004
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Qual é o valor de 1 LSB do ADC de 10 bits do ATmega328P com referência de 5,00 V? Responda em mV, com 2 casas decimais.
+  resposta: {valor: 4.88, unidade: "mV", tolerancia: 0.01}
+  explicacao: |
+    1 LSB = V_ref/1024 = 5000 mV/1024 ≈ 4,88 mV. Com a referência de 1,1 V, cai para ≈ 1,07 mV.
+  fonte: "Microchip, ATmega328P datasheet, Analog-to-Digital Converter, ADC Conversion Result"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T04-005
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Com referência AVCC = 5,00 V, que código o ADC de 10 bits do ATmega328P devolve para uma entrada de 2,00 V (ideal, sem erros)? Responda com um número inteiro.
+  resposta: {valor: 409, unidade: "LSB", tolerancia: 0}
+  explicacao: |
+    ADC = ⌊V_in · 1024/V_ref⌋ = ⌊2,00 × 1024/5,00⌋ = ⌊409,6⌋ = 409. De volta: 409 × 5,00/1024 ≈ 1,997 V.
+  fonte: "Microchip, ATmega328P datasheet, Analog-to-Digital Converter, ADC Conversion Result"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T04-006
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Com a referência interna de 1,1 V (considere exatamente 1,100 V), o ADC lê 600. Qual é a tensão na entrada? Responda em mV, com 1 casa decimal.
+  resposta: {valor: 644.5, unidade: "mV", tolerancia: 0.01}
+  explicacao: |
+    V_in ≈ ADC × V_ref/1024 = 600 × 1100 mV/1024 ≈ 644,5 mV. Na prática, a referência interna de cada chip difere um pouco de 1,1 V, e é preciso calibrá-la.
+  fonte: "Microchip, ATmega328P datasheet, Analog-to-Digital Converter, ADC Conversion Result"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T04-007
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um sensor LM35 (10 mV/°C, 0 V a 0 °C) mede 37,5 °C e está ligado a uma entrada do ADC com a referência interna de 1,100 V. Que código o ADC ideal devolve? Responda com um número inteiro.
+  resposta: {valor: 349, unidade: "LSB", tolerancia: 0}
+  explicacao: |
+    V = 37,5 × 10 mV = 375 mV. ADC = ⌊375 × 1024/1100⌋ = ⌊349,09⌋ = 349. Cada LSB vale ~0,107 °C, contra ~0,49 °C com a referência de 5 V; em troca, o limite cai para ~110 °C.
+  fonte: "Microchip, ATmega328P datasheet, Analog-to-Digital Converter, ADC Conversion Result; Texas Instruments, folha de dados do LM35"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T04-008
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Com o clock do ADC em 125 kHz, quanto tempo leva uma conversão normal de 13 ciclos de ADC? Responda em µs, sem casas decimais.
+  resposta: {valor: 104, unidade: "µs", tolerancia: 0.01}
+  explicacao: |
+    13/125 000 s = 104 µs. É o tempo básico de um `analogRead` num Uno (16 MHz com prescaler 128), e limita o modo contínuo a ~9615 amostras por segundo.
+  fonte: "Microchip, ATmega328P datasheet, Analog-to-Digital Converter, Prescaling and Conversion Timing"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T04-009
+  objetivo: O3
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    O clock do ADC deve ficar entre 50 e 200 kHz para a resolução máxima. Com o ATmega328P a 16 MHz, que prescaler (bits ADPS2:0) atende?
+  alternativas:
+    - "64, que dá 250 kHz"
+    - "128, que dá 125 kHz"
+    - "32, que dá 500 kHz"
+    - "16, que dá 1 MHz"
+  resposta: 1
+  explicacao: |
+    16 MHz/128 = 125 kHz, o único valor da lista (e o maior divisor disponível) dentro de 50–200 kHz. É o que o `init()` do Arduino configura. Divisores menores convertem mais rápido, com perda de resolução.
+  fonte: "Microchip, ATmega328P datasheet, Analog-to-Digital Converter, Prescaling and Conversion Timing"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T04-010
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    A primeira conversão depois de ligar o ADC (ADEN) leva 25 ciclos de clock do ADC, em vez de 13. Com o clock do ADC em 125 kHz, quanto ela dura? Responda em µs, sem casas decimais.
+  resposta: {valor: 200, unidade: "µs", tolerancia: 0.01}
+  explicacao: |
+    25/125 000 s = 200 µs. Os ciclos extras inicializam o circuito analógico. Desligar o ADC entre leituras para poupar energia faz cada leitura pagar esse tempo.
+  fonte: "Microchip, ATmega328P datasheet, Analog-to-Digital Converter, Prescaling and Conversion Timing"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T04-011
+  objetivo: O3
+  tipo: unica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    O ADC está com disparo automático pela comparação A do Timer0 (ADATE = 1, ADTS = 011) e interrupção ADC_vect; o Timer0 está em CTC a 1 kHz, sem nenhuma interrupção do Timer0 habilitada. Só a primeira conversão acontece. Qual é a causa?
+  alternativas:
+    - "O disparo ocorre na borda de subida da flag OCF0A; como ninguém a limpa, ela fica em 1 e não há nova borda"
+    - "O modo CTC não gera a flag de comparação; seria preciso o modo Normal"
+    - "O ADC não pode ser disparado com ADIE = 1"
+    - "O prescaler do ADC precisa ser igual ao do Timer0"
+  resposta: 0
+  explicacao: |
+    O datasheet avisa: a flag do evento liga mesmo com a interrupção desabilitada, e é a borda dela que dispara a conversão; para disparar de novo, a flag precisa ser limpa. Sem ISR do Timer0 (que a limparia ao entrar), a solução é limpar o OCF0A na ISR do ADC: `TIFR0 = (1 << OCF0A);`.
+  fonte: "Microchip, ATmega328P datasheet, Analog-to-Digital Converter, Starting a Conversion (Auto Triggering)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T04-012
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Com AVCC como referência, o canal do bandgap (considere 1,100 V) lê 250. Qual é o VCC do chip? Responda em mV, com um número inteiro.
+  resposta: {valor: 4506, unidade: "mV", tolerancia: 0.01}
+  explicacao: |
+    ADC = 1,1 × 1024/VCC → VCC = 1,1 × 1024/250 = 1126,4/250 ≈ 4,506 V = 4506 mV. É a forma de acompanhar a bateria sem componente externo; a precisão depende de calibrar o bandgap do chip.
+  fonte: "Microchip, ATmega328P datasheet, Analog-to-Digital Converter (ADMUX: 1.1V (VBG)); Elliot Williams, Make: AVR Programming, capítulo Analog-to-Digital Conversion II"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T04-013
+  objetivo: O4
+  tipo: multipla
+  dificuldade: 3
+  bloom: avaliar
+  enunciado: |
+    Quais medidas melhoram de fato a leitura do ADC do ATmega328P?
+  alternativas:
+    - "Converter no modo de sono ADC Noise Reduction, para que a CPU fique parada durante a conversão"
+    - "Pôr um capacitor de 100 nF do pino ao GND quando a fonte é um divisor de alta impedância"
+    - "Somar 16 amostras e deslocar 2 bits para a direita, desde que haja ruído de cerca de 1 LSB, para obter 12 bits"
+    - "Tirar a média de muitas amostras de um sinal sem nenhum ruído para ganhar resolução"
+  resposta: [0, 1, 2]
+  explicacao: |
+    O capacitor carrega o de amostragem (~14 pF) quando a fonte não consegue. A sobreamostragem (AVR121) dá n bits a mais com 4ⁿ amostras, mas só se o ruído fizer o código variar: sem ruído, todas as amostras dão o mesmo código e a média não cria informação. O modo ADC Noise Reduction tira o ruído digital da CPU e dos pinos durante a conversão.
+  fonte: "Microchip, AVR121: Enhancing ADC resolution by oversampling; ATmega328P datasheet, Analog Input Circuitry e ADC Noise Canceler"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.2.T04-014
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Para calibrar o bandgap de um chip, você mede o VCC com um multímetro bom (5,02 V) e, no mesmo instante, o canal do bandgap lê 220 com referência AVCC. Qual é a tensão real do bandgap desse chip? Responda em mV, com 1 casa decimal.
+  resposta: {valor: 1078.5, unidade: "mV", tolerancia: 0.01}
+  explicacao: |
+    V_BG = ADC × VCC/1024 = 220 × 5020 mV/1024 ≈ 1078,5 mV, quase 2 % abaixo do 1,1 V nominal. A constante do chip passa a ser 1078,5 × 1024 ≈ 1 104 384 (mV·LSB), e VCC = 1 104 384/ADC; sem calibrar, toda medida de VCC sairia ~2 % alta.
+  fonte: "Microchip, AVR120: Characterization and Calibration of the ADC on an AVR; ATmega328P datasheet, ADC Characteristics (V_INT)"
+  origem: ia
+  revisao: rascunho
