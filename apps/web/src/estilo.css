@@ -208,6 +208,10 @@ input[type='text'], input[type='url'], input[type='password'], input[inputmode] 
 .login h1 { font: 18px/1.6 var(--fonte-pixel); color: var(--destaque); margin: 0; text-align: center; }
 .login p { margin: 0 0 8px; text-align: center; color: var(--texto-2); font-size: 14px; }
 .login label { font-size: 13px; color: var(--texto-2); }
+.campo-senha { position: relative; display: block; }
+.campo-senha input { padding-right: 44px; }
+.olho { position: absolute; right: 4px; top: 50%; transform: translateY(-50%); width: 36px; height: 36px; border: 0; border-radius: 6px; background: transparent; cursor: pointer; font-size: 18px; line-height: 1; }
+.olho:hover, .olho:focus-visible { background: var(--fundo-2); outline: 2px solid var(--borda); }
 
 /* Painel (gráficos: cor validada com o validador da skill de dataviz) */
 :root { --grafico: #cc7a0e; --grade: #2c3142; }
