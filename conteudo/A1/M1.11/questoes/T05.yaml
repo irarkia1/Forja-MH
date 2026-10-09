@@ -1,0 +1,225 @@
+- id: Q-M1.11.T05-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Em ordem de grandeza, quanto uma célula solar colhe dentro de casa (cerca de 500 lx) em comparação com a mesma área ao sol pleno?
+  alternativas:
+    - "Cerca de mil vezes menos: dezenas de µW/cm² contra dezenas de mW/cm²"
+    - "Cerca de metade, porque a lâmpada tem espectro parecido com o do sol"
+    - "Cerca de dez vezes menos"
+    - "A mesma potência, porque a célula se adapta à luz"
+  resposta: 0
+  explicacao: |
+    O sol pleno entrega ~100 mW/cm² de luz, e um painel converte 10–20 % disso. A 500 lx há da ordem de 0,1–0,2 mW/cm² de luz, e uma célula de silício amorfo colhe ~10 µW/cm². Por isso nó com célula interna precisa de média de poucos µA.
+  fonte: "Vullers et al., Micropower energy harvesting, Solid-State Electronics 53 (2009)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.11.T05-002
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Uma célula interna de 8 cm² colhe 10 µW/cm² com a luz acesa, 9 h por dia, e a cadeia de conversão tem eficiência de 70 %. Quanta energia chega ao armazenamento por dia? Responda em mWh, com 3 casas decimais.
+  resposta: {valor: 0.504, unidade: "mWh", tolerancia: 0.01}
+  explicacao: |
+    8 × 10 µW = 80 µW; 80 µW × 9 h = 0,72 mWh; × 0,7 = 0,504 mWh por dia.
+  fonte: "Vullers et al., Micropower energy harvesting, Solid-State Electronics 53 (2009); Texas Instruments, BQ25570 datasheet"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.11.T05-003
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Com os 0,504 mWh por dia da questão anterior, qual é a maior corrente média que um nó alimentado a 3,0 V pode consumir, sem margem? Responda em µA, com 1 casa decimal.
+  resposta: {valor: 7.0, unidade: "µA", tolerancia: 0.01}
+  explicacao: |
+    Potência média disponível: 0,504 mWh / 24 h = 0,021 mW = 21 µW. I = P / V = 21 µW / 3,0 V = 7,0 µA. Com margem de 30 %, o projeto deve mirar ~5 µA de média, incluindo a fuga do armazenamento.
+  fonte: "Vullers et al., Micropower energy harvesting, Solid-State Electronics 53 (2009)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.11.T05-004
+  objetivo: O2
+  tipo: vf
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: ligar um painel solar diretamente a uma bateria faz o painel operar sempre no ponto de máxima potência.
+  resposta: false
+  explicacao: |
+    Ligado direto, o painel opera na tensão da bateria, que raramente coincide com a do MPP (perto de 0,76–0,8·V_oc, variando com a luz e a temperatura). O conversor com MPPT ajusta a tensão de entrada para ficar no máximo.
+  fonte: "Texas Instruments, BQ25570 datasheet (Maximum Power Point Tracking)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.11.T05-005
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um painel de 80 × 80 mm com eficiência de 20 % recebe irradiância de 800 W/m². Qual é a potência elétrica no MPP? Responda em W, com 2 casas decimais.
+  resposta: {valor: 1.02, unidade: "W", tolerancia: 0.01}
+  explicacao: |
+    P = G·A·η = 800 × 0,0064 × 0,20 = 1,024 W ≈ 1,02 W. A energia diária sai das horas de sol pleno do local, das perdas e da eficiência do carregador.
+  fonte: "Vullers et al., Micropower energy harvesting, Solid-State Electronics 53 (2009)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.11.T05-006
+  objetivo: O2
+  tipo: unica
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Qual descrição corresponde ao método de MPPT "perturbar e observar"?
+  alternativas:
+    - "Desconecta a carga periodicamente, mede a tensão de circuito aberto e regula a entrada numa fração fixa dela"
+    - "Mantém a tensão do painel igual à da bateria e mede só a corrente"
+    - "Muda a tensão de operação um passo, mede a potência e inverte o sentido do passo quando a potência cai"
+    - "Usa uma tabela de irradiância por hora do dia gravada no firmware"
+  resposta: 2
+  explicacao: |
+    O P&O segue o máximo de verdade, oscilando um passo em torno dele, mas precisa medir tensão e corrente. A fração de V_oc é mais simples e gasta menos (é o que o BQ25570 faz), com erro pequeno quando a fração está bem escolhida.
+  fonte: "Texas Instruments, BQ25570 datasheet (Maximum Power Point Tracking)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.11.T05-007
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um gerador termoelétrico tem 100 pares com coeficiente de Seebeck de 400 µV/K por par e resistência interna de 1,6 Ω. A diferença de temperatura no módulo é 4 K. Qual é a potência máxima entregue a uma carga casada? Responda em mW, com 1 casa decimal.
+  resposta: {valor: 4.0, unidade: "mW", tolerancia: 0.01}
+  explicacao: |
+    V_oc = 100 × 400 µV × 4 = 0,16 V. Na carga casada, P = V_oc² / (4·R) = 0,0256 / 6,4 = 4,0 mW, com a saída em 0,08 V. A tensão baixa exige um conversor que parta de dezenas de mV.
+  fonte: "Analog Devices, LTC3108 datasheet; Vullers et al., Micropower energy harvesting (2009)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.11.T05-008
+  objetivo: O3
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Qual expressão dá a energia útil de um supercapacitor de capacitância C usado de V₁ até V₂?
+  alternativas:
+    - "C·(V₁ − V₂)"
+    - "½·C·(V₁ − V₂)²"
+    - "C·V₁²"
+    - "½·C·(V₁² − V₂²)"
+  resposta: 3
+  explicacao: |
+    A energia armazenada é ½CV²; a útil é a diferença entre o cheio e o mínimo que o conversor de saída aceita: ½C(V₁² − V₂²). C·(V₁ − V₂) é a carga, não a energia.
+  fonte: "Battery University, BU-209: How does a Supercapacitor Work?"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.11.T05-009
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um supercapacitor de 2,2 F é usado de 5,0 V até 2,5 V. Qual é a energia útil? Responda em J, com 1 casa decimal.
+  resposta: {valor: 20.6, unidade: "J", tolerancia: 0.01}
+  explicacao: |
+    E = ½ × 2,2 × (25 − 6,25) = 1,1 × 18,75 = 20,625 J ≈ 20,6 J. Baixar V₂ aproveita mais energia, desde que o conversor de saída opere com essa tensão.
+  fonte: "Battery University, BU-209: How does a Supercapacitor Work?"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.11.T05-010
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um nó consome 0,15 mW de média e deve atravessar 24 h sem fonte, usando um supercapacitor de 5,0 V até 2,0 V. Qual é a capacitância mínima, sem contar a fuga? Responda em F, com 2 casas decimais.
+  resposta: {valor: 1.23, unidade: "F", tolerancia: 0.01}
+  explicacao: |
+    E = 0,15 mW × 86 400 s = 12,96 J. C = 2E / (V₁² − V₂²) = 25,92 / 21 ≈ 1,23 F. Escolha 1,5 F ou mais, porque a fuga e a tolerância de capacitância comem a margem.
+  fonte: "Battery University, BU-209: How does a Supercapacitor Work?"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.11.T05-011
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Um supercapacitor de 1 F é usado de 5,0 V até 2,0 V. A carga consome 0,1 mW e a fuga do próprio capacitor equivale a mais 20 µW. Por quantas horas ele sustenta o nó sem fonte? Responda em h, com 1 casa decimal.
+  resposta: {valor: 24.3, unidade: "h", tolerancia: 0.01}
+  explicacao: |
+    E = ½ × 1 × (25 − 4) = 10,5 J. Potência total: 100 + 20 = 120 µW. t = 10,5 / 0,00012 = 87 500 s ≈ 24,3 h. Sem a fuga seriam 29,2 h: a fuga custou um sexto da autonomia.
+  fonte: "Battery University, BU-209: How does a Supercapacitor Work?; Eaton, datasheet de supercapacitor (Leakage current)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.11.T05-012
+  objetivo: O4
+  tipo: multipla
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Quais funções o BQ25570 reúne num só chip?
+  alternativas:
+    - "Rádio de baixo consumo para enviar o estado da bateria"
+    - "Boost de entrada com MPPT pela fração da tensão de circuito aberto"
+    - "Proteções de sobretensão e de subtensão do armazenamento e uma saída VBAT_OK"
+    - "Buck de saída de nanopotência com tensão programada por resistores"
+  resposta: [1, 2, 3]
+  explicacao: |
+    O BQ25570 tem partida a frio, boost com MPPT, VBAT_OV, VBAT_UV, VBAT_OK com histerese e um buck de saída, com Iq da ordem de centenas de nA. Não tem rádio: o MCU lê o VBAT_OK e decide.
+  fonte: "Texas Instruments, BQ25570 datasheet (Feature Description)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.11.T05-013
+  objetivo: O4
+  tipo: unica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Ao amanhecer, um nó solar com supercapacitor liga, começa o boot e o rádio, a tensão cai, ele desliga e repete o ciclo dezenas de vezes sem nunca transmitir. Qual é a correção mais adequada?
+  alternativas:
+    - "Aumentar a frequência do MCU para o boot terminar antes de a tensão cair"
+    - "Usar o VBAT_OK com histerese (ou um limiar com histerese no firmware) para só ligar o rádio quando houver energia para o ciclo inteiro"
+    - "Retirar o supercapacitor e ligar o painel direto ao MCU"
+    - "Baixar o limiar de VBAT_UV até 0 V"
+  resposta: 1
+  explicacao: |
+    Sem histerese, o limiar de liga e o de desliga são o mesmo, e o consumo do boot derruba a tensão abaixo dele. Com histerese, o nó só começa quando a energia armazenada cobre o pulso inteiro e só para bem abaixo. VBAT_UV a 0 V descarregaria o armazenamento sem proteção.
+  fonte: "Texas Instruments, BQ25570 datasheet (Battery Voltage in Operating Range (VBAT_OK Output))"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.11.T05-014
+  objetivo: O4
+  tipo: unica
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Um TEG preso a um cano entrega 0,25 V em circuito aberto. O projeto usa um BQ25570 (partida a frio a partir de ~600 mV) com o supercapacitor totalmente descarregado na instalação. O que acontece e o que fazer?
+  alternativas:
+    - "O nó não parte, porque 0,25 V está abaixo da partida a frio; use um conversor que parta de dezenas de mV (como o LTC3108 com transformador) ou instale o nó com o armazenamento já carregado"
+    - "O nó parte normalmente, porque o boost principal opera a partir de 100 mV"
+    - "O nó parte, mas o MPPT fica em 80 % de V_oc, o valor certo para o TEG"
+    - "O nó não parte; a solução é aumentar o VBAT_OV para 5,5 V"
+  resposta: 0
+  explicacao: |
+    O boost principal só trabalha a partir de ~100 mV depois que VSTOR passou de ~1,8 V; com o armazenamento vazio, quem opera é o circuito de partida a frio, que precisa de ~600 mV. Para TEG, além disso, o MPPT deve ficar em 50 % de V_oc (carga casada), não em 80 %.
+  fonte: "Texas Instruments, BQ25570 datasheet (Cold-Start Operation); Analog Devices, LTC3108 datasheet"
+  origem: ia
+  revisao: rascunho

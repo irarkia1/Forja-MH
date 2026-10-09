@@ -1,29 +1,76 @@
 id: M1.11
 ato: A1
 nome: "Energia e baixo consumo"
+missao: "As máquinas da Vila da Forja já sentem, pensam e falam, mas morrem quando a pilha acaba: conheça a alquimia de cada bateria, faça a conta de cada gota de carga antes de comprá-la, ensine as máquinas a dormir sem vazar energia, meça de nanoampères a ampères sem enganar o instrumento e, por fim, alimente a forja com o sol, o calor e a vibração do próprio caminho."
 horas: 70
 trilha: hardware
 ordem: 18
 requer: ["M1.6", "M0.4"]
 tags_chefe: []
+# Ordem didática (a da grade, mantida): química de baterias (a fonte vem primeiro: a capacidade útil, a tensão de corte, a resistência interna e a autodescarga são os números de entrada de todas as contas seguintes, e o carregador e a proteção definem o que a placa precisa ter) → orçamento de energia (com a bateria caracterizada, o perfil de ciclo de trabalho, a corrente média, a autonomia com margens e o custo do regulador; aprofunda a conta do M0.3 e o exemplo do ESP32 do M1.6) → modos de sleep e wake-up (o orçamento mostra que o sono e o tempo acordado dominam; aqui estão as alavancas em três famílias, ESP32, STM32 e nRF52, mais as fugas que estragam o sono) → medir corrente de µA a A (elite: só depois de saber o que esperar dá para escolher o instrumento, desconfiar da burden voltage e conferir o orçamento com o perfil medido e integrado) → energy harvesting por último (junta tudo: o orçamento medido diz se a fonte colhida basta, o armazenamento é uma bateria ou um supercapacitor, e o firmware passa a dormir conforme a energia disponível).
 topicos:
   - id: M1.11.T01
     nome: "Química de baterias (Li-ion, LiFePO4, primárias)"
     tipo: comum
     peso: 1
+    objetivos:
+      - id: O1
+        texto: "Comparar as químicas Li-ion/LiPo, LiFePO4, alcalina, lítio primário (CR2032 e Li-SOCl2) e NiMH quanto a tensão nominal e de corte, curva de descarga, densidade de energia, autodescarga e faixa de temperatura, e escolher a química adequada a um produto IoT"
+      - id: O2
+        texto: "Calcular a capacidade efetiva de uma bateria considerando a taxa de descarga (taxa C e lei de Peukert), a temperatura e a tensão de corte do circuito"
+      - id: O3
+        texto: "Estimar a queda de tensão de uma célula num pulso de corrente a partir da resistência interna e dimensionar um capacitor de reforço para células de alta impedância como a CR2032 e a Li-SOCl2"
+      - id: O4
+        texto: "Especificar a carga CC/CV de uma célula de lítio com o TP4056 (resistor RPROG, término, NTC, dissipação) e a proteção por PCM ou BMS (sobretensão, subtensão, sobrecorrente), aplicando as regras de segurança de projeto, armazenamento e transporte"
   - id: M1.11.T02
     nome: "Orçamento de energia"
     tipo: comum
     peso: 1
+    objetivos:
+      - id: O1
+        texto: "Montar o perfil de ciclo de trabalho de um dispositivo (estados, correntes, durações e frequências, inclusive eventos raros) e calcular a carga por ciclo, a corrente média e a fração de cada estado no consumo"
+      - id: O2
+        texto: "Calcular a autonomia a partir da capacidade útil, descontando tensão de corte, autodescarga, temperatura, envelhecimento e margem de projeto, e dimensionar a bateria para uma vida-alvo"
+      - id: O3
+        texto: "Incluir no orçamento o caminho de alimentação (corrente quiescente e eficiência do regulador, divisores e fugas) e decidir entre LDO e buck para cada perfil de carga"
+      - id: O4
+        texto: "Implementar o orçamento em código e usá-lo para comparar estratégias de firmware, como agrupar transmissões, encurtar o tempo acordado e ajustar o período de amostragem"
   - id: M1.11.T03
     nome: "Modos de sleep e wake-up"
     tipo: comum
     peso: 1
+    objetivos:
+      - id: O1
+        texto: "Comparar os modos de baixo consumo do STM32L4 (Sleep, Stop 0/1/2, Standby, Shutdown), do nRF52 (System ON e System OFF) e do ESP32 (light e deep sleep) quanto ao que fica ligado, à corrente, ao tempo de despertar e ao que se perde"
+      - id: O2
+        texto: "Configurar fontes de despertar (timer de wake-up do RTC, EXTI, GPIO com SENSE, watchdog do AVR) e escrever em C a sequência de entrada e saída de um modo de sono, inclusive a reconfiguração do clock depois do Stop"
+      - id: O3
+        texto: "Eliminar as fugas de corrente no sono (pinos flutuantes, pull-ups contra nível ativo, divisores de bateria, alimentação reversa pelos pinos e periféricos que não dormem) configurando os pinos e desligando cargas com chaves"
+      - id: O4
+        texto: "Escolher o regulador e a arquitetura de alimentação para o sono (LDO de baixo Iq, buck com modo de economia, chave de carga e domínios de alimentação) e estimar o efeito de cada escolha na corrente de sono"
   - id: M1.11.T04
     nome: "Medir corrente de µA a A"
     tipo: elite
     peso: 2
+    objetivos:
+      - id: O1
+        texto: "Explicar o problema da faixa dinâmica na medição de dispositivos de baixo consumo (de nA no sono a centenas de mA nos pulsos) e calcular a burden voltage de um amperímetro e o erro que ela provoca"
+      - id: O2
+        texto: "Comparar multímetro, µCurrent, Power Profiler Kit II, Joulescope, osciloscópio com shunt e INA219/INA226 quanto a faixa, resolução, burden voltage, banda e taxa de amostragem e escolher o instrumento adequado a cada medição"
+      - id: O3
+        texto: "Dimensionar um shunt simples ou comutado para uma faixa de corrente, calculando resolução, queda de tensão, erro de offset e banda, e configurar o INA226 (calibração, tempo de conversão e média)"
+      - id: O4
+        texto: "Integrar um perfil de corrente medido para obter a carga por evento e a corrente média, registrar o perfil com uma alternativa barata (INA226 com MCU ou shunt com osciloscópio) e confrontar a medida com o orçamento de energia"
   - id: M1.11.T05
     nome: "Energy harvesting (solar, vibração)"
     tipo: comum
     peso: 1
+    objetivos:
+      - id: O1
+        texto: "Estimar a potência disponível de fontes de harvesting (solar externa e interna, vibração com piezo, termoelétrica e RF) e compará-la com o orçamento de energia do dispositivo"
+      - id: O2
+        texto: "Explicar a curva I-V de uma célula solar, o ponto de máxima potência e as técnicas de MPPT (fração da tensão de circuito aberto e perturbar e observar) e calcular a potência de um painel pela irradiância, pela área e pelas eficiências"
+      - id: O3
+        texto: "Dimensionar o armazenamento (supercapacitor ou bateria) para atravessar noites e pulsos, calculando a energia útil ½C(V₁² − V₂²), a fuga e o tempo de recarga"
+      - id: O4
+        texto: "Projetar a cadeia de um nó alimentado por harvesting com um gerenciador como o BQ25570 (partida a frio, boost com MPPT, limites de sobretensão e subtensão, buck de saída, sinal de bateria boa) e adaptar o firmware à energia disponível"

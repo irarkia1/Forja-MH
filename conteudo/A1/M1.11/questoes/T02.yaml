@@ -1,0 +1,220 @@
+- id: Q-M1.11.T02-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Num orçamento de energia montado só com o ciclo principal (acordar, medir, transmitir, dormir), que tipo de estado costuma ficar de fora e causar os maiores erros de autonomia?
+  alternativas:
+    - "Os eventos raros, como reconexão à rede, sincronismo de relógio, GPS ou atualização de firmware"
+    - "O tempo de conversão do ADC, que é de microssegundos"
+    - "A corrente de sono do MCU, que é sempre a maior parcela"
+    - "O tempo de subida dos pinos de saída"
+  resposta: 0
+  explicacao: |
+    Eventos que acontecem uma vez por dia ou por semana, mas duram dezenas de segundos com o rádio ligado, podem pesar um terço do orçamento ou mais. Usar o dia como período de referência obriga a colocá-los na tabela.
+  fonte: "Silicon Labs, AN0007 (Energy Modes); Texas Instruments, IQ: What it is, what it isn't, and how to use it"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.11.T02-002
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um nó dorme a 3 µA e, a cada 5 min, fica 0,5 s acordado com média de 20 mA. Qual é a corrente média? Responda em µA, com 1 casa decimal.
+  resposta: {valor: 36.3, unidade: "µA", tolerancia: 0.01}
+  explicacao: |
+    Ciclo de 300 s: (0,5 × 20 + 299,5 × 0,003) / 300 = (10 + 0,8985) / 300 ≈ 0,0363 mA = 36,3 µA. O tempo acordado responde por 92 % da carga.
+  fonte: "Silicon Labs, AN0007 (Energy Modes)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.11.T02-003
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Um nó acorda 96 vezes por dia por 2 s a 30 mA e dorme a 5 µA no resto do tempo. Uma vez por dia, ele também fica 30 s a 80 mA para reconectar. Que fração da carga diária vai para essa reconexão? Responda em %, com 1 casa decimal.
+  resposta: {valor: 27.9, unidade: "%", tolerancia: 0.01}
+  explicacao: |
+    Ciclos: 96 × 2 × 30 = 5760 mA·s. Reconexão: 30 × 80 = 2400 mA·s. Sono: 0,005 × (86 400 − 192 − 30) ≈ 430,9 mA·s. Total ≈ 8590,9 mA·s; 2400 / 8590,9 ≈ 27,9 %. Um evento diário de 30 s pesa mais de um quarto do orçamento.
+  fonte: "Silicon Labs, AN0007 (Energy Modes)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.11.T02-004
+  objetivo: O2
+  tipo: vf
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: dividir a capacidade nominal da bateria pela corrente média dá uma autonomia que já considera a tensão de corte do circuito, a autodescarga e o envelhecimento.
+  resposta: false
+  explicacao: |
+    A capacidade nominal é medida numa condição de teste. A autonomia de projeto usa a capacidade útil (fração até o corte do seu circuito, na sua taxa e temperatura), multiplicada pela fração que sobra com o envelhecimento, soma a autodescarga como corrente equivalente e acrescenta margem.
+  fonte: "Battery University, BU-501: Basics about Discharging; BU-802b: What does Elevated Self-discharge Do?"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.11.T02-005
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um produto gasta 1,2 mAh por dia. A bateria tem 1000 mAh nominais, fração útil de 0,85 e fração de vida de 0,9; a autodescarga equivale a 1 µA. Com margem de 25 %, qual é a autonomia? Responda em dias, arredondando para o inteiro mais próximo.
+  resposta: {valor: 500, unidade: "dias", tolerancia: 0.01}
+  explicacao: |
+    Útil: 1000 × 0,85 × 0,9 = 765 mAh. Autodescarga: 0,001 mA × 24 h = 0,024 mAh/dia. Dias = 765 / [(1,2 + 0,024) × 1,25] = 765 / 1,53 = 500 dias.
+  fonte: "Battery University, BU-503: How to Calculate Battery Runtime"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.11.T02-006
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 4
+  bloom: aplicar
+  enunciado: |
+    Um produto deve durar 3 anos (1095 dias). Ele gasta 3,0 mAh por dia e a autodescarga da bateria equivale a 0,1 mAh por dia. Use fração útil de 0,8, fração de vida de 0,85 e margem de 30 %. Qual é a capacidade nominal mínima? Responda em mAh, arredondando para o inteiro mais próximo.
+  resposta: {valor: 6489, unidade: "mAh", tolerancia: 0.01}
+  explicacao: |
+    C_nom = (Q_dia + Q_auto) × dias × (1 + margem) / (f_útil × f_vida) = 3,1 × 1095 × 1,3 / 0,68 ≈ 4412,9 / 0,68 ≈ 6489 mAh. É uma pilha tamanho D de lítio ou duas C em paralelo; antes de comprar, vale ver se o firmware não reduz o Q_dia.
+  fonte: "Battery University, BU-503: How to Calculate Battery Runtime"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.11.T02-007
+  objetivo: O3
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Para um nó que dorme a 5 µA, qual regulador de 3,3 V é a escolha coerente com o orçamento?
+  alternativas:
+    - "AMS1117, com corrente quiescente da ordem de 5 mA"
+    - "Um buck comum para cargas de ampères, com Iq de 50 µA"
+    - "Um regulador 7833, que é robusto e barato"
+    - "MCP1700, com corrente quiescente da ordem de 1,6 µA"
+  resposta: 3
+  explicacao: |
+    No sono, o Iq do regulador soma-se à carga. Com o AMS1117, o sono de 5 µA vira milhares de µA; com um buck de Iq 50 µA, vira 55 µA; o 7833 também tem Iq de mA. O MCP1700 acrescenta só ~1,6 µA.
+  fonte: "Microchip, MCP1700 datasheet; Texas Instruments, IQ: What it is, what it isn't, and how to use it"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.11.T02-008
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um buck com eficiência de 90 % alimenta um MCU a 1,8 V que consome 12 mA. A bateria está em 3,7 V. Qual é a corrente na bateria? Responda em mA, com 2 casas decimais.
+  resposta: {valor: 6.49, unidade: "mA", tolerancia: 0.01}
+  explicacao: |
+    I_bat = V_out·I_out / (η·V_bat) = 1,8 × 12 / (0,9 × 3,7) ≈ 6,49 mA. Com um LDO seriam 12 mA (mais o Iq): o buck quase dobra a autonomia nesse estado porque a tensão de saída é bem menor que a da bateria.
+  fonte: "Texas Instruments, TPS62740 datasheet (Detailed Description; curvas de eficiência)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.11.T02-009
+  objetivo: O3
+  tipo: multipla
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Em quais situações um conversor buck tende a reduzir a corrente média tirada da bateria, em comparação com um LDO?
+  alternativas:
+    - "Quando a carga é um MCU com regulador interno, que consome quase a mesma corrente em 1,8 V e em 3,3 V, e o buck baixa o VDD para 1,8 V"
+    - "Quando a bateria fica em 3,6 V, a saída é 3,3 V e a carga é um rádio que consome o mesmo em qualquer tensão"
+    - "Quando a tensão da bateria é bem maior que a tensão de saída e a carga passa boa parte do tempo ativa"
+    - "Quando o produto dorme 99,9 % do tempo a 3 µA e o buck tem Iq de 30 µA"
+  resposta: [0, 2]
+  explicacao: |
+    O buck converte potência: I_bat = V_out·I_out/(η·V_bat). Ganha quando V_out é bem menor que V_bat e a corrente da carga não sobe ao baixar a tensão. Com 3,6 V → 3,3 V e η = 90 %, a corrente na bateria fica até maior que com LDO. E um Iq de 30 µA é dez vezes o sono do produto.
+  fonte: "Texas Instruments, TPS62740 datasheet; Texas Instruments, IQ: What it is, what it isn't, and how to use it"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.11.T02-010
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um divisor de dois resistores de 470 kΩ fica ligado direto a uma Li-ion em 4,2 V para medir a tensão da bateria. Quanto ele consome continuamente? Responda em µA, com 2 casas decimais.
+  resposta: {valor: 4.47, unidade: "µA", tolerancia: 0.01}
+  explicacao: |
+    I = 4,2 / 940 kΩ ≈ 4,47 µA — mais que o sono de muitos MCUs. Chaveie o divisor com um MOSFET ou use resistores de MΩ com um capacitor no ponto médio e tempo de amostragem longo no ADC.
+  fonte: "Texas Instruments, IQ: What it is, what it isn't, and how to use it"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.11.T02-011
+  objetivo: O4
+  tipo: unica
+  dificuldade: 2
+  bloom: analisar
+  enunciado: |
+    O programa de orçamento de um nó LoRa mostra: transmissão 52 %, evento diário de reconexão 30 %, sono 11 %, janelas de recepção 6 %, medida 1 %. Qual mudança de firmware deve ser estudada primeiro?
+  alternativas:
+    - "Trocar o LDO para reduzir a corrente de sono pela metade"
+    - "Reduzir as transmissões, agrupando medidas ou transmitindo só quando o valor muda"
+    - "Otimizar o código da medida para rodar mais rápido"
+    - "Encurtar as janelas de recepção"
+  resposta: 1
+  explicacao: |
+    A fração de cada estado diz onde vale trabalhar. Cortar o sono pela metade rende no máximo 5,5 %; a medida é 1 %. Agrupar quatro medidas por transmissão pode cortar perto de 40 % do total. A reconexão diária é o segundo alvo.
+  fonte: "Silicon Labs, AN0007 (Energy Modes)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.11.T02-012
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um nó mede a cada 5 min (288 vezes por dia), gastando 0,05 s a 3 mA em cada medida, e passa a transmitir só a cada 6 medidas (48 vezes por dia), gastando 1,2 s a 40 mA em cada transmissão. No resto do dia dorme a 4 µA. Qual é a nova corrente média? Responda em µA, com 1 casa decimal.
+  resposta: {valor: 31.2, unidade: "µA", tolerancia: 0.01}
+  explicacao: |
+    Medidas: 288 × 0,05 × 3 = 43,2 mA·s. Transmissões: 48 × 1,2 × 40 = 2304 mA·s. Tempo ativo: 14,4 + 57,6 = 72 s; sono: 0,004 × 86 328 ≈ 345,3 mA·s. Total ≈ 2692,5 mA·s / 86 400 s ≈ 31,2 µA. Transmitindo a cada medida, com 1 s a 40 mA, seriam cerca de 138 µA.
+  fonte: "Silicon Labs, AN0007 (Energy Modes)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.11.T02-013
+  objetivo: O4
+  tipo: vf
+  dificuldade: 3
+  bloom: avaliar
+  enunciado: |
+    Verdadeiro ou falso: dobrar o período entre medidas (de 5 para 10 min) sempre reduz a corrente média pela metade.
+  resposta: false
+  explicacao: |
+    Só a parte proporcional aos ciclos cai pela metade. O sono, a autodescarga, o Iq do regulador e os eventos diários continuam iguais; se eles forem uma fração grande, o ganho é bem menor que 50 %. O programa de orçamento mostra quanto realmente se ganha.
+  fonte: "Silicon Labs, AN0007 (Energy Modes)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.11.T02-014
+  objetivo: O4
+  tipo: multipla
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    O orçamento de um nó tem: transmissões 50 %, reconexão diária 35 %, sono 10 %, janelas de recepção 5 %. Quais mudanças, sozinhas, reduzem a corrente média em mais de 25 %?
+  alternativas:
+    - "Zerar a corrente de sono"
+    - "Reconectar a cada 7 dias em vez de todo dia"
+    - "Reduzir à metade a corrente das janelas de recepção"
+    - "Agrupar 4 medidas por transmissão, com pacotes de mesma duração no ar"
+  resposta: [1, 3]
+  explicacao: |
+    Reconectar a cada 7 dias corta 6/7 de 35 % = 30 %. Agrupar 4 medidas corta 3/4 de 50 % = 37,5 % (um pouco menos se o pacote crescer). Zerar o sono rende 10 % e as janelas pela metade, 2,5 %.
+  fonte: "Silicon Labs, AN0007 (Energy Modes)"
+  origem: ia
+  revisao: rascunho

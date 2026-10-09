@@ -1,0 +1,220 @@
+- id: Q-M1.11.T01-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Qual química de célula única pode alimentar diretamente um microcontrolador de 3,3 V (faixa de 3,0 a 3,6 V), sem regulador, durante quase toda a descarga?
+  alternativas:
+    - "Li-ion NMC, que vai de 4,2 V a 3,0 V"
+    - "NiMH, que fica em torno de 1,2 V"
+    - "LiFePO4, que fica em 3,2–3,3 V e chega a 3,6 V carregada"
+    - "Alcalina, que começa em 1,6 V e termina em 0,8 V"
+  resposta: 2
+  explicacao: |
+    A LiFePO4 tem curva muito plana em 3,2–3,3 V e tensão máxima de carga de 3,6 V, dentro da faixa do MCU. A Li-ion carregada passa de 3,6 V (4,2 V); NiMH e alcalina, sozinhas, ficam muito abaixo.
+  fonte: "Battery University, BU-205: Types of Lithium-ion"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.11.T01-002
+  objetivo: O1
+  tipo: vf
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: os cerca de 2500 mAh impressos numa pilha AA alcalina valem para qualquer corrente de descarga e qualquer tensão de corte do circuito.
+  resposta: false
+  explicacao: |
+    A capacidade é medida numa condição especificada: corrente baixa e corte em 0,8–0,9 V por célula. Com corrente alta (a resistência interna derruba a tensão) ou com corte mais alto, como 1,5 V por célula para um circuito de 3,0 V, a carga aproveitável é bem menor.
+  fonte: "Battery University, BU-106: Advantages of Primary Batteries; BU-501: Basics about Discharging"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.11.T01-003
+  objetivo: O1
+  tipo: multipla
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Quais afirmações descrevem corretamente uma pilha de lítio-cloreto de tionila (Li-SOCl2) tipo bobina, como a usada em medidores de água?
+  alternativas:
+    - "Pode ser recarregada com o mesmo perfil CC/CV de uma Li-ion, desde que a tensão final seja 3,6 V"
+    - "Tem autodescarga muito baixa, da ordem de 1 % ao ano, o que permite vidas de 10 anos ou mais"
+    - "Opera numa faixa de temperatura larga, incluindo dezenas de graus abaixo de zero"
+    - "Depois de muito tempo parada, pode mostrar uma queda forte de tensão no primeiro pulso, por causa da passivação"
+  resposta: [1, 2, 3]
+  explicacao: |
+    A Li-SOCl2 é primária (não se recarrega), tem autodescarga muito baixa, opera de cerca de −55 a +85 °C e sofre passivação: uma película de LiCl cresce no ânodo e causa o voltage delay no primeiro pulso. Por isso os projetos com rádio põem um supercapacitor ou usam uma célula com capacitor híbrido.
+  fonte: "Saft, LS14500 datasheet; Battery University, BU-106: Advantages of Primary Batteries"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.11.T01-004
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Uma célula Li-ion de 2500 mAh perde 2,5 % da carga por mês parada (autodescarga mais o PCM). Considerando um mês de 730 h, qual é a corrente equivalente dessa perda? Responda em µA, arredondando para o inteiro mais próximo.
+  resposta: {valor: 86, unidade: "µA", tolerancia: 0.02}
+  explicacao: |
+    2,5 % de 2500 mAh = 62,5 mAh por mês; 62,5 mAh / 730 h ≈ 0,0856 mA ≈ 86 µA. É mais do que o sono de quase todo MCU moderno: num nó que dorme a poucos µA, a própria bateria Li-ion domina o orçamento.
+  fonte: "Battery University, BU-802b: What does Elevated Self-discharge Do?"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.11.T01-005
+  objetivo: O2
+  tipo: unica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Uma célula de 2500 mAh é descarregada a 0,2C. Qual é a corrente?
+  alternativas:
+    - "200 mA"
+    - "500 mA"
+    - "2,5 A"
+    - "12,5 A"
+  resposta: 1
+  explicacao: |
+    1C é a corrente que descarregaria a capacidade nominal em 1 h: 2,5 A. 0,2C = 0,2 × 2500 mA = 500 mA.
+  fonte: "Battery University, BU-501: Basics about Discharging"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.11.T01-006
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Uma bateria de 100 Ah especificada para descarga em 20 h tem expoente de Peukert k = 1,2. Pela lei de Peukert, quanto tempo ela dura descarregada a 10 A constantes? Responda em h, com 1 casa decimal.
+  resposta: {valor: 8.7, unidade: "h", tolerancia: 0.01}
+  explicacao: |
+    t = H·(C/(I·H))^k = 20 × (100/(10 × 20))^1,2 = 20 × 0,5^1,2 ≈ 20 × 0,435 ≈ 8,7 h. A capacidade efetiva é 10 × 8,7 ≈ 87 Ah, 13 % abaixo do rótulo; a 5 A (a taxa de 20 h) ela entregaria os 100 Ah.
+  fonte: "Battery University, BU-503: How to Calculate Battery Runtime"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.11.T01-007
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Um produto alimentado por uma Li-ion usa um LDO de 3,3 V com queda de 0,25 V e tem pulsos de 300 mA. A resistência interna da célula é 0,15 Ω. Abaixo de que tensão de circuito aberto (OCV) da célula o LDO deixa de regular durante o pulso? Responda em V, com 2 casas decimais.
+  resposta: {valor: 3.6, unidade: "V", tolerancia: 0.01}
+  explicacao: |
+    O LDO precisa de 3,3 + 0,25 = 3,55 V na entrada durante o pulso. A célula perde 0,3 × 0,15 = 0,045 V internamente, então a OCV mínima é 3,55 + 0,045 ≈ 3,60 V. Essa é a tensão de corte efetiva do sistema: toda a carga abaixo de ~3,6 V fica na célula, o que pode ser uma fração grande da curva da Li-ion.
+  fonte: "Battery University, BU-501: Basics about Discharging; Panasonic, NCR18650B datasheet (curvas de descarga)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.11.T01-008
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Uma CR2032 tem tensão de circuito aberto de 2,95 V e resistência interna de 35 Ω. Qual é a tensão nos terminais durante um pulso de 10 mA? Responda em V, com 2 casas decimais.
+  resposta: {valor: 2.6, unidade: "V", tolerancia: 0.01}
+  explicacao: |
+    V = OCV − I·R = 2,95 − 0,010 × 35 = 2,95 − 0,35 = 2,60 V. Se o BOR do MCU estiver perto disso, o produto reinicia no pulso mesmo com carga sobrando na pilha.
+  fonte: "Energizer, CR2032 Product Datasheet (Internal Resistance)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.11.T01-009
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um capacitor em paralelo com a pilha deve fornecer sozinho um pulso de 25 mA durante 4 ms, com queda de tensão máxima de 0,15 V. Qual é a capacitância mínima? Responda em µF, arredondando para o inteiro mais próximo.
+  resposta: {valor: 667, unidade: "µF", tolerancia: 0.01}
+  explicacao: |
+    C ≥ I·t/ΔV = 0,025 × 0,004 / 0,15 ≈ 667 µF; escolha 680 µF ou 1000 µF, de baixa fuga e baixa ESR. Entre pulsos, a pilha recarrega o capacitor com constante de tempo R_int·C.
+  fonte: "Energizer, Lithium Coin Handbook and Application Manual; Nordic Semiconductor, High pulse drain impact on CR2032 coin cell battery capacity"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.11.T01-010
+  objetivo: O3
+  tipo: vf
+  dificuldade: 3
+  bloom: avaliar
+  enunciado: |
+    Verdadeiro ou falso: acrescentar um eletrolítico de alumínio comum de 1000 µF em paralelo com uma CR2032 resolve a queda nos pulsos sem nenhum efeito sobre a corrente de sono do produto.
+  resposta: false
+  explicacao: |
+    O capacitor resolve os pulsos, mas tem corrente de fuga, e um eletrolítico grande pode vazar alguns µA, tanto quanto o sono inteiro de um nó BLE. Use capacitores de baixa fuga (tântalo de polímero, cerâmicos, supercapacitores especificados para isso) e meça a corrente de sono com ele montado.
+  fonte: "Energizer, Lithium Coin Handbook and Application Manual; Nordic Semiconductor, High pulse drain impact on CR2032 coin cell battery capacity"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.11.T01-011
+  objetivo: O3
+  tipo: multipla
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Um medidor NB-IoT alimentado por uma Li-SOCl2 tipo bobina (tamanho AA) reinicia na primeira transmissão depois de meses parado no estoque, com pulsos de cerca de 200 mA. Quais medidas atacam a causa?
+  alternativas:
+    - "Pôr um supercapacitor (ou usar uma célula com capacitor híbrido) para fornecer os pulsos, recarregado devagar pela pilha"
+    - "Trocar o capacitor de desacoplamento do MCU de 100 nF por 1 µF"
+    - "Considerar no projeto a queda extra da passivação no primeiro pulso e testar o pulso a frio, depois de armazenamento"
+    - "Limitar a corrente puxada da pilha e transmitir só quando a tensão do armazenamento estiver acima de um limiar"
+  resposta: [0, 2, 3]
+  explicacao: |
+    A célula tipo bobina tem resistência interna alta e passivação; 200 mA estão além do que ela fornece com tensão aceitável. A solução é um armazenamento que forneça os pulsos (supercapacitor ou capacitor híbrido), com a pilha recarregando-o a corrente baixa, e o firmware esperando a tensão. Um desacoplamento de 1 µF guarda carga para microssegundos, não para um pulso de rádio de centenas de ms.
+  fonte: "Saft, LS14500 datasheet (voltage delay); Battery University, BU-106: Advantages of Primary Batteries"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.11.T01-012
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Pela fórmula do datasheet do TP4056, I_BAT = 1200/R_PROG (com V_PROG = 1 V), que resistor R_PROG programa a corrente de carga em 400 mA? Responda em kΩ, com 1 casa decimal.
+  resposta: {valor: 3.0, unidade: "kΩ", tolerancia: 0.01}
+  explicacao: |
+    R_PROG = 1200 / 0,4 A = 3000 Ω = 3,0 kΩ. A tabela do datasheet também associa 3 kΩ a 400 mA. O término acontece quando a corrente cai a 1/10 da programada, cerca de 40 mA.
+  fonte: "NanJing Top Power, TP4056 datasheet (Application Information: Programming Charge Current)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.11.T01-013
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um TP4056 recebe 5,0 V e carrega a 0,8 A uma célula que está em 3,2 V. Quanto o chip dissipa nesse instante? Responda em W, com 2 casas decimais.
+  resposta: {valor: 1.44, unidade: "W", tolerancia: 0.01}
+  explicacao: |
+    O TP4056 é linear: P = (V_IN − V_BAT)·I = (5,0 − 3,2) × 0,8 = 1,44 W. É muito para um SOP-8: o chip atinge a temperatura da regulação térmica e reduz a corrente, por isso a corrente real fica abaixo da programada no começo da carga.
+  fonte: "NanJing Top Power, TP4056 datasheet (Thermal Regulation; Power Dissipation)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.11.T01-014
+  objetivo: O4
+  tipo: unica
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Um rastreador com LiPo e módulo TP4056 (pino TEMP aterrado) será usado em câmaras frigoríficas a −10 °C e recarregado por USB lá dentro. Qual é o risco principal e a correção adequada?
+  alternativas:
+    - "Sobrecarga acima de 4,2 V; a correção é trocar o resistor R_PROG por um de valor maior"
+    - "Descarga profunda; a correção é baixar o limiar de subtensão do PCM para 2,0 V"
+    - "Excesso de corrente no conector USB; a correção é um fusível de 500 mA na entrada"
+    - "Deposição de lítio metálico ao carregar abaixo de 0 °C; a correção é ligar um NTC ao TEMP (ou inibir a carga pelo firmware) para só carregar entre 0 e 45 °C"
+  resposta: 3
+  explicacao: |
+    Carregar Li-ion abaixo de 0 °C deposita lítio metálico no ânodo (lithium plating), o que reduz a capacidade e pode criar um curto interno. Com o TEMP aterrado, o TP4056 não sabe a temperatura. A janela do TEMP com um NTC na célula, ou um MCU que só habilita a carga entre 0 e 45 °C, resolve; a tensão de carga continua 4,2 V.
+  fonte: "Battery University, BU-410: Charging at High and Low Temperatures; NanJing Top Power, TP4056 datasheet (TEMP pin)"
+  origem: ia
+  revisao: rascunho

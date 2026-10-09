@@ -1,0 +1,220 @@
+- id: Q-M1.11.T04-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    O que é a burden voltage de um amperímetro?
+  alternativas:
+    - "A tensão máxima que o amperímetro aguenta entre as pontas sem queimar o fusível"
+    - "O erro de offset do amplificador interno, em µV"
+    - "A queda de tensão que o próprio amperímetro provoca no circuito ao ser posto em série, proporcional à corrente medida"
+    - "A tensão da bateria interna usada para medir resistência"
+  resposta: 2
+  explicacao: |
+    O amperímetro é um shunt em série: a corrente produz uma queda nele, que é tirada da tensão do dispositivo medido. Os multímetros a especificam em tensão por unidade de corrente (por exemplo, mV/mA) em cada faixa.
+  fonte: "Dave Jones (EEVblog), µCurrent; Fluke, 87V manual (Burden Voltage)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.11.T04-002
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um multímetro na faixa de mA tem burden de 1,8 mV/mA. Qual é a queda de tensão que ele provoca num pico de 220 mA? Responda em V, com 3 casas decimais.
+  resposta: {valor: 0.396, unidade: "V", tolerancia: 0.01}
+  explicacao: |
+    220 mA × 1,8 mV/mA = 396 mV = 0,396 V. Um DUT alimentado em 3,3 V veria ~2,90 V no pico: abaixo do mínimo de 3,0 V de um ESP32, o que pode causar brown-out por culpa do instrumento.
+  fonte: "Fluke, 87V manual (Burden Voltage); Dave Jones (EEVblog), µCurrent"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.11.T04-003
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um instrumento deve resolver 20 nA no sono e medir picos de 400 mA numa só escala. Quantos bits efetivos de faixa dinâmica são necessários? Responda em bits, com 1 casa decimal.
+  resposta: {valor: 24.3, unidade: "bits", tolerancia: 0.01}
+  explicacao: |
+    400 mA / 20 nA = 2 × 10⁷; log₂(2 × 10⁷) ≈ 24,3 bits (≈ 146 dB). Nenhum ADC comum entrega isso com banda de dezenas de kHz; por isso os instrumentos comutam shunts (PPK2, Joulescope) ou se mede o sono e o pulso separadamente.
+  fonte: "Nordic Semiconductor, Power Profiler Kit II User Guide; Joulescope User's Guide"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.11.T04-004
+  objetivo: O2
+  tipo: vf
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: no modo source meter do Power Profiler Kit II, o próprio PPK2 alimenta o dispositivo e regula a tensão, de modo que a queda no shunt interno não reduz a tensão vista pelo dispositivo.
+  resposta: true
+  explicacao: |
+    No source meter, o PPK2 é a fonte do DUT (0,8 a 5 V) e a malha de regulação compensa a queda na medição. No ampere meter, ele fica em série com outra fonte, como um multímetro, e a queda existe (pequena).
+  fonte: "Nordic Semiconductor, Power Profiler Kit II User Guide (Measurement modes)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.11.T04-005
+  objetivo: O2
+  tipo: multipla
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Quais afirmações sobre os instrumentos de medição de corrente estão corretas?
+  alternativas:
+    - "O multímetro na faixa de µA é adequado para registrar o perfil de um pulso de rádio de 2 ms"
+    - "O osciloscópio com shunt mostra bem a forma de pulsos rápidos, mas com 8 bits não resolve correntes de sono de µA junto com picos de dezenas de mA"
+    - "O µCurrent usa um shunt pequeno com amplificador de ×100, reduzindo a burden em relação ao multímetro sozinho"
+    - "O INA226 com um MCU é um registrador barato de perfil, limitado pela resolução do shunt escolhido e por alguns kS/s"
+  resposta: [1, 2, 3]
+  explicacao: |
+    O multímetro faz média lenta, poucas leituras por segundo, e não mostra pulsos de ms. O osciloscópio tem banda e pouca resolução; o µCurrent troca shunt grande por shunt pequeno com ganho; o INA226 resolve 2,5 µV/R e converte em 140 µs a 8,244 ms.
+  fonte: "Dave Jones (EEVblog), µCurrent GOLD; Texas Instruments, INA226 datasheet (Averaging and Conversion Time Considerations)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.11.T04-006
+  objetivo: O2
+  tipo: unica
+  dificuldade: 3
+  bloom: avaliar
+  enunciado: |
+    Você precisa medir, numa só captura de alguns minutos, a carga de cada evento de advertising BLE (pulsos de ~3 ms a ~10 mA) e a corrente de sono (~2 µA) entre eles, num nó alimentado por CR2032. Qual instrumento atende melhor?
+  alternativas:
+    - "Multímetro na faixa de µA, anotando a leitura a cada segundo"
+    - "Power Profiler Kit II, com faixas comutadas automaticamente e 100 kS/s"
+    - "Osciloscópio de 8 bits com shunt de 1 Ω"
+    - "INA219 com shunt de 0,1 Ω e um Arduino"
+  resposta: 1
+  explicacao: |
+    Só um medidor com comutação automática de faixa e amostragem rápida enxerga os dois níveis na mesma captura. O multímetro não vê pulsos; o osciloscópio com 1 Ω não resolve 2 µA; o INA219 com 0,1 Ω tem LSB de 100 µA.
+  fonte: "Nordic Semiconductor, Power Profiler Kit II User Guide"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.11.T04-007
+  objetivo: O3
+  tipo: unica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    O LSB de tensão de shunt do INA226 é 2,5 µV. Qual é a resolução de corrente com um shunt de 0,1 Ω?
+  alternativas:
+    - "2,5 µA"
+    - "0,25 µA"
+    - "250 µA"
+    - "25 µA"
+  resposta: 3
+  explicacao: |
+    Resolução = V_LSB / R = 2,5 µV / 0,1 Ω = 25 µA. É ótima para picos de centenas de mA e cega para um sono de 10 µA.
+  fonte: "Texas Instruments, INA226 datasheet (Basic ADC Functions)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.11.T04-008
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um INA226 usa shunt de 0,02 Ω e Current_LSB escolhido de 100 µA. Qual é o valor do registrador de calibração, pela fórmula CAL = 0,00512 / (Current_LSB × R_shunt)? Responda como número inteiro.
+  resposta: {valor: 2560, unidade: "contagens", tolerancia: 0}
+  explicacao: |
+    CAL = 0,00512 / (100 × 10⁻⁶ × 0,02) = 0,00512 / 2 × 10⁻⁶ = 2560. O Power_LSB fica em 25 × 100 µA = 2,5 mW.
+  fonte: "Texas Instruments, INA226 datasheet (Calibration Register and Scaling)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.11.T04-009
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Com o INA226 (LSB de shunt de 2,5 µV), qual é o menor shunt que dá resolução de 0,5 µA? Responda em Ω, com 1 casa decimal.
+  resposta: {valor: 5.0, unidade: "Ω", tolerancia: 0.01}
+  explicacao: |
+    R = V_LSB / resolução = 2,5 µV / 0,5 µA = 5 Ω. A faixa cai para 81,92 mV / 5 Ω ≈ 16,4 mA, e a burden num pulso de 15 mA seria 75 mV.
+  fonte: "Texas Instruments, INA226 datasheet (Basic ADC Functions)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.11.T04-010
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Um registrador com INA226 e shunt de 0,5 Ω tem offset de +8 µV que ninguém mediu nem subtraiu. A corrente média real do dispositivo é 6 µA. Qual autonomia, com uma bateria de 1000 mAh, alguém calcularia a partir da média registrada? Responda em dias, arredondando para o inteiro mais próximo.
+  resposta: {valor: 1894, unidade: "dias", tolerancia: 0.01}
+  explicacao: |
+    O offset vira 8 µV / 0,5 Ω = 16 µA somados a cada amostra; a média registrada é 6 + 16 = 22 µA. Autonomia calculada: 1000 / 0,022 ≈ 45 455 h ≈ 1894 dias, contra ~6944 dias reais. A média de muitas amostras não remove offset: é preciso medir o zero e subtrair.
+  fonte: "Texas Instruments, INA226 datasheet (Shunt offset voltage); TI Precision Labs – Current Sense Amplifiers"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.11.T04-011
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um despertar medido tem 6 ms a 10 mA, depois 2 ms a 45 mA e depois 4 ms a 3 mA. Qual é a carga do evento? Responda em mA·s, com 3 casas decimais.
+  resposta: {valor: 0.162, unidade: "mA·s", tolerancia: 0.01}
+  explicacao: |
+    Q = Σ I·t = 6 × 10 + 2 × 45 + 4 × 3 = 60 + 90 + 12 = 162 mA·ms = 0,162 mA·s. A fase de 2 ms do rádio carrega mais da metade da carga.
+  fonte: "Nordic Semiconductor, Power Profiler Kit II User Guide (seleção de janela: carga e média)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.11.T04-012
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    O evento da questão anterior (0,162 mA·s em 12 ms) se repete a cada 20 s, e o sono medido à parte é 4 µA. Qual é a corrente média? Responda em µA, com 1 casa decimal.
+  resposta: {valor: 12.1, unidade: "µA", tolerancia: 0.01}
+  explicacao: |
+    Por ciclo: 0,162 + 0,004 × (20 − 0,012) ≈ 0,162 + 0,0800 = 0,2420 mA·s; média = 0,2420 / 20 ≈ 0,0121 mA = 12,1 µA. O evento de 12 ms carrega dois terços da carga do ciclo.
+  fonte: "Nordic Semiconductor, Power Profiler Kit II User Guide; Silicon Labs, AN0007 (Energy Modes)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.11.T04-013
+  objetivo: O4
+  tipo: vf
+  dificuldade: 3
+  bloom: avaliar
+  enunciado: |
+    Verdadeiro ou falso: se um registrador com INA226 e shunt de 0,1 Ω mostra zero durante o sono, a corrente de sono do dispositivo pode ser omitida do orçamento.
+  resposta: false
+  explicacao: |
+    Com 0,1 Ω, o LSB é 25 µA: um sono de 5 µA arredonda para zero. A parcela do sono precisa ser medida com um instrumento sensível (multímetro em µA, µCurrent, shunt maior) e somada; integrada por horas, ela pode ser uma fração grande do total.
+  fonte: "Texas Instruments, INA226 datasheet (Basic ADC Functions)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.11.T04-014
+  objetivo: O3
+  tipo: multipla
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Um shunt comutado usa 10 Ω (para µA) em série com 0,1 Ω (para mA); um MOSFET em paralelo com o shunt de 10 Ω fecha quando a corrente sobe, e um Schottky também fica em paralelo com ele. Quais afirmações estão corretas?
+  alternativas:
+    - "O Schottky limita a queda no shunt de 10 Ω durante o intervalo em que o MOSFET ainda não fechou"
+    - "As amostras tomadas durante a troca de faixa ficam erradas e precisam ser descartadas ou tratadas"
+    - "Na faixa baixa, a resolução é dada pelo shunt de 10 Ω, cem vezes melhor que a do shunt de 0,1 Ω"
+    - "Com o MOSFET fechado, a resistência total em série volta a ser a do shunt de 10 Ω"
+  resposta: [0, 1, 2]
+  explicacao: |
+    Com o MOSFET fechado, o shunt de 10 Ω fica em curto (resta 0,1 Ω mais o R_DS(on)). Antes de ele fechar, a corrente alta passaria pelos 10 Ω: o Schottky limita a queda a algumas centenas de mV. As amostras da transição são o ponto fraco desse método, que os instrumentos comerciais resolvem comutando em µs.
+  fonte: "Joulescope User's Guide; Nordic Semiconductor, Power Profiler Kit II User Guide (Hardware description)"
+  origem: ia
+  revisao: rascunho
