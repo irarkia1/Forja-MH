@@ -1,0 +1,240 @@
+- id: Q-M1.7.T10-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    No Zephyr, duas threads preemptivas estão prontas: A com prioridade 1 e B com prioridade 5. Qual roda?
+  alternativas:
+    - "B, porque número maior significa mais urgente, como no FreeRTOS"
+    - "As duas se alternam por time slicing"
+    - "A, porque no Zephyr número menor significa mais urgente"
+    - "A que foi criada primeiro"
+  resposta: 2
+  explicacao: |
+    No Zephyr, quanto menor o valor, maior a prioridade; o FreeRTOS usa o sentido oposto. Time slicing só alterna threads de mesma prioridade. É a armadilha número um ao portar código.
+  fonte: "Zephyr Project Documentation, Kernel Services, Threads (Thread Priorities)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T10-002
+  objetivo: O1
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: no Zephyr, uma thread com prioridade −2 em execução é preemptada assim que uma thread de prioridade 0 fica pronta.
+  resposta: false
+  explicacao: |
+    Prioridades negativas são cooperativas: a thread não é preemptada por outras threads até bloquear ou ceder (k_yield). Só ISRs a interrompem. Threads de prioridade 0 em diante são preemptivas.
+  fonte: "Zephyr Project Documentation, Kernel Services, Threads (Thread Priorities) e Scheduling"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T10-003
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Com `CONFIG_NUM_COOP_PRIORITIES=16`, que valor numérico de prioridade a macro `K_PRIO_COOP(13)` produz, sabendo que `K_PRIO_COOP(x)` = −(CONFIG_NUM_COOP_PRIORITIES − x)? Responda com um número inteiro.
+  resposta: {valor: -3, unidade: "prioridade", tolerancia: 0}
+  explicacao: |
+    −(16 − 13) = −3: uma prioridade cooperativa. As cooperativas vão de −16 a −1 nessa configuração; K_PRIO_PREEMPT(x) devolve simplesmente x.
+  fonte: "Zephyr Project Documentation, Kernel Services, Threads (Thread Priorities); include/zephyr/kernel.h"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T10-004
+  objetivo: O1
+  tipo: multipla
+  dificuldade: 3
+  bloom: entender
+  enunciado: |
+    Marque as afirmações corretas sobre a organização do Zephyr comparada à do FreeRTOS.
+  alternativas:
+    - "O Zephyr inclui drivers com API uniforme e subsistemas como rede e Bluetooth LE, enquanto o FreeRTOS é essencialmente o kernel"
+    - "O west é a ferramenta que gerencia os repositórios e módulos e orquestra build, gravação e depuração"
+    - "No Zephyr, o tamanho de pilha de uma thread é dado em bytes"
+    - "O devicetree do Zephyr é interpretado em tempo de execução, como no Linux"
+  resposta: [0, 1, 2]
+  explicacao: |
+    O Zephyr é um sistema completo com drivers, subsistemas e build próprio (CMake + west); pilhas são em bytes. O devicetree é processado na compilação e vira macros C: não há interpretação em tempo de execução.
+  fonte: "Zephyr Project Documentation, Introduction; Getting Started Guide; Devicetree Guide (Introduction to devicetree)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T10-005
+  objetivo: O2
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Num nó de devicetree do Zephyr, o que faz a propriedade `status = "okay"`?
+  alternativas:
+    - "Habilita o nó: o dispositivo passa a existir para o build e o driver pode ser instanciado"
+    - "Indica que o hardware passou no autoteste na inicialização"
+    - "Liga o clock do periférico em tempo de execução"
+    - "Marca o nó como somente leitura"
+  resposta: 0
+  explicacao: |
+    Nós com status "disabled" são ignorados; "okay" os habilita. Periféricos do SoC costumam vir desabilitados no .dtsi e são ligados pela placa ou por um overlay da aplicação.
+  fonte: "Zephyr Project Documentation, Devicetree Guide, Introduction to devicetree"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T10-006
+  objetivo: O2
+  tipo: unica
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Sua aplicação precisa ligar o I²C1 e declarar um sensor nele, numa placa suportada pelo Zephyr. Qual é a forma recomendada?
+  alternativas:
+    - "Editar o arquivo .dts da placa dentro da árvore do Zephyr"
+    - "Criar um overlay da aplicação (app.overlay ou boards/<placa>.overlay) com as mudanças"
+    - "Escrever os registradores do I²C1 no main antes de chamar o driver"
+    - "Adicionar CONFIG_I2C1_ADDR=0x76 ao prj.conf"
+  resposta: 1
+  explicacao: |
+    O overlay é combinado ao devicetree da placa no build, sem alterar a árvore do Zephyr. O resultado final aparece em build/zephyr/zephyr.dts. Endereço de dispositivo é dado do hardware: vai no devicetree, não no Kconfig.
+  fonte: "Zephyr Project Documentation, Devicetree Guide, Set devicetree overlays"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T10-007
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Num overlay, o nó `bme280@76 { compatible = "bosch,bme280"; reg = <0x76>; };` está dentro de `&i2c1`. Que endereço I²C de 7 bits, em decimal, o driver usará? Responda com um número inteiro.
+  resposta: {valor: 118, unidade: "endereço", tolerancia: 0}
+  explicacao: |
+    Para nós filhos de um barramento I²C, reg é o endereço de 7 bits no barramento: 0x76 = 7 × 16 + 6 = 118. O sufixo @76 do nome do nó deve coincidir com o primeiro valor de reg.
+  fonte: "Zephyr Project Documentation, Devicetree Guide, Introduction to devicetree (unit address e reg)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T10-008
+  objetivo: O2
+  tipo: multipla
+  dificuldade: 4
+  bloom: aplicar
+  enunciado: |
+    Marque os usos corretos da API de devicetree do Zephyr em C.
+  alternativas:
+    - "static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(DT_ALIAS(led0), gpios);"
+    - "static const struct device *const i2c = DEVICE_DT_GET(DT_NODELABEL(i2c1));"
+    - "Verificar gpio_is_ready_dt(&led) ou device_is_ready(i2c) antes de usar o dispositivo"
+    - "Chamar DT_ALIAS(led0) em tempo de execução, dentro de um laço, para descobrir o pino atual do LED"
+  resposta: [0, 1, 2]
+  explicacao: |
+    As macros DT_ resolvem tudo na compilação, gerando constantes; não existem em tempo de execução. GPIO_DT_SPEC_GET reúne porta, pino e flags; DEVICE_DT_GET obtém o ponteiro do dispositivo; os testes de prontidão detectam driver não inicializado.
+  fonte: "Zephyr Project Documentation, Devicetree Guide, Devicetree access from C/C++; samples/basic/blinky"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T10-009
+  objetivo: O3
+  tipo: vf
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: uma opção alterada no `west build -t menuconfig` permanece ligada depois de um build limpo (`west build -p always`), mesmo sem ser copiada para o prj.conf.
+  resposta: false
+  explicacao: |
+    O menuconfig altera o .config daquele diretório de build. Um build limpo regenera a configuração a partir dos Kconfig, do defconfig da placa e do prj.conf; o que deve durar vai para o prj.conf (ou um fragmento de configuração).
+  fonte: "Zephyr Project Documentation, Configuration System (Kconfig), Interactive Kconfig interfaces e Setting Kconfig configuration values"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T10-010
+  objetivo: O3
+  tipo: multipla
+  dificuldade: 2
+  bloom: analisar
+  enunciado: |
+    Marque o que, no Zephyr, pertence ao **Kconfig** (e não ao devicetree).
+  alternativas:
+    - "Compilar o subsistema de sensores e o driver do BME280"
+    - "Tamanho da pilha da thread main (CONFIG_MAIN_STACK_SIZE)"
+    - "Ligar o time slicing e definir a fatia em ms"
+    - "Em que pino da placa está o LED verde"
+  resposta: [0, 1, 2]
+  explicacao: |
+    Kconfig decide o software: o que é compilado e com que parâmetros. Onde o LED está é descrição do hardware, papel do devicetree (gpios = <&gpioa 5 …>).
+  fonte: "Zephyr Project Documentation, Configuration System (Kconfig); Devicetree Guide"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T10-011
+  objetivo: O3
+  tipo: unica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    O BME280 está declarado no overlay, dentro de `&i2c1`, com `status = "okay"` no barramento, mas `device_is_ready()` do sensor devolve falso e o .config não tem `CONFIG_SENSOR`. Qual é a causa mais provável?
+  alternativas:
+    - "Erro no endereço reg, porque o devicetree não aceita 0x76"
+    - "O Zephyr só aceita sensores em placas da Nordic"
+    - "O driver não foi compilado: o devicetree descreve o hardware, mas o Kconfig precisa ligar o subsistema de sensores (e o driver)"
+    - "Falta chamar o devicetree em tempo de execução para carregar o nó"
+  resposta: 2
+  explicacao: |
+    Devicetree e Kconfig se complementam: sem CONFIG_SENSOR (e o driver do BME280, normalmente habilitado automaticamente quando há um nó compatível e o subsistema está ligado), não há driver para inicializar o dispositivo, e device_is_ready devolve falso.
+  fonte: "Zephyr Project Documentation, Devicetree Guide (Devicetree HOWTOs) e Configuration System (Kconfig)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T10-012
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    `K_MSGQ_DEFINE(fila, 12, 10, 4)` define uma fila de mensagens de 10 itens de 12 bytes, alinhados em 4 bytes. Quantos bytes tem o buffer de armazenamento das mensagens? Responda com um número inteiro.
+  resposta: {valor: 120, unidade: "bytes", tolerancia: 0}
+  explicacao: |
+    10 × 12 = 120 bytes, reservados estaticamente pela macro (12 já é múltiplo do alinhamento 4). Como no FreeRTOS, os itens são copiados para dentro da fila.
+  fonte: "Zephyr Project Documentation, Kernel Services, Message Queues"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T10-013
+  objetivo: O4
+  tipo: unica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um `k_timer` de 10 ms deve disparar a leitura de um sensor I²C que leva 2 ms. Qual implementação é correta no Zephyr?
+  alternativas:
+    - "Ler o sensor dentro da função de expiração do timer, protegido por k_mutex_lock(&m, K_FOREVER)"
+    - "Chamar k_msleep(2) dentro da função de expiração para esperar a conversão"
+    - "Criar o timer com prioridade negativa para poder bloquear"
+    - "Na função de expiração, só dar um semáforo (ou submeter um k_work); uma thread espera esse sinal e faz a leitura I²C"
+  resposta: 3
+  explicacao: |
+    A função de expiração de um k_timer roda em contexto de interrupção e não pode bloquear (nem esperar mutex nem dormir). O padrão é o mesmo processamento adiado do FreeRTOS: sinalizar e deixar o trabalho para uma thread ou fila de trabalho.
+  fonte: "Zephyr Project Documentation, Kernel Services, Timers e Interrupts (Offloading ISR Work)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T10-014
+  objetivo: O4
+  tipo: multipla
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Você porta para o Zephyr, num Cortex-M, a tarefa FreeRTOS `xTaskCreate(vSensor, "sensor", 256, NULL, 3, NULL)` (de 0 a 4, a 3 é a segunda mais urgente), que usa `xSemaphoreCreateMutex` e `vTaskDelay(pdMS_TO_TICKS(100))`. Marque as traduções corretas.
+  alternativas:
+    - "K_THREAD_DEFINE(t_sensor, 1024, sensor, NULL, NULL, NULL, 1, 0, 0), com pilha em bytes e um valor de prioridade pequeno"
+    - "K_MUTEX_DEFINE(m) com k_mutex_lock e k_mutex_unlock, que também aplicam herança de prioridade"
+    - "k_msleep(100) no lugar do vTaskDelay"
+    - "K_THREAD_DEFINE(t_sensor, 256, sensor, NULL, NULL, NULL, 3, 0, 0), copiando os números sem mudança"
+  resposta: [0, 1, 2]
+  explicacao: |
+    256 palavras de 4 bytes viram 1024 bytes; e, como no Zephyr menor é mais urgente, a prioridade 3 do FreeRTOS (alta) vira um número pequeno. Mutex e atraso têm equivalentes diretos. Copiar 256 e 3 daria pilha quatro vezes menor e prioridade com o sentido invertido.
+  fonte: "Zephyr Project Documentation, Kernel Services, Threads e Mutexes; FreeRTOS Reference Manual, xTaskCreate()"
+  origem: ia
+  revisao: rascunho

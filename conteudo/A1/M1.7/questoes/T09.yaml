@@ -1,0 +1,235 @@
+- id: Q-M1.7.T09-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    No projeto de 4 tarefas, por que o supervisor, que alimenta o watchdog, recebe a **menor** prioridade entre as tarefas da aplicação?
+  alternativas:
+    - "Para economizar pilha, já que tarefas de prioridade baixa usam menos RAM"
+    - "Porque tarefas de prioridade baixa recebem mais fatias de tempo do escalonador"
+    - "Porque o FreeRTOS exige que a tarefa que alimenta o watchdog tenha prioridade 1"
+    - "Para que, se alguma tarefa monopolizar a CPU, o supervisor não rode, o watchdog não seja alimentado e o sistema reinicie"
+  resposta: 3
+  explicacao: |
+    Na menor prioridade, o supervisor só roda se todas as tarefas acima deixarem CPU livre. Assim a inanição vira reinício. Somado aos bits de vida (ele só alimenta o watchdog se todas as tarefas sinalizaram), cobre tanto a tarefa que trava bloqueada quanto a que trava em laço.
+  fonte: "Mastering the FreeRTOS Real Time Kernel, Task Management, seção Scheduling Algorithms; ST, RM0368, Independent watchdog (IWDG)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T09-002
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    A tarefa de aquisição envia uma amostra a cada 10 ms para uma fila de 16 itens. Por quanto tempo, em ms, a tarefa de processamento pode ficar sem retirar itens antes que uma amostra seja perdida? Responda com um número inteiro.
+  resposta: {valor: 160, unidade: "ms", tolerancia: 0}
+  explicacao: |
+    16 itens × 10 ms = 160 ms de folga. É esse número que se compara com o pior bloqueio do processamento: com o semáforo binário da falha 1, a espera passa de 160 ms e há perdas; com o mutex, fica abaixo de 80 ms.
+  fonte: "Mastering the FreeRTOS Real Time Kernel, Queue Management, seção Characteristics of a Queue"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T09-003
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Calcule a utilização total, em %, de: tick (C = 0,02 ms, T = 1 ms), aquisição (0,1 ms, 10 ms), processamento (0,3 ms, 10 ms), comunicação (7 ms, 100 ms) e supervisor (0,5 ms, 500 ms). Responda com uma casa decimal.
+  resposta: {valor: 13.1, unidade: "%", tolerancia: 0.01}
+  explicacao: |
+    U = 0,02/1 + 0,1/10 + 0,3/10 + 7/100 + 0,5/500 = 0,02 + 0,01 + 0,03 + 0,07 + 0,001 = 0,131 = 13,1 %. Com 5 itens, o limite de Liu e Layland é 0,7435: escalonável com folga. Na placa, compare com 100 % menos a porcentagem da tarefa ociosa no vTaskGetRunTimeStatistics.
+  fonte: "Liu e Layland (1973); Mastering the FreeRTOS Real Time Kernel, Developer Support, seção Viewing Run-time and Task State Information"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T09-004
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Prioridades fixas, da maior para a menor, com (C, T) em ms: tick (0,02; 1), ISR do timer (0,005; 10), tarefa de timers (0,01; 250), aquisição (0,1; 10), processamento (0,3; 10) e comunicação (12; 100). Calcule o pior tempo de resposta da comunicação pela iteração R = C + Σ⌈R/Tⱼ⌉·Cⱼ, começando em R⁰ = C + ΣCⱼ. Responda em ms com uma casa decimal.
+  resposta: {valor: 13.1, unidade: "ms", tolerancia: 0.01}
+  explicacao: |
+    R⁰ = 12 + 0,02 + 0,005 + 0,01 + 0,1 + 0,3 = 12,435. R¹ = 12 + ⌈12,435⌉·0,02 + ⌈1,24⌉·0,405 + ⌈0,05⌉·0,01 = 12 + 0,26 + 0,81 + 0,01 = 13,08. R² = 12 + 14·0,02 + 2·0,405 + 0,01 = 13,10. R³ = 12 + 14·0,02 + 2·0,405 + 0,01 = 13,10 (convergiu). Conferido com o simulador de escalonamento do módulo.
+  fonte: "M. Joseph e P. Pandya, Finding Response Times in a Real-Time System, 1986; Audsley et al., 1993"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T09-005
+  objetivo: O2
+  tipo: vf
+  dificuldade: 1
+  bloom: avaliar
+  enunciado: |
+    Verdadeiro ou falso: alimentar o watchdog de hardware num callback de timer de software a cada 500 ms garante que o sistema reinicie se a tarefa de processamento travar.
+  resposta: false
+  explicacao: |
+    O callback roda na tarefa de serviço dos timers, que continua funcionando mesmo com o processamento travado: o watchdog seria alimentado para sempre. O watchdog só protege se for alimentado por quem verificou que todas as tarefas estão vivas, como o supervisor com os bits de vida do projeto.
+  fonte: "Mastering the FreeRTOS Real Time Kernel, Software Timer Management, seção The Context of a Software Timer; ST, RM0368, Independent watchdog (IWDG)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T09-006
+  objetivo: O2
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    No STM32 do projeto, `configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY` vale 5, e a ISR do TIM2 chama `vTaskNotifyGiveFromISR`. Qual chamada de `NVIC_SetPriority(TIM2_IRQn, …)` é correta?
+  alternativas:
+    - "NVIC_SetPriority(TIM2_IRQn, 0)"
+    - "NVIC_SetPriority(TIM2_IRQn, 2)"
+    - "NVIC_SetPriority(TIM2_IRQn, 6)"
+    - "NVIC_SetPriority(TIM2_IRQn, 4)"
+  resposta: 2
+  explicacao: |
+    ISRs que chamam a API FromISR precisam de prioridade lógica numericamente igual ou maior que o limite (5 a 15). 0, 2 e 4 estão acima do limite: não são mascaradas pelo kernel e corromperiam suas estruturas.
+  fonte: "freertos.org, Running the RTOS on an ARM Cortex-M Core"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T09-007
+  objetivo: O2
+  tipo: multipla
+  dificuldade: 3
+  bloom: avaliar
+  enunciado: |
+    Marque as decisões de implementação corretas no projeto de 4 tarefas.
+  alternativas:
+    - "A tarefa de comunicação é a única que chama printf; as outras enviam mensagens a ela por fila"
+    - "Verificar a criação das tarefas com ok &= xTaskCreate(…) e um único configASSERT(ok == pdPASS) no final"
+    - "A tarefa de comunicação liga seu bit de vida também quando o tempo limite da fila expira sem mensagens, para não ser confundida com uma tarefa travada"
+    - "A ISR do timer só limpa a flag do periférico e notifica a aquisição; a leitura do ADC fica na tarefa"
+  resposta: [0, 2, 3]
+  explicacao: |
+    Guardiã da UART, sinal de vida independente de haver trabalho e ISR mínima com processamento adiado estão no projeto. O acúmulo com &= não detecta falhas: errCOULD_NOT_ALLOCATE_REQUIRED_MEMORY vale −1, que tem o bit 0 ligado, e 1 & −1 = 1. Cada retorno precisa ser comparado com pdPASS.
+  fonte: "Mastering the FreeRTOS Real Time Kernel, Resource Management, seção Gatekeeper Tasks; Interrupt Management, seção Deferred Interrupt Processing; FreeRTOS-Kernel, include/projdefs.h"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T09-008
+  objetivo: O3
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Na saída de `vTaskListTasks`, uma linha diz `comun  X  2  344  3`. O que significa o 344?
+  alternativas:
+    - "O número de vezes que a tarefa rodou"
+    - "O tempo de CPU acumulado, em ticks"
+    - "O tamanho total da pilha, em bytes"
+    - "O menor espaço livre que a pilha da tarefa já teve, em palavras (a marca d'água)"
+  resposta: 3
+  explicacao: |
+    As colunas são nome, estado (X = em execução), prioridade, marca d'água da pilha em palavras e número da tarefa. Com pilha de 512 palavras, a tarefa usou no máximo 168 palavras até então.
+  fonte: "Mastering the FreeRTOS Real Time Kernel, Developer Support, seção The vTaskList() Helper Function; FreeRTOS-Kernel, include/task.h (vTaskListTasks)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T09-009
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Num STM32 a 84 MHz, o relógio de estatísticas do FreeRTOS é `DWT->CYCCNT >> 6`. Qual é a frequência desse relógio, em kHz? Responda com uma casa decimal.
+  resposta: {valor: 1312.5, unidade: "kHz", tolerancia: 0.01}
+  explicacao: |
+    84 MHz / 2⁶ = 84 000 kHz / 64 = 1312,5 kHz, cerca de 1300 vezes o tick de 1 kHz: resolução de sobra para as porcentagens. O contador de 32 bits do CYCCNT dá a volta em 2³²/84 MHz ≈ 51 s; o contador dividido acompanha essa volta, e por isso as estatísticas devem ser lidas em intervalos menores ou estendidas por software.
+  fonte: "Mastering the FreeRTOS Real Time Kernel, Developer Support, seção The Run-Time Statistics Clock; Arm, Cortex-M4 Technical Reference Manual, DWT"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T09-010
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Depois de 10 s de execução, com relógio de estatísticas de 1 MHz, `vTaskGetRunTimeStatistics` mostra 15 000 contagens para a tarefa de aquisição, que roda a 100 Hz. Qual é o tempo médio de execução por ativação, em µs? Responda com um número inteiro.
+  resposta: {valor: 15, unidade: "µs", tolerancia: 0}
+  explicacao: |
+    15 000 contagens a 1 MHz = 15 000 µs. Em 10 s houve 100 × 10 = 1000 ativações: 15 µs por ativação. É a média: para a análise de tempo real use o máximo medido (DWT no início e no fim do trabalho) com margem.
+  fonte: "Mastering the FreeRTOS Real Time Kernel, Developer Support, seções Task Run-Time Statistics e The vTaskGetRunTimeStats() Helper Function"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T09-011
+  objetivo: O3
+  tipo: multipla
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Marque as afirmações corretas sobre as ferramentas de medição e trace de um sistema FreeRTOS.
+  alternativas:
+    - "A macro traceTASK_SWITCHED_IN pode escrever o número da tarefa em pinos de GPIO para um analisador lógico mostrar a linha do tempo"
+    - "O Tracealyzer, com o TraceRecorder, grava eventos do kernel em RAM (snapshot) ou por streaming e mostra a linha do tempo das tarefas"
+    - "vTaskGetRunTimeStatistics mostra a ordem em que as tarefas rodaram, troca a troca"
+    - "No simulador POSIX, a marca d'água de pilha e as porcentagens de CPU não valem como medida da placa"
+  resposta: [0, 1, 3]
+  explicacao: |
+    As macros de trace e as ferramentas de trace mostram quando cada tarefa rodou. As estatísticas de execução só acumulam quanto cada tarefa rodou, sem ordem. No POSIX, as tarefas rodam em pilhas de threads do Linux e o tempo depende do sistema operacional.
+  fonte: "Mastering the FreeRTOS Real Time Kernel, Developer Support, seções Tracealyzer, Viewing Run-time and Task State Information e Trace Hook Macros; freertos.org, FreeRTOS simulator for Linux"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T09-012
+  objetivo: O4
+  tipo: unica
+  dificuldade: 2
+  bloom: analisar
+  enunciado: |
+    Na falha provocada número 1, o lock do estado vira semáforo binário, o supervisor (prioridade 1) passa 80 ms dentro dele e uma tarefa de carga de prioridade 2 ocupa a maior parte da CPU. Qual é o sintoma e a correção?
+  alternativas:
+    - "Estouro de pilha no supervisor; aumentar a pilha"
+    - "Perdas de amostra: o processamento espera o lock enquanto a carga impede o supervisor de terminar; trocar por mutex (herança) e encurtar a seção crítica"
+    - "Deadlock entre processamento e supervisor; usar ordem global de aquisição"
+    - "Nenhum sintoma, porque o processamento tem prioridade maior que a carga"
+  resposta: 1
+  explicacao: |
+    É inversão de prioridade ilimitada: o processamento (3) espera o supervisor (1), que é preemptado pela carga (2). A fila de 16 amostras (160 ms) estoura. Nos testes do módulo, foram 152 perdas no POSIX e 185 no QEMU com o binário, e 0 com o mutex.
+  fonte: "Mastering the FreeRTOS Real Time Kernel, Resource Management, seções Priority Inversion e Priority Inheritance"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T09-013
+  objetivo: O4
+  tipo: unica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Na falha provocada número 3 (processamento toma o mutex do estado e depois o mutex B; supervisor toma B e depois o do estado), o sistema reinicia pelo watchdog sem imprimir nenhum ALARME. Por quê?
+  alternativas:
+    - "O supervisor é uma das tarefas presas no deadlock: ninguém percebe a falta dos bits de vida nem envia o alarme, e só o watchdog de hardware age"
+    - "A fila de mensagens encheu e descartou os alarmes"
+    - "O watchdog reinicia antes de o supervisor ter tempo de detectar a falha"
+    - "A tarefa de comunicação também está no deadlock"
+  resposta: 0
+  explicacao: |
+    O supervisor ficou bloqueado para sempre esperando o mutex do estado. Ele não roda, logo não envia alarme nem alimenta o watchdog. A comunicação continua viva, mas não recebe nada. É o motivo de o watchdog ser de hardware e independente das tarefas.
+  fonte: "Mastering the FreeRTOS Real Time Kernel, Resource Management, seção Deadlock (or Deadly Embrace); ST, RM0368, Independent watchdog (IWDG)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T09-014
+  objetivo: O4
+  tipo: multipla
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Marque as associações corretas entre o que se observa no sistema de 4 tarefas e a causa provável.
+  alternativas:
+    - "O trace mostra só a aquisição rodando por 2 s antes do reinício, sem a tarefa ociosa: inanição causada por uma tarefa de alta prioridade que não bloqueia"
+    - "O contador de perdas de mensagens cresce sem parar, sem reinícios: consumidor (comunicação) mais lento que o produtor"
+    - "O gancho de estouro aponta a comunicação logo depois do primeiro printf com float: pilha pequena demais para a formatação"
+    - "Perdas de amostra que somem ao trocar um semáforo binário por mutex: deadlock"
+  resposta: [0, 1, 2]
+  explicacao: |
+    Inanição, fila cheia e estouro de pilha têm assinaturas distintas no trace, nos contadores e nos ganchos. Perdas que somem ao trocar semáforo binário por mutex são inversão de prioridade (a herança resolve), não deadlock: deadlock não é resolvido pela herança e trava as tarefas para sempre.
+  fonte: "Mastering the FreeRTOS Real Time Kernel, capítulos Resource Management e Troubleshooting"
+  origem: ia
+  revisao: rascunho

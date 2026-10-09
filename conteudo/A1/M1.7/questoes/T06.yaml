@@ -1,0 +1,235 @@
+- id: Q-M1.7.T06-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    O que caracteriza a inversão de prioridade **ilimitada**?
+  alternativas:
+    - "A tarefa de alta prioridade espera a de baixa terminar a seção crítica, e isso dura no máximo o tamanho da seção"
+    - "Duas tarefas esperam, cada uma, um recurso que a outra segura"
+    - "Enquanto a tarefa de alta prioridade espera um recurso com a de baixa, tarefas de prioridade intermediária, que nem usam o recurso, preemptam a de baixa e prolongam a espera sem limite"
+    - "Uma tarefa de baixa prioridade nunca consegue rodar porque as de alta nunca bloqueiam"
+  resposta: 2
+  explicacao: |
+    Esperar a seção crítica da tarefa de baixa prioridade é a inversão limitada, inevitável com exclusão mútua. Ela se torna ilimitada quando tarefas médias rodam no lugar da tarefa de baixa prioridade, que então não libera o recurso. Recurso em ciclo é deadlock; baixa prioridade sem CPU é inanição.
+  fonte: "Mastering the FreeRTOS Real Time Kernel, Resource Management, seção Priority Inversion; Sha, Rajkumar e Lehoczky, Priority Inheritance Protocols, IEEE Transactions on Computers, 1990"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T06-002
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    L (baixa prioridade) segura um recurso protegido por **semáforo binário** e ainda precisa de 2 ms de CPU dentro da seção crítica. H (alta) pede o recurso e bloqueia. Logo em seguida ficam prontas M₁ e M₂, de prioridade intermediária, que não usam o recurso e precisam de 15 ms e 10 ms de CPU. Por quanto tempo, em ms, H fica bloqueada? Responda com um número inteiro.
+  resposta: {valor: 27, unidade: "ms", tolerancia: 0}
+  explicacao: |
+    Sem herança, M₁ e M₂ preemptam L enquanto H espera: 15 + 10 = 25 ms de tarefas médias, mais os 2 ms que faltam a L, totalizam 27 ms. Com mutex, L herdaria a prioridade de H e o bloqueio seria só 2 ms.
+  fonte: "Mastering the FreeRTOS Real Time Kernel, Resource Management, seções Priority Inversion e Priority Inheritance"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T06-003
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Escalonamento preemptivo por prioridade. Em t = 0, L (baixa) toma um recurso protegido por **semáforo binário**; sua seção crítica precisa de 4 ms de CPU. Em t = 1 ms, H (alta) fica pronta, pede o recurso e bloqueia. Em t = 1,5 ms, M (média, não usa o recurso) fica pronta e precisa de 6 ms de CPU. Despreze o custo das trocas de contexto. Em que instante, em ms, H obtém o recurso? Responda com uma casa decimal.
+  resposta: {valor: 10.0, unidade: "ms", tolerancia: 0.01}
+  explicacao: |
+    De 0 a 1, L roda (falta 3). Em 1, H preempta, pede o recurso e bloqueia; L volta. Em 1,5, M preempta L (falta 2,5 a L). M roda de 1,5 a 7,5. L termina a seção de 7,5 a 10,0 e libera; H obtém o recurso em t = 10,0 ms. Com mutex, L herdaria a prioridade de H em t = 1 e terminaria em t = 4.
+  fonte: "Sha, Rajkumar e Lehoczky, Priority Inheritance Protocols, IEEE Transactions on Computers, 1990"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T06-004
+  objetivo: O1
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: com herança de prioridade, a tarefa de alta prioridade nunca espera nada por causa de uma tarefa de baixa prioridade.
+  resposta: false
+  explicacao: |
+    A herança impede que tarefas médias prolonguem a espera, mas a tarefa de alta prioridade ainda espera a seção crítica da de baixa prioridade terminar: a inversão limitada é inevitável quando se usa exclusão mútua. É esse tempo que entra como bloqueio B na análise.
+  fonte: "Mastering the FreeRTOS Real Time Kernel, Resource Management, seção Priority Inheritance"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T06-005
+  objetivo: O2
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Que sistema operacional de tempo real rodava no computador de bordo do Mars Pathfinder, em cuja configuração estava a opção que resolveu as reinicializações de 1997?
+  alternativas:
+    - "FreeRTOS"
+    - "VxWorks, da Wind River"
+    - "µC/OS-II"
+    - "Linux com patches de tempo real"
+  resposta: 1
+  explicacao: |
+    O Pathfinder usava o VxWorks. O mutex envolvido tinha a opção de herança de prioridade desligada; a correção foi ligá-la, alterando a configuração em voo. O FreeRTOS surgiu anos depois.
+  fonte: "Glenn E. Reeves, What really happened on Mars? (1997), publicado por Mike Jones em What really happened on Mars Rover Pathfinder"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T06-006
+  objetivo: O2
+  tipo: multipla
+  dificuldade: 2
+  bloom: lembrar
+  enunciado: |
+    Marque as afirmações corretas sobre o caso Mars Pathfinder, segundo o relato de Glenn Reeves.
+  alternativas:
+    - "A tarefa de coleta meteorológica, de baixa prioridade, tomava o mutex do barramento de informações para publicar seus dados"
+    - "A tarefa de comunicações, de prioridade média e longa duração, não usava o mutex, mas preemptava a tarefa meteorológica"
+    - "A correção foi ligar a herança de prioridade do mutex, alterando a configuração no sistema em voo"
+    - "A correção foi aumentar o tempo do watchdog, para que ele tolerasse a demora da tarefa do barramento"
+  resposta: [0, 1, 2]
+  explicacao: |
+    A tarefa de alta prioridade (gerência do barramento) esperava o mutex com a meteorológica, que era preemptada pela de comunicações. A verificação periódica detectava o atraso e reiniciava o sistema. A correção foi ligar a herança no mutex (pelo interpretador de C a bordo), não esconder o sintoma no watchdog.
+  fonte: "Glenn E. Reeves, What really happened on Mars? (1997); Mike Jones, What really happened on Mars Rover Pathfinder"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T06-007
+  objetivo: O2
+  tipo: unica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    No Pathfinder, qual era o sintoma visível da inversão de prioridade e por que ele apareceu dessa forma?
+  alternativas:
+    - "Reinicializações completas do sistema, porque um mecanismo de verificação periódica percebia que a tarefa do barramento não completara o ciclo a tempo e reiniciava o computador"
+    - "Um travamento permanente da sonda, porque as tarefas entraram em deadlock e nada mais rodava"
+    - "Dados corrompidos no barramento, porque duas tarefas escreviam ao mesmo tempo sem mutex"
+    - "Esgotamento do heap, porque as tarefas eram criadas e apagadas repetidamente"
+  resposta: 0
+  explicacao: |
+    O mutex funcionava (não havia escrita simultânea) e não havia ciclo de espera (não era deadlock). A tarefa de alta prioridade atrasava; a verificação de que o ciclo do barramento tinha terminado (descrita como watchdog no resumo de Mike Jones) detectava o atraso e reiniciava o sistema, que voltava a funcionar até a próxima ocorrência.
+  fonte: "Glenn E. Reeves, What really happened on Mars? (1997); Mike Jones, What really happened on Mars Rover Pathfinder"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T06-008
+  objetivo: O3
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    No FreeRTOS, que objetos aplicam herança de prioridade?
+  alternativas:
+    - "Todos os semáforos, inclusive binários e contadores"
+    - "Só as filas"
+    - "Só os semáforos binários criados com xSemaphoreCreateBinary"
+    - "Os mutexes, comuns e recursivos"
+  resposta: 3
+  explicacao: |
+    A herança é exclusiva dos mutexes (xSemaphoreCreateMutex e xSemaphoreCreateRecursiveMutex), porque só eles têm dono. Semáforos binários e contadores não têm dono e não aplicam herança.
+  fonte: "Mastering the FreeRTOS Real Time Kernel, Resource Management, seções Mutexes (and Binary Semaphores) e Priority Inheritance"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T06-009
+  objetivo: O3
+  tipo: unica
+  dificuldade: 2
+  bloom: analisar
+  enunciado: |
+    No FreeRTOS, a tarefa L (prioridade base 1) segura os mutexes A e B. H (prioridade 4) bloqueia esperando A, e L herda a prioridade 4. L então devolve A, e H o recebe. Qual é a prioridade de L logo depois, enquanto ainda segura B e ninguém espera B?
+  alternativas:
+    - "1, porque devolveu o mutex que causou a herança"
+    - "4: a prioridade herdada só é devolvida quando L liberar todos os mutexes que segura"
+    - "2, a média entre a base e a herdada"
+    - "0, porque passa a ser tratada como ociosa"
+  resposta: 1
+  explicacao: |
+    A implementação do FreeRTOS conta os mutexes seguros pela tarefa (uxMutexesHeld) e só restaura a prioridade base quando a contagem volta a zero. É uma simplificação para economizar memória e ciclos: L pode ficar mais tempo do que o necessário na prioridade alta.
+  fonte: "FreeRTOS-Kernel, tasks.c (xTaskPriorityDisinherit e uxMutexesHeld); Mastering the FreeRTOS Real Time Kernel, Resource Management, seção Priority Inheritance"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T06-010
+  objetivo: O3
+  tipo: multipla
+  dificuldade: 3
+  bloom: avaliar
+  enunciado: |
+    Compare a herança de prioridade com o protocolo de teto de prioridade imediato. Marque as afirmações corretas.
+  alternativas:
+    - "No teto imediato, a tarefa sobe para o teto do recurso assim que o toma, haja ou não disputa"
+    - "No teto imediato, uma tarefa é bloqueada no máximo por uma seção crítica de tarefa de menor prioridade"
+    - "A herança de prioridade exige conhecer de antemão todas as tarefas que usam cada recurso"
+    - "O teto imediato evita deadlock entre recursos geridos por ele"
+  resposta: [0, 1, 3]
+  explicacao: |
+    O teto é a maior prioridade entre os usuários do recurso, e por isso é o teto (não a herança) que exige conhecer os usuários de antemão. Ao tomar o recurso a tarefa já sobe ao teto, o que limita o bloqueio a uma seção crítica e impede que alguém que disputa o recurso rode enquanto ele está tomado, evitando deadlock. A herança só age quando há disputa.
+  fonte: "Sha, Rajkumar e Lehoczky, Priority Inheritance Protocols, 1990; Giorgio Buttazzo, Hard Real-Time Computing Systems, capítulo Resource Access Protocols"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T06-011
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Quatro tarefas, da mais para a menos prioritária: τ₁, τ₂, τ₃, τ₄. O recurso R1 é usado por τ₁ (seção crítica de 0,5 ms) e por τ₃ (1,2 ms). O recurso R2 é usado por τ₂ (0,7 ms) e por τ₄ (2,0 ms). Não há seções aninhadas. Com o protocolo de **teto imediato**, qual é o bloqueio máximo B₂ de τ₂, em ms? Responda com uma casa decimal.
+  resposta: {valor: 2.0, unidade: "ms", tolerancia: 0.01}
+  explicacao: |
+    Teto de R1 = prioridade de τ₁; teto de R2 = prioridade de τ₂. Com teto imediato, τ₂ pode ser bloqueada por uma única seção crítica de tarefa menos prioritária num recurso de teto maior ou igual à sua prioridade: τ₃ em R1 (1,2 ms, teto de τ₁) ou τ₄ em R2 (2,0 ms, teto de τ₂). B₂ = máx(1,2; 2,0) = 2,0 ms. Com herança, τ₂ poderia ser bloqueada uma vez por cada tarefa menos prioritária: 1,2 + 2,0 = 3,2 ms.
+  fonte: "Sha, Rajkumar e Lehoczky, Priority Inheritance Protocols, 1990; Giorgio Buttazzo, Hard Real-Time Computing Systems, capítulo Resource Access Protocols"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T06-012
+  objetivo: O4
+  tipo: multipla
+  dificuldade: 2
+  bloom: avaliar
+  enunciado: |
+    Marque as decisões de projeto que reduzem o bloqueio de tarefas de alta prioridade por recursos compartilhados num firmware FreeRTOS.
+  alternativas:
+    - "Copiar os dados para variáveis locais dentro do mutex e processá-los fora dele"
+    - "Trocar mutexes por semáforos binários, que são mais leves"
+    - "Pôr o recurso sob uma tarefa guardiã que recebe pedidos por fila"
+    - "Evitar que uma tarefa segure dois mutexes ao mesmo tempo"
+  resposta: [0, 2, 3]
+  explicacao: |
+    Seções críticas curtas reduzem B diretamente; a guardiã elimina a disputa; segurar um mutex por vez evita cadeias de bloqueio e a devolução tardia da prioridade herdada no FreeRTOS. Semáforos binários não têm herança e reabrem a inversão ilimitada.
+  fonte: "Mastering the FreeRTOS Real Time Kernel, Resource Management, seções Priority Inheritance e Gatekeeper Tasks"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T06-013
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Prioridades RMS: τ₁ (C = 1 ms, T = 4 ms) e τ₂ (C = 2 ms, T = 8 ms). τ₂ divide um mutex com uma tarefa de prioridade menor, cuja seção crítica dura até 1,5 ms (B₂ = 1,5 ms). Pela iteração R = C + B + Σ⌈R/Tⱼ⌉·Cⱼ, qual é R₂ em ms? Responda com uma casa decimal.
+  resposta: {valor: 5.5, unidade: "ms", tolerancia: 0.01}
+  explicacao: |
+    R⁰ = 2 + 1,5 + 1 = 4,5 → 2 + 1,5 + ⌈4,5/4⌉·1 = 2 + 1,5 + 2 = 5,5 → 2 + 1,5 + ⌈5,5/4⌉·1 = 5,5 (convergiu). R₂ = 5,5 ms ≤ 8 ms. Sem o bloqueio, seria 3 ms.
+  fonte: "Audsley, Burns, Richardson, Tindell e Wellings, Applying New Scheduling Theory to Static Priority Pre-emptive Scheduling, 1993"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T06-014
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Prioridades RMS: τ₁ (C = 1 ms, T = 5 ms) e τ₂ (C = 2 ms, T = 12 ms), mais duas tarefas de menor prioridade, τ₃ e τ₄. Com **herança de prioridade**, τ₂ pode ser bloqueada uma vez por τ₃ (seção crítica de 1,2 ms) e uma vez por τ₄ (seção crítica de 2,0 ms), em recursos diferentes. Qual é R₂, em ms, pela análise de tempo de resposta? Responda com uma casa decimal.
+  resposta: {valor: 7.2, unidade: "ms", tolerancia: 0.01}
+  explicacao: |
+    Com herança, B₂ = 1,2 + 2,0 = 3,2 ms (uma seção de cada tarefa menos prioritária). R⁰ = 2 + 3,2 + 1 = 6,2 → 2 + 3,2 + ⌈6,2/5⌉·1 = 7,2 → 2 + 3,2 + ⌈7,2/5⌉·1 = 7,2 (convergiu). R₂ = 7,2 ms ≤ 12 ms. Com teto imediato, B₂ seria 2,0 ms e R₂ = 5,0 ms.
+  fonte: "Sha, Rajkumar e Lehoczky, Priority Inheritance Protocols, 1990; Audsley et al., Applying New Scheduling Theory to Static Priority Pre-emptive Scheduling, 1993"
+  origem: ia
+  revisao: rascunho

@@ -1,49 +1,141 @@
 id: M1.7
 ato: A1
 nome: "RTOS"
+missao: "Na Vila da Forja, uma só bigorna já não dá conta de tantas encomendas: organize a guilda de tarefas do FreeRTOS, ensine cada ferreiro a esperar a vez pela prioridade, a passar recados por filas e a dividir as ferramentas sem travar a oficina, e prove com as contas de tempo real que nenhum prazo da forja será perdido."
 horas: 150
 trilha: firmware
 ordem: 14
 requer: ["M1.4|M1.6"]
 tags_chefe: []
+# Ordem didática (a da grade, mantida): por que RTOS (o limite do superloop e o primeiro projeto FreeRTOS no simulador POSIX: o ambiente de todos os exemplos do módulo) → tarefas e estados (o objeto central; a troca de contexto por PendSV e PSP fecha o que o M1.3 e o M1.4 só apresentaram) → escalonamento e prioridades (com as tarefas e os estados na mão, a regra de quem roda, o tick, o tickless e a análise de tempo real RMS e de tempo de resposta, que todos os tópicos seguintes usam) → filas (o primeiro objeto de comunicação e a ponte ISR → tarefa com FromISR e configMAX_SYSCALL_INTERRUPT_PRIORITY, que reaparece em semáforos e notificações) → semáforos e mutex (sincronização, condição de corrida, seção crítica e deadlock, sobre a mesma infraestrutura das filas) → inversão de prioridade (só faz sentido depois do mutex: Pathfinder, herança e teto, e o termo de bloqueio que completa a análise do T03) → timers de software e eventos (a tarefa de serviço dos timers é uma tarefa com fila; event groups e notificações são as alternativas leves aos objetos já vistos) → heap e stack (com todos os objetos criados, dá para medir quanto cada um custa e dimensionar pilhas e heap) → projeto com 4 tarefas (elite: junta tudo, mede com runtime stats e trace e provoca as falhas estudadas) → Zephyr por último (a comparação com um segundo RTOS só rende depois de dominar o primeiro; devicetree e Kconfig preparam o M3 e o M4).
 topicos:
   - id: M1.7.T01
     nome: "Por que RTOS: superloop × escalonador"
     tipo: comum
     peso: 1
+    objetivos:
+      - id: O1
+        texto: "Comparar o superloop, o superloop com interrupções (foreground/background) e as máquinas de estado cooperativas quanto a latência, determinismo e acoplamento, e calcular o pior tempo de resposta de um superloop"
+      - id: O2
+        texto: "Explicar o que um kernel de tempo real oferece (tarefas, escalonador, tick, objetos de comunicação e sincronização) e distinguir sistemas de tempo real rígido, firme e brando"
+      - id: O3
+        texto: "Decidir quando um RTOS compensa (custo em RAM, flash e CPU, complexidade, certificação) e comparar FreeRTOS, Zephyr, µC/OS-III, ThreadX e a camada CMSIS-RTOS2"
+      - id: O4
+        texto: "Montar e executar um projeto FreeRTOS mínimo (FreeRTOSConfig.h, arquivos do kernel, port, heap, xTaskCreate e vTaskStartScheduler) no simulador POSIX do Linux e numa placa Cortex-M"
   - id: M1.7.T02
     nome: "Tarefas e estados"
     tipo: comum
     peso: 1
+    objetivos:
+      - id: O1
+        texto: "Criar e apagar tarefas com xTaskCreate, xTaskCreateStatic e vTaskDelete, passando parâmetros, e explicar o TCB, a pilha própria de cada tarefa e o tamanho de pilha em palavras"
+      - id: O2
+        texto: "Descrever os estados Running, Ready, Blocked e Suspended e as transições causadas por vTaskDelay, objetos do kernel, vTaskSuspend e vTaskResume"
+      - id: O3
+        texto: "Implementar tarefas periódicas sem deriva com xTaskDelayUntil e explicar a tarefa ociosa, o idle hook e o efeito de uma tarefa que nunca bloqueia"
+      - id: O4
+        texto: "Explicar a troca de contexto no Cortex-M (PendSV na menor prioridade, PSP para as tarefas e MSP para o kernel, registradores salvos pelo hardware e pelo software, SVC para iniciar a primeira tarefa)"
   - id: M1.7.T03
     nome: "Escalonamento preemptivo e prioridades"
     tipo: comum
     peso: 1
+    objetivos:
+      - id: O1
+        texto: "Prever a ordem de execução no escalonamento preemptivo de prioridade fixa do FreeRTOS, com e sem time slicing, e no modo cooperativo"
+      - id: O2
+        texto: "Configurar o tick (configTICK_RATE_HZ, pdMS_TO_TICKS) e o modo tickless (configUSE_TICKLESS_IDLE), calculando resolução, sobrecarga do tick e duração dos atrasos"
+      - id: O3
+        texto: "Atribuir prioridades por taxa monotônica (RMS) e aplicar o teste de utilização de Liu e Layland, n(2^(1/n) − 1), a um conjunto de tarefas periódicas"
+      - id: O4
+        texto: "Calcular o tempo de resposta no pior caso pela análise iterativa R = C + B + Σ⌈R/Tj⌉·Cj e explicar como o WCET é estimado e medido"
   - id: M1.7.T04
     nome: "Filas"
     tipo: comum
     peso: 1
+    objetivos:
+      - id: O1
+        texto: "Usar filas do FreeRTOS (xQueueCreate, xQueueSend, xQueueSendToFront, xQueueReceive, xQueuePeek, xQueueOverwrite) com tempos de bloqueio, entendendo a cópia por valor"
+      - id: O2
+        texto: "Projetar a comunicação por fila: dimensionar comprimento e tamanho do item, enviar ponteiros com posse definida, identificar a origem das mensagens e escutar várias filas com queue sets"
+      - id: O3
+        texto: "Passar dados de uma ISR para uma tarefa com as funções FromISR, pxHigherPriorityTaskWoken e portYIELD_FROM_ISR, aplicando o processamento adiado de interrupções"
+      - id: O4
+        texto: "Configurar configKERNEL_INTERRUPT_PRIORITY e configMAX_SYSCALL_INTERRUPT_PRIORITY no Cortex-M e dizer quais ISRs podem chamar a API do kernel e por quê"
   - id: M1.7.T05
     nome: "Semáforos e mutex"
     tipo: comum
     peso: 1
+    objetivos:
+      - id: O1
+        texto: "Usar semáforos binários e contadores (xSemaphoreCreateBinary, xSemaphoreCreateCounting, xSemaphoreTake, xSemaphoreGive e xSemaphoreGiveFromISR) para sincronizar tarefas e interrupções e contar eventos ou recursos"
+      - id: O2
+        texto: "Identificar condições de corrida e proteger dados compartilhados com seção crítica (taskENTER_CRITICAL), suspensão do escalonador (vTaskSuspendAll) ou mutex, escolhendo o mecanismo pelo custo"
+      - id: O3
+        texto: "Usar mutexes, mutexes recursivos e tarefas guardiãs (gatekeeper) e distinguir mutex de semáforo binário quanto a posse, herança de prioridade e uso em ISR"
+      - id: O4
+        texto: "Reconhecer e prevenir deadlock (as quatro condições de Coffman, ordem global de aquisição, tempo limite no xSemaphoreTake) e diagnosticá-lo pelo estado das tarefas"
   - id: M1.7.T06
     nome: "Inversão de prioridade"
     tipo: comum
     peso: 1
+    objetivos:
+      - id: O1
+        texto: "Explicar a inversão de prioridade limitada e ilimitada com uma linha do tempo de três tarefas e calcular por quanto tempo a tarefa de alta prioridade fica bloqueada"
+      - id: O2
+        texto: "Analisar o caso Mars Pathfinder (barramento de informações, tarefa de meteorologia, reinicializações do sistema, correção pela herança de prioridade no VxWorks) a partir do relato de Glenn Reeves"
+      - id: O3
+        texto: "Explicar a herança de prioridade do mutex do FreeRTOS e seus limites (mutexes aninhados, cadeias de bloqueio, retorno da prioridade) e compará-la ao protocolo de teto de prioridade"
+      - id: O4
+        texto: "Incluir o bloqueio por recursos compartilhados na análise de tempo de resposta e projetar o sistema para limitá-lo (seções curtas, tarefas guardiãs, mutex em vez de semáforo binário)"
   - id: M1.7.T07
     nome: "Timers de software e eventos"
     tipo: comum
     peso: 1
+    objetivos:
+      - id: O1
+        texto: "Criar timers de software one-shot e auto-reload (xTimerCreate, xTimerStart, xTimerReset, xTimerChangePeriod) e explicar a tarefa de serviço dos timers, a fila de comandos e as regras do callback"
+      - id: O2
+        texto: "Sincronizar tarefas com event groups (xEventGroupSetBits, xEventGroupWaitBits esperando um ou todos os bits, xEventGroupSync) e calcular quantos bits de evento estão disponíveis"
+      - id: O3
+        texto: "Usar task notifications como semáforo leve, valor de 32 bits e conjunto de bits (xTaskNotifyGive, ulTaskNotifyTake, xTaskNotify, xTaskNotifyWait) e conhecer as limitações delas"
+      - id: O4
+        texto: "Escolher entre timer de software, timer de hardware, tarefa periódica, fila, semáforo, event group e notificação para cada problema de sincronização pelo custo em RAM, tempo e flexibilidade"
   - id: M1.7.T08
     nome: "Heap e stack por tarefa"
     tipo: comum
     peso: 1
+    objetivos:
+      - id: O1
+        texto: "Comparar os esquemas heap_1 a heap_5 do FreeRTOS (liberação, fragmentação, determinismo, regiões não contíguas) e escolher um pelo perfil do projeto"
+      - id: O2
+        texto: "Usar a alocação estática (configSUPPORT_STATIC_ALLOCATION, xTaskCreateStatic, vApplicationGetIdleTaskMemory) e acompanhar o heap com xPortGetFreeHeapSize, xPortGetMinimumEverFreeHeapSize e o malloc failed hook"
+      - id: O3
+        texto: "Dimensionar a pilha de uma tarefa (contexto salvo, cadeia de chamadas, variáveis locais, printf, ponto flutuante, ISRs) e converter entre palavras e bytes"
+      - id: O4
+        texto: "Detectar estouro de pilha com configCHECK_FOR_STACK_OVERFLOW (métodos 1 e 2), vApplicationStackOverflowHook e uxTaskGetStackHighWaterMark e ajustar a pilha por medição"
   - id: M1.7.T09
     nome: "Projeto FreeRTOS com 4 tarefas"
     tipo: elite
     peso: 2
+    objetivos:
+      - id: O1
+        texto: "Projetar uma aplicação de 4 tarefas (aquisição, processamento, comunicação e supervisão) com prioridades, períodos, filas e mutex justificados por análise de tempo real"
+      - id: O2
+        texto: "Implementar o projeto em FreeRTOS com processamento adiado de interrupção, filas, mutex, timer de software e supervisão por watchdog, no simulador POSIX e numa placa Cortex-M"
+      - id: O3
+        texto: "Medir o comportamento com runtime stats (vTaskGetRunTimeStats), vTaskList, high water mark e trace (Tracealyzer, SystemView ou macros de trace) e confrontar as medidas com a análise"
+      - id: O4
+        texto: "Provocar e diagnosticar falhas de propósito (inversão de prioridade, estouro de pilha, deadlock, fila cheia e inanição) e documentar causa, sintoma e correção de cada uma"
   - id: M1.7.T10
     nome: "Zephyr (introdução)"
     tipo: comum
     peso: 1
+    objetivos:
+      - id: O1
+        texto: "Descrever a organização do Zephyr (kernel, drivers, subsistemas, west e CMake) e comparar suas threads e prioridades cooperativas e preemptivas com as tarefas do FreeRTOS"
+      - id: O2
+        texto: "Ler e escrever trechos de devicetree (nós, compatible, reg, status, aliases, overlays) e acessar dispositivos pelas macros DT_ALIAS, DEVICE_DT_GET e GPIO_DT_SPEC_GET"
+      - id: O3
+        texto: "Configurar o build com Kconfig (prj.conf, menuconfig, símbolos CONFIG_) e separar o papel do devicetree (descrição do hardware) do papel do Kconfig (escolha do software)"
+      - id: O4
+        texto: "Escrever uma aplicação Zephyr com threads (K_THREAD_DEFINE, k_msleep), k_msgq, k_sem, k_mutex e k_timer e compilá-la com west build para native_sim ou qemu_cortex_m3"

@@ -1,0 +1,235 @@
+- id: Q-M1.7.T07-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Em que contexto o FreeRTOS executa as funções de callback dos timers de software?
+  alternativas:
+    - "Na rotina de interrupção do tick"
+    - "Na tarefa que criou o timer"
+    - "Na tarefa de serviço dos timers (daemon), criada pelo kernel quando configUSE_TIMERS = 1"
+    - "Na tarefa ociosa"
+  resposta: 2
+  explicacao: |
+    Os callbacks rodam, um de cada vez, na tarefa de serviço dos timers, com a prioridade configTIMER_TASK_PRIORITY. Não rodam em ISR, por isso podem usar a API comum, mas não devem bloquear.
+  fonte: "Mastering the FreeRTOS Real Time Kernel, Software Timer Management, seção The Context of a Software Timer (The RTOS Daemon (Timer Service) Task)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T07-002
+  objetivo: O1
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: `xTimerStart(xTimer, 0)` altera o estado do timer diretamente, no contexto da tarefa que chama, e por isso nunca falha.
+  resposta: false
+  explicacao: |
+    As funções de controle de timer enviam um comando pela fila de comandos dos timers para a tarefa de serviço. Se a fila estiver cheia e o tempo de bloqueio for 0, a chamada falha e devolve pdFAIL. É por isso que essas funções têm parâmetro de tempo de bloqueio.
+  fonte: "Mastering the FreeRTOS Real Time Kernel, Software Timer Management, seção The Context of a Software Timer (The Timer Command Queue)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T07-003
+  objetivo: O1
+  tipo: unica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    O callback de um timer de software de 10 ms chama `vTaskDelay(pdMS_TO_TICKS(100))` para esperar um sensor. O que acontece com os outros timers do sistema?
+  alternativas:
+    - "Nada: cada timer tem sua própria tarefa"
+    - "O kernel detecta o bloqueio e transfere os outros callbacks para a tarefa ociosa"
+    - "O vTaskDelay é ignorado dentro de callbacks"
+    - "Nenhum outro callback roda durante esses 100 ms, porque a tarefa de serviço, que executa todos, está bloqueada"
+  resposta: 3
+  explicacao: |
+    Todos os callbacks rodam na mesma tarefa de serviço. Se um deles bloqueia, todos os outros timers atrasam e os comandos se acumulam na fila. Callbacks devem ser curtos e nunca bloquear; trabalho que precisa esperar vai para uma tarefa.
+  fonte: "Mastering the FreeRTOS Real Time Kernel, Software Timer Management, seção Software Timer Callback Functions"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T07-004
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um timer one-shot de 300 ms é iniciado em t = 0. Em t = 200 ms, uma tecla provoca `xTimerReset` nesse timer, e nada mais acontece. Desprezando o atraso da tarefa de serviço, em que instante, em ms, o callback executa? Responda com um número inteiro.
+  resposta: {valor: 500, unidade: "ms", tolerancia: 0}
+  explicacao: |
+    xTimerReset reinicia a contagem a partir do instante do reset: 200 + 300 = 500 ms. No simulador POSIX, o mesmo cenário apagou a luz de fundo no tick 501 (o reset foi processado no tick 201).
+  fonte: "Mastering the FreeRTOS Real Time Kernel, Software Timer Management, seção Resetting a Software Timer"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T07-005
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Com o tipo de tick de 32 bits (`configTICK_TYPE_WIDTH_IN_BITS = TICK_TYPE_WIDTH_32_BITS`), quantos bits de evento um event group do FreeRTOS oferece à aplicação? Responda com um número inteiro.
+  resposta: {valor: 24, unidade: "bits", tolerancia: 0}
+  explicacao: |
+    EventBits_t tem a largura do tick, e os 8 bits altos são reservados para controle do kernel: 32 − 8 = 24. Com tick de 16 bits sobram 8; com 64 bits, 56.
+  fonte: "Mastering the FreeRTOS Real Time Kernel, Event Groups, seção Characteristics of an Event Group; FreeRTOS-Kernel, include/event_groups.h"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T07-006
+  objetivo: O2
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Uma tarefa chama `xEventGroupWaitBits(g, BIT_WIFI | BIT_HORA, pdFALSE, pdTRUE, pdMS_TO_TICKS(5000))`. Só `BIT_WIFI` é ligado, e `BIT_HORA` nunca. O que acontece?
+  alternativas:
+    - "A tarefa acorda assim que BIT_WIFI é ligado"
+    - "A tarefa fica bloqueada até esgotar os 5000 ms e então retorna com o valor dos bits, em que BIT_HORA está desligado"
+    - "A tarefa fica bloqueada para sempre"
+    - "A chamada falha na hora, porque um dos bits ainda não existe"
+  resposta: 1
+  explicacao: |
+    Com xWaitForAllBits = pdTRUE, a condição é o E lógico: os dois bits. Como BIT_HORA não chega, a espera termina pelo tempo limite, e o valor devolvido mostra quais bits estavam ligados. Por isso o retorno sempre deve ser conferido.
+  fonte: "Mastering the FreeRTOS Real Time Kernel, Event Groups, seção Event Management Using Event Groups (xEventGroupWaitBits)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T07-007
+  objetivo: O2
+  tipo: multipla
+  dificuldade: 3
+  bloom: entender
+  enunciado: |
+    Marque as afirmações corretas sobre os event groups do FreeRTOS.
+  alternativas:
+    - "Um único xEventGroupSetBits pode desbloquear várias tarefas que esperam o mesmo grupo"
+    - "xEventGroupSetBitsFromISR adia a operação para a tarefa de serviço dos timers e pode falhar se a fila de comandos estiver cheia"
+    - "xEventGroupSync liga o bit da tarefa e a bloqueia até que todos os bits das participantes estejam ligados"
+    - "Uma tarefa que espera um event group recebe uma cópia de um dado de até 32 bytes enviado com os bits"
+  resposta: [0, 1, 2]
+  explicacao: |
+    Event groups fazem broadcast: todas as tarefas cuja condição foi satisfeita desbloqueiam. Como isso não tem duração limitada, a versão FromISR é adiada para a tarefa de serviço. xEventGroupSync implementa um ponto de encontro. Event groups não levam dados, só bits.
+  fonte: "Mastering the FreeRTOS Real Time Kernel, Event Groups, seções Characteristics of an Event Group, Event Management Using Event Groups e Task Synchronization Using an Event Group"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T07-008
+  objetivo: O3
+  tipo: vf
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: três tarefas podem ficar bloqueadas esperando a mesma notificação de tarefa, e uma única chamada a `xTaskNotifyGive` acorda as três.
+  resposta: false
+  explicacao: |
+    A notificação é enviada diretamente a uma tarefa, pelo handle dela, e tem um único receptor. Para avisar várias tarefas de uma vez, use um event group.
+  fonte: "Mastering the FreeRTOS Real Time Kernel, Task Notifications, seção Benefits and Limitations of Task Notifications"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T07-009
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Uma ISR chama `vTaskNotifyGiveFromISR` três vezes antes de a tarefa rodar. A tarefa então chama `ulTaskNotifyTake(pdFALSE, 0)` duas vezes seguidas. Que valor a **segunda** chamada devolve? Responda com um número inteiro.
+  resposta: {valor: 2, unidade: "contagem", tolerancia: 0}
+  explicacao: |
+    Os três Give levam o valor a 3. ulTaskNotifyTake devolve o valor antes de mexer nele; com pdFALSE, decrementa 1. A primeira chamada devolve 3 (deixa 2); a segunda devolve 2 (deixa 1). No simulador POSIX, o mesmo teste devolveu 3 e depois, com pdTRUE, 2.
+  fonte: "FreeRTOS Reference Manual, ulTaskNotifyTake(); Mastering the FreeRTOS Real Time Kernel, Task Notifications, seção Using Task Notifications"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T07-010
+  objetivo: O3
+  tipo: multipla
+  dificuldade: 3
+  bloom: avaliar
+  enunciado: |
+    Marque as limitações reais das notificações de tarefa do FreeRTOS.
+  alternativas:
+    - "Não é possível enviar uma notificação para uma ISR, só para tarefas"
+    - "Cada posição guarda um único valor de 32 bits: valores que chegam mais rápido que o consumo podem ser sobrescritos ou recusados"
+    - "O remetente não pode bloquear esperando que o receptor consuma a notificação anterior"
+    - "Não podem ser enviadas de dentro de uma ISR"
+  resposta: [0, 1, 2]
+  explicacao: |
+    O destino é sempre uma tarefa, não há armazenamento além do valor de 32 bits (e do estado), e não existe o equivalente a 'fila cheia' que bloqueie o remetente. Enviar de ISR é possível e comum, com vTaskNotifyGiveFromISR e xTaskNotifyFromISR.
+  fonte: "Mastering the FreeRTOS Real Time Kernel, Task Notifications, seção Benefits and Limitations of Task Notifications"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T07-011
+  objetivo: O3
+  tipo: unica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    A tarefa P envia leituras à tarefa C por notificação: `xTaskNotify(hC, leitura, eSetValueWithoutOverwrite)`. C demora a rodar, e P envia 111 e depois 222 antes de C chamar `xTaskNotifyWait`. O que C recebe e o que P vê?
+  alternativas:
+    - "C recebe 222; as duas chamadas de P devolvem pdPASS"
+    - "C recebe 333, a soma; as duas chamadas devolvem pdPASS"
+    - "C recebe 111; a segunda chamada de P devolve pdFAIL porque havia um valor pendente, e o 222 se perde"
+    - "C recebe 111 e depois 222, porque as notificações formam uma fila"
+  resposta: 2
+  explicacao: |
+    eSetValueWithoutOverwrite só grava se não houver notificação pendente; caso contrário devolve pdFAIL e mantém o valor antigo. Com eSetValueWithOverwrite, C receberia 222 (o último). Notificações não formam fila: para não perder leituras, use uma fila. No simulador POSIX, a chamada sem sobrescrita com valor pendente devolveu 0 (pdFAIL).
+  fonte: "FreeRTOS Reference Manual, xTaskNotify() (eNotifyAction); Mastering the FreeRTOS Real Time Kernel, Task Notifications, seção Using Task Notifications"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T07-012
+  objetivo: O4
+  tipo: multipla
+  dificuldade: 2
+  bloom: avaliar
+  enunciado: |
+    Marque as associações adequadas entre problema e mecanismo do FreeRTOS.
+  alternativas:
+    - "Apagar o display 30 s depois da última tecla: timer de software one-shot reiniciado com xTimerReset a cada tecla"
+    - "Fim de cada bloco do DMA do ADC avisando a tarefa de filtro, sem perder blocos: notificação usada como contador"
+    - "Tarefa de rede que só deve publicar com 'sensor calibrado E hora sincronizada': event group esperando todos os bits"
+    - "Duas tarefas escrevendo na mesma UART: event group com um bit por tarefa"
+  resposta: [0, 1, 2]
+  explicacao: |
+    Atraso reiniciável é o caso típico de timer one-shot; aviso de ISR para uma tarefa, contando, é notificação como contador; combinação de condições é event group. Recurso compartilhado pede mutex ou tarefa guardiã, não bits de evento.
+  fonte: "Mastering the FreeRTOS Real Time Kernel, capítulos Software Timer Management, Event Groups, Task Notifications e Resource Management"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T07-013
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Num Cortex-M3, com a configuração do módulo, um semáforo ocupa 80 bytes, um timer de software 44 bytes e um event group 28 bytes. Um projeto usa 5 semáforos binários (um por ISR que avisa uma tarefa), 2 timers e 1 event group. Quantos bytes economiza ao trocar os 5 semáforos por notificações de tarefa, que já estão no TCB? Desconsidere o cabeçalho do heap. Responda com um número inteiro.
+  resposta: {valor: 400, unidade: "bytes", tolerancia: 0}
+  explicacao: |
+    5 × 80 = 400 bytes deixam de ser alocados. Os timers (2 × 44 = 88) e o event group (28) continuam. A troca só vale quando cada semáforo tem uma única tarefa receptora, que é o caso de ISR avisando uma tarefa.
+  fonte: "freertos.org, RTOS Task Notifications; tamanhos medidos com sizeof(StaticSemaphore_t), sizeof(StaticTimer_t) e sizeof(StaticEventGroup_t) no arm-none-eabi-gcc"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T07-014
+  objetivo: O4
+  tipo: unica
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Um firmware FreeRTOS com tick de 1 ms precisa amostrar um ADC a 20 kHz com variação de instante (jitter) menor que 5 µs e entregar blocos de 256 amostras a uma tarefa de filtro. Qual arquitetura atende?
+  alternativas:
+    - "Um timer de software auto-reload de 50 µs cujo callback lê o ADC"
+    - "Uma tarefa de prioridade máxima com xTaskDelayUntil de 50 µs"
+    - "Um timer de hardware disparando o ADC, DMA levando as amostras para um buffer duplo e uma notificação da ISR do DMA acordando a tarefa de filtro a cada bloco"
+    - "Um event group com um bit por amostra"
+  resposta: 2
+  explicacao: |
+    Timers de software e atrasos de tarefa têm resolução de um tick (1 ms) e jitter da ordem do tick; 50 µs nem é representável. O disparo por timer de hardware e o transporte por DMA dão precisão de clock de periférico, e a notificação adia o processamento para a tarefa uma vez por bloco (a cada 12,8 ms).
+  fonte: "Mastering the FreeRTOS Real Time Kernel, Software Timer Management e Interrupt Management (Deferred Interrupt Processing); ST, RM0368, ADC e DMA (revisão do M1.4)"
+  origem: ia
+  revisao: rascunho

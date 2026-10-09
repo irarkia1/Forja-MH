@@ -1,0 +1,240 @@
+- id: Q-M1.7.T04-001
+  objetivo: O1
+  tipo: vf
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Verdadeiro ou falso: `xQueueSend` copia os bytes do item para dentro da fila, de modo que o remetente pode reutilizar a variável logo depois da chamada.
+  resposta: true
+  explicacao: |
+    As filas do FreeRTOS trabalham por cópia: o item é copiado na escrita e de novo na leitura. Por isso uma variável local pode ser enviada e reutilizada. Quando se envia um ponteiro, é o ponteiro que é copiado, não os dados para onde ele aponta.
+  fonte: "Mastering the FreeRTOS Real Time Kernel, Queue Management, seção Characteristics of a Queue (Data Storage)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T04-002
+  objetivo: O1
+  tipo: unica
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    As tarefas X (prioridade 2), que começou a esperar primeiro, e Y (prioridade 3) estão bloqueadas em `xQueueReceive` na mesma fila vazia. Chega um item. Quem o recebe?
+  alternativas:
+    - "X, porque está esperando há mais tempo"
+    - "As duas recebem uma cópia"
+    - "Y, porque tem a maior prioridade"
+    - "Quem o escalonador sortear"
+  resposta: 2
+  explicacao: |
+    Quando várias tarefas esperam a mesma fila, a de maior prioridade é desbloqueada. O tempo de espera só desempata tarefas de mesma prioridade. Um item é retirado por uma única tarefa.
+  fonte: "Mastering the FreeRTOS Real Time Kernel, Queue Management, seção Characteristics of a Queue (Blocking on Queue Reads)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T04-003
+  objetivo: O1
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Uma fila de 1 item de `int32_t` é usada como caixa postal. Uma tarefa chama `xQueueOverwrite` com 10, depois com 20 e depois com 30. Em seguida, outra tarefa chama `xQueuePeek` duas vezes e depois `uxQueueMessagesWaiting`. O que ela obtém?
+  alternativas:
+    - "30, 30 e 1"
+    - "10, 20 e 0"
+    - "30, depois erro por fila vazia, e 0"
+    - "10, 10 e 3"
+  resposta: 0
+  explicacao: |
+    xQueueOverwrite substitui o item de uma fila de comprimento 1 e nunca bloqueia: fica só o 30. xQueuePeek lê sem retirar, então as duas leituras dão 30 e a fila continua com 1 item.
+  fonte: "Mastering the FreeRTOS Real Time Kernel, Queue Management, seção Using a Queue to Create a Mailbox"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T04-004
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Num Cortex-M3, a estrutura de controle de uma fila do FreeRTOS ocupa 80 bytes na configuração usada. Quantos bytes de heap consome `xQueueCreate(20, sizeof(Amostra_t))`, se `sizeof(Amostra_t)` é 16? Desconsidere o cabeçalho de alocação do heap. Responda com um número inteiro.
+  resposta: {valor: 400, unidade: "bytes", tolerancia: 0}
+  explicacao: |
+    A fila guarda os itens por cópia: 20 × 16 = 320 bytes de armazenamento, mais 80 bytes da estrutura = 400 bytes, alocados num único bloco do heap.
+  fonte: "FreeRTOS-Kernel, queue.c (xQueueGenericCreate); Mastering the FreeRTOS Real Time Kernel, Queue Management, seção Characteristics of a Queue"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T04-005
+  objetivo: O2
+  tipo: unica
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Uma tarefa consumidora recebe, por uma única fila, mensagens de três produtores diferentes e precisa saber quem enviou cada uma. Qual é a solução recomendada no livro do FreeRTOS?
+  alternativas:
+    - "Criar três filas e consultar uxQueueMessagesWaiting de cada uma em laço"
+    - "Usar o valor de retorno de xQueueReceive, que informa o remetente"
+    - "Enviar uma struct com um campo que identifica a origem junto com o dado"
+    - "Dar prioridades diferentes aos produtores, porque a fila ordena por prioridade do remetente"
+  resposta: 2
+  explicacao: |
+    A fila não registra o remetente. O padrão é incluir a origem (ou o tipo de evento) na própria mensagem, como a struct com eDataSource do livro. Varrer filas em laço desperdiça CPU, e a fila é FIFO, não ordenada por prioridade do remetente.
+  fonte: "Mastering the FreeRTOS Real Time Kernel, Queue Management, seção Receiving Data From Multiple Sources"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T04-006
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Uma ISR coloca numa fila cada byte recebido a 57 600 bit/s (10 bits por byte). A tarefa que retira os bytes pode ficar até 8 ms sem executar. Qual é o menor comprimento de fila, em bytes, que evita perda nesse intervalo? Responda com um número inteiro.
+  resposta: {valor: 47, unidade: "bytes", tolerancia: 0}
+  explicacao: |
+    Um byte a cada 10 / 57 600 s = 173,6 µs. 8 ms valem 8000 / 173,6 = 46,08 tempos de byte; numa janela de 8 ms podem terminar até ⌊46,08⌋ + 1 = 47 bytes (um logo no início da janela e mais 46 a cada 173,6 µs): o comprimento mínimo é 47. Na prática se arredonda para cima com margem (64) e se contam as perdas.
+  fonte: "Mastering the FreeRTOS Real Time Kernel, Interrupt Management, seção Using Queues within an Interrupt Service Routine"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T04-007
+  objetivo: O2
+  tipo: multipla
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Uma tarefa de rede envia quadros de 1500 bytes a uma tarefa de processamento por uma fila de ponteiros. Marque as práticas corretas.
+  alternativas:
+    - "Criar a fila com o tamanho do item igual a sizeof(uint8_t *), e não 1500"
+    - "Depois de enviar o ponteiro com sucesso, o remetente deixa de ler ou escrever o buffer; quem recebeu passa a ser o dono"
+    - "Se o envio falhar por fila cheia, o remetente continua dono do buffer e deve liberá-lo ou reaproveitá-lo"
+    - "Reaproveitar o mesmo buffer estático para o próximo quadro logo depois do envio, já que a fila guardou uma cópia"
+  resposta: [0, 1, 2]
+  explicacao: |
+    A fila copia só o ponteiro (4 bytes num Cortex-M). Os dados continuam no buffer, então é preciso uma regra de posse: entregou, não toca mais; não entregou, a posse continua com o remetente. Reaproveitar o buffer logo depois do envio sobrescreve o quadro que o receptor ainda vai ler.
+  fonte: "Mastering the FreeRTOS Real Time Kernel, Queue Management, seção Working with Large or Variable Sized Data"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T04-008
+  objetivo: O3
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Dentro de uma rotina de interrupção, qual chamada é a adequada para pôr um item numa fila do FreeRTOS?
+  alternativas:
+    - "xQueueSendFromISR, que nunca bloqueia e informa se uma tarefa de prioridade maior foi acordada"
+    - "xQueueSend com portMAX_DELAY, para garantir a entrega"
+    - "xQueueSend com tempo de bloqueio zero"
+    - "Nenhuma: ISRs só podem escrever em variáveis volatile"
+  resposta: 0
+  explicacao: |
+    As funções sem o sufixo FromISR podem bloquear e supõem um contexto de tarefa. Dentro de ISR use as versões FromISR, que não bloqueiam e devolvem, em pxHigherPriorityTaskWoken, se é preciso trocar de contexto ao sair.
+  fonte: "Mastering the FreeRTOS Real Time Kernel, Interrupt Management, seção Using the FreeRTOS API from an ISR (The Interrupt Safe API)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T04-009
+  objetivo: O3
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: se uma ISR chama `xQueueSendFromISR` mas omite o `portYIELD_FROM_ISR(xHigherPriorityTaskWoken)` no final, o item enviado é perdido.
+  resposta: false
+  explicacao: |
+    O item está na fila e a tarefa já foi movida para Ready. Sem o portYIELD_FROM_ISR, a troca de contexto só acontece no próximo tick ou na próxima chamada que provoque escalonamento: a consequência é latência maior, de até um período de tick, não perda de dados.
+  fonte: "Mastering the FreeRTOS Real Time Kernel, Interrupt Management, seções The xHigherPriorityTaskWoken Parameter e The portYIELD_FROM_ISR() and portEND_SWITCHING_ISR() Macros"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T04-010
+  objetivo: O3
+  tipo: multipla
+  dificuldade: 3
+  bloom: entender
+  enunciado: |
+    Marque as vantagens do processamento adiado de interrupções (a ISR entrega o dado e uma tarefa de alta prioridade o processa).
+  alternativas:
+    - "A ISR fica curta, o que reduz a latência das outras interrupções"
+    - "O processamento pode usar toda a API do kernel, inclusive bloquear e usar mutex"
+    - "O processamento entra na análise de tempo real como uma tarefa comum, com prioridade escolhida pelo projetista"
+    - "Elimina a necessidade de limpar a flag do periférico na ISR"
+  resposta: [0, 1, 2]
+  explicacao: |
+    Adiar o trabalho para uma tarefa encurta a ISR, permite usar a API completa e põe o trabalho sob o controle do escalonador. A ISR continua obrigada a limpar a flag do periférico; caso contrário, a interrupção volta a disparar sem parar.
+  fonte: "Mastering the FreeRTOS Real Time Kernel, Interrupt Management, seção Deferred Interrupt Processing"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T04-011
+  objetivo: O3
+  tipo: unica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    A tarefa C (prioridade 3) está em execução quando uma ISR chama `xQueueSendFromISR`, que desbloqueia a tarefa D (prioridade 2), e termina com `portYIELD_FROM_ISR(xHigherPriorityTaskWoken)`. O que acontece?
+  alternativas:
+    - "D roda imediatamente ao fim da ISR, porque foi acordada por uma interrupção"
+    - "xHigherPriorityTaskWoken continua pdFALSE, não há troca de contexto e D roda quando C bloquear ou quando nenhuma tarefa de prioridade maior que 2 estiver pronta"
+    - "xHigherPriorityTaskWoken vira pdTRUE e D preempta C ao sair da ISR"
+    - "D fica em Blocked até o próximo tick"
+  resposta: 1
+  explicacao: |
+    pxHigherPriorityTaskWoken só vira pdTRUE se a tarefa desbloqueada tiver prioridade maior que a interrompida. D (2) é menos prioritária que C (3): ela vai para Ready, mas a regra do escalonador mantém C em execução. D roda quando C deixar a CPU.
+  fonte: "Mastering the FreeRTOS Real Time Kernel, Interrupt Management, seção The xHigherPriorityTaskWoken Parameter"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T04-012
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Num STM32 (4 bits de prioridade implementados nos bits altos do byte), `configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY` vale 5. Qual é o valor, em decimal, de `configMAX_SYSCALL_INTERRUPT_PRIORITY`, que o kernel escreve no BASEPRI? Responda com um número inteiro.
+  resposta: {valor: 80, unidade: "valor", tolerancia: 0}
+  explicacao: |
+    5 << (8 − 4) = 5 × 16 = 80 = 0x50. O valor lógico (5) é o que se passa ao NVIC_SetPriority; o valor deslocado (0x50) é o que vai para o BASEPRI.
+  fonte: "freertos.org, Running the RTOS on an ARM Cortex-M Core; FreeRTOSConfig.h dos demos para STM32"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T04-013
+  objetivo: O4
+  tipo: multipla
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Num STM32 com `configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY = 5`, marque as IRQs que podem chamar `xSemaphoreGiveFromISR`.
+  alternativas:
+    - "Uma IRQ configurada com NVIC_SetPriority(IRQn, 3)"
+    - "Uma IRQ configurada com NVIC_SetPriority(IRQn, 5)"
+    - "Uma IRQ configurada com NVIC_SetPriority(IRQn, 11)"
+    - "Uma IRQ habilitada sem nenhuma chamada a NVIC_SetPriority"
+  resposta: [1, 2]
+  explicacao: |
+    Podem usar a API as IRQs com prioridade lógica numericamente igual ou maior que o limite (5 a 15). A de prioridade 3 é mais urgente que o limite e não é mascarada pelo kernel. Uma IRQ sem configuração fica com prioridade 0, a mais urgente de todas: também não pode.
+  fonte: "freertos.org, Running the RTOS on an ARM Cortex-M Core"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T04-014
+  objetivo: O4
+  tipo: unica
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Um firmware com FreeRTOS num STM32 trava ou corrompe listas do kernel de forma rara e intermitente. A ISR do ADC chama `xQueueSendFromISR`, e o código de inicialização tem `NVIC_EnableIRQ(ADC_IRQn)` sem `NVIC_SetPriority`. O `configASSERT` não está definido. Qual é o diagnóstico mais provável?
+  alternativas:
+    - "A fila é pequena demais e as perdas corrompem a memória"
+    - "Falta portYIELD_FROM_ISR na ISR do ADC"
+    - "O tick está rápido demais e o kernel não consegue processá-lo"
+    - "A IRQ do ADC ficou com prioridade 0, acima de configMAX_SYSCALL_INTERRUPT_PRIORITY, e interrompe seções críticas do kernel enquanto chama a API"
+  resposta: 3
+  explicacao: |
+    Sem NVIC_SetPriority, a IRQ fica com prioridade 0. O BASEPRI das seções críticas não a mascara, então ela pode entrar no meio de uma alteração de lista do kernel e chamar a API, corrompendo o estado. A correção é dar à IRQ uma prioridade lógica igual ou menos urgente que o limite e definir o configASSERT, que faz o port acusar o erro na primeira chamada (vPortValidateInterruptPriority). Fila cheia só faz o FromISR devolver falha.
+  fonte: "freertos.org, Running the RTOS on an ARM Cortex-M Core; FAQ, My application does not run, what could be wrong?"
+  origem: ia
+  revisao: rascunho

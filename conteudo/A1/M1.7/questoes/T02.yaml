@@ -1,0 +1,235 @@
+- id: Q-M1.7.T02-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    No FreeRTOS original (não no ESP-IDF), em que unidade é dado o tamanho de pilha passado a `xTaskCreate`?
+  alternativas:
+    - "Em bytes"
+    - "Em palavras, isto é, em elementos de StackType_t"
+    - "Em kilobytes"
+    - "Em ticks"
+  resposta: 1
+  explicacao: |
+    O parâmetro conta elementos de StackType_t. No Cortex-M, StackType_t tem 32 bits, então 128 significa 512 bytes. O ESP-IDF é a exceção: conta em bytes (M1.6.T02).
+  fonte: "FreeRTOS Reference Manual, xTaskCreate(); Mastering the FreeRTOS Real Time Kernel, Task Management, seção Creating Tasks"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T02-002
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Num STM32 (Cortex-M4), uma tarefa é criada com `xTaskCreate(vRede, "rede", 384, NULL, 3, NULL)`. Quantos bytes de RAM a pilha dessa tarefa ocupa? Responda com um número inteiro.
+  resposta: {valor: 1536, unidade: "bytes", tolerancia: 0}
+  explicacao: |
+    384 palavras × 4 bytes (StackType_t de 32 bits) = 1536 bytes. O TCB vem à parte.
+  fonte: "FreeRTOS Reference Manual, xTaskCreate(), parâmetro de profundidade da pilha"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T02-003
+  objetivo: O1
+  tipo: multipla
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Marque as afirmações corretas sobre criar e apagar tarefas no FreeRTOS.
+  alternativas:
+    - "Quando uma tarefa se apaga com vTaskDelete(NULL), a pilha e o TCB alocados pelo kernel são liberados depois, pela tarefa ociosa"
+    - "Uma tarefa criada com xTaskCreateStatic usa o heap do FreeRTOS para a pilha, mas não para o TCB"
+    - "Passar como pvParameters o endereço de uma variável local de uma função que retorna logo depois da criação é um erro, porque a variável deixa de existir"
+    - "xTaskCreate pode falhar por falta de heap e, nesse caso, devolve um valor diferente de pdPASS"
+  resposta: [0, 2, 3]
+  explicacao: |
+    A limpeza de uma tarefa que se apagou fica para a ociosa, que precisa ganhar CPU. Com xTaskCreateStatic, a aplicação fornece a pilha e o TCB, e nada vem do heap. O ponteiro para variável local fica pendurado quando a função retorna. xTaskCreate devolve errCOULD_NOT_ALLOCATE_REQUIRED_MEMORY quando falta heap.
+  fonte: "Mastering the FreeRTOS Real Time Kernel, Task Management, seções Creating Tasks e Deleting a Task; FreeRTOS Reference Manual, xTaskCreateStatic()"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T02-004
+  objetivo: O1
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: o primeiro campo do TCB do FreeRTOS é o ponteiro para o topo da pilha salvo na última troca de contexto (pxTopOfStack), e o código de troca de contexto do port depende dessa posição.
+  resposta: true
+  explicacao: |
+    Em tasks.c, a struct tskTCB começa por pxTopOfStack, e o comentário diz que ele tem de ser o primeiro membro. O PendSV do port Cortex-M lê e grava o topo da pilha com `ldr r0, [r1]` e `str r0, [r2]`, usando o endereço do TCB sem deslocamento.
+  fonte: "FreeRTOS-Kernel, tasks.c (struct tskTCB) e portable/GCC/ARM_CM3/port.c (xPortPendSVHandler)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T02-005
+  objetivo: O2
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Uma tarefa chamou `xQueueReceive(fila, &item, pdMS_TO_TICKS(50))` e a fila está vazia. Em que estado ela fica enquanto espera?
+  alternativas:
+    - "Running, testando a fila sem parar"
+    - "Ready, à espera da CPU"
+    - "Suspended, até alguém chamar vTaskResume"
+    - "Blocked, até chegar um item ou passarem 50 ms"
+  resposta: 3
+  explicacao: |
+    Esperar por um evento com tempo limite põe a tarefa em Blocked: ela sai das listas de prontas e não consome CPU. Sai de lá quando o item chega ou quando o tempo limite expira, e volta a Ready.
+  fonte: "Mastering the FreeRTOS Real Time Kernel, Task Management, seção Expanding the 'Not Running' State"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T02-006
+  objetivo: O2
+  tipo: unica
+  dificuldade: 2
+  bloom: analisar
+  enunciado: |
+    A tarefa T está bloqueada num `vTaskDelay(pdMS_TO_TICKS(1000))`. Depois de 100 ms, outra tarefa chama `vTaskSuspend(hT)` e, logo em seguida, `vTaskResume(hT)`. O que acontece com T?
+  alternativas:
+    - "Vai para Ready imediatamente: a espera de 1000 ms é abandonada"
+    - "Volta a Blocked e completa os 900 ms restantes"
+    - "Fica em Suspended até o fim dos 1000 ms"
+    - "Recomeça a espera de 1000 ms do zero"
+  resposta: 0
+  explicacao: |
+    Suspender uma tarefa bloqueada a tira da lista de atrasadas; retomá-la a põe na lista de prontas. O atraso em curso é abandonado. Foi o que se viu no simulador POSIX: eTaskGetState devolveu Ready logo depois do vTaskResume.
+  fonte: "FreeRTOS Reference Manual, vTaskSuspend() e vTaskResume(); FreeRTOS-Kernel, tasks.c"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T02-007
+  objetivo: O2
+  tipo: multipla
+  dificuldade: 3
+  bloom: entender
+  enunciado: |
+    Marque as transições de estado que existem no FreeRTOS.
+  alternativas:
+    - "De Blocked para Ready, quando o evento esperado acontece ou o tempo limite expira"
+    - "De Suspended para Ready, somente por vTaskResume ou xTaskResumeFromISR"
+    - "De Blocked direto para Running, sem passar por Ready, quando o tempo limite expira"
+    - "De Running para Ready, quando uma tarefa de prioridade maior fica pronta"
+  resposta: [0, 1, 3]
+  explicacao: |
+    Toda tarefa que deixa de esperar vai primeiro para Ready; só o escalonador leva de Ready a Running (o que pode acontecer no mesmo instante, mas passando pela escolha do escalonador). Suspended não tem tempo limite: só sai por vTaskResume. A preempção leva Running a Ready.
+  fonte: "Mastering the FreeRTOS Real Time Kernel, Task Management, seções Top Level Task States e Expanding the 'Not Running' State (diagrama de estados)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T02-008
+  objetivo: O3
+  tipo: vf
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: uma tarefa que faz `trabalho(); vTaskDelay(10);` em laço roda com período exato de 10 ticks, qualquer que seja a duração do trabalho.
+  resposta: false
+  explicacao: |
+    vTaskDelay conta a partir da chamada: o período vira trabalho + 10 ticks e varia com o trabalho (deriva). Para período fixo, use xTaskDelayUntil, que conta a partir do último despertar.
+  fonte: "Mastering the FreeRTOS Real Time Kernel, Task Management, seção Expanding the 'Not Running' State (vTaskDelay e xTaskDelayUntil)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T02-009
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Tick de 1 ms. Uma tarefa periódica faz 2,5 ms de trabalho e chama `vTaskDelay(25)`, quando o período desejado era de 25 ms. Aproximando o período real por trabalho + atraso, quantos milissegundos ela está atrasada, em relação a um relógio de 25 ms, depois de 40 ciclos? Responda com um número inteiro.
+  resposta: {valor: 100, unidade: "ms", tolerancia: 0}
+  explicacao: |
+    Cada ciclo dura cerca de 2,5 + 25 = 27,5 ms, ou seja, 2,5 ms a mais que o desejado. Em 40 ciclos: 40 × 2,5 = 100 ms de deriva. Com xTaskDelayUntil(&xUltimo, 25), o atraso acumulado seria zero.
+  fonte: "Mastering the FreeRTOS Real Time Kernel, Task Management, seção Expanding the 'Not Running' State"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T02-010
+  objetivo: O3
+  tipo: unica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Uma tarefa de prioridade 2 executa `for (;;) { le_adc(); filtra(); }` sem nenhuma chamada que bloqueie. Há tarefas de prioridade 1 e a tarefa ociosa. Qual é a consequência?
+  alternativas:
+    - "Nenhuma: o tick reparte o tempo igualmente entre todas as tarefas"
+    - "As tarefas de prioridade 1 e a ociosa nunca mais rodam; tarefas apagadas não são limpas e o idle hook não executa"
+    - "Só a tarefa ociosa deixa de rodar; as de prioridade 1 dividem a CPU com a de prioridade 2"
+    - "O kernel detecta o laço e rebaixa a tarefa para a prioridade 0"
+  resposta: 1
+  explicacao: |
+    O time slicing só alterna tarefas de mesma prioridade. Uma tarefa de prioridade 2 sempre pronta impede a execução de tudo o que está abaixo: inanição. Como a ociosa não roda, a memória de tarefas que se apagaram não é liberada e o idle hook não é chamado. Toda tarefa acima da menor prioridade precisa bloquear em algum ponto.
+  fonte: "Mastering the FreeRTOS Real Time Kernel, Task Management, seções The Idle Task and the Idle Task Hook e Scheduling Algorithms"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T02-011
+  objetivo: O4
+  tipo: unica
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Por que o port do FreeRTOS para Cortex-M configura o PendSV com a menor prioridade de interrupção?
+  alternativas:
+    - "Porque o PendSV não pode ser mascarado pelo BASEPRI se tiver outra prioridade"
+    - "Para que o SysTick possa ter prioridade ainda menor que a dele"
+    - "Para que a troca de contexto só ocorra depois que todas as outras interrupções terminaram, e nunca no meio de uma ISR"
+    - "Porque exceções de sistema só aceitam a menor prioridade no Cortex-M"
+  resposta: 2
+  explicacao: |
+    Quem decide trocar de tarefa só pende o PendSV. Na menor prioridade, ele roda por tail-chaining depois de todas as ISRs, e várias ISRs que pedem troca no mesmo instante resultam numa troca só. Se tivesse prioridade alta, a troca poderia acontecer com outra ISR ainda ativa.
+  fonte: "freertos.org, Running the RTOS on an ARM Cortex-M Core; Joseph Yiu, The Definitive Guide to ARM Cortex-M3 and Cortex-M4 Processors, seção sobre SVC e PendSV"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T02-012
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Num Cortex-M4F com o port GCC/ARM_CM4F, uma tarefa que usa a FPU é trocada pelo PendSV. O hardware empilha o quadro estendido de 26 palavras; o port salva R4–R11 e R14 e, por haver contexto de ponto flutuante, S16–S31. Quantos bytes da pilha da tarefa o contexto salvo ocupa? Responda com um número inteiro.
+  resposta: {valor: 204, unidade: "bytes", tolerancia: 0}
+  explicacao: |
+    Hardware: 26 palavras (R0–R3, R12, LR, PC, xPSR, S0–S15, FPSCR e uma reservada). Software: 9 (R4–R11, R14) + 16 (S16–S31) = 25. Total: 51 palavras × 4 = 204 bytes. Sem FPU ativa, seriam 8 + 9 = 17 palavras = 68 bytes.
+  fonte: "FreeRTOS-Kernel, portable/GCC/ARM_CM4F/port.c (xPortPendSVHandler); Arm, Cortex-M4 Devices Generic User Guide, seção Exception entry and return"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T02-013
+  objetivo: O4
+  tipo: multipla
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Marque as afirmações corretas sobre a troca de contexto e a partida do FreeRTOS no Cortex-M3.
+  alternativas:
+    - "Ao entrar no PendSV, o hardware já empilhou R0–R3, R12, LR, PC e xPSR na PSP da tarefa que sai; o tratador empilha R4–R11 na mesma pilha"
+    - "vTaskSwitchContext é chamada com o BASEPRI elevado a configMAX_SYSCALL_INTERRUPT_PRIORITY"
+    - "Uma interrupção aninhada que chega enquanto uma ISR roda empilha seu quadro na PSP da tarefa interrompida"
+    - "O quadro inicial montado por pxPortInitialiseStack põe o pvParameters na posição de R0, e é assim que o parâmetro chega à função da tarefa"
+  resposta: [0, 1, 3]
+  explicacao: |
+    O PendSV completa o quadro do hardware com R4–R11 e guarda o topo no TCB; a escolha da próxima tarefa é feita com as interrupções que usam a API mascaradas pelo BASEPRI. Em modo Handler, a pilha é sempre o MSP: só a primeira interrupção, a que interrompe a tarefa, empilha na PSP. O quadro falso inicial tem PC = função, LR = prvTaskExitError, xPSR com o bit Thumb e R0 = pvParameters.
+  fonte: "FreeRTOS-Kernel, portable/GCC/ARM_CM3/port.c (pxPortInitialiseStack, xPortPendSVHandler); Arm, Cortex-M3 Devices Generic User Guide, seção Exception entry and return"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T02-014
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Port GCC/ARM_CM3. Depois que o PendSV salvou o contexto de uma tarefa, o pxTopOfStack dela aponta para o R4 salvo. Acima dele estão R5 a R11 e, em seguida, o quadro do hardware na ordem R0, R1, R2, R3, R12, LR, PC e xPSR, uma palavra de 4 bytes cada. A quantos bytes acima de pxTopOfStack está o PC salvo? Responda com um número inteiro.
+  resposta: {valor: 56, unidade: "bytes", tolerancia: 0}
+  explicacao: |
+    R4–R11 ocupam 8 palavras (deslocamentos 0 a 28). O quadro do hardware começa em 32: R0 em 32, R1 em 36, R2 em 40, R3 em 44, R12 em 48, LR em 52, PC em 56 e xPSR em 60. É o cálculo que um depurador ciente do RTOS faz para mostrar onde cada tarefa parou.
+  fonte: "FreeRTOS-Kernel, portable/GCC/ARM_CM3/port.c (xPortPendSVHandler); Arm, Cortex-M3 Devices Generic User Guide, seção Exception entry and return (ordem do quadro empilhado)"
+  origem: ia
+  revisao: rascunho

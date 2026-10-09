@@ -1,0 +1,240 @@
+- id: Q-M1.7.T01-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Num firmware em superloop, uma função do laço trata comandos da serial. De que depende o pior tempo de resposta a um comando?
+  alternativas:
+    - "Só do tempo da própria função que trata o comando"
+    - "Da prioridade da interrupção da UART no NVIC"
+    - "Do tempo de todas as funções do laço, porque o comando pode chegar logo depois do teste e esperar a volta inteira"
+    - "Da frequência do tick do sistema"
+  resposta: 2
+  explicacao: |
+    No superloop, todo trabalho feito no laço espera a sua vez na sequência. O pior caso é o comando chegar logo depois do teste: ele espera todas as outras funções e o próprio tratamento. Por isso mexer numa função que nada tem a ver com a serial muda a latência da serial (acoplamento temporal). A ISR só deixa a flag ligada; quem trata é o laço.
+  fonte: "Jean J. Labrosse, µC/OS-III: The Real-Time Kernel, seção Foreground/Background Systems"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T01-002
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um superloop chama, em sequência, quatro funções que gastam 4 ms, 10 ms, 2 ms e 3 ms. A terceira (2 ms) trata um comando sinalizado por uma flag ligada na ISR da UART. Desprezando o tempo das interrupções, qual é o pior tempo, em milissegundos, entre a chegada do comando e o fim do seu tratamento? Responda com um número inteiro.
+  resposta: {valor: 19, unidade: "ms", tolerancia: 0}
+  explicacao: |
+    No pior caso a flag é ligada logo depois do teste: o comando espera a função de 3 ms, depois a de 4 ms e a de 10 ms, e então é tratado (2 ms): 3 + 4 + 10 + 2 = 19 ms, a soma de todas as funções do laço.
+  fonte: "Jean J. Labrosse, µC/OS-III: The Real-Time Kernel, seção Foreground/Background Systems"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T01-003
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Uma volta de um superloop executa 8 ms de código. Uma interrupção chega a cada 0,5 ms e sua rotina gasta 0,05 ms. Usando a iteração R = 8 + ⌈R/0,5⌉ × 0,05 (começando em R = 8), qual é o pior tempo de uma volta, em milissegundos, com uma casa decimal?
+  resposta: {valor: 8.9, unidade: "ms", tolerancia: 0.01}
+  explicacao: |
+    R₀ = 8 → ⌈16⌉ × 0,05 = 0,8 → R₁ = 8,8 → ⌈17,6⌉ = 18 → 18 × 0,05 = 0,9 → R₂ = 8,9 → ⌈17,8⌉ = 18 → R₃ = 8,9 (convergiu). As interrupções que caem dentro da volta a esticam: o pior caso do superloop é a soma das funções mais a carga de interrupção no intervalo. É a mesma iteração da análise de tempo de resposta do T03.
+  fonte: "N. Audsley, A. Burns, M. Richardson, K. Tindell e A. Wellings, Applying new scheduling theory to static priority pre-emptive scheduling (1993); Labrosse, µC/OS-III, seção Foreground/Background Systems"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T01-004
+  objetivo: O1
+  tipo: multipla
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Compare um superloop, um despachante cooperativo disparado por timer (cada função curta roda no seu tique e nunca bloqueia) e um RTOS preemptivo por prioridade. Marque as afirmações corretas.
+  alternativas:
+    - "No despachante cooperativo, uma função que demora mais que o tique atrasa todas as que deveriam rodar depois dela, porque ninguém a interrompe"
+    - "No RTOS preemptivo, o pior tempo de resposta de uma tarefa depende só dela e das tarefas e interrupções de prioridade maior"
+    - "O superloop com interrupções já oferece prioridade entre os trabalhos feitos no laço, desde que as interrupções tenham prioridades diferentes no NVIC"
+    - "Trocar esperas ativas por máquinas de estado no superloop reduz o bloqueio, mas espalha a lógica em estados e não cria prioridade entre as funções"
+  resposta: [0, 1, 3]
+  explicacao: |
+    No cooperativo ninguém tira a CPU de uma função longa: o pior caso é a soma das funções do mesmo tique. No preemptivo, a tarefa só espera quem é mais prioritário (e bloqueios por recurso, T06). As prioridades do NVIC valem para as rotinas de interrupção, não para as funções do laço, que continuam em sequência fixa. Máquinas de estado evitam o bloqueio, mas não dão prioridade.
+  fonte: "Labrosse, µC/OS-III, seções Foreground/Background Systems e Real-Time Kernels; Michael J. Pont, Patterns for Time-Triggered Embedded Systems"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T01-005
+  objetivo: O2
+  tipo: vf
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: um sistema de tempo real é, por definição, um sistema que executa as tarefas o mais rápido possível.
+  resposta: false
+  explicacao: |
+    Tempo real é cumprir prazos de forma previsível. Um sistema lento que sempre responde dentro do prazo é de tempo real; um sistema rápido na média, mas que às vezes atrasa além do prazo, não é. O RTOS acrescenta custo de CPU; o que ele oferece é determinismo.
+  fonte: "freertos.org, RTOS Fundamentals, Real Time Applications; Giorgio Buttazzo, Hard Real-Time Computing Systems, capítulo de conceitos básicos"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T01-006
+  objetivo: O2
+  tipo: unica
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Um receptor LoRa tem uma janela curta para receber a resposta do gateway. Se o firmware abrir a janela tarde, o pacote é perdido, mas o dispositivo continua funcionando e tenta de novo no próximo ciclo. Como se classifica esse requisito?
+  alternativas:
+    - "Tempo real rígido, porque o prazo é curto"
+    - "Tempo real firme: o resultado atrasado não vale nada, mas perder alguns prazos raramente é tolerável"
+    - "Tempo real brando: o resultado atrasado ainda tem quase o mesmo valor"
+    - "Não é tempo real, porque não há risco à vida"
+  resposta: 1
+  explicacao: |
+    O pacote fora da janela não tem valor nenhum (não é brando), mas a perda ocasional não causa falha do sistema (não é rígido). A classificação depende da consequência de perder o prazo, não do tamanho do prazo.
+  fonte: "Giorgio Buttazzo, Hard Real-Time Computing Systems, capítulo de conceitos básicos (hard, firm e soft tasks)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T01-007
+  objetivo: O2
+  tipo: multipla
+  dificuldade: 3
+  bloom: entender
+  enunciado: |
+    Marque o que um kernel de tempo real como o FreeRTOS oferece e que um superloop com interrupções não oferece por si só.
+  alternativas:
+    - "Tarefas que bloqueiam esperando tempo ou evento sem consumir CPU enquanto esperam"
+    - "Garantia automática de que todos os prazos serão cumpridos, sem análise"
+    - "Escolha da tarefa a executar pela prioridade, com preempção da menos urgente"
+    - "Objetos de comunicação com bloqueio e tempo limite, como filas e semáforos"
+  resposta: [0, 2, 3]
+  explicacao: |
+    O kernel dá tarefas com bloqueio, escalonador por prioridade e objetos de comunicação e sincronização, além do tick para contar o tempo. Ele não garante prazos sozinho: oferece mecanismos previsíveis, e quem prova que os prazos são cumpridos é a análise de escalonabilidade (T03, T06).
+  fonte: "Richard Barry, Mastering the FreeRTOS Real Time Kernel, introdução (Why Use an RTOS?); freertos.org, RTOS Fundamentals"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T01-008
+  objetivo: O3
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    O que é o CMSIS-RTOS2?
+  alternativas:
+    - "Uma API padrão da Arm para serviços de RTOS, implementada pelo RTX5 e, por uma camada de adaptação, pelo FreeRTOS"
+    - "Um kernel de tempo real completo mantido pela STMicroelectronics"
+    - "O nome do port do FreeRTOS para Cortex-M"
+    - "Uma versão do Zephyr para microcontroladores da Arm"
+  resposta: 0
+  explicacao: |
+    CMSIS-RTOS2 é uma interface (osThreadNew, osMessageQueuePut, osMutexAcquire…). Quem executa é um kernel: o RTX5 da Arm a implementa nativamente; o CubeMX gera código nessa API e usa um arquivo de adaptação (cmsis_os2.c) que chama o FreeRTOS.
+  fonte: "Arm, CMSIS-RTOS2 API documentation, Overview"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T01-009
+  objetivo: O3
+  tipo: multipla
+  dificuldade: 2
+  bloom: avaliar
+  enunciado: |
+    Em quais situações adotar um RTOS costuma compensar o custo extra de RAM, flash e complexidade?
+  alternativas:
+    - "Um produto com Wi-Fi, um sensor amostrado a 100 Hz e uma interface com o usuário, cada um com prazos diferentes"
+    - "Um ATtiny85 com 512 bytes de RAM que lê um botão e acende um LED"
+    - "Um firmware que precisa de uma pilha TCP/IP com várias conexões simultâneas esperando dados da rede"
+    - "Um projeto dividido entre várias pessoas, em que mudar o tempo de um módulo hoje quebra o tempo de outro"
+  resposta: [0, 2, 3]
+  explicacao: |
+    Várias atividades com prazos diferentes, esperas por E/S de rede e a necessidade de desacoplar módulos são os casos clássicos. Num MCU de 512 bytes de RAM com uma atividade só, o kernel e as pilhas próprias de cada tarefa não cabem e não trazem benefício.
+  fonte: "Labrosse, µC/OS-III, seção Real-Time Kernels; Richard Barry, Mastering the FreeRTOS Real Time Kernel, introdução"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T01-010
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Num Cortex-M (StackType_t de 4 bytes), uma aplicação FreeRTOS tem 4 tarefas com pilha de 256 palavras cada e a tarefa ociosa com 128 palavras. Suponha 92 bytes por TCB. Quantos bytes de RAM as pilhas e os TCBs dessas 5 tarefas ocupam? Responda com um número inteiro.
+  resposta: {valor: 5068, unidade: "bytes", tolerancia: 0}
+  explicacao: |
+    Pilhas: 4 × 256 × 4 = 4096 bytes e 128 × 4 = 512 bytes. TCBs: 5 × 92 = 460 bytes. Total: 4096 + 512 + 460 = 5068 bytes. É o custo de RAM que o superloop não tem, e é por isso que um RTOS não cabe num MCU de 512 bytes.
+  fonte: "Richard Barry, Mastering the FreeRTOS Real Time Kernel, Task Management, seção Creating Tasks (parâmetro usStackDepth em palavras)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T01-011
+  objetivo: O4
+  tipo: unica
+  dificuldade: 2
+  bloom: lembrar
+  enunciado: |
+    Ao montar um projeto FreeRTOS, quantos arquivos da pasta `portable/MemMang` (heap_1.c a heap_5.c) você deve compilar se usar alocação dinâmica?
+  alternativas:
+    - "Todos os cinco, porque o kernel escolhe em tempo de execução"
+    - "Nenhum: o kernel usa sempre o malloc da biblioteca C"
+    - "Dois: um para as tarefas e outro para as filas"
+    - "Exatamente um, o esquema escolhido para o projeto"
+  resposta: 3
+  explicacao: |
+    Cada heap_x.c define pvPortMalloc e vPortFree. Compilar dois dá símbolos duplicados; nenhum deixa pvPortMalloc indefinido (a não ser com alocação só estática). O heap_3 é o que envolve o malloc da biblioteca C, mas também é um arquivo a escolher (T08).
+  fonte: "Richard Barry, Mastering the FreeRTOS Real Time Kernel, The FreeRTOS Distribution, seção FreeRTOS Source Files Common to All Ports; Heap Memory Management, seção Example Memory Allocation Schemes"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T01-012
+  objetivo: O4
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: depois que `vTaskStartScheduler()` inicia as tarefas, ela retorna ao `main`, que continua executando como uma tarefa de prioridade zero.
+  resposta: false
+  explicacao: |
+    Em funcionamento normal, `vTaskStartScheduler()` nunca retorna: o processador passa a executar as tarefas. Ela só volta se não houver heap para criar a tarefa ociosa (e a de timers). Código escrito depois dela no `main` não roda; a tarefa de prioridade zero é a ociosa, criada pelo kernel.
+  fonte: "FreeRTOS Reference Manual, vTaskStartScheduler(); Mastering the FreeRTOS Real Time Kernel, Task Management, seção Creating Tasks"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T01-013
+  objetivo: O4
+  tipo: unica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Num STM32 com o port GCC/ARM_CM4F e o startup do CMSIS, o programa entra em `vTaskStartScheduler()` e o depurador mostra a CPU presa no `Default_Handler` antes da primeira tarefa rodar. Qual a causa mais provável?
+  alternativas:
+    - "O configTICK_RATE_HZ está alto demais para o clock da placa"
+    - "Os tratadores do port não foram ligados aos nomes SVC_Handler, PendSV_Handler e SysTick_Handler da tabela de vetores"
+    - "A primeira tarefa foi criada com prioridade maior que configMAX_PRIORITIES − 1"
+    - "Faltou chamar vTaskDelay na primeira tarefa"
+  resposta: 1
+  explicacao: |
+    O port define vPortSVCHandler, xPortPendSVHandler e xPortSysTickHandler. A tabela de vetores do CMSIS chama SVC_Handler, PendSV_Handler e SysTick_Handler, que por padrão são aliases fracos do Default_Handler. O kernel usa um SVC para saltar para a primeira tarefa: sem os #define no FreeRTOSConfig.h (ou funções que chamem os do port), esse SVC cai no laço infinito do Default_Handler.
+  fonte: "freertos.org, Running the RTOS on an ARM Cortex-M Core; FAQ, My application does not run, what could be wrong?"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T01-014
+  objetivo: O4
+  tipo: multipla
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Marque as afirmações corretas sobre o port POSIX (simulador Linux) do FreeRTOS.
+  alternativas:
+    - "Cada tarefa do FreeRTOS vira uma thread do Linux, mas o port garante que só uma delas executa por vez"
+    - "O código do kernel (tasks.c, queue.c, list.c) é o mesmo usado nos microcontroladores; muda só o port"
+    - "Ele serve para medir o pior tempo de resposta real que a aplicação terá na placa"
+    - "O tick é simulado por um temporizador do sistema operacional, de modo que o Linux pode atrasá-lo"
+  resposta: [0, 1, 3]
+  explicacao: |
+    O port POSIX roda as tarefas como threads controladas pelo próprio port (uma de cada vez) e gera o tick com um temporizador do sistema. O kernel é o mesmo, o que o torna ótimo para testar lógica, filas e sincronização. Mas o Linux não é tempo real: tempos medidos no simulador não valem como pior caso na placa.
+  fonte: "freertos.org, FreeRTOS simulator for Linux (Posix/Linux port)"
+  origem: ia
+  revisao: rascunho

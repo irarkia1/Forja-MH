@@ -1,0 +1,235 @@
+- id: Q-M1.7.T08-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Qual esquema de heap do FreeRTOS não permite liberar memória (não implementa vPortFree de verdade) e, por isso, nunca fragmenta?
+  alternativas:
+    - "heap_1"
+    - "heap_2"
+    - "heap_4"
+    - "heap_5"
+  resposta: 0
+  explicacao: |
+    O heap_1 só avança um ponteiro dentro do vetor do heap: é determinístico e sem fragmentação, adequado quando tudo é criado na inicialização e nada é apagado. Os demais permitem liberar.
+  fonte: "Mastering the FreeRTOS Real Time Kernel, Heap Memory Management, seção Example Memory Allocation Schemes (Heap_1)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T08-002
+  objetivo: O1
+  tipo: multipla
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Marque as afirmações corretas sobre os esquemas de heap do FreeRTOS.
+  alternativas:
+    - "O heap_4 junta blocos livres adjacentes ao liberar, o que reduz a fragmentação"
+    - "O heap_5 usa o algoritmo do heap_4 sobre várias regiões de RAM não contíguas, definidas por vPortDefineHeapRegions antes de criar qualquer objeto"
+    - "O heap_3 envolve o malloc e o free da biblioteca C, e o tamanho do heap vem do linker script, não de configTOTAL_HEAP_SIZE"
+    - "O heap_2 junta blocos livres adjacentes e é o recomendado para projetos novos"
+  resposta: [0, 1, 2]
+  explicacao: |
+    O heap_2 usa best fit sem juntar blocos livres e é mantido só por compatibilidade; o heap_4 é o recomendado para quem cria e apaga objetos. O heap_5 estende o heap_4 a várias regiões. O heap_3 delega à biblioteca C, protegendo as chamadas com o escalonador suspenso.
+  fonte: "Mastering the FreeRTOS Real Time Kernel, Heap Memory Management, seção Example Memory Allocation Schemes; freertos.org, Memory Management"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T08-003
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Num Cortex-M, o heap_4 acrescenta a cada bloco um cabeçalho de 8 bytes e arredonda o tamanho total para múltiplo de 8. Quantos bytes do heap consome `pvPortMalloc(50)`? Responda com um número inteiro.
+  resposta: {valor: 64, unidade: "bytes", tolerancia: 0}
+  explicacao: |
+    50 + 8 (cabeçalho BlockLink_t) = 58, arredondado para o próximo múltiplo de 8 = 64 bytes. No QEMU (Cortex-M3), dois pvPortMalloc(100) seguidos ficaram a 112 bytes um do outro: 100 + 8 = 108 → 112.
+  fonte: "FreeRTOS-Kernel, portable/MemMang/heap_4.c (xHeapStructSize e portBYTE_ALIGNMENT)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T08-004
+  objetivo: O1
+  tipo: unica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Depois de dias criando e apagando objetos, `xPortGetFreeHeapSize()` informa 12 KB livres, mas `xQueueCreate(100, 64)`, que precisa de cerca de 6,5 KB, devolve NULL. O que explica isso e como confirmar?
+  alternativas:
+    - "Um defeito do heap_4: ele não sabe somar blocos; troque pelo heap_2"
+    - "configTOTAL_HEAP_SIZE foi ignorado; aumente o valor"
+    - "Fragmentação: há 12 KB livres no total, mas nenhum bloco contíguo grande o bastante; o maior bloco livre aparece em vPortGetHeapStats"
+    - "Filas só podem ser criadas antes de iniciar o escalonador"
+  resposta: 2
+  explicacao: |
+    A soma dos blocos livres não diz nada sobre a contiguidade. vPortGetHeapStats (heap_4 e heap_5) informa o maior bloco livre. A prevenção é alocar tudo na inicialização ou usar pools de blocos fixos. O heap_2, que nem junta vizinhos, fragmenta mais.
+  fonte: "Mastering the FreeRTOS Real Time Kernel, Heap Memory Management, seções Example Memory Allocation Schemes e Heap Related Utility Functions"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T08-005
+  objetivo: O2
+  tipo: vf
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: com `configSUPPORT_DYNAMIC_ALLOCATION = 0` e todos os objetos criados pelas funções Static, o projeto não precisa compilar nenhum arquivo heap_x.c.
+  resposta: true
+  explicacao: |
+    Sem alocação dinâmica, o kernel nunca chama pvPortMalloc. A aplicação fornece toda a memória, inclusive a da tarefa ociosa e a da tarefa de timers (vApplicationGetIdleTaskMemory e vApplicationGetTimerTaskMemory).
+  fonte: "Mastering the FreeRTOS Real Time Kernel, Heap Memory Management, seção Using Static Memory Allocation; freertos.org, Static Vs Dynamic Memory Allocation"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T08-006
+  objetivo: O2
+  tipo: unica
+  dificuldade: 2
+  bloom: lembrar
+  enunciado: |
+    Qual função informa o menor valor de heap livre que existiu desde o boot, útil para dimensionar configTOTAL_HEAP_SIZE?
+  alternativas:
+    - "xPortGetFreeHeapSize"
+    - "xPortGetMinimumEverFreeHeapSize"
+    - "uxTaskGetStackHighWaterMark"
+    - "uxQueueSpacesAvailable"
+  resposta: 1
+  explicacao: |
+    xPortGetMinimumEverFreeHeapSize (heap_4 e heap_5) devolve a marca d'água do heap. xPortGetFreeHeapSize dá só o valor atual; a função de marca d'água de pilha é por tarefa.
+  fonte: "Mastering the FreeRTOS Real Time Kernel, Heap Memory Management, seção Heap Related Utility Functions"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T08-007
+  objetivo: O2
+  tipo: multipla
+  dificuldade: 3
+  bloom: avaliar
+  enunciado: |
+    Marque as afirmações corretas sobre a alocação estática no FreeRTOS.
+  alternativas:
+    - "A RAM dos objetos estáticos aparece no .bss do link, e o arm-none-eabi-size mostra se tudo cabe antes de rodar"
+    - "Com configSUPPORT_STATIC_ALLOCATION = 1, a aplicação precisa fornecer vApplicationGetIdleTaskMemory e, com timers, vApplicationGetTimerTaskMemory"
+    - "xTaskCreateStatic pode falhar em tempo de execução por fragmentação do heap"
+    - "Objetos estáticos e dinâmicos podem conviver no mesmo projeto"
+  resposta: [0, 1, 3]
+  explicacao: |
+    A memória estática é reservada pelo linker, não pelo heap, então não há falha de alocação nem fragmentação. O kernel pede à aplicação a memória das tarefas que ele próprio cria. Com as duas opções ligadas, cada objeto pode ser criado de um jeito.
+  fonte: "Mastering the FreeRTOS Real Time Kernel, Heap Memory Management, seção Using Static Memory Allocation"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T08-008
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Num STM32 (Cortex-M4), uma tarefa é criada com pilha de 300 palavras. Quantos bytes isso representa? Responda com um número inteiro.
+  resposta: {valor: 1200, unidade: "bytes", tolerancia: 0}
+  explicacao: |
+    StackType_t tem 4 bytes no Cortex-M: 300 × 4 = 1200 bytes.
+  fonte: "FreeRTOS Reference Manual, xTaskCreate(); FreeRTOS-Kernel, portable/GCC/ARM_CM4F/portmacro.h"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T08-009
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Num Cortex-M3, uma tarefa tem pilha de 256 palavras e `uxTaskGetStackHighWaterMark` devolve 25 depois dos testes. Quantos bytes de pilha ela chegou a usar no pior caso observado? Responda com um número inteiro.
+  resposta: {valor: 924, unidade: "bytes", tolerancia: 0}
+  explicacao: |
+    A marca d'água é o mínimo livre, em palavras: usadas = 256 − 25 = 231 palavras × 4 = 924 bytes. Sobraram só 100 bytes (cerca de 10 %): pouca margem.
+  fonte: "Mastering the FreeRTOS Real Time Kernel, Troubleshooting, seção Stack Overflow (The uxTaskGetStackHighWaterMark() API Function)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T08-010
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Dimensione a pilha de uma tarefa num Cortex-M3 (sem FPU): contexto salvo de 64 bytes, quadro de uma interrupção de 32 bytes, cadeia de chamadas com quadros de 96 e 140 bytes e, no fim, um snprintf com %d que usa 404 bytes. Com 25 % de margem sobre o total, quantas palavras de pilha você reserva, arredondando para cima? Responda com um número inteiro.
+  resposta: {valor: 230, unidade: "palavras", tolerancia: 0}
+  explicacao: |
+    Total: 64 + 32 + 96 + 140 + 404 = 736 bytes = 184 palavras. Com 25 %: 184 × 1,25 = 230 palavras (920 bytes). Depois de implementar, confirme com a marca d'água.
+  fonte: "Mastering the FreeRTOS Real Time Kernel, Troubleshooting, seção Stack Overflow; FreeRTOS-Kernel, portable/GCC/ARM_CM3/port.c (contexto salvo)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T08-011
+  objetivo: O3
+  tipo: multipla
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Num Cortex-M3 com FreeRTOS, marque o que ocupa espaço na pilha **da tarefa** (a pilha apontada pela PSP).
+  alternativas:
+    - "O contexto salvo pelo PendSV (R4–R11) e o quadro empilhado pelo hardware ao trocar de tarefa"
+    - "O quadro de 8 palavras empilhado quando a primeira interrupção interrompe a tarefa"
+    - "As variáveis locais e os registradores salvos de toda a cadeia de chamadas da tarefa"
+    - "Os quadros das interrupções aninhadas que chegam enquanto outra ISR está em execução"
+  resposta: [0, 1, 2]
+  explicacao: |
+    A interrupção que interrompe a tarefa empilha o quadro na pilha em uso, a PSP. A partir daí o núcleo está em modo Handler e usa o MSP: as ISRs aninhadas empilham no MSP, não na pilha da tarefa. Por isso a pilha de cada tarefa só precisa de um quadro de interrupção, e o MSP precisa caber o aninhamento de todas as ISRs.
+  fonte: "Arm, Cortex-M3 Devices Generic User Guide, seção Exception entry and return; FreeRTOS-Kernel, portable/GCC/ARM_CM3/port.c"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T08-012
+  objetivo: O4
+  tipo: unica
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    O que o método 2 de `configCHECK_FOR_STACK_OVERFLOW` faz a mais que o método 1?
+  alternativas:
+    - "Verifica o ponteiro de pilha a cada instrução, por hardware"
+    - "Reserva automaticamente o dobro da pilha pedida"
+    - "Confere, na troca de contexto, se os últimos 16 bytes do fundo da pilha ainda têm o padrão de preenchimento 0xA5"
+    - "Desliga as interrupções enquanto a tarefa usa mais de 75 % da pilha"
+  resposta: 2
+  explicacao: |
+    O método 1 só confere se o ponteiro de pilha salvo passou do limite. O método 2 faz isso e também confere o padrão de preenchimento no fundo da pilha, pegando estouros que já voltaram antes da troca. As duas verificações acontecem na troca de contexto, não continuamente.
+  fonte: "Mastering the FreeRTOS Real Time Kernel, Troubleshooting, seção Stack Overflow (Method 1 e Method 2); FreeRTOS-Kernel, include/stack_macros.h"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T08-013
+  objetivo: O4
+  tipo: vf
+  dificuldade: 3
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: no FreeRTOS original rodando num Cortex-M, `uxTaskGetStackHighWaterMark` devolve o espaço de pilha livre mínimo em bytes.
+  resposta: false
+  explicacao: |
+    No FreeRTOS original, o valor é em palavras (elementos de StackType_t, 4 bytes no Cortex-M). No ESP-IDF, em que StackType_t tem 1 byte, o mesmo número sai em bytes: um bom motivo para confusão ao portar código.
+  fonte: "FreeRTOS Reference Manual, uxTaskGetStackHighWaterMark(); ESP-IDF Programming Guide, FreeRTOS (IDF)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T08-014
+  objetivo: O4
+  tipo: unica
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Com `configCHECK_FOR_STACK_OVERFLOW = 2`, uma tarefa de pilha pequena chama uma função recursiva profunda e o sistema cai num HardFault, sem que `vApplicationStackOverflowHook` seja chamado. Qual é a explicação mais provável e a melhor proteção adicional?
+  alternativas:
+    - "O método 2 só funciona com heap_1; troque o heap"
+    - "A verificação acontece na troca de contexto; o estouro corrompeu memória vizinha (outro TCB ou outra pilha) e causou a falha antes da troca. Use o MPU ou o PSPLIM do Cortex-M33, e uma pilha maior com a recursão eliminada"
+    - "O gancho só é chamado se configASSERT estiver definido"
+    - "HardFault é o comportamento normal do método 2 em vez de chamar o gancho"
+  resposta: 1
+  explicacao: |
+    As verificações de estouro do FreeRTOS acontecem quando a tarefa sai da CPU. Um estouro grande pode destruir estruturas vizinhas e travar antes disso. Foi o que se observou no QEMU com uma recursão de 1000 níveis numa pilha de 128 palavras; com um estouro menor, o gancho foi chamado normalmente. Proteção imediata exige hardware: MPU (ports ARM_CM3_MPU e ARM_CM4_MPU) ou o limite de pilha do ARMv8-M.
+  fonte: "Mastering the FreeRTOS Real Time Kernel, Troubleshooting, seção Stack Overflow; freertos.org, Stack Usage and Stack Overflow Checking"
+  origem: ia
+  revisao: rascunho

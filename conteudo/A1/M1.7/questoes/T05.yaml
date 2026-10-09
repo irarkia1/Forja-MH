@@ -1,0 +1,245 @@
+- id: Q-M1.7.T05-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Logo depois de `xSemaphoreCreateBinary()`, uma tarefa chama `xSemaphoreTake(s, pdMS_TO_TICKS(10))` e ninguém mais mexe no semáforo. O que acontece?
+  alternativas:
+    - "A chamada retorna pdTRUE na hora, porque o semáforo binário nasce disponível"
+    - "A tarefa bloqueia por 10 ms e a chamada retorna pdFALSE, porque o semáforo binário nasce vazio"
+    - "A chamada dispara o configASSERT, porque é preciso inicializar o semáforo"
+    - "A tarefa fica bloqueada para sempre, ignorando o tempo limite"
+  resposta: 1
+  explicacao: |
+    xSemaphoreCreateBinary cria o semáforo vazio: é preciso um Give antes que um Take tenha sucesso. Isso é o que se quer na sincronização com ISR (a tarefa espera o primeiro evento). O mutex, ao contrário, nasce disponível.
+  fonte: "FreeRTOS Reference Manual, xSemaphoreCreateBinary()"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T05-002
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um semáforo é criado com `xSemaphoreCreateCounting(5, 2)`. Uma ISR chama `xSemaphoreGiveFromISR` quatro vezes. Depois, uma tarefa faz três `xSemaphoreTake` bem-sucedidos. Quanto devolve `uxSemaphoreGetCount` em seguida? Responda com um número inteiro.
+  resposta: {valor: 2, unidade: "contagem", tolerancia: 0}
+  explicacao: |
+    Começa em 2. Os quatro Give levariam a 6, mas a contagem satura no máximo 5 (o quarto Give falha e devolve pdFAIL). Três Take: 5 − 3 = 2.
+  fonte: "FreeRTOS Reference Manual, xSemaphoreCreateCounting() e xSemaphoreGiveFromISR(); Mastering the FreeRTOS Real Time Kernel, Interrupt Management, seção Counting Semaphores"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T05-003
+  objetivo: O1
+  tipo: unica
+  dificuldade: 2
+  bloom: analisar
+  enunciado: |
+    A ISR de um botão dá um semáforo binário a cada aperto. Enquanto a tarefa que o toma está ocupada por 300 ms, o usuário aperta o botão 3 vezes. Quando a tarefa voltar a chamar `xSemaphoreTake` repetidamente com tempo zero, quantos apertos ela detecta?
+  alternativas:
+    - "3"
+    - "0"
+    - "2"
+    - "1"
+  resposta: 3
+  explicacao: |
+    O binário guarda no máximo uma ficha: o segundo e o terceiro Give encontram a ficha lá e falham. A tarefa vê 1 evento. Para contar todos, use semáforo contador, notificação como contador ou uma fila de eventos.
+  fonte: "Mastering the FreeRTOS Real Time Kernel, Interrupt Management, seções Binary Semaphores Used for Synchronization e Counting Semaphores"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T05-004
+  objetivo: O1
+  tipo: multipla
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Marque os usos adequados de um semáforo contador.
+  alternativas:
+    - "Gerenciar 4 buffers de transmissão: criado com máximo 4 e valor inicial 4; Take pega um buffer, Give devolve"
+    - "Contar eventos de uma ISR que podem chegar mais rápido do que a tarefa os trata, sem perder nenhum até o máximo"
+    - "Proteger a escrita na UART compartilhada entre duas tarefas, com herança de prioridade"
+    - "Limitar a 3 o número de tarefas que usam ao mesmo tempo um conjunto de 3 canais de DMA"
+  resposta: [0, 1, 3]
+  explicacao: |
+    O contador serve para contar eventos (inicial 0) e para gerenciar N recursos iguais (inicial N). Para exclusão mútua de um recurso único, com dono e herança de prioridade, o mecanismo é o mutex.
+  fonte: "Mastering the FreeRTOS Real Time Kernel, Interrupt Management, seção Counting Semaphores"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T05-005
+  objetivo: O2
+  tipo: vf
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: declarar um contador compartilhado entre duas tarefas como `volatile` torna a operação `contador++` atômica no Cortex-M.
+  resposta: false
+  explicacao: |
+    volatile só obriga o compilador a ler e escrever na memória a cada acesso. O incremento continua sendo ldr, add e str, e uma preempção entre a leitura e a escrita perde um incremento. No simulador POSIX, duas tarefas fazendo 2 000 000 de incrementos cada chegaram a cerca de 2,3 milhões em vez de 4 milhões.
+  fonte: "Mastering the FreeRTOS Real Time Kernel, Resource Management, seção Mutual Exclusion"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T05-006
+  objetivo: O2
+  tipo: unica
+  dificuldade: 2
+  bloom: avaliar
+  enunciado: |
+    Uma ISR de captura atualiza um carimbo de tempo de 64 bits (`uint64_t`) que uma tarefa lê. Qual é a proteção adequada para a leitura na tarefa?
+  alternativas:
+    - "Um mutex tomado pela tarefa e pela ISR"
+    - "Uma seção crítica curta (taskENTER_CRITICAL) em volta da cópia do valor"
+    - "Suspender o escalonador com vTaskSuspendAll durante a leitura"
+    - "Nenhuma: leituras de 64 bits são atômicas no Cortex-M"
+  resposta: 1
+  explicacao: |
+    O dado é dividido com uma ISR, então só serve um mecanismo que impeça a ISR de entrar no meio: a seção crítica, que eleva o BASEPRI. A ISR não pode tomar mutex. Suspender o escalonador não bloqueia interrupções. Uma leitura de 64 bits são duas leituras de 32 bits e pode rasgar.
+  fonte: "Mastering the FreeRTOS Real Time Kernel, Resource Management, seção Critical Sections and Suspending the Scheduler"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T05-007
+  objetivo: O2
+  tipo: multipla
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Marque as afirmações corretas sobre os mecanismos de exclusão mútua do FreeRTOS no Cortex-M3/M4.
+  alternativas:
+    - "taskENTER_CRITICAL eleva o BASEPRI e impede trocas de contexto e ISRs que usam a API, mas não as de prioridade acima de configMAX_SYSCALL_INTERRUPT_PRIORITY"
+    - "vTaskSuspendAll impede trocas de contexto, mas mantém as interrupções habilitadas"
+    - "Dentro de uma seção crítica é seguro chamar xSemaphoreTake com tempo de espera, porque o kernel adia o bloqueio"
+    - "Um mutex só faz esperar as tarefas que disputam o recurso; as demais tarefas e as ISRs seguem normalmente"
+  resposta: [0, 1, 3]
+  explicacao: |
+    A seção crítica mascara pelo BASEPRI só as interrupções até o limite; as mais urgentes continuam. Suspender o escalonador não mexe em interrupções. O mutex é o mecanismo mais seletivo. Chamar API que bloqueia dentro de seção crítica (ou com o escalonador suspenso) é proibido.
+  fonte: "Mastering the FreeRTOS Real Time Kernel, Resource Management, seção Critical Sections and Suspending the Scheduler"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T05-008
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Num Cortex-M4 a 80 MHz, uma tarefa executa uma seção crítica (taskENTER_CRITICAL … taskEXIT_CRITICAL) que dura 400 ciclos. Uma interrupção de prioridade 7 (abaixo do limite das syscalls, que é 5) chega logo depois do início da seção crítica. Somando os 12 ciclos de entrada na exceção, qual é a latência dessa interrupção no pior caso, em microssegundos? Responda com duas casas decimais.
+  resposta: {valor: 5.15, unidade: "µs", tolerancia: 0.01}
+  explicacao: |
+    A interrupção fica mascarada pelo BASEPRI até o fim da seção crítica: 400 ciclos de espera + 12 de entrada = 412 ciclos; 412 / 80 MHz = 5,15 µs. Uma interrupção de prioridade 3 (acima do limite) não esperaria nada. Seções críticas longas pioram a latência de todas as interrupções que usam o kernel.
+  fonte: "Mastering the FreeRTOS Real Time Kernel, Resource Management, seção Critical Sections and Suspending the Scheduler; freertos.org, Running the RTOS on an ARM Cortex-M Core"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T05-009
+  objetivo: O3
+  tipo: unica
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    O que um mutex do FreeRTOS tem que um semáforo binário não tem?
+  alternativas:
+    - "Um dono (a tarefa que o tomou) e herança de prioridade"
+    - "A possibilidade de ser dado dentro de uma ISR"
+    - "Contagem de até 255 fichas"
+    - "Tempo limite na espera"
+  resposta: 0
+  explicacao: |
+    O mutex registra a tarefa dona e eleva temporariamente a prioridade dela quando uma tarefa mais prioritária espera (T06). Por ter dono, não pode ser usado em ISR. Tempo limite os dois têm; contagem é do semáforo contador.
+  fonte: "Mastering the FreeRTOS Real Time Kernel, Resource Management, seções Mutexes (and Binary Semaphores) e Priority Inheritance"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T05-010
+  objetivo: O3
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: uma tarefa que tomou três vezes um mutex recursivo com `xSemaphoreTakeRecursive` precisa chamar `xSemaphoreGiveRecursive` três vezes para que outra tarefa consiga tomá-lo.
+  resposta: true
+  explicacao: |
+    O mutex recursivo conta os Take da tarefa dona e só fica livre quando os Give igualam a contagem. Com um mutex comum, o segundo Take da mesma tarefa bloquearia para sempre (ou falharia, com tempo limite).
+  fonte: "Mastering the FreeRTOS Real Time Kernel, Resource Management, seção Recursive Mutexes"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T05-011
+  objetivo: O3
+  tipo: unica
+  dificuldade: 3
+  bloom: avaliar
+  enunciado: |
+    Cinco tarefas e duas ISRs precisam escrever mensagens de log na mesma UART. Qual é a solução mais robusta?
+  alternativas:
+    - "Um mutex em volta de cada printf, tomado também pelas ISRs"
+    - "Uma seção crítica em volta de cada printf"
+    - "Uma tarefa guardiã, a única que acessa a UART, recebendo as mensagens por fila (as ISRs usam xQueueSendFromISR)"
+    - "Um semáforo binário criado disponível, tomado por quem for escrever"
+  resposta: 2
+  explicacao: |
+    A guardiã elimina o compartilhamento: só ela toca na UART, as outras enviam pedidos por fila, inclusive as ISRs. Não há inversão de prioridade nem deadlock por esse recurso. ISRs não podem tomar mutex; uma seção crítica do tamanho de um printf destrói a latência; o binário não tem herança de prioridade.
+  fonte: "Mastering the FreeRTOS Real Time Kernel, Resource Management, seção Gatekeeper Tasks"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T05-012
+  objetivo: O4
+  tipo: multipla
+  dificuldade: 2
+  bloom: lembrar
+  enunciado: |
+    Marque as condições que fazem parte das quatro condições necessárias para deadlock descritas por Coffman.
+  alternativas:
+    - "Posse e espera: quem já tem um recurso espera outro sem soltar o primeiro"
+    - "Espera circular entre duas ou mais tarefas"
+    - "Prioridades diferentes entre as tarefas envolvidas"
+    - "Ausência de preempção de recursos: ninguém tira o recurso de quem o tem"
+  resposta: [0, 1, 3]
+  explicacao: |
+    As quatro condições são exclusão mútua, posse e espera, ausência de preempção de recursos e espera circular. Deadlock acontece também entre tarefas de mesma prioridade; prioridade não é condição.
+  fonte: "E. G. Coffman, M. Elphick e A. Shoshani, System Deadlocks, ACM Computing Surveys, 1971"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T05-013
+  objetivo: O4
+  tipo: unica
+  dificuldade: 3
+  bloom: avaliar
+  enunciado: |
+    A tarefa de gravação toma o mutex da SPI e depois o da memória flash; a tarefa de atualização toma o da flash e depois o da SPI. Às vezes as duas param para sempre. Qual correção elimina o problema na origem?
+  alternativas:
+    - "Dar prioridades diferentes às duas tarefas"
+    - "Trocar os mutexes por semáforos binários"
+    - "Aumentar o tempo limite dos xSemaphoreTake para portMAX_DELAY"
+    - "Definir uma ordem global de aquisição (sempre SPI antes de flash) e segui-la nas duas tarefas"
+  resposta: 3
+  explicacao: |
+    O problema é espera circular: cada uma segura o recurso que a outra quer. Com ordem global, a espera circular fica impossível. Prioridades diferentes não desfazem o ciclo, binários continuam tendo o mesmo ciclo, e portMAX_DELAY só torna o travamento permanente e invisível.
+  fonte: "Mastering the FreeRTOS Real Time Kernel, Resource Management, seção Deadlock (or Deadly Embrace)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T05-014
+  objetivo: O4
+  tipo: multipla
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Um produto com FreeRTOS para de responder, mas o LED de vida pisca normalmente (controlado por um timer de software). Você suspeita de deadlock entre duas tarefas. Marque as observações e técnicas que confirmam ou ajudam a tratar a suspeita.
+  alternativas:
+    - "vTaskList mostra as duas tarefas em Blocked o tempo todo, com a tarefa ociosa recebendo quase toda a CPU"
+    - "xSemaphoreGetMutexHolder mostra que cada uma é a dona do mutex que a outra espera"
+    - "Trocar portMAX_DELAY por tempo limite nos xSemaphoreTake e registrar as falhas transforma o travamento num erro detectável"
+    - "O fato de o LED de vida piscar prova que nenhuma tarefa está travada"
+  resposta: [0, 1, 2]
+  explicacao: |
+    Deadlock aparece como tarefas bloqueadas para sempre e CPU ociosa; o dono de cada mutex fecha o ciclo. Tempo limite não previne, mas torna o problema visível e tratável. O LED controlado por um timer de software só prova que o tick e a tarefa de serviço dos timers rodam: é por isso que o supervisor deve checar o sinal de vida de cada tarefa (T09).
+  fonte: "Mastering the FreeRTOS Real Time Kernel, Resource Management, seção Deadlock (or Deadly Embrace); Developer Support, seção Viewing Run-time and Task State Information"
+  origem: ia
+  revisao: rascunho

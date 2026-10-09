@@ -1,0 +1,225 @@
+- id: Q-M1.7.T03-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    FreeRTOS com `configUSE_PREEMPTION = 1`. Uma ISR dá um semáforo que desbloqueia uma tarefa de prioridade maior que a tarefa em execução, e a ISR termina com `portYIELD_FROM_ISR(xHigherPriorityTaskWoken)`. Quando a tarefa desbloqueada começa a rodar?
+  alternativas:
+    - "Só no próximo tick"
+    - "Quando a tarefa interrompida bloquear ou chamar taskYIELD"
+    - "Depois que todas as tarefas de mesma prioridade da interrompida tiverem rodado uma fatia"
+    - "Imediatamente ao sair da ISR, por uma troca de contexto pedida por ela"
+  resposta: 3
+  explicacao: |
+    No escalonamento preemptivo, a tarefa em Running é sempre a pronta de maior prioridade. A ISR pende o PendSV pelo portYIELD_FROM_ISR, e a troca acontece logo ao sair dela, sem esperar o tick. Esperar a tarefa atual ceder é o comportamento cooperativo.
+  fonte: "Mastering the FreeRTOS Real Time Kernel, Task Management, seção Prioritized Preemptive Scheduling with Time Slicing; Interrupt Management, seção Using the FreeRTOS API from an ISR"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T03-002
+  objetivo: O1
+  tipo: multipla
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Marque as afirmações corretas sobre o time slicing do FreeRTOS (`configUSE_TIME_SLICING`).
+  alternativas:
+    - "Com time slicing, tarefas prontas de mesma prioridade se revezam a cada tick"
+    - "Com time slicing, uma tarefa de prioridade 1 sempre pronta recebe uma fatia mesmo havendo uma tarefa de prioridade 2 sempre pronta"
+    - "Sem time slicing, uma tarefa só cede a CPU a outra de mesma prioridade quando bloqueia ou chama taskYIELD"
+    - "Sem time slicing, a preempção por tarefas de prioridade maior continua acontecendo"
+  resposta: [0, 2, 3]
+  explicacao: |
+    O time slicing só reparte o tempo entre tarefas de mesma prioridade, no tick. Ele não dá fatia a prioridades menores: a de prioridade 1 passa fome enquanto a de 2 estiver pronta. Desligá-lo não desliga a preempção, só o revezamento entre iguais.
+  fonte: "Mastering the FreeRTOS Real Time Kernel, Task Management, seções Prioritized Preemptive Scheduling with Time Slicing e Prioritized Preemptive Scheduling (without Time Slicing)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T03-003
+  objetivo: O1
+  tipo: unica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    FreeRTOS em modo cooperativo (`configUSE_PREEMPTION = 0`), tick de 1 ms. A tarefa B (prioridade 2) começa em t = 0 e processa durante 4 ms sem chamar nenhuma função que bloqueie, e então bloqueia. A tarefa A (prioridade 3) é desbloqueada por uma ISR em t = 1 ms e precisa de 1 ms de CPU. Em que instante A termina?
+  alternativas:
+    - "Em t = 2 ms"
+    - "Em t = 5 ms"
+    - "Em t = 3 ms"
+    - "Em t = 4 ms"
+  resposta: 1
+  explicacao: |
+    No cooperativo ninguém é tirado da CPU: A fica pronta em t = 1, mas só roda quando B bloquear, em t = 4, e termina em t = 5. No preemptivo terminaria em t = 2. O pior caso de uma tarefa no cooperativo inclui o maior trecho sem ceder de qualquer outra.
+  fonte: "Mastering the FreeRTOS Real Time Kernel, Task Management, seção Cooperative Scheduling"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T03-004
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Com `configTICK_RATE_HZ = 250`, qual é o período do tick em milissegundos? Responda com um número inteiro.
+  resposta: {valor: 4, unidade: "ms", tolerancia: 0}
+  explicacao: |
+    1 / 250 Hz = 0,004 s = 4 ms. É também a resolução de vTaskDelay e dos tempos limite.
+  fonte: "Mastering the FreeRTOS Real Time Kernel, Task Management, seção Time Measurement and the Tick Interrupt"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T03-005
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Com `configTICK_RATE_HZ = 200`, quanto vale `pdMS_TO_TICKS(37)`? A macro faz a conta em inteiros e trunca. Responda com um número inteiro de ticks.
+  resposta: {valor: 7, unidade: "ticks", tolerancia: 0}
+  explicacao: |
+    37 × 200 / 1000 = 7,4 → 7 ticks = 35 ms. Somado à incerteza de até um tick do vTaskDelay, o atraso real fica entre 30 e 35 ms: menor que os 37 ms pedidos.
+  fonte: "FreeRTOS-Kernel, include/projdefs.h (pdMS_TO_TICKS); Mastering the FreeRTOS Real Time Kernel, Task Management, seção Time Measurement and the Tick Interrupt"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T03-006
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um STM32 a 72 MHz roda o FreeRTOS com tick de 1000 Hz, e a rotina do tick gasta 360 ciclos em média. Que porcentagem da CPU o tick consome? Responda em %, com uma casa decimal.
+  resposta: {valor: 0.5, unidade: "%", tolerancia: 0.01}
+  explicacao: |
+    360 ciclos × 1000 por segundo = 360 000 ciclos/s; 360 000 / 72 000 000 = 0,005 = 0,5 %. A 10 kHz seriam 5 %: por isso ticks acima de 1 kHz raramente compensam.
+  fonte: "Mastering the FreeRTOS Real Time Kernel, Task Management, seção Time Measurement and the Tick Interrupt"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T03-007
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um Cortex-M a 48 MHz usa o tickless idle padrão do FreeRTOS, com o SysTick de 24 bits contando o clock do núcleo e tick de 1000 Hz. Quantos ticks, no máximo, podem ser suprimidos num único sono? Responda com um número inteiro.
+  resposta: {valor: 349, unidade: "ticks", tolerancia: 0}
+  explicacao: |
+    Contagens por tick = 48 000 000 / 1000 = 48 000. Máximo = ⌊(2²⁴ − 1) / 48 000⌋ = ⌊16 777 215 / 48 000⌋ = ⌊349,5⌋ = 349 ticks. É o cálculo de xMaximumPossibleSuppressedTicks no port; para sonos mais longos, os ports dos fabricantes usam LPTIM ou RTC.
+  fonte: "FreeRTOS-Kernel, portable/GCC/ARM_CM3/port.c (vPortSetupTimerInterrupt e vPortSuppressTicksAndSleep); Mastering the FreeRTOS Real Time Kernel, Low Power Support, seção Tickless Idle Mode"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T03-008
+  objetivo: O3
+  tipo: vf
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Verdadeiro ou falso: na atribuição por taxa monotônica (RMS), a tarefa de menor período recebe a maior prioridade.
+  resposta: true
+  explicacao: |
+    RMS ordena as prioridades pelo período: quanto mais frequente a tarefa, maior a prioridade. Liu e Layland mostraram que é a atribuição de prioridade fixa ótima quando o prazo é igual ao período.
+  fonte: "C. L. Liu e J. W. Layland, Scheduling Algorithms for Multiprogramming in a Hard-Real-Time Environment, JACM, 1973"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T03-009
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Calcule o limite de utilização de Liu e Layland, n·(2^(1/n) − 1), para n = 4 tarefas. Responda com quatro casas decimais.
+  resposta: {valor: 0.7568, unidade: "adimensional", tolerancia: 0.001}
+  explicacao: |
+    2^(1/4) = 1,189207; menos 1 = 0,189207; vezes 4 = 0,756828 ≈ 0,7568. Quatro tarefas com utilização total até 75,68 % são escalonáveis pela RMS, quaisquer que sejam os períodos.
+  fonte: "C. L. Liu e J. W. Layland, Scheduling Algorithms for Multiprogramming in a Hard-Real-Time Environment, JACM, 1973"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T03-010
+  objetivo: O3
+  tipo: multipla
+  dificuldade: 3
+  bloom: avaliar
+  enunciado: |
+    Marque as afirmações corretas sobre o teste de utilização de Liu e Layland.
+  alternativas:
+    - "Ele é suficiente, mas não necessário: um conjunto com U acima do limite ainda pode ser escalonável pela RMS"
+    - "Um conjunto com períodos harmônicos, como 10, 20 e 40 ms, é escalonável pela RMS até U = 1"
+    - "Se U ultrapassar o limite, alguma tarefa certamente perde o prazo"
+    - "Com U > 1, nenhum escalonador consegue cumprir todos os prazos num único processador"
+  resposta: [0, 1, 3]
+  explicacao: |
+    O limite n(2^(1/n) − 1) vale para o pior conjunto de períodos possível; acima dele, o teste não conclui e é preciso a análise de tempo de resposta. Períodos harmônicos chegam a U = 1. Utilização acima de 1 pede mais CPU do que existe.
+  fonte: "C. L. Liu e J. W. Layland (1973); Giorgio Buttazzo, Hard Real-Time Computing Systems, capítulo Periodic Task Scheduling"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T03-011
+  objetivo: O4
+  tipo: unica
+  dificuldade: 2
+  bloom: avaliar
+  enunciado: |
+    Você mediu com o DWT_CYCCNT 10 000 execuções de uma rotina de controle e o maior tempo observado foi 120 µs. Que valor usar como C na análise de tempo de resposta?
+  alternativas:
+    - "120 µs, porque foi medido no hardware real"
+    - "A média das medidas, porque representa o comportamento típico"
+    - "O menor valor observado, para não superestimar a carga"
+    - "Um valor acima de 120 µs, com margem justificada, porque o maior valor observado não garante o pior caso"
+  resposta: 3
+  explicacao: |
+    A medição só mostra os caminhos e estados exercitados no teste; o pior caso real pode não ter aparecido. Na prática se acrescenta margem (e se documenta o método) ou se usa análise estática de WCET. A média serve para estimar carga, não para provar prazos.
+  fonte: "R. Wilhelm et al., The Worst-Case Execution-Time Problem — Overview of Methods and Survey of Tools, ACM TECS, 2008"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T03-012
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Tarefas com prioridade RMS, em (C, T) ms: τ₁ (1, 5), τ₂ (2, 8), τ₃ (3, 12). A tarefa τ₃ pode ainda ficar bloqueada até B₃ = 2 ms por um mutex segurado por uma tarefa de prioridade menor. Pela iteração R = C + B + Σ⌈R/Tⱼ⌉·Cⱼ, qual é R₃ em ms? Responda com um número inteiro.
+  resposta: {valor: 12, unidade: "ms", tolerancia: 0}
+  explicacao: |
+    R⁰ = 3 + 2 + 1 + 2 = 8 → 3 + 2 + ⌈8/5⌉·1 + ⌈8/8⌉·2 = 9 → 3 + 2 + 2 + ⌈9/8⌉·2 = 11 → 3 + 2 + ⌈11/5⌉·1 + 4 = 12 → 3 + 2 + 3 + 4 = 12 (convergiu). R₃ = 12 ≤ 12: cumpre o prazo sem nenhuma folga. Sem o bloqueio, R₃ seria 7.
+  fonte: "N. Audsley, A. Burns, M. Richardson, K. Tindell e A. Wellings, Applying New Scheduling Theory to Static Priority Pre-emptive Scheduling, Software Engineering Journal, 1993"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T03-013
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Prioridades RMS, em (C, T) ms, com prazo igual ao período: τ₁ (2, 10), τ₂ (3, 15) e τ₃ (C₃, 30). Pela análise de tempo de resposta, qual é o maior valor inteiro de C₃, em ms, que mantém τ₃ escalonável?
+  resposta: {valor: 18, unidade: "ms", tolerancia: 0}
+  explicacao: |
+    Com C₃ = 18: R = 18 + ⌈R/10⌉·2 + ⌈R/15⌉·3; começando em 23 → 18 + 6 + 6 = 30 → 18 + 6 + 6 = 30 ≤ 30. Com C₃ = 19: 24 → 19 + 6 + 6 = 31 → 19 + 8 + 9 = 36 > 30, perde o prazo. Com C₃ = 18, U = 0,2 + 0,2 + 0,6 = 1,0: muito acima do limite de Liu e Layland (0,7798), que só garantiria C₃ ≤ 11. A RTA é exata; o teste de utilização é conservador.
+  fonte: "M. Joseph e P. Pandya, Finding Response Times in a Real-Time System, The Computer Journal, 1986; Liu e Layland (1973)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.7.T03-014
+  objetivo: O3
+  tipo: multipla
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Marque as afirmações corretas sobre a atribuição de prioridades por taxa monotônica.
+  alternativas:
+    - "Entre as atribuições de prioridade fixa, a RMS é ótima quando o prazo de cada tarefa é igual ao seu período"
+    - "Quando os prazos são menores que os períodos, a atribuição ótima de prioridade fixa é por prazo (deadline monotonic)"
+    - "A RMS é ótima entre todos os escalonadores, inclusive os de prioridade dinâmica, como o EDF"
+    - "O resultado de Liu e Layland supõe tarefas independentes; recursos compartilhados exigem incluir o bloqueio na análise"
+  resposta: [0, 1, 3]
+  explicacao: |
+    A otimalidade da RMS vale entre as prioridades fixas com D = T. Com D < T, a deadline monotonic (Leung e Whitehead, 1982) é a ótima. Escalonadores de prioridade dinâmica como o EDF chegam a U = 1 em qualquer conjunto (também mostrado por Liu e Layland). Tarefas que dividem recursos podem ser bloqueadas por tarefas de menor prioridade, o termo B da análise (T06).
+  fonte: "Liu e Layland (1973); J. Leung e J. Whitehead, On the complexity of fixed-priority scheduling of periodic, real-time tasks, Performance Evaluation, 1982; Buttazzo, Hard Real-Time Computing Systems"
+  origem: ia
+  revisao: rascunho
