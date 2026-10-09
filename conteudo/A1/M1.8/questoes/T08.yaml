@@ -1,0 +1,220 @@
+- id: Q-M1.8.T08-001
+  objetivo: O1
+  tipo: vf
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: um MOSFET com V_GS(th) de 2 V está totalmente ligado, com o RDS(on) do datasheet, quando o gate recebe 3,3 V.
+  resposta: false
+  explicacao: |
+    O V_GS(th) é a tensão em que o MOSFET começa a conduzir uma corrente pequena (cerca de 250 µA no teste do datasheet). O RDS(on) só vale na V_GS em que foi especificado; para 3,3 V, procure um MOSFET com RDS(on) especificado em 2,5 V, ou use um driver.
+  fonte: "Nexperia, AN11158 Understanding power MOSFET data sheet parameters; Infineon, IRLZ44N datasheet, Electrical Characteristics"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.8.T08-002
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um MOSFET com RDS(on) = 18 mΩ conduz continuamente 6 A. Qual é a perda de condução? Responda em W, com 3 casas decimais.
+  resposta: {valor: 0.648, unidade: "W", tolerancia: 0.01}
+  explicacao: |
+    P = I²·RDS(on) = 36 × 0,018 = 0,648 W. A perda cresce com o quadrado da corrente, e o RDS(on) sobe com a temperatura: para o projeto, use o valor quente da curva normalizada.
+  fonte: "Horowitz & Hill, The Art of Electronics, Field-Effect Transistors (Power MOSFETs); Nexperia, AN11158"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.8.T08-003
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um MOSFET em TO-220, sem dissipador (R_θJA = 62 °C/W), dissipa 0,9 W num ambiente a 35 °C. Qual é a temperatura de junção? Responda em °C, com 1 casa decimal.
+  resposta: {valor: 90.8, unidade: "°C", tolerancia: 0.01}
+  explicacao: |
+    T_J = T_A + P·R_θJA = 35 + 0,9 × 62 = 90,8 °C. Está abaixo dos 175 °C máximos, mas o RDS(on) a essa temperatura é cerca de 1,3 a 1,4 vez o de 25 °C: refaça a conta com o valor quente.
+  fonte: "Infineon, IRLZ44N datasheet, Thermal Resistance; Nexperia, AN11158"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.8.T08-004
+  objetivo: O1
+  tipo: multipla
+  dificuldade: 3
+  bloom: avaliar
+  enunciado: |
+    Você vai chavear 2 A de uma fita de LED de 12 V direto de um GPIO de 3,3 V, com um MOSFET de canal N de lado baixo. Quais critérios estão corretos?
+  alternativas:
+    - "Escolher um MOSFET com RDS(on) especificado em V_GS de 2,5 V ou menos"
+    - "Basta que o I_D da primeira página seja maior que 2 A"
+    - "Escolher V_DS(máx) com folga sobre os 12 V, por exemplo 30 V ou mais"
+    - "Colocar um resistor de pull-down no gate para a fita não acender durante o reset do MCU"
+  resposta: [0, 2, 3]
+  explicacao: |
+    O I_D da primeira página é medido com o encapsulamento a 25 °C num dissipador ideal; o limite real é térmico e depende do RDS(on) na V_GS disponível. Folga em V_DS cobre picos, e o pull-down garante que a chave fique desligada enquanto o pino do MCU está em alta impedância.
+  fonte: "Nexperia, AN11158 Understanding power MOSFET data sheet parameters; Horowitz & Hill, The Art of Electronics, Field-Effect Transistors"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.8.T08-005
+  objetivo: O2
+  tipo: unica
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Durante o ligamento de um MOSFET, a tensão de gate fica parada num valor intermediário por algum tempo. O que acontece nesse platô de Miller?
+  alternativas:
+    - "O gate está descarregando pela carga"
+    - "O MOSFET está em avalanche"
+    - "A corrente de gate carrega a capacitância gate-dreno enquanto V_DS cai, e a chave passa pela região de tensão e corrente altas ao mesmo tempo"
+    - "O MOSFET já está totalmente ligado, e o platô é só um atraso do driver"
+  resposta: 2
+  explicacao: |
+    No platô, a corrente de gate é gasta para carregar C_GD enquanto o dreno desce; V_GS fica parado. É nessa etapa que acontecem as perdas de chaveamento, e por isso um driver com mais corrente encurta o platô e reduz as perdas.
+  fonte: "Balogh, TI, Fundamentals of MOSFET and IGBT Gate Driver Circuits"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.8.T08-006
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um MOSFET tem carga total de gate Q_g = 60 nC, e o gate é carregado por uma corrente média de 30 mA. Qual é, aproximadamente, o tempo para ligá-lo? Responda em µs, com 1 casa decimal.
+  resposta: {valor: 2.0, unidade: "µs", tolerancia: 0.01}
+  explicacao: |
+    t ≈ Q_g/I_G = 60 nC/30 mA = 2,0 µs. Com um driver de 2 A, cairia para 30 ns. A estimativa é grosseira, porque a corrente cai à medida que o gate sobe, mas dá a ordem de grandeza certa.
+  fonte: "Balogh, TI, Fundamentals of MOSFET and IGBT Gate Driver Circuits"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.8.T08-007
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Uma chave comuta 24 V e 4 A com PWM de 10 kHz, e a soma dos tempos de subida e de descida é de 1 µs. Pela aproximação P_sw ≈ ½·V·I·(t_r + t_f)·f, qual é a perda de chaveamento? Responda em W, com 2 casas decimais.
+  resposta: {valor: 0.48, unidade: "W", tolerancia: 0.01}
+  explicacao: |
+    P_sw = 0,5 × 24 × 4 × 1 µs × 10 000 = 0,48 W. A perda é proporcional à frequência: a 40 kHz seriam 1,92 W. Um gate driver mais forte encurta t_r e t_f.
+  fonte: "Balogh, TI, Fundamentals of MOSFET and IGBT Gate Driver Circuits (switching losses)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.8.T08-008
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Um MOSFET com RDS(on) = 20 mΩ comuta 8 A em 12 V, com PWM de 20 kHz e duty de 50 %. Os tempos de subida e de descida são de 200 ns cada. Somando a perda de condução (I²·RDS(on)·duty) e a de chaveamento (½·V·I·(t_r + t_f)·f), qual é a perda total? Responda em W, com 2 casas decimais.
+  resposta: {valor: 1.02, unidade: "W", tolerancia: 0.01}
+  explicacao: |
+    Condução: 64 × 0,02 × 0,5 = 0,64 W. Chaveamento: 0,5 × 12 × 8 × 400 ns × 20 000 = 0,384 W. Total ≈ 1,02 W, e mais de um terço vem do chaveamento. Reduzir a frequência ou usar um driver mais forte ataca essa parcela.
+  fonte: "Balogh, TI, Fundamentals of MOSFET and IGBT Gate Driver Circuits; Nexperia, AN11158"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.8.T08-009
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Uma solenoide de 20 mH conduz 1 A. Qual é a energia guardada no seu campo magnético, que precisa ir para algum lugar quando a chave abre? Responda em mJ, com 1 casa decimal.
+  resposta: {valor: 10.0, unidade: "mJ", tolerancia: 0.01}
+  explicacao: |
+    E = ½·L·I² = 0,5 × 0,02 × 1² = 10 mJ. Sem diodo de roda livre, essa energia vai para a avalanche do MOSFET a cada desligamento, e pode passar do E_AS do datasheet. Com o diodo, ela se dissipa na resistência da bobina e no diodo.
+  fonte: "Horowitz & Hill, The Art of Electronics, Field-Effect Transistors (inductive loads); Nexperia, AN11158 (avalanche)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.8.T08-010
+  objetivo: O3
+  tipo: unica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Numa chave de lado baixo com MOSFET acionando uma bobina de relé alimentada por 12 V, como se liga o diodo de roda livre?
+  alternativas:
+    - "Em paralelo com a bobina, com o catodo no +12 V e o anodo no dreno"
+    - "Em paralelo com a bobina, com o anodo no +12 V e o catodo no dreno"
+    - "Em série com o source do MOSFET, com o catodo no GND"
+    - "Entre o gate e o source do MOSFET"
+  resposta: 0
+  explicacao: |
+    Com a chave ligada, o diodo fica reversamente polarizado. Ao abrir, a bobina inverte a tensão nos seus terminais e o diodo conduz a corrente em círculo, prendendo o dreno cerca de 0,7 V acima do +12 V. Ao contrário, ele seria um curto da fonte assim que a chave ligasse.
+  fonte: "Horowitz & Hill, The Art of Electronics, Field-Effect Transistors (inductive loads); TE Connectivity, Coil Suppression Can Reduce Relay Life"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.8.T08-011
+  objetivo: O3
+  tipo: multipla
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Você precisa ligar e desligar um módulo de 24 V que tem o GND comum com o MCU, usando uma chave de lado alto. Quais afirmações estão corretas?
+  alternativas:
+    - "Com MOSFET de canal P, o source vai no +24 V e a chave liga quando o gate fica abaixo do source"
+    - "Puxar o gate de um canal P direto ao GND aplica −24 V entre gate e source, acima do limite típico de ±20 V, e por isso se usa um divisor ou um Zener"
+    - "Um MOSFET de canal N no lado alto liga com o gate em 3,3 V vindo direto do MCU"
+    - "Chaves de carga integradas e drivers com bootstrap ou bomba de carga resolvem o lado alto com canal N"
+  resposta: [0, 1, 3]
+  explicacao: |
+    O canal P liga com V_GS negativo, e o V_GS(máx) obriga a limitar a tensão de gate em 24 V. Um canal N no lado alto precisa de gate acima do +24 V, o que exige bootstrap, bomba de carga ou chave integrada; 3,3 V no gate deixaria V_GS negativo.
+  fonte: "Horowitz & Hill, The Art of Electronics, Field-Effect Transistors (high-side switches); Balogh, TI, Fundamentals of MOSFET and IGBT Gate Driver Circuits"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.8.T08-012
+  objetivo: O4
+  tipo: unica
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Por que um LED de potência não deve ser ligado diretamente a uma fonte de tensão, sem limitar a corrente?
+  alternativas:
+    - "Porque o LED só funciona com corrente alternada"
+    - "Porque a corrente cresce exponencialmente com a tensão e o V_F cai quando ele esquenta, o que pode levar ao disparo térmico"
+    - "Porque a tensão direta do LED aumenta com a temperatura, desligando o LED"
+    - "Porque o LED precisa de PWM para acender"
+  resposta: 1
+  explicacao: |
+    O LED é um diodo: pequenas variações de tensão causam grandes variações de corrente, e o V_F diminui com a temperatura, o que aumenta ainda mais a corrente. Controla-se a corrente com resistor, fonte de corrente linear ou driver chaveado.
+  fonte: "Horowitz & Hill, The Art of Electronics (LED drive); Lumileds, Luxeon datasheets (V_F × I_F e temperatura)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.8.T08-013
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um LED de 1 W com V_F = 3,3 V deve conduzir 350 mA a partir de 9 V, limitado por um resistor em série. Qual é o valor do resistor? Responda em Ω, com 2 casas decimais.
+  resposta: {valor: 16.29, unidade: "Ω", tolerancia: 0.01}
+  explicacao: |
+    R = (9 − 3,3)/0,35 ≈ 16,29 Ω (na prática, 16 Ω). O resistor dissipa 0,35² × 16,29 ≈ 2 W, e a eficiência do circuito é 3,3/9 ≈ 37 %: é o caso em que um driver chaveado de corrente constante compensa.
+  fonte: "Horowitz & Hill, The Art of Electronics (LED drive)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.8.T08-014
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Para que o brilho de um LED pareça linear ao olho, o firmware aplica a correção gama duty = nível^2,2 (nível e duty de 0 a 1). Que duty corresponde ao nível de 60 %? Responda em %, com 1 casa decimal.
+  resposta: {valor: 32.5, unidade: "%", tolerancia: 0.01}
+  explicacao: |
+    0,6^2,2 ≈ 0,325, ou 32,5 % de duty. Sem a correção, os níveis altos pareceriam todos quase iguais ao máximo. O PWM deve ficar em centenas de Hz ou mais para não cintilar.
+  fonte: "Horowitz & Hill, The Art of Electronics (LED drive); Microchip, ATmega328P datasheet, Fast PWM Mode"
+  origem: ia
+  revisao: rascunho

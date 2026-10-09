@@ -1,0 +1,220 @@
+- id: Q-M1.8.T03-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Um calibrador de pneu mostra 32 psi num pneu cheio e 0 psi num pneu vazio ao nível do mar. Que tipo de pressão ele mede?
+  alternativas:
+    - "Absoluta, contra o vácuo"
+    - "Diferencial, entre duas tomadas do pneu"
+    - "Barométrica, contra o nível do mar padrão"
+    - "Manométrica, contra a atmosfera local"
+  resposta: 3
+  explicacao: |
+    O pneu vazio está na pressão atmosférica e o calibrador lê 0: ele mede contra a atmosfera, ou seja, pressão manométrica. Um sensor absoluto leria cerca de 14,7 psi (101 kPa) no pneu vazio.
+  fonte: "Fraden, Handbook of Modern Sensors, Pressure Sensors"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.8.T03-002
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Pela fórmula da atmosfera padrão, h = 44 330·[1 − (p/p₀)^(1/5,255)], qual é a altitude correspondente a p = 900 hPa, com p₀ = 1013,25 hPa? Responda em m, sem casas decimais.
+  resposta: {valor: 989, unidade: "m", tolerancia: 0.01}
+  explicacao: |
+    p/p₀ = 0,8882; elevado a 1/5,255 dá 0,97770; h = 44 330 × 0,02230 ≈ 989 m. Esse valor só é a altitude real se p₀ for a pressão ao nível do mar do dia, e não a padrão.
+  fonte: "Bosch Sensortec, BMP180 datasheet, Calculating absolute altitude"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.8.T03-003
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um MPX5010 manométrico, com V_out = V_S·(0,09·P + 0,04) (P em kPa), mede a pressão no fundo de uma caixa d'água e lê 3,40 V com V_S = 5,00 V. Qual é a altura da coluna d'água, usando 9,81 kPa por metro? Responda em m, com 3 casas decimais.
+  resposta: {valor: 0.725, unidade: "m", tolerancia: 0.01}
+  explicacao: |
+    P = (3,40/5,00 − 0,04)/0,09 = 7,111 kPa; h = 7,111/9,81 ≈ 0,725 m. O sensor é ratiométrico: medir V_out e V_S com a mesma referência cancela a variação da alimentação.
+  fonte: "NXP, MPX5010 datasheet (Transfer Function); Fraden, Handbook of Modern Sensors, Pressure Sensors"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.8.T03-004
+  objetivo: O1
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: com o barômetro parado sobre a mesa, a altitude absoluta calculada com p₀ fixo em 1013,25 hPa pode variar dezenas de metros ao longo de alguns dias, só por causa do tempo meteorológico.
+  resposta: true
+  explicacao: |
+    A pressão ao nível do mar varia dezenas de hPa com o tempo, e cada hPa vale cerca de 8 m perto do nível do mar. Para altitude absoluta, use o p₀ do dia; para diferenças de altura em curto prazo, como andares, o barômetro funciona bem, porque a exatidão relativa é muito melhor que a absoluta.
+  fonte: "Bosch Sensortec, BMP280 datasheet (exatidão absoluta e relativa); Bosch Sensortec, BMP180 datasheet, Calculating absolute altitude"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.8.T03-005
+  objetivo: O2
+  tipo: unica
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Um MPU6050 em queda livre (sem rotação e sem resistência do ar) lê, nos três eixos do acelerômetro:
+  alternativas:
+    - "1 g no eixo vertical e 0 nos outros"
+    - "Aproximadamente 0 g nos três eixos"
+    - "−1 g no eixo vertical, porque o chip está caindo"
+    - "9,81 g no eixo vertical"
+  resposta: 1
+  explicacao: |
+    O acelerômetro mede a força específica: a aceleração do chip menos a gravidade. Em queda livre, as duas são iguais e a leitura é zero. Parado sobre a mesa, com Z para cima, lê +1 g em Z, porque a mesa empurra o chip para cima.
+  fonte: "Fraden, Handbook of Modern Sensors, Velocity and Acceleration; Analog Devices, AN-1057 Using an Accelerometer for Inclination Sensing"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.8.T03-006
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    O acelerômetro do MPU6050 está na escala de ±4 g (8192 LSB/g) e o eixo X lê −3000. Qual é a aceleração nesse eixo? Responda em g, com 3 casas decimais.
+  resposta: {valor: -0.366, unidade: "g", tolerancia: 0.01}
+  explicacao: |
+    −3000/8192 ≈ −0,366 g. Na escala de ±2 g, o mesmo valor bruto seria −0,183 g: a conversão depende do AFS_SEL configurado em ACCEL_CONFIG (0x1C).
+  fonte: "TDK InvenSense, MPU-6000/MPU-6050 Product Specification, Accelerometer Specifications"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.8.T03-007
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Parado, o MPU6050 em ±2 g lê a_x = 0, a_y = 5000 e a_z = 12 000. Qual é o ângulo de rolagem, roll = atan2(a_y, a_z)? Responda em graus, com 2 casas decimais.
+  resposta: {valor: 22.62, unidade: "°", tolerancia: 0.01}
+  explicacao: |
+    atan2(5000, 12 000) = 22,62°. A escala não importa, porque é uma razão. O módulo, √(5000² + 12 000²)/16 384 ≈ 0,79 g, mostra que essa leitura não tem 1 g; em produto, isso pede a calibração de seis posições e um teste de movimento antes de confiar no ângulo.
+  fonte: "Analog Devices, AN-1057 Using an Accelerometer for Inclination Sensing"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.8.T03-008
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Na calibração de seis posições em ±4 g, o eixo Y lê +8350 apontado para cima e −8030 apontado para baixo. Depois de corrigir offset e ganho com esses dois pontos, quanto vale uma leitura bruta de 4255? Responda em g, com 3 casas decimais.
+  resposta: {valor: 0.5, unidade: "g", tolerancia: 0.01}
+  explicacao: |
+    offset = (8350 − 8030)/2 = 160 LSB; ganho = (8350 + 8030)/2 = 8190 LSB/g. a = (4255 − 160)/8190 = 0,500 g. Sem a correção, com o nominal de 8192 LSB/g, sairia 0,519 g: um erro de cerca de 1,3° na inclinação (31,3° em vez de 30°).
+  fonte: "TDK InvenSense, MPU-6000/MPU-6050 Product Specification; Fraden, Handbook of Modern Sensors, Sensor Characteristics (Calibration)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.8.T03-009
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Na escala de ±500 °/s (65,5 LSB por °/s), o giroscópio do MPU6050 parado lê em média 98 LSB num eixo. Se esse bias não for tirado, quanto erro de ângulo a integração acumula em 60 s? Responda em graus, com 1 casa decimal.
+  resposta: {valor: 89.8, unidade: "°", tolerancia: 0.01}
+  explicacao: |
+    Bias = 98/65,5 ≈ 1,496 °/s; em 60 s, 89,8°. Por isso o bias é medido em repouso na inicialização e subtraído, e o ângulo é corrigido por outra referência, como a gravidade no filtro complementar.
+  fonte: "TDK InvenSense, MPU-6000/MPU-6050 Product Specification, Gyroscope Specifications (Initial ZRO Tolerance)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.8.T03-010
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Num filtro complementar θ = α·(θ + ω·Δt) + (1 − α)·θ_acel, amostrado a cada 5 ms, você quer constante de tempo τ = 0,5 s. Com α = τ/(τ + Δt), qual é o valor de α? Responda com 3 casas decimais.
+  resposta: {valor: 0.99, unidade: "adimensional", tolerancia: 0.001}
+  explicacao: |
+    α = 0,5/(0,5 + 0,005) = 0,990. Abaixo de cerca de 1/(2πτ) ≈ 0,32 Hz, o ângulo segue o acelerômetro; acima, segue o giroscópio. Se a taxa de amostragem mudar, α também tem de mudar para manter o mesmo τ.
+  fonte: "Colton, The Balance Filter (MIT, 2007)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.8.T03-011
+  objetivo: O3
+  tipo: multipla
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Sobre o filtro complementar que combina acelerômetro e giroscópio para estimar roll e pitch, quais afirmações estão corretas?
+  alternativas:
+    - "O ângulo do giroscópio passa por um passa-altas e o do acelerômetro por um passa-baixas com a mesma frequência de corte"
+    - "Um bias constante do giroscópio, que integrado cresceria sem limite, vira um erro de ângulo constante de cerca de bias × τ"
+    - "Aumentar α deixa o filtro mais imune à vibração, mas a correção pela gravidade fica mais lenta"
+    - "O filtro complementar também corrige a guinada (yaw), porque o acelerômetro vê a rotação em torno da vertical"
+  resposta: [0, 1, 2]
+  explicacao: |
+    As duas funções de transferência somam 1, e cada sensor domina na faixa em que é bom. O bias vira um erro fixo b·τ, e por isso vale a pena calibrá-lo. Girar em torno da vertical não muda o vetor gravidade: para yaw é preciso magnetômetro.
+  fonte: "Colton, The Balance Filter (MIT, 2007); Analog Devices, AN-1057 Using an Accelerometer for Inclination Sensing"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.8.T03-012
+  objetivo: O4
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Em que efeito físico se baseia o giroscópio MEMS vibratório?
+  alternativas:
+    - "Na força de Coriolis sobre uma massa mantida em vibração, que a empurra na direção perpendicular quando o chip gira"
+    - "No efeito Hall numa placa semicondutora girando"
+    - "Na variação da resistência de um diafragma com a pressão"
+    - "No efeito Seebeck entre dois metais"
+  resposta: 0
+  explicacao: |
+    Uma massa vibra na ressonância (drive); com rotação Ω, a força de Coriolis F = 2m·Ω × v desloca-a no eixo de sensoriamento, lido por pentes capacitivos. Por manter a massa sempre vibrando, o giroscópio consome mais que o acelerômetro.
+  fonte: "Fraden, Handbook of Modern Sensors, Velocity and Acceleration (gyroscopes)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.8.T03-013
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    A massa de prova de um acelerômetro MEMS, presa por molas, tem frequência de ressonância de 3 kHz. Pelo modelo massa-mola, x = a/ω₀², quanto ela se desloca sob 1 g (9,81 m/s²)? Responda em nm, com 1 casa decimal.
+  resposta: {valor: 27.6, unidade: "nm", tolerancia: 0.01}
+  explicacao: |
+    ω₀ = 2π × 3000 = 18 850 rad/s; x = 9,81/18 850² ≈ 27,6 nm. Deslocamentos dessa ordem só são lidos porque os pentes capacitivos diferenciais e o ASIC detectam variações de capacitância minúsculas. Uma ressonância mais alta dá mais banda e menos deslocamento.
+  fonte: "Fraden, Handbook of Modern Sensors, Velocity and Acceleration (capacitive accelerometers)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.8.T03-014
+  objetivo: O4
+  tipo: multipla
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Sobre a construção de um sensor de pressão MEMS piezorresistivo, quais afirmações estão corretas?
+  alternativas:
+    - "Os piezorresistores ficam nas bordas do diafragma, onde a tensão mecânica é máxima, ligados em ponte de Wheatstone"
+    - "Nos sensores absolutos, a cavidade sob o diafragma é selada a vácuo, por exemplo na soldagem de lâminas"
+    - "O encapsulamento pode transmitir tensões mecânicas ao diafragma e causar histerese e deriva"
+    - "Como o silício quase não depende da temperatura, esses sensores dispensam compensação térmica"
+  resposta: [0, 1, 2]
+  explicacao: |
+    O diafragma é corroído no silício, os resistores ficam onde a deformação é maior e formam a ponte completa. A cavidade selada é a referência dos absolutos. O efeito piezorresistivo do silício depende muito da temperatura, e por isso existe compensação, no próprio chip (MPX5010) ou por coeficientes de calibração (BMP280).
+  fonte: "Fraden, Handbook of Modern Sensors, Pressure Sensors e Sensor Materials and Technologies; NXP, MPX5010 datasheet"
+  origem: ia
+  revisao: rascunho

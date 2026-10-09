@@ -1,0 +1,210 @@
+- id: Q-M1.8.T04-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Por que um LDR de CdS é uma má escolha para medir a iluminância em lux num produto?
+  alternativas:
+    - "Porque só funciona com luz infravermelha"
+    - "Porque é lento, varia muito de peça para peça, tem memória da luz anterior e contém cádmio, de uso restrito pela RoHS"
+    - "Porque precisa de um amplificador de transimpedância para funcionar"
+    - "Porque sua resistência sobe com a luz, ao contrário do fotodiodo"
+  resposta: 1
+  explicacao: |
+    O LDR serve para "claro ou escuro", lido num divisor simples. Para lux, use um sensor com filtro que imite o olho, como o BH1750, ou um fotodiodo calibrado. A resistência do LDR cai com a luz, e ele responde bem ao visível; a transimpedância é o circuito do fotodiodo.
+  fonte: "Fraden, Handbook of Modern Sensors, Light Detectors (Photoresistors)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.8.T04-002
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um fotodiodo produz 0,4 µA num amplificador de transimpedância com R_f = 4,7 MΩ. Qual é o módulo da tensão de saída? Responda em V, com 2 casas decimais.
+  resposta: {valor: 1.88, unidade: "V", tolerancia: 0.01}
+  explicacao: |
+    V = I·R_f = 0,4 µA × 4,7 MΩ = 1,88 V. O terra virtual mantém o fotodiodo em 0 V e toda a fotocorrente passa por R_f; um capacitor em paralelo com R_f evita oscilação e limita a banda.
+  fonte: "Horowitz & Hill, The Art of Electronics, Operational Amplifiers (transimpedance amplifier); Fraden, Handbook of Modern Sensors, Light Detectors"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.8.T04-003
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    No modo de alta resolução, com o tempo de medida padrão, a iluminância do BH1750 é lux = contagem/1,2. Qual é a iluminância para a leitura 0x0960? Responda em lx, sem casas decimais.
+  resposta: {valor: 2000, unidade: "lx", tolerancia: 0.001}
+  explicacao: |
+    0x0960 = 2400; 2400/1,2 = 2000 lx. Mudando o registrador de tempo de medida (MTreg), muda o fator, e a conta deve acompanhar.
+  fonte: "Rohm, BH1750FVI datasheet, Measurement mode explanation e Measurement sequence example"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.8.T04-004
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um LDR segue R = R₁₀·(E/10 lx)^(−γ), com R₁₀ = 12 kΩ e γ = 0,7. Ele mede 3,0 kΩ. Qual é a iluminância estimada? Responda em lx, com 1 casa decimal.
+  resposta: {valor: 72.5, unidade: "lx", tolerancia: 0.01}
+  explicacao: |
+    E = 10·(R/R₁₀)^(−1/γ) = 10 × (0,25)^(−1,4286) ≈ 10 × 7,25 = 72,5 lx. Como R₁₀ e γ variam muito entre peças, o número só vale depois de calibrar aquela peça.
+  fonte: "Fraden, Handbook of Modern Sensors, Light Detectors (Photoresistors)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.8.T04-005
+  objetivo: O2
+  tipo: vf
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: no VL53L0X, o tempo de voo da luz (cerca de 6,7 ns de ida e volta para 1 m) é medido pelo timer do microcontrolador, como o eco do HC-SR04.
+  resposta: false
+  explicacao: |
+    Nanossegundos estão fora do alcance de um timer de MCU. O VL53L0X mede dentro do chip, com uma matriz de SPADs e um histograma de muitos pulsos, e entrega a distância pronta pelo I²C. O eco do ultrassom dura milissegundos e cabe num timer com captura de entrada.
+  fonte: "STMicroelectronics, VL53L0X datasheet (Ranging); Fraden, Handbook of Modern Sensors, Position, Displacement, and Level"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.8.T04-006
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    O ECHO de um HC-SR04 fica em nível alto por 5,0 ms, com o ar a 25 °C. Usando v = 331,3 + 0,606·T m/s, qual é a distância até o alvo? Responda em m, com 3 casas decimais.
+  resposta: {valor: 0.866, unidade: "m", tolerancia: 0.01}
+  explicacao: |
+    v = 331,3 + 15,15 = 346,45 m/s. d = v·t/2 = 346,45 × 0,005/2 ≈ 0,866 m. O tempo do ECHO é de ida e volta: esquecer a divisão por 2 dobra a distância.
+  fonte: "HC-SR04 Ultrasonic Ranging Module datasheet; Fraden, Handbook of Modern Sensors, Position, Displacement, and Level (ultrasonic)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.8.T04-007
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Um medidor de nível ultrassônico usa sempre v = 343,4 m/s (ar a 20 °C), mas o ar no tanque está a 40 °C. Para um eco de 10,0 ms, de quanto a distância calculada fica abaixo da real (com v = 331,3 + 0,606·T m/s)? Responda em cm, com 1 casa decimal.
+  resposta: {valor: 6.1, unidade: "cm", tolerancia: 0.02}
+  explicacao: |
+    A 40 °C, v = 355,54 m/s e a distância real é 355,54 × 0,010/2 = 1,7777 m. O firmware calcula 343,4 × 0,010/2 = 1,7170 m: 6,1 cm a menos, ou cerca de 3,4 %. Um sensor de temperatura junto ao transdutor corrige isso.
+  fonte: "HC-SR04 Ultrasonic Ranging Module datasheet; Fraden, Handbook of Modern Sensors, Position, Displacement, and Level"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.8.T04-008
+  objetivo: O2
+  tipo: multipla
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Compare o HC-SR04 e o VL53L0X para estas aplicações. Quais afirmações estão corretas?
+  alternativas:
+    - "Para medir o nível de um tanque de cerveja com espuma na superfície, o ultrassom tende a falhar, porque a espuma absorve o eco"
+    - "Num estacionamento a céu aberto, ao meio-dia, o VL53L0X pode perder alcance, porque o infravermelho do sol cega os SPADs"
+    - "Atrás de uma janela de vidro, o VL53L0X dispensa ajustes, porque o vidro é transparente ao infravermelho"
+    - "Num corredor estreito, o cone largo do ultrassom pode pegar o eco das paredes antes do alvo"
+  resposta: [0, 1, 3]
+  explicacao: |
+    Superfícies macias absorvem o ultrassom, e o cone de cerca de 15° pega ecos laterais. O ToF sofre com a luz ambiente infravermelha e com alvos escuros. O vidro de proteção reflete parte do laser de volta ao receptor (crosstalk), que precisa ser calibrado pela API da ST.
+  fonte: "STMicroelectronics, VL53L0X datasheet (Ranging performances) e manual da API; HC-SR04 datasheet"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.8.T04-009
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    O registrador de tensão do shunt do INA219 (LSB de 10 µV) lê 0x1F40, com um shunt de 0,05 Ω. Qual é a corrente? Responda em A, com 2 casas decimais.
+  resposta: {valor: 1.6, unidade: "A", tolerancia: 0.01}
+  explicacao: |
+    0x1F40 = 8000 → 8000 × 10 µV = 80,00 mV; I = 80 mV/0,05 Ω = 1,60 A. Esse valor cabe no PGA de ±160 mV, mas não no de ±40 mV, que saturaria.
+  fonte: "Texas Instruments, INA219 datasheet, Shunt Voltage Register"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.8.T04-010
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um INA219 deve medir até 8 A com um shunt de 0,01 Ω. O Current_LSB mínimo é 8 A/2¹⁵; você escolhe o valor redondo logo acima, 250 µA. Pela fórmula Cal = trunc[0,04096/(Current_LSB × R_shunt)], qual é o valor do registrador de calibração? Responda com um número inteiro.
+  resposta: {valor: 16384, unidade: "valor do registrador", tolerancia: 0.001}
+  explicacao: |
+    Mínimo: 8/32 768 = 244,1 µA → 250 µA. Cal = 0,04096/(250 × 10⁻⁶ × 0,01) = 16 384 (0x4000). O Power_LSB fica em 20 × 250 µA = 5 mW. Com 8 A, o shunt cai 80 mV e dissipa 0,64 W.
+  fonte: "Texas Instruments, INA219 datasheet, Programming the Calibration Register"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.8.T04-011
+  objetivo: O3
+  tipo: vf
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Verdadeiro ou falso: no INA219, os registradores de corrente e de potência só dão valores úteis depois que o firmware programa o registrador de calibração.
+  resposta: true
+  explicacao: |
+    O registrador de calibração, que vale 0 depois do reset, fixa a escala que converte a tensão do shunt em corrente; sem ele, corrente e potência leem 0. Os registradores de tensão do shunt e do barramento funcionam sem calibração.
+  fonte: "Texas Instruments, INA219 datasheet, Programming e Calibration Register"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.8.T04-012
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um ACS712-05B (185 mV/A) alimentado em 5 V lê 2,50 V sem carga (tara) e 2,87 V com a carga ligada. Qual é a corrente? Responda em A, com 2 casas decimais.
+  resposta: {valor: 2.0, unidade: "A", tolerancia: 0.01}
+  explicacao: |
+    I = (2,87 − 2,50)/0,185 = 2,00 A. A tara deve ser medida, e não suposta: o zero do ACS712 varia com a alimentação, com a temperatura e com campos magnéticos próximos.
+  fonte: "Allegro MicroSystems, ACS712 datasheet (Sensitivity, Zero Current Output Voltage)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.8.T04-013
+  objetivo: O4
+  tipo: multipla
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Comparando a medição de corrente por shunt com INA219 e por efeito Hall com ACS712, quais afirmações estão corretas?
+  alternativas:
+    - "O ACS712 isola eletricamente o circuito medido do circuito de leitura, e o INA219 não"
+    - "Para medir dezenas de microampères de um MCU dormindo, o ACS712 é a melhor escolha"
+    - "O shunt dissipa I²·R, e o ACS712 tem só cerca de 1,2 mΩ de condutor interno"
+    - "O offset do ACS712 deriva com temperatura e com campos magnéticos externos, e por isso a tara ao ligar é recomendável"
+  resposta: [0, 2, 3]
+  explicacao: |
+    O ruído do ACS712-05B, de cerca de 21 mV pico a pico, equivale a cerca de 0,1 A: microampères ficam invisíveis. Para correntes pequenas, o shunt com amplificador de deriva zero ganha. O Hall ganha em isolação, perda e correntes altas.
+  fonte: "Allegro MicroSystems, ACS712 datasheet; Texas Instruments, INA219 datasheet"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.8.T04-014
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    A saída de um ACS712-05B (185 mV/A, em 5 V) passa por um divisor que a multiplica por 2/3 e chega a um ADC de 12 bits com referência de 3,3 V. Quantos miliampères correspondem a 1 LSB? Responda em mA, com 2 casas decimais.
+  resposta: {valor: 6.53, unidade: "mA", tolerancia: 0.01}
+  explicacao: |
+    LSB no pino = 3,3/4096 = 0,8057 mV; na saída do sensor, × 3/2 = 1,2085 mV; ÷ 185 mV/A ≈ 6,53 mA por LSB. O ruído do sensor (cerca de 21 mV pico a pico, ou 0,11 A) é umas 17 vezes maior que o LSB: a resolução útil é a do ruído, e mais bits não ajudam.
+  fonte: "Allegro MicroSystems, ACS712 datasheet (Noise); TI, Analog Engineer's Pocket Reference (LSB)"
+  origem: ia
+  revisao: rascunho

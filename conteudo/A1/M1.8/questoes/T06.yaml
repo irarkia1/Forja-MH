@@ -1,0 +1,220 @@
+- id: Q-M1.8.T06-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Uma balança é "zerada" com o prato vazio antes de cada pesagem (tara). Que parcela do modelo y = g·x + o essa calibração de um ponto corrige?
+  alternativas:
+    - "Só o offset"
+    - "Só o ganho"
+    - "O offset e o ganho"
+    - "A não linearidade da célula"
+  resposta: 0
+  explicacao: |
+    Um ponto só determina um coeficiente: o deslocamento. O ganho (contagens por grama) precisa de um segundo ponto com uma massa conhecida, e a não linearidade exige mais pontos ou um modelo.
+  fonte: "Fraden, Handbook of Modern Sensors, Sensor Characteristics (Calibration)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.8.T06-002
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um transmissor de pressão marca 0,12 bar com a tomada aberta para a atmosfera (0,00 bar manométrico) e 9,85 bar num calibrador de 10,00 bar. Depois da calibração de dois pontos, quanto vale uma leitura bruta de 5,00 bar? Responda em bar, com 2 casas decimais.
+  resposta: {valor: 5.02, unidade: "bar", tolerancia: 0.01}
+  explicacao: |
+    g = (10,00 − 0,00)/(9,85 − 0,12) = 1,02775; o = 0,00 − 1,02775 × 0,12 = −0,1233. Corrigida: 1,02775 × 5,00 − 0,1233 ≈ 5,02 bar.
+  fonte: "Fraden, Handbook of Modern Sensors, Sensor Characteristics (Calibration); Microchip, AVR120 Characterization and Calibration of the ADC on an AVR"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.8.T06-003
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um canal de temperatura lê o código 412 a 0,0 °C e 3688 a 80,0 °C. Qual é o ganho da calibração, em milésimos de grau por código (m°C/código)? Responda com 2 casas decimais.
+  resposta: {valor: 24.42, unidade: "m°C/código", tolerancia: 0.01}
+  explicacao: |
+    g = (80,0 − 0,0)/(3688 − 412) = 80/3276 ≈ 0,02442 °C/código = 24,42 m°C/código. O offset sai de o = 0 − g × 412 ≈ −10,06 °C.
+  fonte: "Fraden, Handbook of Modern Sensors, Sensor Characteristics (Calibration)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.8.T06-004
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um termômetro marca 0,4 °C num banho de gelo (0,0 °C) e 98,0 °C na água fervendo num dia em que, pela pressão local, ela ferve a 97,3 °C. Depois de corrigir offset e ganho com esses dois pontos, quanto vale uma leitura bruta de 60,0 °C? Responda em °C, com 2 casas decimais.
+  resposta: {valor: 59.42, unidade: "°C", tolerancia: 0.01}
+  explicacao: |
+    g = 97,3/(98,0 − 0,4) = 0,99693; o = −0,4 × 0,99693 = −0,3988. Corrigida: 0,99693 × 60,0 − 0,3988 ≈ 59,42 °C. Se o segundo ponto fosse tomado como 100,0 °C, a correção sairia errada em cerca de 2,7 % do ganho.
+  fonte: "Fraden, Handbook of Modern Sensors, Sensor Characteristics (Calibration)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.8.T06-005
+  objetivo: O2
+  tipo: vf
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: o ponto de verificação de uma calibração de dois pontos deve ser um dos dois pontos usados no ajuste, para confirmar que a correção ficou certa.
+  resposta: false
+  explicacao: |
+    Nos dois pontos de ajuste o erro é zero por construção: verificar ali não prova nada. O ponto de verificação deve ser independente, de preferência no meio da faixa, onde aparecem a não linearidade, a histerese e o erro das referências.
+  fonte: "Fraden, Handbook of Modern Sensors, Sensor Characteristics (Calibration Error)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.8.T06-006
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Uma calibração usou referências com erro máximo de ±0,2 °C em 10 °C e também ±0,2 °C em 30 °C. O sensor passa a ser usado a 50 °C, fora do intervalo. Qual é o pior erro propagado das referências nesse ponto? Responda em °C, com 1 casa decimal.
+  resposta: {valor: 0.6, unidade: "°C", tolerancia: 0.01}
+  explicacao: |
+    Os pesos são (30 − 50)/(30 − 10) = −1 para o erro em 10 °C e (50 − 10)/20 = 2 para o erro em 30 °C. Pior caso: 1 × 0,2 + 2 × 0,2 = 0,6 °C, três vezes o erro das referências. Extrapolar amplifica; calibre nas pontas da faixa de uso.
+  fonte: "Fraden, Handbook of Modern Sensors, Sensor Characteristics (Calibration Error, Uncertainty)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.8.T06-007
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Um PT100 segue R(T) = 100·(1 + 3,9083 × 10⁻³·T − 5,775 × 10⁻⁷·T²) Ω, com T em °C. Ele é convertido por uma reta que passa pelos valores exatos em 0 °C e em 100 °C. Quando a temperatura real é 25,00 °C, quanto a reta indica? Responda em °C, com 2 casas decimais.
+  resposta: {valor: 25.28, unidade: "°C", tolerancia: 0.01}
+  explicacao: |
+    R(0) = 100 Ω, R(100) = 138,5055 Ω: a reta tem 0,385055 Ω/°C. R(25) = 109,7347 Ω, e a reta dá (109,7347 − 100)/0,385055 ≈ 25,28 °C. O erro de 0,28 °C não aparece nos pontos de ajuste; um ponto de verificação no meio da faixa o revela, e a correção é linearizar pela equação de Callendar-Van Dusen.
+  fonte: "IEC 60751 (coeficientes A e B do Pt100); TI, Analog Engineer's Pocket Reference (RTD)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.8.T06-008
+  objetivo: O3
+  tipo: unica
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Qual é a relação entre a equação Beta de um NTC e a equação de Steinhart-Hart, 1/T = A + B·ln R + C·(ln R)³?
+  alternativas:
+    - "São independentes: a Beta vale para NTC e a de Steinhart-Hart para RTD"
+    - "A Beta é o caso particular C = 0 da Steinhart-Hart, e por isso só precisa de dois pontos"
+    - "A Steinhart-Hart é a Beta escrita em graus Celsius"
+    - "A Beta tem três coeficientes e a Steinhart-Hart, dois"
+  resposta: 1
+  explicacao: |
+    Reescrevendo 1/T = 1/T₀ + (1/β)·ln(R/R₀), tem-se A = 1/T₀ − ln(R₀)/β, B = 1/β e C = 0. O termo cúbico da Steinhart-Hart acompanha a curvatura que a Beta não segue, e exige um terceiro ponto. Ambas usam temperatura em kelvin.
+  fonte: "Steinhart & Hart, Calibration curves for thermistors, Deep-Sea Research (1968); Fraden, Handbook of Modern Sensors, Temperature Sensors (Thermistors)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.8.T06-009
+  objetivo: O3
+  tipo: multipla
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Sobre as formas de linearizar um sensor, quais afirmações estão corretas?
+  alternativas:
+    - "Uma tabela com interpolação linear serve para qualquer curva monotônica, mesmo sem modelo físico, ao custo de memória"
+    - "Um polinômio de grau alto ajustado a poucos pontos sempre melhora a exatidão entre os pontos"
+    - "Na interpolação linear, reduzir o passo da tabela à metade reduz o erro máximo a cerca de um quarto"
+    - "Um modelo físico, como o de Steinhart-Hart, precisa de poucos pontos porque a forma da curva já é conhecida"
+  resposta: [0, 2, 3]
+  explicacao: |
+    O erro da interpolação linear é proporcional ao quadrado do passo, então dividir o passo por 2 divide o erro por 4. Polinômios de grau alto passam pelos pontos e oscilam entre eles, além de explodirem fora da faixa. A tabela não exige modelo; o modelo físico exige poucos pontos.
+  fonte: "Fraden, Handbook of Modern Sensors, Sensor Characteristics (Computation of Stimulus)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.8.T06-010
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um NTC mede 10 000 Ω a 25,00 °C e 3602 Ω a 50,00 °C. Qual é o seu parâmetro β, calculado com esses dois pontos (temperaturas em kelvin, T = °C + 273,15)? Responda em K, arredondado para o inteiro mais próximo.
+  resposta: {valor: 3935, unidade: "K", tolerancia: 0.001}
+  explicacao: |
+    β = ln(R₁/R₂)/(1/T₁ − 1/T₂) = ln(10 000/3602)/(1/298,15 − 1/323,15) = 1,0211/2,5947 × 10⁻⁴ ≈ 3935 K. Com esse β, o NTC do roteiro, que mede 32 650 Ω a 0 °C, seria lido como 0,47 °C: o Beta acerta os pontos de onde saiu e erra longe deles.
+  fonte: "Fraden, Handbook of Modern Sensors, Temperature Sensors (Thermistors); Vishay, NTC thermistors application notes"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.8.T06-011
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 4
+  bloom: aplicar
+  enunciado: |
+    Um NTC tem coeficientes de Steinhart-Hart A = 1,009249522 × 10⁻³, B = 2,378405444 × 10⁻⁴ e C = 2,019202697 × 10⁻⁷ (com R em ohms e T em kelvin). Qual é a temperatura quando a resistência vale 5000 Ω? Responda em °C, com 2 casas decimais.
+  resposta: {valor: 43.33, unidade: "°C", tolerancia: 0.01}
+  explicacao: |
+    ln 5000 = 8,5172; (ln R)³ = 617,87. 1/T = 1,009249522 × 10⁻³ + 2,378405444 × 10⁻⁴ × 8,5172 + 2,019202697 × 10⁻⁷ × 617,87 ≈ 3,1607 × 10⁻³ K⁻¹, então T ≈ 316,38 K = 43,33 °C. Use logaritmo natural e kelvin: log10 ou °C dão resultados absurdos.
+  fonte: "Steinhart & Hart, Calibration curves for thermistors, Deep-Sea Research (1968)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.8.T06-012
+  objetivo: O4
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Na interface serial do HX711, depois de ler os 24 bits de dados, o MCU dá pulsos extras no PD_SCK. O que significa dar 25 pulsos no total?
+  alternativas:
+    - "A próxima conversão será no canal B, com ganho 32"
+    - "A próxima conversão será no canal A, com ganho 64"
+    - "O HX711 entra em modo de baixo consumo"
+    - "A próxima conversão será no canal A, com ganho 128"
+  resposta: 3
+  explicacao: |
+    Pela tabela do datasheet: 25 pulsos = canal A, ganho 128; 26 = canal B, ganho 32; 27 = canal A, ganho 64. O desligamento acontece quando o PD_SCK fica em nível alto por mais de 60 µs, e não pelo número de pulsos.
+  fonte: "Avia Semiconductor, HX711 datasheet, Serial Interface"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.8.T06-013
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Na calibração de uma balança com HX711, a tara (média sem carga) dá 8450 contagens e uma massa de referência de 1000,0 g dá 433 950 contagens. Qual é a massa de um objeto que produz 200 000 contagens? Responda em g, com 1 casa decimal.
+  resposta: {valor: 450.2, unidade: "g", tolerancia: 0.01}
+  explicacao: |
+    k = (433 950 − 8450)/1000,0 = 425,5 contagens/g. m = (200 000 − 8450)/425,5 ≈ 450,2 g. A tara deve ser refeita a cada ligada, porque o zero da célula deriva; o k vai para a memória não volátil.
+  fonte: "Avia Semiconductor, HX711 datasheet; Fraden, Handbook of Modern Sensors, Sensor Characteristics (Calibration)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.8.T06-014
+  objetivo: O4
+  tipo: multipla
+  dificuldade: 3
+  bloom: avaliar
+  enunciado: |
+    O fator de escala de uma balança será guardado na EEPROM do MCU. Quais práticas protegem o produto contra coeficientes inválidos?
+  alternativas:
+    - "Guardar o bloco com uma assinatura, um número de versão e um CRC, e conferir os três na inicialização"
+    - "Conferir se o fator lido está numa faixa fisicamente plausível para a célula usada"
+    - "Usar o valor lido mesmo que o CRC falhe, porque a EEPROM raramente se corrompe"
+    - "Na falha, usar um valor nominal e sinalizar que a balança está descalibrada"
+  resposta: [0, 1, 3]
+  explicacao: |
+    Uma EEPROM nova vem toda em 0xFF, que, como float, é NaN; uma versão nova de firmware pode mudar a estrutura. Assinatura, versão, CRC e teste de plausibilidade pegam esses casos, e o produto deve avisar quando cai no valor padrão. Usar um bloco com CRC errado é aceitar lixo em silêncio.
+  fonte: "Microchip, ATmega328P datasheet, EEPROM Data Memory; avr-libc, <avr/eeprom.h>"
+  origem: ia
+  revisao: rascunho

@@ -1,0 +1,220 @@
+- id: Q-M1.8.T09-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Para que serve o diodo ligado em antiparalelo com a bobina de um relé acionado por transistor?
+  alternativas:
+    - "Para retificar a corrente alternada dos contatos"
+    - "Para dar um caminho à corrente da bobina quando o transistor desliga, evitando o pico de tensão que o destruiria"
+    - "Para acelerar o fechamento do relé"
+    - "Para indicar visualmente que o relé está ligado"
+  resposta: 1
+  explicacao: |
+    A bobina é indutiva e mantém a corrente ao ser desligada; sem caminho, a tensão no coletor sobe até romper o transistor. O diodo conduz essa corrente em círculo. O efeito colateral é atrasar a abertura dos contatos, e não acelerar o fechamento.
+  fonte: "TE Connectivity, Coil Suppression Can Reduce Relay Life; Horowitz & Hill, The Art of Electronics, Bipolar Transistors (inductive loads)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.8.T09-002
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    A bobina de um relé de 12 V tem resistência de 240 Ω. Qual é a corrente da bobina na tensão nominal? Responda em mA, sem casas decimais.
+  resposta: {valor: 50, unidade: "mA", tolerancia: 0.01}
+  explicacao: |
+    I = 12/240 = 50 mA, e a bobina consome 0,6 W. É mais do que um pino de MCU deve fornecer: use um transistor ou MOSFET com diodo de roda livre.
+  fonte: "TE Connectivity, Relay Definitions (coil resistance, coil power)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.8.T09-003
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um relé de 5 V com bobina de 70 Ω é acionado por um NPN, comandado por um GPIO de 3,3 V. Para saturação forçada, use I_B = I_C/10 e V_BE = 0,7 V, desprezando a queda V_CE. Qual é o resistor de base? Responda em Ω, arredondado para o inteiro mais próximo.
+  resposta: {valor: 364, unidade: "Ω", tolerancia: 0.01}
+  explicacao: |
+    I_C = 5/70 = 71,4 mA; I_B = 7,14 mA; R_B = (3,3 − 0,7)/7,14 mA ≈ 364 Ω. Na prática, 330 Ω (7,9 mA no pino). Calcular pelo β típico deixaria o transistor fora da saturação quando o β real fosse menor.
+  fonte: "Horowitz & Hill, The Art of Electronics, Bipolar Transistors (transistor switch)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.8.T09-004
+  objetivo: O1
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: o diodo de roda livre sozinho faz o relé soltar mais devagar, e um Zener em série com o diodo acelera a abertura, desde que o transistor aguente V_CC + V_Z + 0,7 V.
+  resposta: true
+  explicacao: |
+    Só com o diodo, a corrente decai lentamente pela constante L/R da bobina, e o contato se abre devagar, sustentando o arco por mais tempo. Com o Zener, a tensão na bobina fica presa em V_Z + 0,7 V e a energia se dissipa mais depressa; o transistor tem de suportar essa tensão a mais.
+  fonte: "TE Connectivity, Coil Suppression Can Reduce Relay Life"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.8.T09-005
+  objetivo: O2
+  tipo: vf
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: um relé especificado para "10 A 250 VAC / 10 A 30 VDC" pode chavear 10 A em 250 V de corrente contínua.
+  resposta: false
+  explicacao: |
+    Em CA, o arco se apaga sozinho a cada passagem da corrente por zero; em CC, não. Por isso o mesmo contato só é especificado até 30 VDC. A 250 VDC, o arco se manteria e destruiria o contato.
+  fonte: "Songle, SRD-05VDC-SL-C datasheet; TE Connectivity, Relay Definitions (contact ratings)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.8.T09-006
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um relé de estado sólido com saída a triac conduz 6 A com queda de 1,4 V. Quanto ele dissipa? Responda em W, com 1 casa decimal.
+  resposta: {valor: 8.4, unidade: "W", tolerancia: 0.01}
+  explicacao: |
+    P = 6 × 1,4 = 8,4 W, que precisam de um dissipador. Um relé eletromecânico com 20 mΩ de contato dissiparia 6² × 0,02 = 0,72 W.
+  fonte: "Omron, G3MB solid state relay datasheet (on-state voltage drop); TE Connectivity, Relay Definitions"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.8.T09-007
+  objetivo: O2
+  tipo: multipla
+  dificuldade: 3
+  bloom: avaliar
+  enunciado: |
+    Comparando um relé de estado sólido (SSR) com saída a triac e um relé eletromecânico, quais afirmações estão corretas?
+  alternativas:
+    - "O SSR a triac não serve para chavear carga em corrente contínua, porque o triac só desliga quando a corrente passa por zero"
+    - "Desligado, o SSR tem uma corrente de fuga de alguns mA, que pode manter acesa fracamente uma lâmpada de LED"
+    - "O SSR não tem desgaste de contatos, mas a queda de cerca de 1 V a 1,6 V exige dissipador em correntes altas"
+    - "Ao falhar, o SSR costuma ficar aberto, o que é sempre o modo de falha seguro"
+  resposta: [0, 1, 2]
+  explicacao: |
+    O triac precisa da passagem por zero para desligar, tem fuga e queda de tensão. A falha típica de um SSR é em curto, ou seja, fica ligado, o que exige proteção adicional (fusível, termostato de segurança) quando a carga é perigosa.
+  fonte: "Omron, G3MB solid state relay datasheet; TE Connectivity, Relay Definitions"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.8.T09-008
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Um relé tem vida elétrica de 100 000 operações (ciclos liga-desliga) com a carga nominal. O firmware garante pelo menos 5 min ligado e 5 min desligado em cada ciclo, e a carga trabalha 24 h por dia no pior caso. Em quantos dias, no mínimo, ele atinge a vida elétrica? Responda em dias, arredondado para o inteiro mais próximo.
+  resposta: {valor: 694, unidade: "dias", tolerancia: 0.01}
+  explicacao: |
+    Cada ciclo leva no mínimo 10 min: no máximo 6 ciclos por hora, ou 144 por dia. 100 000/144 ≈ 694 dias, quase dois anos. Sem tempo mínimo, com ruído de temperatura, o mesmo relé poderia chegar a 100 000 operações em poucos dias.
+  fonte: "TE Connectivity, Relay Definitions (mechanical and electrical life)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.8.T09-009
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Uma entrada de 24 V vai ao LED de um PC817 (V_F = 1,2 V) e deve impor I_F = 6 mA. Qual é o resistor em série? Responda em Ω, sem casas decimais.
+  resposta: {valor: 3800, unidade: "Ω", tolerancia: 0.01}
+  explicacao: |
+    R = (24 − 1,2)/6 mA = 3800 Ω (3,9 kΩ na série E12). Ele dissipa cerca de 22,8²/3800 ≈ 0,14 W: um resistor de 1/4 W serve, mas é melhor dividir em dois.
+  fonte: "Sharp, PC817 datasheet (Forward voltage); Horowitz & Hill, The Art of Electronics (optocouplers)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.8.T09-010
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um PC817 da faixa de CTR mínimo de 50 % recebe I_F = 2 mA. Para considerar o envelhecimento do LED, você supõe que o CTR caia à metade do mínimo. A saída tem pull-up ao 3,3 V. Qual é o menor pull-up que ainda garante a saturação do fototransistor? Responda em kΩ, com 1 casa decimal.
+  resposta: {valor: 6.6, unidade: "kΩ", tolerancia: 0.01}
+  explicacao: |
+    CTR de projeto = 25 %, então I_C = 0,25 × 2 mA = 0,5 mA. Para saturar, o pull-up não pode pedir mais que isso: R ≥ 3,3 V/0,5 mA = 6,6 kΩ. Pull-ups maiores saturam com mais folga, mas deixam o sinal mais lento.
+  fonte: "Sharp, PC817 datasheet (Current transfer ratio, Response time)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.8.T09-011
+  objetivo: O3
+  tipo: unica
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Um módulo de relé tem optoacoplador na entrada, mas a bobina, o fototransistor e o Arduino estão todos ligados ao mesmo 5 V e ao mesmo GND. O que o optoacoplador garante nesse caso?
+  alternativas:
+    - "Isolação galvânica completa entre o Arduino e a bobina"
+    - "Proteção contra a rede elétrica ligada aos contatos"
+    - "Isolação de 5 kV entre os terras"
+    - "Nenhuma isolação, porque os dois lados já estão ligados pela mesma fonte e pelo mesmo GND"
+  resposta: 3
+  explicacao: |
+    A isolação só existe se as alimentações e os terras dos dois lados forem separados. Com tudo no mesmo GND, o optoacoplador é só um driver. A isolação entre a bobina e os contatos vem do próprio relé, não do optoacoplador.
+  fonte: "Sharp, PC817 datasheet; TI, Isolation Glossary"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.8.T09-012
+  objetivo: O4
+  tipo: unica
+  dificuldade: 2
+  bloom: lembrar
+  enunciado: |
+    Na isolação entre a rede elétrica e a baixa tensão de uma placa, o que é a distância de escoamento (creepage)?
+  alternativas:
+    - "O menor caminho em linha reta, pelo ar, entre os dois condutores"
+    - "A espessura do isolante interno do optoacoplador"
+    - "O menor caminho entre os condutores medido pela superfície do isolante, como a placa"
+    - "A distância entre o fusível e o relé"
+  resposta: 2
+  explicacao: |
+    O caminho pelo ar é a distância de isolação (clearance); o escoamento é o caminho pela superfície, onde poeira e umidade formam trilhas condutoras. Uma fenda fresada na placa aumenta o escoamento sem afastar os componentes.
+  fonte: "TI, Isolation Glossary; IEC 60664-1 (definições de clearance e creepage)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.8.T09-013
+  objetivo: O4
+  tipo: multipla
+  dificuldade: 3
+  bloom: avaliar
+  enunciado: |
+    Um protótipo vai acionar um aquecedor ligado à rede de 220 V por um relé. Quais práticas estão corretas?
+  alternativas:
+    - "Fusível ou disjuntor na fase, antes do relé, dimensionado pela carga"
+    - "O relé chaveando a fase, e não o neutro"
+    - "Caixa fechada e não condutora, ou metálica aterrada, sem partes da rede acessíveis ao dedo"
+    - "Fazer os testes com o circuito energizado, para ver o relé funcionando"
+  resposta: [0, 1, 2]
+  explicacao: |
+    O fusível limita o dano num curto; chavear a fase deixa a carga sem tensão quando desligada; a caixa impede o contato. Mexer com o circuito energizado é a principal causa de choque: desligue, confira com o multímetro e só então toque.
+  fonte: "ABNT NBR 5410 Instalações elétricas de baixa tensão; IEC 62368-1"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.8.T09-014
+  objetivo: O4
+  tipo: vf
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Verdadeiro ou falso: um sensor com botões que o usuário toca pode ser alimentado por uma fonte capacitiva sem transformador, ligada direto à rede, desde que a saída para o relé use um optoacoplador.
+  resposta: false
+  explicacao: |
+    A fonte capacitiva não tem isolação: todo o circuito alimentado por ela, inclusive o MCU e os botões, fica no potencial da rede. O optoacoplador na saída não muda isso. O que o usuário toca exige uma fonte com isolação reforçada, certificada.
+  fonte: "IEC 62368-1 (isolação reforçada); TI, Isolation Glossary"
+  origem: ia
+  revisao: rascunho

@@ -1,45 +1,128 @@
 id: M1.8
 ato: A1
 nome: "Sensores e atuadores"
+missao: "Na Vila da Forja, as máquinas já pensam e conversam, mas ainda estão cegas e paradas: dê a elas sentidos que medem o mundo com número e incerteza, calibre cada um contra uma referência de confiança e ensine-as a mover motores, relés e luzes sem queimar a forja."
 horas: 150
 trilha: sensores
 ordem: 15
 requer: ["M1.2", "M0.5"]
 tags_chefe: []
+# Ordem didática: classes e especificações (o vocabulário de toda folha de dados e a cadeia de medição inteira, do transdutor ao número calibrado: o mapa do módulo) → amp-op e condicionamento (as ferramentas do meio da cadeia, usadas por todos os sensores seguintes: divisor, ponte, amplificador de instrumentação, anti-aliasing e filtros digitais) → calibração de dois pontos (o fim da cadeia: offset e ganho, linearização e Steinhart-Hart, com a célula de carga e o HX711, que juntam ponte, ganho e calibração num laboratório só) → temperatura e umidade (a primeira família completa, que usa o divisor, a ponte, o ganho e a calibração recém-aprendidos em NTC, RTD, termopar e sensores digitais de umidade) → luz, distância e corrente (três famílias rápidas sobre a mesma base: fotodiodo e transimpedância, tempo de voo e shunt com INA219 ou efeito Hall) → pressão e IMU (os sensores MEMS, os mais complexos do módulo, com a primeira fusão de sensores e a espiada de como são fabricados) → MOSFET como chave e drivers (a virada para os atuadores: a chave que está por trás de LED de potência, relé, motor e buzzer) → relés e isolação (a carga indutiva e a rede elétrica, protegidas pelo diodo de roda livre e pelo optoacoplador) → motores DC, servo e passo por último (juntam MOSFET, ponte H, diodo de roda livre, PWM e timers do M1.2 e do M1.4 no atuador mais exigente).
 topicos:
   - id: M1.8.T01
     nome: "Classes de sensores e especificações (faixa, resolução, exatidão, deriva)"
     tipo: comum
     peso: 1
-  - id: M1.8.T02
-    nome: "Temperatura e umidade"
-    tipo: elite
-    peso: 2
-  - id: M1.8.T03
-    nome: "Pressão e IMU"
-    tipo: elite
-    peso: 2
-  - id: M1.8.T04
-    nome: "Luz, distância, corrente"
-    tipo: comum
-    peso: 1
+    objetivos:
+      - id: O1
+        texto: "Classificar sensores (ativo ou passivo, analógico ou digital, absoluto ou relativo) e descrever a cadeia de medição do transdutor ao valor calibrado no firmware"
+      - id: O2
+        texto: "Distinguir exatidão, precisão e resolução e calcular a resolução em unidade física por LSB e o erro total a partir das especificações de um datasheet"
+      - id: O3
+        texto: "Interpretar faixa, sensibilidade, não linearidade, histerese, deriva e repetibilidade numa folha de dados de sensor e dizer quais erros a calibração corrige"
+      - id: O4
+        texto: "Calcular o tempo de resposta de um sensor de primeira ordem (constante de tempo, t63 e t90) e escolher uma taxa de amostragem coerente com ele"
   - id: M1.8.T05
     nome: "Amp-op básico e condicionamento de sinal"
     tipo: comum
     peso: 1
+    objetivos:
+      - id: O1
+        texto: "Aplicar as regras do amp-op ideal às configurações seguidor, não inversora, inversora e diferencial e escolher um amp-op rail-to-rail para alimentação única de 3,3 V ou 5 V"
+      - id: O2
+        texto: "Calcular a saída de uma ponte de Wheatstone e o ganho de um amplificador de instrumentação, ajustando a faixa do sinal à faixa do ADC"
+      - id: O3
+        texto: "Dimensionar um filtro anti-aliasing RC antes do ADC a partir da taxa de amostragem, da resolução e da impedância de entrada do conversor"
+      - id: O4
+        texto: "Implementar e comparar em C os filtros digitais média móvel, IIR de primeira ordem e mediana, relacionando o coeficiente à frequência de corte e ao atraso"
   - id: M1.8.T06
     nome: "Calibração de dois pontos"
     tipo: elite
     peso: 2
-  - id: M1.8.T07
-    nome: "Motores DC, servo, passo"
+    objetivos:
+      - id: O1
+        texto: "Modelar o erro de um sensor como offset e ganho e calcular os coeficientes de correção a partir de dois pontos de referência"
+      - id: O2
+        texto: "Planejar uma calibração (escolha dos pontos, referências confiáveis, ponto de verificação intermediário) e estimar o erro residual que sobra depois dela"
+      - id: O3
+        texto: "Linearizar sensores não lineares por tabela com interpolação, por polinômio ou por modelo físico, ajustando os coeficientes de Steinhart-Hart a partir de três pontos"
+      - id: O4
+        texto: "Calibrar uma célula de carga com o HX711 (tara, fator de escala e massas de referência) e guardar e validar os coeficientes na memória não volátil"
+  - id: M1.8.T02
+    nome: "Temperatura e umidade"
+    tipo: elite
+    peso: 2
+    objetivos:
+      - id: O1
+        texto: "Medir temperatura com NTC num divisor de tensão, escolhendo o resistor fixo, convertendo pela equação Beta ou de Steinhart-Hart e limitando o autoaquecimento"
+      - id: O2
+        texto: "Calcular a resistência de RTDs PT100 e PT1000 pela equação de Callendar-Van Dusen e explicar a excitação por corrente e as ligações a 2, 3 e 4 fios"
+      - id: O3
+        texto: "Explicar o termopar pelo efeito Seebeck, aplicar a compensação de junção fria e ler um conversor dedicado como o MAX31855"
+      - id: O4
+        texto: "Interpretar sensores digitais de umidade relativa capacitivos (SHT3x, AHT20), converter os códigos brutos e calcular o ponto de orvalho"
+  - id: M1.8.T04
+    nome: "Luz, distância, corrente"
     tipo: comum
     peso: 1
+    objetivos:
+      - id: O1
+        texto: "Medir luz com LDR, com fotodiodo em amplificador de transimpedância e com sensor digital (BH1750), relacionando fotocorrente, resistência e lux"
+      - id: O2
+        texto: "Medir distância por ultrassom (HC-SR04), corrigindo a velocidade do som pela temperatura, e por tempo de voo óptico (VL53L0X), comparando faixa, cone e limitações"
+      - id: O3
+        texto: "Medir corrente com resistor shunt e o INA219, calculando a queda no shunt, o registrador de calibração e os LSBs de corrente e de potência"
+      - id: O4
+        texto: "Medir corrente por efeito Hall (ACS712), comparando isolação, sensibilidade, offset e ruído com a medição por shunt"
+  - id: M1.8.T03
+    nome: "Pressão e IMU"
+    tipo: elite
+    peso: 2
+    objetivos:
+      - id: O1
+        texto: "Explicar os sensores de pressão piezorresistivos (absoluto, manométrico e diferencial), converter a saída de um sensor analógico e estimar a altitude pela pressão barométrica"
+      - id: O2
+        texto: "Converter as leituras brutas do acelerômetro e do giroscópio do MPU6050 em g e °/s pela escala configurada e calcular a inclinação a partir da gravidade"
+      - id: O3
+        texto: "Explicar o bias, o ruído e a deriva do giroscópio, calibrar o bias em repouso e combinar acelerômetro e giroscópio com um filtro complementar"
+      - id: O4
+        texto: "Descrever como acelerômetros, giroscópios e sensores de pressão MEMS são construídos por dentro (massa de prova, molas, pentes capacitivos, efeito Coriolis e diafragma)"
   - id: M1.8.T08
     nome: "MOSFET como chave e drivers"
     tipo: elite
     peso: 2
+    objetivos:
+      - id: O1
+        texto: "Escolher um MOSFET de canal N para chave de lado baixo pelo datasheet (VDS, ID, RDS(on) na VGS disponível, limiar) e calcular a perda de condução e a temperatura de junção"
+      - id: O2
+        texto: "Calcular a corrente e o tempo de carga do gate pela carga total Qg, estimar as perdas de chaveamento no PWM e decidir quando usar um gate driver"
+      - id: O3
+        texto: "Proteger a chave de cargas indutivas com o diodo de roda livre e montar a chave de lado alto com MOSFET de canal P ou driver dedicado"
+      - id: O4
+        texto: "Acionar um LED de potência com resistor ou com fonte de corrente constante, controlando o brilho por PWM e respeitando a dissipação"
   - id: M1.8.T09
     nome: "Relés e isolação"
     tipo: comum
     peso: 1
+    objetivos:
+      - id: O1
+        texto: "Acionar a bobina de um relé com transistor e diodo de roda livre, calculando a corrente da bobina, o resistor de base e o efeito da supressão no tempo de abertura"
+      - id: O2
+        texto: "Ler as especificações dos contatos de um relé (tensão e corrente em CA e CC, cargas indutivas e de lâmpada, vida elétrica) e escolher entre relé eletromecânico e de estado sólido"
+      - id: O3
+        texto: "Dimensionar um optoacoplador pela relação de transferência de corrente (CTR) e usá-lo para isolar entradas e saídas do MCU"
+      - id: O4
+        texto: "Explicar a isolação galvânica e as regras de segurança ao chavear a rede elétrica (distâncias de isolação, fusível, separação de terras)"
+  - id: M1.8.T07
+    nome: "Motores DC, servo, passo"
+    tipo: comum
+    peso: 1
+    objetivos:
+      - id: O1
+        texto: "Explicar o motor DC (força contraeletromotriz, corrente de partida, torque) e controlar sentido e velocidade com uma ponte H por PWM, incluindo os modos de freio e de roda livre"
+      - id: O2
+        texto: "Gerar o sinal de controle de um servo de modelismo (período de 20 ms e pulso de 1 a 2 ms) com um timer e calcular a resolução angular obtida"
+      - id: O3
+        texto: "Acionar um motor de passo bipolar com A4988 ou DRV8825, ajustando o limite de corrente pela Vref e calculando passos por milímetro e a frequência de STEP"
+      - id: O4
+        texto: "Acionar buzzers ativos e passivos e escolher o atuador e o driver adequados (motor DC, servo, passo ou buzzer) para uma aplicação a partir de torque, precisão e custo"

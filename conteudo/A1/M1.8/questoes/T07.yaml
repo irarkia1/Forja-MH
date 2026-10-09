@@ -1,0 +1,215 @@
+- id: Q-M1.8.T07-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Numa ponte H, o que acontece quando as duas chaves de baixo são fechadas e as duas de cima ficam abertas, com o motor girando?
+  alternativas:
+    - "O motor recebe a tensão inteira da fonte no sentido inverso"
+    - "A fonte entra em curto"
+    - "O motor fica em roda livre e para só por atrito"
+    - "O motor fica em curto e a força contraeletromotriz gera uma corrente que o freia ativamente"
+  resposta: 3
+  explicacao: |
+    As duas chaves de baixo ligam os terminais do motor entre si: é o freio (short brake). Roda livre é com todas as chaves abertas. O curto da fonte acontece quando as duas chaves do mesmo braço, a de cima e a de baixo, fecham juntas.
+  fonte: "Toshiba, TB6612FNG datasheet (H-SW Control Function); TI, Brushed DC Motor Fundamentals"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.8.T07-002
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um motor DC de 12 V tem resistência de enrolamento de 2,4 Ω. Qual é a corrente de partida (rotor parado)? Responda em A, com 1 casa decimal.
+  resposta: {valor: 5.0, unidade: "A", tolerancia: 0.01}
+  explicacao: |
+    Parado, não há força contraeletromotriz: I = V/R = 12/2,4 = 5,0 A. A fonte, a ponte H e as trilhas precisam suportar essa corrente, mesmo que o motor gire em vazio com poucos décimos de ampère.
+  fonte: "TI, Brushed DC Motor Fundamentals; Horowitz & Hill, The Art of Electronics (motor drive)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.8.T07-003
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    O mesmo motor (12 V, 2 Ω de enrolamento) está girando com força contraeletromotriz de 10,8 V. Pela equação V = I·R + k_e·ω, qual é a corrente? Responda em A, com 2 casas decimais.
+  resposta: {valor: 0.6, unidade: "A", tolerancia: 0.01}
+  explicacao: |
+    I = (12 − 10,8)/2 = 0,60 A. Se a carga aumentar, a rotação cai, a força contraeletromotriz diminui e a corrente sobe, aumentando o torque (T = k_t·I).
+  fonte: "TI, Brushed DC Motor Fundamentals"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.8.T07-004
+  objetivo: O1
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: controlar um motor DC por PWM a 1 kHz pode fazer o enrolamento apitar de forma audível, e por isso os drivers modernos costumam usar 20 kHz ou mais.
+  resposta: true
+  explicacao: |
+    A corrente pulsante a 1 kHz faz partes do motor vibrar nessa frequência, dentro da faixa audível. Acima de cerca de 20 kHz o som some, mas as perdas de chaveamento crescem, por isso o driver precisa ser de MOSFET e aceitar essa frequência.
+  fonte: "TI, Brushed DC Motor Fundamentals; Balogh, TI, Fundamentals of MOSFET and IGBT Gate Driver Circuits"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.8.T07-005
+  objetivo: O2
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    No sinal de controle de um servo de modelismo, com período de 20 ms, qual largura de pulso corresponde tipicamente à posição central?
+  alternativas:
+    - "0,5 ms"
+    - "1,5 ms"
+    - "10 ms"
+    - "20 ms"
+  resposta: 1
+  explicacao: |
+    Tipicamente, 1 ms numa ponta, 1,5 ms no centro e 2 ms na outra ponta. Muitos servos aceitam de 0,5 a 2,5 ms, mas a faixa real deve ser medida, para não forçar os batentes.
+  fonte: "TowerPro, SG90 datasheet"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.8.T07-006
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    O Timer1 de um ATmega328P a 16 MHz, com prescaler 8 (0,5 µs por contagem), gera o sinal de um servo no modo Fast PWM com TOP em ICR1. Que valor de OCR1A produz um pulso de 1,25 ms? Responda com um número inteiro.
+  resposta: {valor: 2500, unidade: "contagens", tolerancia: 0.001}
+  explicacao: |
+    1,25 ms/0,5 µs = 2500. O período de 20 ms usa ICR1 = 39 999, porque o contador vai de 0 a TOP, ou seja, 40 000 contagens.
+  fonte: "Microchip, ATmega328P datasheet, 16-bit Timer/Counter1 (Fast PWM Mode)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.8.T07-007
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    O mesmo servo é comandado com o Timer1 em prescaler 64 (4 µs por contagem). Se os pulsos de 1 ms a 2 ms cobrem 180°, qual é a resolução angular do comando? Responda em graus por contagem, com 2 casas decimais.
+  resposta: {valor: 0.72, unidade: "°/contagem", tolerancia: 0.01}
+  explicacao: |
+    1 ms/4 µs = 250 contagens entre os extremos; 180°/250 = 0,72° por contagem. Com prescaler 8 seriam 2000 contagens, ou 0,09°. Na prática, a banda morta e a folga das engrenagens limitam o servo a cerca de 1°.
+  fonte: "Microchip, ATmega328P datasheet, 16-bit Timer/Counter1"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.8.T07-008
+  objetivo: O2
+  tipo: multipla
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Um projeto com três servos MG996R alimentados pelo regulador de 5 V de um Arduino reinicia o MCU sempre que os servos se movem juntos. Quais diagnósticos e correções são adequados?
+  alternativas:
+    - "Os servos puxam picos de corrente que o regulador não fornece, a tensão cai e o MCU reinicia; usar uma fonte de 5 a 6 V separada para os servos, com GND comum"
+    - "Um capacitor eletrolítico grande perto dos servos ajuda a absorver os picos de corrente"
+    - "Aumentar o período do sinal para 100 ms reduz a corrente dos servos"
+    - "Comandar pulsos fora da faixa do servo faz a engrenagem forçar o batente e aumenta a corrente; respeitar a faixa medida"
+  resposta: [0, 1, 3]
+  explicacao: |
+    Servos de torque alto puxam mais de 1 A ao se mover ou travar; alimentá-los separados, com GND comum, e com capacitores locais resolve. Forçar o batente mantém a corrente alta. Mudar o período não reduz a corrente e pode fazer o servo se comportar mal.
+  fonte: "TowerPro, MG996R datasheet; TI, Brushed DC Motor Fundamentals"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.8.T07-009
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Numa placa A4988 com resistor de sensoriamento R_S = 0,068 Ω, o limite de corrente é I_max = V_ref/(8·R_S). Que V_ref ajusta o limite em 1,2 A? Responda em V, com 3 casas decimais.
+  resposta: {valor: 0.653, unidade: "V", tolerancia: 0.01}
+  explicacao: |
+    V_ref = 8 × 0,068 × 1,2 ≈ 0,653 V. Com um clone de R_S = 0,1 Ω, seria 0,96 V; com a fórmula do R_S errado, o motor fica fraco ou o driver superaquece. Leia o resistor na placa.
+  fonte: "Allegro MicroSystems, A4988 datasheet, Current Regulation; Pololu, página do produto A4988 (current limiting)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.8.T07-010
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um eixo de impressora usa correia GT2 (passo de 2 mm) com polia de 16 dentes, motor de 200 passos por volta e micropasso de 1/16. Quantos passos por milímetro? Responda com um número inteiro.
+  resposta: {valor: 100, unidade: "passos/mm", tolerancia: 0.001}
+  explicacao: |
+    Uma volta da polia avança 16 × 2 = 32 mm. Passos por volta = 200 × 16 = 3200. 3200/32 = 100 passos/mm. Com polia de 20 dentes, seriam 80.
+  fonte: "Allegro MicroSystems, A4988 datasheet, Microstepping"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.8.T07-011
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Um eixo deve andar 100 mm com perfil trapezoidal: aceleração de 50 mm/s², velocidade máxima de 15 mm/s e desaceleração igual à aceleração. Quanto tempo leva o movimento? Responda em s, com 2 casas decimais.
+  resposta: {valor: 6.97, unidade: "s", tolerancia: 0.01}
+  explicacao: |
+    Acelerar até 15 mm/s leva 0,3 s e cobre 2,25 mm; desacelerar, o mesmo. O trecho em velocidade constante tem 100 − 4,5 = 95,5 mm, ou 6,367 s. Total: 0,3 + 6,367 + 0,3 ≈ 6,97 s (o mesmo que d/v + v/a). Sem rampa, o motor de passo perderia passos na partida.
+  fonte: "Microchip, AVR446 Linear speed control of stepper motor; Austin, Generate stepper-motor speed profiles in real time (2005)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.8.T07-012
+  objetivo: O4
+  tipo: vf
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: um buzzer passivo apita quando ligado a uma tensão contínua, da mesma forma que um buzzer ativo.
+  resposta: false
+  explicacao: |
+    O buzzer passivo é só o transdutor e precisa de uma onda quadrada na frequência desejada, gerada pelo timer. O ativo tem um oscilador interno e apita com tensão contínua, sempre na mesma frequência.
+  fonte: "CUI Devices, notas de aplicação de buzzers (active × passive); Murata, piezoelectric sounders datasheet"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.8.T07-013
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um timer em modo CTC alterna o pino de um buzzer passivo a cada comparação, com f = F_CPU/(2·N·(1 + OCR)). Com F_CPU = 16 MHz e prescaler N = 8, que OCR gera 2,5 kHz? Responda com um número inteiro.
+  resposta: {valor: 399, unidade: "contagens", tolerancia: 0.001}
+  explicacao: |
+    OCR = 16 000 000/(2 × 8 × 2500) − 1 = 400 − 1 = 399. O fator 2 aparece porque cada comparação inverte o pino: são duas comparações por período.
+  fonte: "Microchip, ATmega328P datasheet, Clear Timer on Compare Match (CTC) Mode"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.8.T07-014
+  objetivo: O4
+  tipo: multipla
+  dificuldade: 3
+  bloom: avaliar
+  enunciado: |
+    Quais escolhas de atuador estão bem justificadas?
+  alternativas:
+    - "Motor de passo com A4988 para posicionar o carro de uma impressora 3D, com homing por chave de fim de curso ao ligar"
+    - "Servo de modelismo para girar continuamente a pá de um misturador por horas, controlando a velocidade"
+    - "Motor DC com redução e encoder para controlar a velocidade de uma esteira sob carga variável"
+    - "Buzzer passivo com timer para tocar alarmes de tons diferentes para cada falha"
+  resposta: [0, 2, 3]
+  explicacao: |
+    O passo dá posição repetível em malha aberta, com homing para saber o zero; o motor DC com encoder fecha a malha de velocidade; o buzzer passivo toca qualquer frequência. O servo de modelismo comum gira só cerca de 180° e não foi feito para trabalho contínuo; para girar sem parar, use um motor DC.
+  fonte: "Allegro MicroSystems, A4988 datasheet; TI, Brushed DC Motor Fundamentals; TowerPro, SG90 datasheet"
+  origem: ia
+  revisao: rascunho

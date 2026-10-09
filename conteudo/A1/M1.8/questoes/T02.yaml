@@ -1,0 +1,215 @@
+- id: Q-M1.8.T02-001
+  objetivo: O1
+  tipo: vf
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: o autoaquecimento de um NTC medido num divisor de tensão faz a leitura sair mais quente que a temperatura real do ambiente, e o erro cresce com a potência dissipada no termistor.
+  resposta: true
+  explicacao: |
+    A corrente de excitação dissipa P = I²·R no NTC, que esquenta P/δ acima do ambiente, sendo δ a constante de dissipação em mW/°C. O erro tem sempre o mesmo sinal. Diminui-se com resistor fixo maior, tensão menor ou alimentando o divisor só durante a leitura.
+  fonte: "Fraden, Handbook of Modern Sensors, Temperature Sensors (Thermistors, self-heating)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.8.T02-002
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um NTC está na parte de baixo de um divisor ratiométrico com R_F = 10 kΩ em cima, lido por um ADC de 12 bits (4096 códigos). O ADC lê 1500. Qual é a resistência do NTC? Responda em Ω, arredondado para o inteiro mais próximo.
+  resposta: {valor: 5778, unidade: "Ω", tolerancia: 0.001}
+  explicacao: |
+    código/N = R_NTC/(R_NTC + R_F) → R_NTC = R_F·código/(N − código) = 10 000 × 1500/2596 ≈ 5778 Ω. Como o divisor e o ADC usam o mesmo VCC, o valor de VCC não entra na conta.
+  fonte: "Fraden, Handbook of Modern Sensors, Interface Electronic Circuits; TI, A Basic Guide to RTD Measurements (medida ratiométrica)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.8.T02-003
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um NTC de 10 kΩ a 25 °C está em série com um resistor de 10 kΩ, alimentados permanentemente por 5 V. A constante de dissipação do NTC é δ = 2 mW/°C. A 25 °C, qual é o erro de autoaquecimento? Responda em °C, com 2 casas decimais.
+  resposta: {valor: 0.31, unidade: "°C", tolerancia: 0.02}
+  explicacao: |
+    I = 5 V/20 kΩ = 0,25 mA; P = I²·R = (0,25 mA)² × 10 kΩ = 0,625 mW; ΔT = P/δ = 0,625/2 ≈ 0,31 °C. Em 3,3 V, o erro cairia para (3,3/5)² × 0,31 ≈ 0,14 °C; alimentando o divisor por um GPIO só durante a leitura, cai quase a zero.
+  fonte: "Fraden, Handbook of Modern Sensors, Temperature Sensors (Thermistors, self-heating)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.8.T02-004
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um NTC com R₂₅ = 10 kΩ e β = 3950 K mede 5778 Ω. Pela equação Beta, 1/T = 1/298,15 + ln(R/R₂₅)/β, com T em kelvin, qual é a temperatura? Responda em °C, com 1 casa decimal.
+  resposta: {valor: 37.9, unidade: "°C", tolerancia: 0.01}
+  explicacao: |
+    ln(5778/10 000) = −0,5485; −0,5485/3950 = −1,3886 × 10⁻⁴; 1/T = 3,3540 × 10⁻³ − 1,3886 × 10⁻⁴ = 3,2151 × 10⁻³ K⁻¹; T = 311,03 K = 37,9 °C. Usar 25 em vez de 298,15 K ou log10 em vez de ln dá resultados absurdos.
+  fonte: "Fraden, Handbook of Modern Sensors, Temperature Sensors (Thermistors); Vishay, NTC thermistors application notes"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.8.T02-005
+  objetivo: O2
+  tipo: unica
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Qual é a vantagem da ligação a 4 fios (Kelvin) de um RTD?
+  alternativas:
+    - "Dobra a sensibilidade do sensor em Ω/°C"
+    - "Dispensa a corrente de excitação"
+    - "Elimina o erro da resistência dos fios, porque a tensão é medida por fios onde não passa corrente"
+    - "Permite usar fio de cobre comum também nos termopares"
+  resposta: 2
+  explicacao: |
+    Dois fios levam a corrente e outros dois medem a tensão diretamente nos terminais do sensor, sem corrente e, portanto, sem queda nos fios. A sensibilidade é a do RTD (0,385 Ω/°C no PT100), e a excitação continua necessária.
+  fonte: "TI, A Basic Guide to RTD Measurements; Fraden, Handbook of Modern Sensors, Temperature Sensors (Resistance Temperature Detectors)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.8.T02-006
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Pela equação de Callendar-Van Dusen para T ≥ 0 °C, R(T) = R₀·(1 + A·T + B·T²), com A = 3,9083 × 10⁻³ °C⁻¹ e B = −5,775 × 10⁻⁷ °C⁻², qual é a resistência de um PT100 a 60 °C? Responda em Ω, com 2 casas decimais.
+  resposta: {valor: 123.24, unidade: "Ω", tolerancia: 0.01}
+  explicacao: |
+    R = 100 × (1 + 0,234498 − 0,002079) = 123,24 Ω. O termo quadrático vale só 0,21 Ω aqui, mas sem ele o erro seria de cerca de 0,54 °C.
+  fonte: "IEC 60751; TI, A Basic Guide to RTD Measurements; Maxim, MAX31865 datasheet"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.8.T02-007
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um PT100 (0,385 Ω/°C) está ligado a 2 fios por um cabo em que cada condutor tem 0,75 Ω. Qual é o erro de temperatura causado pelos fios? Responda em °C, com 1 casa decimal.
+  resposta: {valor: 3.9, unidade: "°C", tolerancia: 0.01}
+  explicacao: |
+    Os dois condutores somam 1,5 Ω em série com o sensor: 1,5/0,385 ≈ 3,9 °C, sempre a mais. Com 3 fios (condutores iguais) ou 4 fios o erro some; com um PT1000, cairia para 0,39 °C.
+  fonte: "TI, A Basic Guide to RTD Measurements (2-wire, 3-wire and 4-wire)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.8.T02-008
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 4
+  bloom: aplicar
+  enunciado: |
+    Um MAX31865 com R_REF = 430 Ω lê um PT100 e devolve o código de 15 bits 9000, com R_RTD = código·R_REF/2¹⁵. Usando a inversa de Callendar-Van Dusen para T ≥ 0, T = [−A + √(A² − 4B·(1 − R/R₀))]/(2B), com A = 3,9083 × 10⁻³ e B = −5,775 × 10⁻⁷, qual é a temperatura? Responda em °C, com 2 casas decimais.
+  resposta: {valor: 46.64, unidade: "°C", tolerancia: 0.01}
+  explicacao: |
+    R = 9000 × 430/32 768 ≈ 118,103 Ω. 1 − R/R₀ = −0,18103; A² − 4B·(−0,18103) = 1,52748 × 10⁻⁵ − 4,182 × 10⁻⁷ = 1,48566 × 10⁻⁵; a raiz vale 3,85443 × 10⁻³; T = (−3,9083 × 10⁻³ + 3,85443 × 10⁻³)/(−1,155 × 10⁻⁶) ≈ 46,64 °C. A resolução do MAX31865 com 430 Ω é de 0,013 Ω, cerca de 0,034 °C.
+  fonte: "Maxim, MAX31865 datasheet (RTD Resistance Register); IEC 60751"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.8.T02-009
+  objetivo: O3
+  tipo: unica
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    O que a tensão medida nas pontas livres de um termopar representa?
+  alternativas:
+    - "A diferença de temperatura entre a junção de medida e a junção de referência (fria)"
+    - "A temperatura absoluta da junção de medida"
+    - "A temperatura do ambiente em que o instrumento está"
+    - "A resistência dos dois fios do termopar"
+  resposta: 0
+  explicacao: |
+    Pelo efeito Seebeck, a tensão depende do gradiente ao longo dos fios e resulta na diferença entre as duas junções. Para obter a temperatura absoluta da junção quente, é preciso medir a junção fria e compensá-la.
+  fonte: "Analog Devices (Maxim), Tutorial 4026 Implementing Cold-Junction Compensation in Thermocouple Applications; TI, A Basic Guide to Thermocouple Measurements"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.8.T02-010
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um termopar tipo K mede 7,340 mV com a junção fria a 20 °C. Pela tabela NIST do tipo K, E(20 °C) = 0,798 mV e E(200 °C) = 8,138 mV. Qual é a temperatura da junção quente, compensando em tensão? Responda em °C, com 1 casa decimal.
+  resposta: {valor: 200.0, unidade: "°C", tolerancia: 0.01}
+  explicacao: |
+    E_total = 7,340 + 0,798 = 8,138 mV, que pela tabela corresponde a 200,0 °C. Converter os 7,340 mV em temperatura (cerca de 180 °C) e somar 20 °C daria um valor parecido aqui, mas o método certo é somar tensões, porque a curva não é linear.
+  fonte: "NIST ITS-90 Thermocouple Database (tipo K); Analog Devices (Maxim), Tutorial 4026 Implementing Cold-Junction Compensation in Thermocouple Applications"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.8.T02-011
+  objetivo: O3
+  tipo: multipla
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Sobre o MAX31855 lendo um termopar tipo K, quais afirmações estão corretas?
+  alternativas:
+    - "A temperatura do termopar vem em 14 bits com sinal, com 0,25 °C por LSB, e a da junção fria (interna) em 12 bits, com 0,0625 °C por LSB"
+    - "O chip calcula a temperatura supondo uma relação linear entre a tensão e a diferença de temperatura, e longe da faixa em que essa reta é boa a leitura erra alguns graus"
+    - "Como o chip mede a própria temperatura como junção fria, pode ser soldado ao lado do regulador sem prejuízo"
+    - "O bit D16 indica que há alguma falha, e os bits D0 a D2 dizem qual: termopar aberto, curto com o GND ou curto com o VCC"
+  resposta: [0, 1, 3]
+  explicacao: |
+    O formato de 32 bits e os bits de falha estão no datasheet, assim como a nota de que o cálculo é linear (41,276 µV/°C para o tipo K); para mais exatidão, recupera-se a tensão e aplica-se o polinômio NIST. O chip é a junção fria: se ele estiver mais quente que o conector, por estar perto de uma fonte de calor, a compensação erra.
+  fonte: "Maxim, MAX31855 datasheet (Temperature Conversion, Serial Interface, Memory Map)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.8.T02-012
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    O SHT31 devolve o valor bruto de temperatura S_T = 0x6000. Pelo datasheet, T = −45 + 175·S_T/(2¹⁶ − 1) °C. Qual é a temperatura? Responda em °C, com 2 casas decimais.
+  resposta: {valor: 20.63, unidade: "°C", tolerancia: 0.01}
+  explicacao: |
+    0x6000 = 24 576. T = −45 + 175 × 24 576/65 535 ≈ −45 + 65,626 = 20,63 °C. A umidade usa RH = 100·S_RH/(2¹⁶ − 1), e cada palavra de 16 bits vem seguida do CRC-8 (polinômio 0x31, inicial 0xFF), que deve ser conferido.
+  fonte: "Sensirion, SHT3x-DIS datasheet, Conversion of Signal Output e Checksum Calculation"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.8.T02-013
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Pela fórmula de Magnus, γ = ln(RH/100) + 17,62·T/(243,12 + T) e T_d = 243,12·γ/(17,62 − γ), com T em °C, qual é o ponto de orvalho do ar a 20 °C e 70 %RH? Responda em °C, com 1 casa decimal.
+  resposta: {valor: 14.4, unidade: "°C", tolerancia: 0.01}
+  explicacao: |
+    γ = ln(0,70) + 17,62 × 20/263,12 = −0,3567 + 1,3393 = 0,9827; T_d = 243,12 × 0,9827/(17,62 − 0,9827) ≈ 14,4 °C. Qualquer superfície abaixo de 14,4 °C nesse ambiente fica molhada.
+  fonte: "Sensirion, Introduction to Humidity (Dew Point Calculation); Fraden, Handbook of Modern Sensors, Humidity and Moisture Sensors"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.8.T02-014
+  objetivo: O4
+  tipo: multipla
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Um SHT31 foi soldado ao lado do regulador de tensão de um nó IoT e lê sistematicamente 2 °C acima de um termômetro de referência no mesmo ambiente. Quais consequências e correções são corretas?
+  alternativas:
+    - "A umidade relativa lida fica abaixo da do ar ambiente, porque o ar junto ao sensor está mais quente"
+    - "A umidade relativa não é afetada, porque o sensor capacitivo só mede vapor d'água"
+    - "Afastar o sensor das fontes de calor, com recorte na placa e abertura para o ar, ataca a causa"
+    - "O ponto de orvalho calculado com a T e a RH do próprio sensor tende a ficar próximo do real, porque a quantidade de vapor não mudou"
+  resposta: [0, 2, 3]
+  explicacao: |
+    A RH depende da temperatura: o ar aquecido junto ao sensor tem pressão de saturação maior e RH menor. A quantidade absoluta de vapor é a mesma, por isso o ponto de orvalho calculado com a T e a RH do próprio sensor quase não muda. A correção de verdade é térmica: afastar o sensor do calor.
+  fonte: "Sensirion, SHT3x-DIS datasheet (recomendações de montagem); Sensirion, Introduction to Humidity"
+  origem: ia
+  revisao: rascunho
