@@ -1,0 +1,240 @@
+- id: Q-M1.6.T04-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Num ESP32 em modo station, qual evento indica que o DHCP entregou um endereço IP e a aplicação já pode abrir conexões TCP?
+  alternativas:
+    - "WIFI_EVENT_STA_START"
+    - "WIFI_EVENT_STA_CONNECTED"
+    - "IP_EVENT_STA_GOT_IP"
+    - "WIFI_EVENT_SCAN_DONE"
+  resposta: 2
+  explicacao: |
+    STA_START significa que o rádio foi ligado (hora de chamar esp_wifi_connect); STA_CONNECTED, que a associação ao AP terminou, mas ainda sem IP. Só IP_EVENT_STA_GOT_IP, da base IP_EVENT, garante endereço para usar a rede.
+  fonte: "ESP-IDF Programming Guide, API Guides, Wi-Fi Driver, Wi-Fi Event Description e Wi-Fi Station General Scenario"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T04-002
+  objetivo: O1
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: `esp_wifi_connect()` bloqueia a tarefa que a chamou até a conexão terminar, devolvendo ESP_OK só quando o IP já foi obtido.
+  resposta: false
+  explicacao: |
+    O driver de Wi-Fi é assíncrono: esp_wifi_connect só inicia a tentativa. O resultado chega depois, como evento (IP_EVENT_STA_GOT_IP ou WIFI_EVENT_STA_DISCONNECTED com um motivo). Por isso se usa um event group para a tarefa esperar, com tempo limite.
+  fonte: "ESP-IDF Programming Guide, API Guides, Wi-Fi Driver, Wi-Fi Programming Model e Wi-Fi Station General Scenario"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T04-003
+  objetivo: O1
+  tipo: multipla
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Marque as afirmações corretas sobre a inicialização do Wi-Fi e o loop de eventos no ESP-IDF v5.
+  alternativas:
+    - "nvs_flash_init deve ser chamado antes de esp_wifi_init, porque o driver usa a NVS"
+    - "esp_event_loop_create_default pode ser chamado por cada módulo do firmware que precise de eventos, sem problema"
+    - "Os handlers registrados no loop padrão rodam na tarefa desse loop e devem ser curtos, sem bloquear"
+    - "esp_wifi_start, no modo station, gera o evento WIFI_EVENT_STA_START, no qual normalmente se chama esp_wifi_connect"
+  resposta: [0, 2, 3]
+  explicacao: |
+    O driver guarda calibração e configuração na NVS. O loop padrão é criado uma vez por boot: uma nova chamada devolve ESP_ERR_INVALID_STATE. Handlers rodam na tarefa do loop (sys_evt) e bloqueá-los atrasa todos os eventos. O STA_START é o gatilho clássico do esp_wifi_connect.
+  fonte: "ESP-IDF Programming Guide, API Guides, Wi-Fi Driver (Wi-Fi Station General Scenario); API Reference, Event Loop Library"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T04-004
+  objetivo: O2
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Uma station tenta se conectar a uma rede WPA2-PSK e recebe repetidamente WIFI_EVENT_STA_DISCONNECTED com reason = 15 (WIFI_REASON_4WAY_HANDSHAKE_TIMEOUT). Qual é a causa mais provável?
+  alternativas:
+    - "O AP está fora de alcance"
+    - "A senha configurada está errada"
+    - "O servidor DHCP do roteador não respondeu"
+    - "A aplicação chamou esp_wifi_disconnect"
+  resposta: 1
+  explicacao: |
+    No WPA2-PSK, o handshake de 4 vias falha (por tempo esgotado) quando as chaves derivadas da senha não batem: na prática, senha errada. AP fora de alcance gera 201 (NO_AP_FOUND); desconexão pedida pela aplicação gera 8 (ASSOC_LEAVE); falha de DHCP não gera desconexão do Wi-Fi.
+  fonte: "ESP-IDF Programming Guide, API Guides, Wi-Fi Driver, Wi-Fi Reason Code; components/esp_wifi/include/esp_wifi_types_generic.h"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T04-005
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um firmware reconecta com recuo exponencial: espera 1 s antes da tentativa 2 e dobra a espera a cada falha, com teto de 60 s. Quanto tempo de espera se acumula entre a tentativa 1 e a tentativa 8? Responda em s, com um número inteiro.
+  resposta: {valor: 123, unidade: "s", tolerancia: 0}
+  explicacao: |
+    Esperas antes das tentativas 2 a 8: 1, 2, 4, 8, 16, 32 e 64 → limitado a 60. Soma: 1 + 2 + 4 + 8 + 16 + 32 + 60 = 123 s. O recuo evita que muitos aparelhos martelem o roteador quando ele volta.
+  fonte: "ESP-IDF Programming Guide, API Guides, Wi-Fi Driver, Wi-Fi Event-Handling (Write Error-Recovery Routines Correctly at All Times)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T04-006
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Medindo a placa, você descobre que uma conexão (de esp_wifi_start até o IP) leva 1,8 s com corrente média de 115 mA. Qual é a carga gasta em cada conexão? Responda em mAh, com 4 casas decimais.
+  resposta: {valor: 0.0575, unidade: "mAh", tolerancia: 0.01}
+  explicacao: |
+    Q = I × t = 115 mA × 1,8 s = 207 mA·s; dividindo por 3600 s/h: 0,0575 mAh. Com 96 conexões por dia (uma a cada 15 min), são 5,52 mAh/dia só para conectar; IP fixo e canal conhecido encurtam esse tempo (T06).
+  fonte: "ESP-IDF Programming Guide, API Guides, Wi-Fi Driver (Power-saving Mode); ESP32 Series Datasheet, RF Power-Consumption Specifications"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T04-007
+  objetivo: O2
+  tipo: multipla
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Marque as decisões de projeto adequadas para a station de um sensor instalado na casa do cliente.
+  alternativas:
+    - "Usar threshold.authmode = WIFI_AUTH_WPA2_PSK, para recusar uma rede aberta falsa com o mesmo SSID"
+    - "Esperar o IP com xEventGroupWaitBits e tempo limite, guardando as medidas numa fila se a rede não vier"
+    - "Reconectar imediatamente no handler, em laço, sem limite, inclusive com senha errada"
+    - "Depois de várias falhas de autenticação seguidas, parar de tentar e sinalizar ao usuário ou voltar ao provisionamento"
+  resposta: [0, 1, 3]
+  explicacao: |
+    O limiar de autenticação impede a associação a redes com segurança menor. O tempo limite evita travar sem rede. Senha errada não se resolve tentando: é preciso intervenção do usuário. Reconexão imediata em laço não dá tempo à rede e, com muitos aparelhos, sobrecarrega o roteador.
+  fonte: "ESP-IDF Programming Guide, API Guides, Wi-Fi Driver (Station Basic Configuration, Wi-Fi Reason Code); API Guides, Wi-Fi Security"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T04-008
+  objetivo: O3
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Com a interface criada por `esp_netif_create_default_wifi_ap()`, qual é o endereço IP padrão do ESP32 na rede que ele mesmo cria?
+  alternativas:
+    - "192.168.4.1"
+    - "192.168.0.1"
+    - "10.0.0.1"
+    - "169.254.0.1"
+  resposta: 0
+  explicacao: |
+    O SoftAP do ESP-IDF usa por padrão a rede 192.168.4.0/24, com o ESP32 em 192.168.4.1 e um servidor DHCP que entrega endereços aos clientes. É o endereço que portais de configuração costumam usar.
+  fonte: "ESP-IDF Programming Guide, API Reference, Networking APIs, ESP-NETIF; examples/wifi/getting_started/softAP"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T04-009
+  objetivo: O3
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: no modo AP+STA, o AP do ESP32 continua sempre no canal configurado em wifi_config_t.ap.channel, mesmo depois que a station se conecta a um roteador em outro canal.
+  resposta: false
+  explicacao: |
+    Há um único rádio. No modo de coexistência station/AP, o canal do AP externo ao qual a station se conectou tem prioridade: o AP do ESP32 passa a operar nesse canal, e clientes conectados a ele podem cair na troca.
+  fonte: "ESP-IDF Programming Guide, API Guides, Wi-Fi Driver, Wi-Fi Mode (WIFI_MODE_APSTA)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T04-010
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: lembrar
+  enunciado: |
+    Segundo a constante ESP_WIFI_MAX_CONN_NUM do ESP-IDF v5.3, quantos clientes, no máximo, o SoftAP de um ESP32-C3 aceita? Responda com um número inteiro.
+  resposta: {valor: 10, unidade: "clientes", tolerancia: 0}
+  explicacao: |
+    No ESP32-C3 e no C6 o limite é 10; no ESP32, S2 e S3, 15; no C2, 4. O campo max_connection da configuração do AP deve ficar dentro desse limite (e é reduzido se o ESP-NOW usar chaves de criptografia).
+  fonte: "ESP-IDF v5.3, components/esp_wifi/include/local/esp_wifi_types_native.h (ESP_WIFI_MAX_CONN_NUM); API Guides, Wi-Fi Driver, AP Basic Configuration"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T04-011
+  objetivo: O3
+  tipo: unica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Um portal de configuração usa o ESP32 como AP aberto (sem senha) e um formulário HTTP em 192.168.4.1 para receber a senha do Wi-Fi da casa. Qual é o problema de segurança principal?
+  alternativas:
+    - "O servidor HTTP do ESP-IDF não aceita formulários"
+    - "Um AP aberto não entrega IP por DHCP"
+    - "A senha da casa trafega sem criptografia: qualquer um ao alcance do rádio pode capturá-la durante a configuração"
+    - "O ESP32 não pode ser AP e station ao mesmo tempo"
+  resposta: 2
+  explicacao: |
+    Sem WPA2 no AP e sem TLS no HTTP, o formulário vai em texto claro pelo ar. Soluções: AP com WPA2 e senha de etiqueta, ou provisionamento com protocomm em segurança 1 ou 2 (troca de chaves e cifra), que é o que o wifi_provisioning faz.
+  fonte: "ESP-IDF Programming Guide, API Reference, Provisioning API, Wi-Fi Provisioning (Security); API Guides, Wi-Fi Security"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T04-012
+  objetivo: O4
+  tipo: unica
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    No wifi_provisioning com segurança 1, para que serve a prova de posse (PoP)?
+  alternativas:
+    - "É o nome da rede Wi-Fi que o aparelho vai criar"
+    - "Garante que quem provisiona tem acesso físico ao aparelho, porque a PoP está na etiqueta ou na caixa"
+    - "É a senha do roteador da casa"
+    - "É o certificado TLS do servidor de nuvem"
+  resposta: 1
+  explicacao: |
+    Na segurança 1, a sessão usa troca de chaves X25519 e AES-CTR, e a PoP entra na autenticação: sem ela, um vizinho não consegue provisionar o aparelho nem participar da sessão. Ela costuma vir impressa num QR code na etiqueta.
+  fonte: "ESP-IDF Programming Guide, API Reference, Provisioning API, Unified Provisioning (Security 1)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T04-013
+  objetivo: O4
+  tipo: multipla
+  dificuldade: 3
+  bloom: avaliar
+  enunciado: |
+    Compare os métodos de provisionamento de Wi-Fi e marque as afirmações corretas.
+  alternativas:
+    - "No provisionamento por BLE, o celular não precisa sair da rede Wi-Fi em que está"
+    - "O provisionamento por SoftAP funciona também em chips sem Bluetooth, como o ESP32-S2"
+    - "O SmartConfig exige que o usuário conecte o celular a um AP criado pelo ESP32"
+    - "Gravar SSID e senha no código-fonte é aceitável em produto, desde que o repositório seja privado"
+  resposta: [0, 1]
+  explicacao: |
+    BLE usa outro rádio, então o celular continua na rede dele; SoftAP só precisa do Wi-Fi. O SmartConfig faz o contrário: o celular fica na própria rede e codifica as credenciais em pacotes que o ESP32 escuta em modo promíscuo. Credenciais no código não servem para produto: cada cliente tem a sua rede, e o segredo ficaria no binário de todos os aparelhos.
+  fonte: "ESP-IDF Programming Guide, API Reference, Provisioning API, Wi-Fi Provisioning; API Reference, Networking APIs, SmartConfig"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T04-014
+  objetivo: O4
+  tipo: unica
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Um produto provisionado por BLE precisa continuar utilizável quando o cliente troca de roteador. Qual desenho atende melhor?
+  alternativas:
+    - "Regravar o firmware pela serial com as novas credenciais"
+    - "Manter o BLE de provisionamento sempre ativo, aceitando novas credenciais de qualquer celular a qualquer momento"
+    - "Apagar a NVS inteira a cada boot, para forçar o provisionamento sempre"
+    - "Um gesto físico (segurar um botão por alguns segundos) que apaga só as credenciais e reinicia em modo de provisionamento; depois de N falhas seguidas de conexão, o aparelho também sinaliza o problema ao usuário"
+  resposta: 3
+  explicacao: |
+    O gesto físico exige posse do aparelho (como a PoP) e preserva o resto da configuração; a sinalização de falha avisa o usuário de que é preciso reprovisionar. BLE aberto o tempo todo é superfície de ataque e gasta energia; apagar a NVS a cada boot inviabiliza o uso; regravar pela serial não é tarefa de cliente.
+  fonte: "ESP-IDF Programming Guide, API Reference, Provisioning API, Wi-Fi Provisioning (wifi_prov_mgr_reset_provisioning); examples/provisioning/wifi_prov_mgr"
+  origem: ia
+  revisao: rascunho

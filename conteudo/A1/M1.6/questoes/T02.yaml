@@ -1,0 +1,235 @@
+- id: Q-M1.6.T02-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Você clonou um projeto ESP-IDF feito para o ESP32 e quer compilá-lo para um ESP32-C3. Qual comando faz a troca de chip corretamente?
+  alternativas:
+    - "idf.py menuconfig"
+    - "idf.py fullclean"
+    - "idf.py build --chip esp32c3"
+    - "idf.py set-target esp32c3"
+  resposta: 3
+  explicacao: |
+    O `idf.py set-target` escolhe o alvo, apaga o diretório build e recria o sdkconfig com os padrões do novo chip (mais o sdkconfig.defaults). O menuconfig só edita opções; o fullclean só apaga o build.
+  fonte: "ESP-IDF Programming Guide, API Guides, Build System, Selecting the Target"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T02-002
+  objetivo: O1
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: o `idf.py` é uma camada sobre o CMake e o esptool; o build de verdade acontece na pasta build, e ao final o idf.py imprime o comando esptool com os endereços de cada binário.
+  resposta: true
+  explicacao: |
+    O idf.py chama o CMake (com o gerador Ninja) para compilar bootloader, tabela de partições e aplicação, e o esptool.py para gravar. No fim do build ele mostra o comando de gravação completo, com os offsets (no ESP32, 0x1000, 0x8000 e 0x10000).
+  fonte: "ESP-IDF Programming Guide, API Guides, Tools, IDF Frontend - idf.py"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T02-003
+  objetivo: O1
+  tipo: multipla
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Ao fim de `idf.py build` para o ESP32 com a tabela de partições padrão, o comando de gravação sugerido contém três binários. Marque as associações corretas entre arquivo e offset na flash.
+  alternativas:
+    - "bootloader/bootloader.bin em 0x1000"
+    - "partition_table/partition-table.bin em 0x8000"
+    - "a aplicação (projeto.bin) em 0x10000"
+    - "a aplicação (projeto.bin) em 0x0"
+  resposta: [0, 1, 2]
+  explicacao: |
+    No ESP32 (e no S2), o bootloader de segundo estágio fica em 0x1000; a tabela de partições em 0x8000 (CONFIG_PARTITION_TABLE_OFFSET); a aplicação inicial em 0x10000. O offset 0x0 é o do bootloader nos S3, C3 e C6, não da aplicação.
+  fonte: "ESP-IDF Programming Guide, API Guides, Partition Tables e Bootloader; saída do idf.py build (ESP-IDF v5.3)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T02-004
+  objetivo: O2
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    O cabeçalho público `components/sensor/include/sensor.h` declara uma função que recebe um `i2c_master_bus_handle_t`, e por isso inclui `driver/i2c_master.h`. Como declarar essa dependência no CMakeLists.txt do componente?
+  alternativas:
+    - "REQUIRES esp_driver_i2c, porque o cabeçalho público expõe o tipo a quem incluir sensor.h"
+    - "PRIV_REQUIRES esp_driver_i2c, porque dependências devem ser sempre privadas"
+    - "Não é preciso declarar: o driver de I²C faz parte dos requisitos comuns"
+    - "INCLUDE_DIRS com o caminho absoluto da pasta do driver no ESP-IDF"
+  resposta: 0
+  explicacao: |
+    Quando um cabeçalho em INCLUDE_DIRS inclui o de outro componente, a dependência vai em REQUIRES, para que quem depende de `sensor` também enxergue `driver/i2c_master.h`. PRIV_REQUIRES serve para includes usados só nos .c. Desde a v5.0 os drivers não são requisitos comuns, e caminhos absolutos quebram o build em outra máquina.
+  fonte: "ESP-IDF Programming Guide, API Guides, Build System, Component Requirements"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T02-005
+  objetivo: O2
+  tipo: vf
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: num componente próprio, o erro `fatal error: driver/gpio.h: No such file or directory` costuma indicar uma dependência faltando no CMakeLists.txt do componente, e não um arquivo apagado do ESP-IDF.
+  resposta: true
+  explicacao: |
+    O build só põe no caminho de include os cabeçalhos dos componentes declarados em REQUIRES ou PRIV_REQUIRES (mais os requisitos comuns). Falta `PRIV_REQUIRES esp_driver_gpio` (ou `driver`, nas versões anteriores à divisão dos drivers).
+  fonte: "ESP-IDF Programming Guide, API Guides, Build System, Component Requirements"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T02-006
+  objetivo: O2
+  tipo: multipla
+  dificuldade: 3
+  bloom: avaliar
+  enunciado: |
+    Um projeto usa o gerenciador de componentes com a linha `espressif/led_strip: "^2.5.3"` no `main/idf_component.yml`. Marque as afirmações corretas.
+  alternativas:
+    - "O idf_component.yml e o dependencies.lock devem ir para o controle de versão"
+    - "A pasta managed_components deve ir para o controle de versão, porque o build não consegue baixá-la de novo"
+    - "A restrição ^2.5.3 aceita a versão 2.9.0 do componente"
+    - "A restrição ^2.5.3 aceita a versão 3.0.0 do componente"
+  resposta: [0, 2]
+  explicacao: |
+    O manifesto e o lock garantem o build reproduzível; managed_components é baixada de novo no build a partir deles e deve ser ignorada. O acento circunflexo segue o versionamento semântico: aceita versões compatíveis (2.x a partir de 2.5.3), não a próxima versão maior (3.0.0).
+  fonte: "ESP-IDF Programming Guide, API Guides, Tools, IDF Component Manager; documentação do IDF Component Manager (Manifest File)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T02-007
+  objetivo: O2
+  tipo: unica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    O `main/CMakeLists.txt` tinha só `idf_component_register(SRCS "main.c" INCLUDE_DIRS ".")` e compilava. Depois de acrescentar `PRIV_REQUIRES pisca`, o `#include "nvs_flash.h"` do main.c passou a falhar. Por quê?
+  alternativas:
+    - "O componente pisca entra em conflito com o nvs_flash"
+    - "Sem lista de requisitos, o main depende de todos os componentes; com a lista declarada, só dos listados e dos requisitos comuns, e nvs_flash não está entre eles"
+    - "PRIV_REQUIRES desliga o componente nvs_flash no sdkconfig"
+    - "O main não pode ter PRIV_REQUIRES, só REQUIRES"
+  resposta: 1
+  explicacao: |
+    O componente main é especial: se não declarar REQUIRES nem PRIV_REQUIRES, recebe automaticamente todos os componentes como dependência. Ao declarar uma lista, passa a valer só ela (mais os requisitos comuns, como freertos, log e esp_system). Solução: `PRIV_REQUIRES pisca nvs_flash`.
+  fonte: "ESP-IDF Programming Guide, API Guides, Build System, Component Requirements (Requirements in the Main Component)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T02-008
+  objetivo: O3
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    De onde vêm as macros `CONFIG_...` que o código C de um projeto ESP-IDF usa, como `CONFIG_FREERTOS_HZ`?
+  alternativas:
+    - "Do arquivo sdkconfig.defaults, incluído diretamente pelo compilador"
+    - "Do Kconfig de cada componente, lido pelo pré-processador"
+    - "De um cabeçalho que o usuário escreve à mão em main/"
+    - "Do cabeçalho build/config/sdkconfig.h, gerado pelo build a partir do sdkconfig"
+  resposta: 3
+  explicacao: |
+    O menuconfig grava o sdkconfig; o build gera dele o sdkconfig.h (e versões para CMake e Python). O Kconfig só descreve as opções; o sdkconfig.defaults só fornece valores iniciais.
+  fonte: "ESP-IDF Programming Guide, API Guides, Build System, Project Configuration"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T02-009
+  objetivo: O3
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: quando uma opção `bool` do Kconfig está desligada, o sdkconfig.h gerado contém `#define CONFIG_OPCAO 0`.
+  resposta: false
+  explicacao: |
+    Opção bool desligada não gera macro nenhuma no sdkconfig.h (e aparece como `# CONFIG_OPCAO is not set` no sdkconfig). Por isso se testa com `#if CONFIG_OPCAO` (macro indefinida vale 0 no #if) ou `#ifdef`.
+  fonte: "ESP-IDF Programming Guide, API Guides, Build System, Project Configuration; build/config/sdkconfig.h de um projeto ESP-IDF v5.3"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T02-010
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    O `Kconfig.projbuild` declara `config FORJA_PERIODO_MS` com `default 500`. O `sdkconfig.defaults` do projeto tem `CONFIG_FORJA_PERIODO_MS=250`. Um colega clona o repositório (sem sdkconfig) e roda `idf.py build`. Qual valor terá `CONFIG_FORJA_PERIODO_MS` no sdkconfig.h? Responda em ms, com um número inteiro.
+  resposta: {valor: 250, unidade: "ms", tolerancia: 0}
+  explicacao: |
+    Sem sdkconfig, o build parte dos padrões do Kconfig e aplica por cima o sdkconfig.defaults: 250 vence o default 500. O sdkconfig.defaults existe exatamente para isso: levar as escolhas do projeto para quem clona.
+  fonte: "ESP-IDF Programming Guide, API Guides, Build System, Custom Sdkconfig Defaults"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T02-011
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Com o tick padrão do FreeRTOS no ESP-IDF (CONFIG_FREERTOS_HZ = 100), quantos ticks vale `pdMS_TO_TICKS(25)`? A macro trunca o resultado. Responda com um número inteiro de ticks.
+  resposta: {valor: 2, unidade: "ticks", tolerancia: 0}
+  explicacao: |
+    pdMS_TO_TICKS(ms) = ms × configTICK_RATE_HZ / 1000 = 25 × 100 / 1000 = 2,5, truncado para 2 ticks. Como cada tick dura 10 ms e a chamada pode cair em qualquer ponto do tick corrente, a espera real fica entre 10 e 20 ms.
+  fonte: "ESP-IDF Programming Guide, API Reference, FreeRTOS (IDF); Kconfig do componente freertos (FREERTOS_HZ, padrão 100)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T02-012
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Um código escrito para o FreeRTOS genérico de 32 bits, onde a pilha de `xTaskCreate` é dada em palavras de 4 bytes, cria uma tarefa com pilha de 1024. Portado sem mudança para o ESP-IDF, onde a pilha é dada em bytes, quantos bytes de pilha a tarefa recebe a menos do que o autor planejou? Responda em bytes, com um número inteiro.
+  resposta: {valor: 3072, unidade: "bytes", tolerancia: 0}
+  explicacao: |
+    O autor planejou 1024 palavras × 4 bytes = 4096 bytes. No ESP-IDF o mesmo número vale 1024 bytes. A diferença é 4096 − 1024 = 3072 bytes: a tarefa fica com um quarto da pilha e tende a estourar.
+  fonte: "ESP-IDF Programming Guide, API Reference, FreeRTOS (IDF), seção sobre diferenças em relação ao FreeRTOS original (tamanho de pilha em bytes)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T02-013
+  objetivo: O4
+  tipo: multipla
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Marque as afirmações corretas sobre o `app_main` no ESP-IDF v5.
+  alternativas:
+    - "Ele é chamado por uma tarefa do FreeRTOS (a tarefa main), depois que o escalonador já foi iniciado"
+    - "Precisa terminar num laço infinito, senão o chip reinicia"
+    - "Se retornar, a tarefa main é apagada e as demais tarefas continuam rodando"
+    - "A pilha da tarefa main é configurável no menuconfig e tem 3584 bytes por padrão"
+  resposta: [0, 2, 3]
+  explicacao: |
+    O startup do ESP-IDF inicia o escalonador e a tarefa main chama app_main (prioridade 1). Retornar é permitido: só a tarefa main é apagada. O tamanho da pilha é CONFIG_ESP_MAIN_TASK_STACK_SIZE, padrão 3584 bytes. Não há reinício por retorno de app_main.
+  fonte: "ESP-IDF Programming Guide, API Guides, Application Startup Flow (Main Task); Kconfig do esp_system (ESP_MAIN_TASK_STACK_SIZE)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T02-014
+  objetivo: O4
+  tipo: unica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Uma tarefa de prioridade 5 executa `for (;;) { if (gpio_get_level(BOTAO) == 0) tratar(); }` sem nenhuma chamada que bloqueie. Com a configuração padrão do ESP-IDF, o que se observa?
+  alternativas:
+    - "Nada de anormal: o escalonador preemptivo divide o tempo igualmente entre todas as tarefas"
+    - "O chip reinicia imediatamente por brownout"
+    - "A tarefa idle daquele núcleo não roda, o watchdog de tarefas avisa depois de cerca de 5 s e as tarefas de prioridade menor nesse núcleo deixam de executar"
+    - "O compilador recusa o laço sem vTaskDelay"
+  resposta: 2
+  explicacao: |
+    Uma tarefa pronta de prioridade alta nunca cede a CPU às de prioridade menor (só divide tempo com as de mesma prioridade). A idle não roda, não alimenta o TWDT, e o aviso "Task watchdog got triggered" aparece (tempo padrão de 5 s). A correção é bloquear: vTaskDelay, fila ou interrupção do GPIO.
+  fonte: "ESP-IDF Programming Guide, API Reference, System API, Watchdogs (Task Watchdog Timer); FreeRTOS (IDF)"
+  origem: ia
+  revisao: rascunho

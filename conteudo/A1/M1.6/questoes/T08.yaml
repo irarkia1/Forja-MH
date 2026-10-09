@@ -1,0 +1,240 @@
+- id: Q-M1.6.T08-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Qual macro da biblioteca de log do ESP-IDF registra uma mensagem de aviso (nível W)?
+  alternativas:
+    - "ESP_LOGE"
+    - "ESP_LOGW"
+    - "ESP_LOGI"
+    - "ESP_LOGV"
+  resposta: 1
+  explicacao: |
+    Os níveis, do mais grave ao mais detalhado, são E (erro), W (aviso), I (informação), D (depuração) e V (detalhado), com as macros ESP_LOGE, ESP_LOGW, ESP_LOGI, ESP_LOGD e ESP_LOGV.
+  fonte: "ESP-IDF Programming Guide, API Reference, System API, Logging library"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T08-002
+  objetivo: O1
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: com CONFIG_LOG_MAXIMUM_LEVEL em Info, a chamada `esp_log_level_set("sensor", ESP_LOG_DEBUG)` faz aparecer no console as mensagens ESP_LOGD da etiqueta sensor.
+  resposta: false
+  explicacao: |
+    O nível máximo decide o que é compilado: chamadas acima dele são removidas pelo pré-processador. esp_log_level_set só ajusta, em tempo de execução, o que já existe no binário. Para poder ligar o Debug sem regravar, compile com nível máximo Debug e padrão Info.
+  fonte: "ESP-IDF Programming Guide, API Reference, Logging library, Log Level Control"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T08-003
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Uma linha de log tem 50 caracteres mais CR e LF. Quanto tempo a UART0 leva para transmiti-la a 115 200 baud, no formato 8N1? Responda em ms, com 2 casas decimais.
+  resposta: {valor: 4.51, unidade: "ms", tolerancia: 0.01}
+  explicacao: |
+    Cada caractere 8N1 ocupa 10 bits (start, 8 dados, stop). São 52 caracteres × 10 bits = 520 bits; 520 / 115 200 = 4,514 ms ≈ 4,51 ms. Por isso log em laço rápido muda o comportamento temporal do programa.
+  fonte: "ESP-IDF Programming Guide, API Guides, Tools, IDF Monitor (baud padrão 115200); M1.5.T01 (tempo de quadro UART)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T08-004
+  objetivo: O1
+  tipo: unica
+  dificuldade: 3
+  bloom: avaliar
+  enunciado: |
+    O firmware perdeu a conexão Wi-Fi e vai fazer a tentativa de reconexão número 3, com recuo exponencial, sem perder dados (as leituras ficam numa fila). Que nível de log é o mais adequado para registrar essa tentativa?
+  alternativas:
+    - "Erro (E), porque a conexão caiu"
+    - "Detalhado (V), porque é um detalhe interno da pilha de rede"
+    - "Aviso (W), porque é uma situação anormal que está sendo tratada"
+    - "Nenhum: reconexões não devem ser registradas"
+  resposta: 2
+  explicacao: |
+    Erro é para falhas que impedem a função de cumprir o seu papel; aqui o sistema está tratando a situação. Aviso registra o anormal tratado e ajuda a diagnosticar redes instáveis. Verbose ficaria desligado em produção e esconderia a informação; não registrar nada impede o diagnóstico.
+  fonte: "ESP-IDF Programming Guide, API Reference, Logging library"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T08-005
+  objetivo: O2
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    O que acontece quando a expressão dentro de `ESP_ERROR_CHECK(...)` devolve um valor diferente de ESP_OK?
+  alternativas:
+    - "O erro é registrado com arquivo, linha e expressão e abort() é chamado, o que leva ao pânico e, por padrão, ao reinício"
+    - "O erro é ignorado e a execução continua"
+    - "A função que contém a macro retorna o erro a quem a chamou"
+    - "A macro tenta executar a expressão de novo até dar certo"
+  resposta: 0
+  explicacao: |
+    ESP_ERROR_CHECK imprime "ESP_ERROR_CHECK failed: esp_err_t 0x... (NOME)" com arquivo, linha, função e expressão e chama abort(). Quem retorna o erro é ESP_RETURN_ON_ERROR; quem só imprime é ESP_ERROR_CHECK_WITHOUT_ABORT.
+  fonte: "ESP-IDF Programming Guide, API Guides, Error Handling"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T08-006
+  objetivo: O2
+  tipo: multipla
+  dificuldade: 3
+  bloom: avaliar
+  enunciado: |
+    Num firmware de produto, marque os usos adequados de cada forma de tratamento de erro.
+  alternativas:
+    - "ESP_ERROR_CHECK em esp_event_loop_create_default() durante a inicialização, porque sem o loop de eventos o sistema não funciona"
+    - "ESP_ERROR_CHECK no envio HTTP de uma leitura ao servidor, porque falha de rede é inaceitável"
+    - "ESP_RETURN_ON_ERROR numa função de driver de sensor, para devolver o erro a quem chamou e deixar a decisão com ele"
+    - "Um if explícito que, ao receber ESP_ERR_NVS_NO_FREE_PAGES de nvs_flash_init, apaga a partição e inicializa de novo"
+  resposta: [0, 2, 3]
+  explicacao: |
+    Abortar faz sentido no que não pode falhar em condições normais (inicialização essencial). Falha de rede é esperada em campo: abortar viraria um aparelho que reinicia em laço; o certo é registrar, guardar e tentar de novo. ESP_RETURN_ON_ERROR propaga o erro em bibliotecas, e o if explícito implementa a recuperação documentada da NVS.
+  fonte: "ESP-IDF Programming Guide, API Guides, Error Handling; API Reference, Non-Volatile Storage Library"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T08-007
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    O console mostra `ESP_ERROR_CHECK failed: esp_err_t 0x102 (ESP_ERR_INVALID_ARG)`. Qual é o valor decimal desse código de erro? Responda com um número inteiro.
+  resposta: {valor: 258, unidade: "valor", tolerancia: 0}
+  explicacao: |
+    0x102 = 1 × 256 + 0 × 16 + 2 = 258. Os códigos genéricos começam em 0x101 (ESP_ERR_NO_MEM), 0x102 (ESP_ERR_INVALID_ARG), 0x103 (ESP_ERR_INVALID_STATE); esp_err_to_name converte qualquer um no nome.
+  fonte: "ESP-IDF Programming Guide, API Reference, Error Codes Reference"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T08-008
+  objetivo: O3
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Você roda `idf.py monitor --print-filter="wifi:W *:E"`. Quais linhas aparecem na tela?
+  alternativas:
+    - "Só as linhas da etiqueta wifi, de todos os níveis"
+    - "Avisos e erros da etiqueta wifi e erros das demais etiquetas"
+    - "Avisos de todas as etiquetas e erros da etiqueta wifi"
+    - "Todas as linhas, porque o filtro só vale para o arquivo de log"
+  resposta: 1
+  explicacao: |
+    Cada item é etiqueta:nível e mostra aquele nível e os mais graves. "wifi:W" mostra W e E do wifi; "*:E" mostra só E das outras etiquetas. O filtro é aplicado no PC: o chip continua transmitindo tudo pela UART.
+  fonte: "ESP-IDF Programming Guide, API Guides, Tools, IDF Monitor, Output Filtering"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T08-009
+  objetivo: O3
+  tipo: vf
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Verdadeiro ou falso: no idf.py monitor, o atalho Ctrl+] encerra o monitor, e os demais comandos usam o prefixo Ctrl+T (por exemplo, Ctrl+T seguido de Ctrl+R reinicia o chip).
+  resposta: true
+  explicacao: |
+    Ctrl+] sai; Ctrl+T abre o menu de comandos: Ctrl+R reinicia, Ctrl+F recompila e grava, Ctrl+A grava só a aplicação, Ctrl+P reinicia em modo de download, Ctrl+H mostra a ajuda.
+  fonte: "ESP-IDF Programming Guide, API Guides, Tools, IDF Monitor, Keyboard Shortcuts"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T08-010
+  objetivo: O3
+  tipo: multipla
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Um projeto com ESP32-C3 usa o USB-Serial/JTAG como console, sem conversor USB-serial na placa. Marque as consequências corretas.
+  alternativas:
+    - "A placa dispensa o CP2102/CH340 e os transistores de auto-reset"
+    - "Quando o chip entra em deep sleep ou reinicia, a porta USB some do PC e reaparece, e logs do início podem se perder"
+    - "O console passa a funcionar mesmo com o chip em deep sleep, porque a USB tem alimentação própria"
+    - "Se o firmware usar os pinos D− e D+ (GPIO18 e GPIO19) para outra função, perde-se o console e a gravação pela USB"
+  resposta: [0, 1, 3]
+  explicacao: |
+    O periférico USB-Serial/JTAG faz o papel do conversor e do reset para download. Ele é desligado no deep sleep e a enumeração recomeça a cada reset; não há console durante o sono. Os pinos USB são GPIO18/19 no C3: reaproveitá-los derruba o console USB, e aí é preciso o botão BOOT para regravar.
+  fonte: "ESP-IDF Programming Guide, API Guides, USB Serial/JTAG Controller Console; ESP32-C3 Series Datasheet, Pin Definitions"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T08-011
+  objetivo: O4
+  tipo: unica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Um ESP32 imprime `Guru Meditation Error: Core 0 panic'ed (LoadProhibited)` com `EXCVADDR: 0x00000000`. Qual é a causa mais provável?
+  alternativas:
+    - "Escrita numa variável const guardada em flash"
+    - "Estouro da pilha da tarefa"
+    - "Divisão inteira por zero"
+    - "Leitura por um ponteiro nulo"
+  resposta: 3
+  explicacao: |
+    LoadProhibited é leitura de endereço inválido, e EXCVADDR mostra o endereço: zero. Escrita inválida seria StoreProhibited; divisão por zero é IntegerDivideByZero; estouro de pilha costuma aparecer como mensagem própria de stack overflow.
+  fonte: "ESP-IDF Programming Guide, API Guides, Fatal Errors, Guru Meditation Errors (LoadProhibited, StoreProhibited)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T08-012
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Considere `typedef struct { uint32_t id; float t; uint8_t nome[8]; uint32_t contagem; } leitura_t;` e um ponteiro `leitura_t *p = NULL;`. A leitura de `p->contagem` provoca LoadProhibited. Que valor decimal aparece em EXCVADDR? Responda com um número inteiro.
+  resposta: {valor: 16, unidade: "endereço (decimal)", tolerancia: 0}
+  explicacao: |
+    O endereço lido é p + offsetof(leitura_t, contagem). Offsets: id em 0 (4 bytes), t em 4 (4 bytes), nome em 8 (8 bytes), contagem em 16, já alinhado a 4. Com p = 0, EXCVADDR = 0x10 = 16. Um EXCVADDR pequeno e não nulo costuma ser um campo de struct acessado por ponteiro nulo.
+  fonte: "ESP-IDF Programming Guide, API Guides, Fatal Errors, Guru Meditation Errors"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T08-013
+  objetivo: O4
+  tipo: multipla
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Marque as associações corretas entre o valor de `esp_reset_reason()` e a situação que o provoca.
+  alternativas:
+    - "ESP_RST_BROWNOUT: a tensão de alimentação caiu abaixo do limiar do detector"
+    - "ESP_RST_PANIC: reinício depois de um Guru Meditation Error ou de abort()"
+    - "ESP_RST_POWERON: retorno do deep sleep por timer"
+    - "ESP_RST_DEEPSLEEP: o chip acordou do deep sleep"
+  resposta: [0, 1, 3]
+  explicacao: |
+    Brownout, pânico e deep sleep têm códigos próprios. ESP_RST_POWERON é a energização (ligar na tomada ou na bateria); o retorno do deep sleep é ESP_RST_DEEPSLEEP, qualquer que seja a fonte de despertar.
+  fonte: "ESP-IDF Programming Guide, API Reference, System API, Miscellaneous System APIs (Reset Reason)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T08-014
+  objetivo: O4
+  tipo: unica
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Aparelhos em campo reiniciam sempre segundos depois de ligar o Wi-Fi. O motivo de reset registrado na NVS é ESP_RST_BROWNOUT e não há core dump gravado. Qual é a ação mais indicada?
+  alternativas:
+    - "Analisar o core dump com idf.py coredump-info"
+    - "Aumentar a pilha da tarefa de Wi-Fi"
+    - "Revisar a alimentação: capacidade do regulador para os picos de transmissão, capacitores de desacoplamento, cabo e fonte"
+    - "Desligar o detector de brownout no menuconfig para evitar os reinícios"
+  resposta: 2
+  explicacao: |
+    Brownout é queda de tensão, problema de hardware, típico no pico de corrente do rádio. Não há pânico de software (por isso não há core dump), e a pilha não tem relação. Desligar o detector só troca o reinício limpo por comportamento imprevisível com tensão baixa (corrupção de flash, travamentos).
+  fonte: "ESP-IDF Programming Guide, API Guides, Fatal Errors, Other Fatal Errors (Brownout); ESP32 Hardware Design Guidelines, Power Supply"
+  origem: ia
+  revisao: rascunho

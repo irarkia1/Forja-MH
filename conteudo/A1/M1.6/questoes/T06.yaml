@@ -1,0 +1,235 @@
+- id: Q-M1.6.T06-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    O que acontece quando um ESP32 acorda do deep sleep?
+  alternativas:
+    - "A execução continua na instrução seguinte a esp_deep_sleep_start, com a RAM intacta"
+    - "O chip reinicia: passa pelo bootloader e o app_main começa de novo; só a memória RTC preserva dados"
+    - "Só a tarefa que chamou esp_deep_sleep_start é reiniciada"
+    - "O chip volta ao modo de download e espera o esptool"
+  resposta: 1
+  explicacao: |
+    No deep sleep as CPUs, a maior parte da RAM e os periféricos digitais são desligados; ao acordar, o chip faz um boot quase completo e esp_reset_reason devolve ESP_RST_DEEPSLEEP. Quem continua de onde parou é o light sleep.
+  fonte: "ESP-IDF Programming Guide, API Reference, System API, Sleep Modes (Sleep Modes)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T06-002
+  objetivo: O1
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: no light sleep, CPUs e periféricos digitais têm o clock cortado e a tensão reduzida, mas a RAM e o estado interno são preservados, e a execução continua depois de esp_light_sleep_start.
+  resposta: true
+  explicacao: |
+    É a definição da documentação: no light sleep os estados são preservados e o retorno é rápido (ordem de 1 ms), com consumo típico da ordem de 0,8 mA no ESP32, contra ~10 µA do deep sleep, que exige reboot.
+  fonte: "ESP-IDF Programming Guide, API Reference, Sleep Modes; ESP32 Series Datasheet, Power Consumption by Power Modes"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T06-003
+  objetivo: O1
+  tipo: multipla
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Segundo a documentação do ESP-IDF para o ESP32, quais partes do chip continuam alimentadas no deep sleep (quando usadas)?
+  alternativas:
+    - "O controlador RTC"
+    - "A memória RTC (FAST e SLOW)"
+    - "O coprocessador ULP"
+    - "O rádio Wi-Fi, para manter a associação com o roteador"
+  resposta: [0, 1, 2]
+  explicacao: |
+    No deep sleep ficam só o controlador RTC, o ULP e as memórias RTC. O rádio é desligado e conexões Wi-Fi e Bluetooth não se mantêm; para continuar conectado com pouco consumo, use modem sleep com light sleep automático.
+  fonte: "ESP-IDF Programming Guide, API Reference, Sleep Modes (Sleep Modes; Wi-Fi/Bluetooth and Sleep Modes)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T06-004
+  objetivo: O2
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Para que serve declarar `RTC_DATA_ATTR static uint32_t contador;` num firmware que usa deep sleep?
+  alternativas:
+    - "Para pôr a variável na memória RTC, onde ela mantém o valor entre um deep sleep e outro"
+    - "Para gravar a variável na NVS automaticamente"
+    - "Para que a variável seja zerada a cada despertar"
+    - "Para acelerar o acesso à variável pela CPU"
+  resposta: 0
+  explicacao: |
+    RTC_DATA_ATTR coloca a variável na memória RTC SLOW, que continua alimentada no deep sleep; ela é inicializada só no power-on. Não é gravada na flash: some se a alimentação acabar.
+  fonte: "ESP-IDF Programming Guide, API Guides, Memory Types (RTC Slow Memory)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T06-005
+  objetivo: O2
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um ESP32-C3 deve acordar do deep sleep quando um botão ligado ao GND for apertado. Que mecanismo usar?
+  alternativas:
+    - "esp_sleep_enable_ext0_wakeup em qualquer GPIO"
+    - "esp_sleep_enable_touchpad_wakeup"
+    - "esp_sleep_enable_ulp_wakeup com um programa do ULP"
+    - "esp_deep_sleep_enable_gpio_wakeup com ESP_GPIO_WAKEUP_GPIO_LOW, num dos GPIOs com essa capacidade (GPIO0 a GPIO5 no C3)"
+  resposta: 3
+  explicacao: |
+    O C3 não tem ext0/ext1, toque nem ULP; o despertar por pino no deep sleep é o GPIO wakeup, restrito aos GPIOs do domínio de baixo consumo (0 a 5 no C3).
+  fonte: "ESP-IDF Programming Guide (ESP32-C3), API Reference, Sleep Modes (GPIO Wakeup); esp_sleep.h (esp_deep_sleep_enable_gpio_wakeup)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T06-006
+  objetivo: O2
+  tipo: multipla
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Marque as afirmações corretas sobre as fontes de despertar do ESP32 original.
+  alternativas:
+    - "O ext0 usa um único RTC GPIO e mantém os periféricos RTC ligados, o que permite usar o pull-up interno do domínio RTC"
+    - "O ext1 aceita vários RTC GPIOs por máscara, com os modos ALL_LOW e ANY_HIGH"
+    - "Depois de acordar, esp_sleep_get_wakeup_cause informa a fonte, e no primeiro boot devolve ESP_SLEEP_WAKEUP_UNDEFINED"
+    - "O despertar por UART funciona no deep sleep"
+  resposta: [0, 1, 2]
+  explicacao: |
+    ext0 = um pino, periféricos RTC ligados; ext1 = máscara de pinos, ALL_LOW ou ANY_HIGH no ESP32 (ANY_LOW nos chips novos). A causa vem de esp_sleep_get_wakeup_cause, que devolve UNDEFINED quando o reset não foi um despertar. O despertar por UART só existe no light sleep.
+  fonte: "ESP-IDF Programming Guide, API Reference, Sleep Modes (External Wakeup (ext0), External Wakeup (ext1), UART Wakeup (Light-sleep Only), Checking Sleep Wakeup Cause)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T06-007
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um sensor acorda a cada 300 s, fica 1,5 s acordado com corrente média de 90 mA e dorme o resto do ciclo a 15 µA. Qual é a corrente média? Responda em µA, com 1 casa decimal.
+  resposta: {valor: 464.9, unidade: "µA", tolerancia: 0.01}
+  explicacao: |
+    Acordado: 1,5 × 90 = 135 mA·s. Dormindo: 298,5 × 0,015 = 4,4775 mA·s. Média = (135 + 4,4775) / 300 = 0,46493 mA = 464,9 µA. O tempo acordado responde por 97% da carga.
+  fonte: "ESP-IDF Programming Guide, API Reference, Sleep Modes; ESP32 Series Datasheet, Current Consumption Characteristics"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T06-008
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Ciclo de 900 s: 2 s acordado a 80 mA (média) e 898 s em deep sleep a 10 µA, contando só o chip. Com uma bateria de 2000 mAh, toda utilizável, quantos dias dura o aparelho? Responda em dias, arredondando para o inteiro mais próximo.
+  resposta: {valor: 444, unidade: "dias", tolerancia: 0.003}
+  explicacao: |
+    Carga por ciclo: 2 × 80 + 898 × 0,010 = 160 + 8,98 = 168,98 mA·s. Média: 168,98 / 900 = 0,18776 mA. Autonomia: 2000 / 0,18776 = 10 652 h = 443,8 dias ≈ 444 dias.
+  fonte: "ESP32 Series Datasheet, Power Consumption by Power Modes; roteiro M1.6.T06, Exemplo 2"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T06-009
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    O mesmo ciclo da questão anterior (2 s a 80 mA, 898 s dormindo, a cada 900 s) roda num DevKit cujo regulador, conversor USB-serial e LED consomem 5 mA a mais o tempo todo, inclusive durante o sono (o chip continua a 10 µA). Com 2000 mAh, quantos dias dura? Responda em dias, com 1 casa decimal.
+  resposta: {valor: 16.1, unidade: "dias", tolerancia: 0.01}
+  explicacao: |
+    Os 5 mA somam nos dois estados: acordado, 2 × 85 = 170 mA·s; dormindo, 898 × 5,010 = 4498,98 mA·s. Média: 4668,98 / 900 = 5,1878 mA. Autonomia: 2000 / 5,1878 = 385,5 h = 16,1 dias. A placa, e não o chip, domina o orçamento.
+  fonte: "ESP32 Hardware Design Guidelines, Power Supply; roteiro M1.6.T06, Exemplo 3"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T06-010
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 4
+  bloom: aplicar
+  enunciado: |
+    Modelo: o deep sleep do chip consome 10 µA e o ULP acrescenta 150 µA enquanto executa. O ULP roda 1 ms a cada 100 ms. Qual é a corrente média total durante o sono? Responda em µA, com 1 casa decimal.
+  resposta: {valor: 11.5, unidade: "µA", tolerancia: 0.01}
+  explicacao: |
+    O ULP executa 1% do tempo: 0,01 × 150 = 1,5 µA de média. Total: 10 + 1,5 = 11,5 µA. Comparar com acordar a CPU 10 vezes por segundo (dezenas de mA por centenas de ms) mostra por que o ULP existe. Na prática, ADC e domínio RTC ligados aumentam o número: meça.
+  fonte: "ESP32 Series Datasheet, Power Consumption by Power Modes (ULP); ESP-IDF Programming Guide, ULP FSM Coprocessor Programming"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T06-011
+  objetivo: O4
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Que coprocessador de baixo consumo o ESP32 original oferece para trabalhar durante o deep sleep?
+  alternativas:
+    - "ULP-RISC-V"
+    - "LP core"
+    - "ULP FSM, programado num assembly próprio"
+    - "Nenhum"
+  resposta: 2
+  explicacao: |
+    O ESP32 tem o ULP FSM. S2 e S3 têm o FSM e o ULP-RISC-V; o C6 tem o LP core (RISC-V); o C3 não tem coprocessador de baixo consumo.
+  fonte: "ESP-IDF Programming Guide, API Reference, System API, ULP FSM Coprocessor Programming, ULP-RISC-V Coprocessor Programming e ULP LP-Core Coprocessor Programming"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T06-012
+  objetivo: O4
+  tipo: unica
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Por que o programa principal lê `ulp_ultima & UINT16_MAX` em vez de `ulp_ultima` ao usar uma variável escrita pelo ULP FSM?
+  alternativas:
+    - "Porque o ULP FSM grava os dados nos 16 bits de baixo de cada palavra, e os 16 bits de cima recebem um valor que depende do endereço da instrução de store"
+    - "Porque o ADC do ULP tem 16 bits"
+    - "Porque a memória RTC é de 16 bits"
+    - "Para converter o valor em milivolts"
+  resposta: 0
+  explicacao: |
+    Os registradores do ULP FSM são de 16 bits e o st escreve só a metade de baixo da palavra de 32 bits; a metade de cima fica com um valor ligado ao endereço da instrução. Sem a máscara, o valor lido pela CPU vem errado.
+  fonte: "ESP-IDF Programming Guide, API Reference, ULP FSM Coprocessor Programming (Accessing the ULP FSM Program Variables)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T06-013
+  objetivo: O4
+  tipo: vf
+  dificuldade: 2
+  bloom: lembrar
+  enunciado: |
+    Verdadeiro ou falso: o ESP32-C3 tem um coprocessador ULP que pode ler o ADC durante o deep sleep.
+  resposta: false
+  explicacao: |
+    O C3 não tem ULP nem LP core; no deep sleep ele acorda só por timer ou por GPIO. Para amostrar sensores dormindo, escolha o ESP32, o S2/S3 (ULP-RISC-V) ou o C6 (LP core).
+  fonte: "ESP32-C3 Series Datasheet, Product Overview; ESP-IDF Programming Guide (ESP32-C3), Sleep Modes"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T06-014
+  objetivo: O4
+  tipo: unica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    No exemplo do roteiro, o programa do ULP, ao decidir acordar a CPU, executa `wake` e depois zera o bit RTC_CNTL_ULP_CP_SLP_TIMER_EN. Que consequência isso tem para o programa principal?
+  alternativas:
+    - "Nenhuma: o ULP volta a rodar sozinho no próximo período"
+    - "O programa principal precisa chamar ulp_run de novo antes de dormir, senão o ULP não volta a executar"
+    - "O ADC fica desligado até o próximo power-on"
+    - "A memória RTC é apagada"
+  resposta: 1
+  explicacao: |
+    Zerar o bit desliga o timer que acorda o ULP; é o que impede o ULP de acordar a CPU repetidamente enquanto ela ainda está trabalhando. Por isso o app_main chama ulp_run a cada despertar, como o exemplo oficial ulp_adc faz.
+  fonte: "ESP-IDF, examples/system/ulp/ulp_fsm/ulp_adc (adc.S e ulp_adc_example_main.c); API Reference, ULP FSM Coprocessor Programming"
+  origem: ia
+  revisao: rascunho

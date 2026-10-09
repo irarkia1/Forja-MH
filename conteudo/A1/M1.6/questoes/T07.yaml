@@ -1,0 +1,225 @@
+- id: Q-M1.6.T07-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    No ESP32 original, um botão ligado entre o GPIO35 e o GND, configurado com `GPIO_PULLUP_ENABLE`, lê valores aleatórios quando está solto. Por quê?
+  alternativas:
+    - "O GPIO35 é de strapping e muda de função depois do boot"
+    - "Os GPIO34 a GPIO39 são só entrada e não têm resistores de pull-up nem de pull-down internos"
+    - "O pull-up interno só funciona com interrupção habilitada"
+    - "O GPIO35 está ligado à flash do módulo"
+  resposta: 1
+  explicacao: |
+    Os GPIO34–39 do ESP32 são só entrada e não têm pull internos; a configuração não tem efeito e a entrada fica flutuando. Use um resistor externo (10 kΩ para 3,3 V) ou outro pino.
+  fonte: "ESP-IDF Programming Guide, API Reference, Peripherals, GPIO & RTC GPIO; ESP32 Series Datasheet, Pin Definitions"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T07-002
+  objetivo: O1
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: graças à GPIO matrix, o driver de I²C do ESP32 pode pôr os sinais SDA e SCL em quase qualquer par de GPIOs livres, ao contrário do ATmega328P, em que o TWI tem pinos fixos.
+  resposta: true
+  explicacao: |
+    A GPIO matrix comuta sinais de periféricos digitais (UART, I²C, SPI, LEDC, RMT…) para quase qualquer GPIO. As exceções são funções analógicas e do domínio RTC (ADC, toque) e sinais muito rápidos, que devem usar os pinos diretos do IO MUX.
+  fonte: "Espressif, ESP32 Technical Reference Manual, capítulo IO MUX and GPIO Matrix"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T07-003
+  objetivo: O1
+  tipo: multipla
+  dificuldade: 3
+  bloom: avaliar
+  enunciado: |
+    Marque as práticas corretas para a ISR de um GPIO registrada com `gpio_isr_handler_add` no ESP-IDF.
+  alternativas:
+    - "Marcar a função com IRAM_ATTR, para que ela rode mesmo com o cache da flash desligado"
+    - "Enviar o evento a uma tarefa com xQueueSendFromISR e pedir troca de contexto com portYIELD_FROM_ISR se necessário"
+    - "Fazer o debounce com vTaskDelay(pdMS_TO_TICKS(20)) dentro da ISR"
+    - "Não chamar ESP_LOGI dentro da ISR"
+  resposta: [0, 1, 3]
+  explicacao: |
+    A ISR deve ser curta, estar em IRAM e só sinalizar uma tarefa com as funções FromISR. vTaskDelay bloqueia e não pode ser chamado em ISR; o debounce vai para a tarefa. Log é lento e não é seguro em ISR.
+  fonte: "ESP-IDF Programming Guide, API Reference, GPIO & RTC GPIO (GPIO ISR); API Reference, FreeRTOS (IDF); M1.2.T05"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T07-004
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    O LEDC usa o clock APB de 80 MHz. Qual é a maior resolução, em bits, para um PWM de 5 kHz? Use res = ⌊log₂(f_clk / f_pwm)⌋ e responda com um número inteiro de bits.
+  resposta: {valor: 13, unidade: "bits", tolerancia: 0}
+  explicacao: |
+    80 000 000 / 5000 = 16 000; log₂ 16 000 ≈ 13,97; arredondando para baixo, 13 bits (8192 níveis, passo de ~0,012%). É o caso citado na documentação do LEDC.
+  fonte: "ESP-IDF Programming Guide, API Reference, Peripherals, LED Control (LEDC), Supported Range of Frequency and Duty Resolutions"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T07-005
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um canal LEDC com resolução de 13 bits deve gerar ciclo de trabalho de 30%. Que valor passar a `ledc_set_duty`? Responda com o inteiro mais próximo.
+  resposta: {valor: 2458, unidade: "contagens", tolerancia: 0}
+  explicacao: |
+    Com 13 bits, 100% corresponde a 2^13 = 8192. 8192 × 0,30 = 2457,6 → 2458. Depois de ledc_set_duty é preciso chamar ledc_update_duty para o valor valer.
+  fonte: "ESP-IDF Programming Guide, API Reference, LED Control (LEDC), Change PWM Duty Cycle Using Software"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T07-006
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um servo é comandado por PWM de 50 Hz gerado pelo LEDC de um ESP32-C3 com 14 bits de resolução. Quantas contagens de duty correspondem a um pulso de 1,5 ms? Responda com o inteiro mais próximo.
+  resposta: {valor: 1229, unidade: "contagens", tolerancia: 0}
+  explicacao: |
+    Período = 1/50 Hz = 20 ms, que correspondem a 2^14 = 16 384 contagens. 1,5/20 × 16 384 = 1228,8 → 1229. Cada contagem vale 20 ms / 16 384 ≈ 1,22 µs.
+  fonte: "ESP-IDF Programming Guide, API Reference, LED Control (LEDC); M1.2.T03 (PWM para servos)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T07-007
+  objetivo: O2
+  tipo: unica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Um `ledc_timer_config` com fonte de 80 MHz, freq_hz = 20 MHz e resolução de 3 bits falha com "requested frequency and duty resolution cannot be achieved". Qual é a explicação?
+  alternativas:
+    - "O LEDC não gera frequências acima de 1 MHz"
+    - "A resolução mínima do LEDC é de 10 bits"
+    - "O canal precisa estar em modo de alta velocidade para frequências acima de 10 MHz"
+    - "f_pwm × 2^res = 20 MHz × 8 = 160 MHz passa do clock de 80 MHz: o divisor teria de ser 0,5, menor que 1"
+  resposta: 3
+  explicacao: |
+    O contador precisa de 2^res pulsos de clock por período: f_pwm × 2^res ≤ f_clk. Com 2 bits (80 MHz) funciona, com passos de 25%. O LEDC chega a 40 MHz com 1 bit; resoluções abaixo de 10 bits são aceitas como números.
+  fonte: "ESP-IDF Programming Guide, API Reference, LED Control (LEDC), Supported Range of Frequency and Duty Resolutions"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T07-008
+  objetivo: O3
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    No ESP32 original, qual restrição vale para o ADC2 quando o Wi-Fi está ligado?
+  alternativas:
+    - "O ADC2 passa a ter 10 bits em vez de 12"
+    - "O ADC2 só pode ser usado com atenuação de 0 dB"
+    - "O ADC2 fica indisponível para a aplicação, porque o driver de Wi-Fi o usa"
+    - "Nenhuma: os dois ADCs funcionam normalmente com o Wi-Fi"
+  resposta: 2
+  explicacao: |
+    No ESP32, o driver de Wi-Fi ocupa o ADC2; leituras da aplicação falham enquanto o Wi-Fi está ativo. Para medir com Wi-Fi, use o ADC1 (GPIO32–39).
+  fonte: "ESP-IDF Programming Guide (ESP32), API Reference, ADC Oneshot Mode Driver (Hardware Limitations)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T07-009
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um divisor com 330 kΩ (em cima) e 100 kΩ (embaixo) leva a tensão de uma bateria ao ADC. A calibração (adc_cali_raw_to_voltage) devolve 950 mV no ponto médio. Qual é a tensão da bateria? Responda em mV, com um número inteiro.
+  resposta: {valor: 4085, unidade: "mV", tolerancia: 0.002}
+  explicacao: |
+    V_adc = V_bat × 100/(330 + 100) → V_bat = 950 × 430/100 = 950 × 4,3 = 4085 mV. Desconsidera-se a corrente que o ADC drena do divisor (por isso um capacitor no ponto médio ajuda com resistores grandes).
+  fonte: "ESP-IDF Programming Guide, API Reference, ADC Calibration Driver"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T07-010
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    O mesmo divisor de 330 kΩ + 100 kΩ fica ligado direto a uma bateria de 4,2 V, sem chave. Que corrente ele drena continuamente? Responda em µA, com 2 casas decimais. (Compare com os ~10 µA de deep sleep do chip.)
+  resposta: {valor: 9.77, unidade: "µA", tolerancia: 0.01}
+  explicacao: |
+    I = 4,2 V / 430 kΩ = 9,767 µA ≈ 9,77 µA, praticamente o consumo do chip em deep sleep. Para não dobrar o consumo, chaveie o divisor com um MOSFET ou use resistores maiores com capacitor no ponto médio.
+  fonte: "ESP-IDF Programming Guide, API Reference, ADC Oneshot Mode Driver; ESP32 Series Datasheet, Power Consumption"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T07-011
+  objetivo: O3
+  tipo: multipla
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Marque as afirmações corretas sobre o ADC do ESP32 original.
+  alternativas:
+    - "Perto de 0 V há uma faixa morta: tensões de algumas dezenas de mV podem ser lidas como 0"
+    - "A referência interna varia de chip para chip, e a calibração com dados de eFuse corrige essa diferença"
+    - "Com ADC_ATTEN_DB_12, a leitura é linear de 0 V até 3,3 V"
+    - "A média de 64 leituras reduz o ruído aleatório por um fator de 8"
+  resposta: [0, 1, 3]
+  explicacao: |
+    O ADC do ESP32 tem não linearidade nos extremos: faixa morta perto de 0 V e saturação antes de 3,3 V mesmo com 12 dB (a faixa útil recomendada vai até ~2,45 V). A V_ref de ~1,1 V varia entre chips; o esquema Line Fitting usa a V_ref ou dois pontos gravados em eFuse. Ruído aleatório cai com √N: √64 = 8.
+  fonte: "Espressif, ESP32 Series Datasheet, ADC Characteristics; ESP-IDF Programming Guide, ADC Calibration Driver (Line Fitting Scheme)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T07-012
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Cada LED WS2812 recebe 24 bits e cada bit dura 1,2 µs. Quanto tempo leva para enviar os dados de uma fita de 60 LEDs, sem contar o reset? Responda em ms, com 3 casas decimais.
+  resposta: {valor: 1.728, unidade: "ms", tolerancia: 0.01}
+  explicacao: |
+    60 × 24 = 1440 bits; 1440 × 1,2 µs = 1728 µs = 1,728 ms. Some ~50 µs (ou mais, nos datasheets novos) de reset em nível baixo para fechar o quadro.
+  fonte: "Worldsemi, datasheet WS2812B; ESP-IDF, examples/peripherals/rmt/led_strip_simple_encoder"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T07-013
+  objetivo: O4
+  tipo: vf
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Verdadeiro ou falso: no sensor de toque do ESP32 original, o valor lido diminui quando um dedo toca o eletrodo.
+  resposta: true
+  explicacao: |
+    O dedo aumenta a capacitância; o sensor do ESP32 conta ciclos de carga e descarga num intervalo fixo, e com mais capacitância conta menos. Nos S2 e S3 (outra geração do sensor) o valor sobe ao tocar; o C3 não tem toque.
+  fonte: "ESP-IDF Programming Guide (ESP32), API Reference, Peripherals, Touch Sensor; examples/peripherals/touch_sensor/touch_sensor_v1"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T07-014
+  objetivo: O4
+  tipo: unica
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Por que usar o RMT, e não a CPU alternando um GPIO, para gerar o sinal de uma fita WS2812 num ESP32 com Wi-Fi ativo?
+  alternativas:
+    - "O RMT toca uma lista de pulsos (nível e duração) por hardware, com resolução de um tick, sem ser afetado por interrupções do Wi-Fi ou trocas de tarefa"
+    - "O RMT converte o sinal para 5 V, dispensando o level shifter"
+    - "Só o RMT consegue acessar os GPIOs acima de 31"
+    - "O RMT aumenta a frequência de clock da CPU durante a transmissão"
+  resposta: 0
+  explicacao: |
+    Os tempos da WS2812 têm tolerância de ~150 ns; uma interrupção no meio de um bit feito por software corrompe o quadro. O RMT reproduz os símbolos sozinho (com DMA ou recarga de memória). Ele não muda níveis de tensão: o nível alto de 3,3 V continua marginal para a WS2812 em 5 V.
+  fonte: "ESP-IDF Programming Guide, API Reference, Remote Control Transceiver (RMT); Worldsemi, datasheet WS2812B"
+  origem: ia
+  revisao: rascunho

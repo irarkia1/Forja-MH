@@ -1,0 +1,230 @@
+- id: Q-M1.6.T05-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Um ESP32-C3 fará só Bluetooth LE e precisa economizar heap e flash. Qual host Bluetooth do ESP-IDF é o mais indicado?
+  alternativas:
+    - "ESP-Bluedroid, porque é o único que suporta GATT"
+    - "ESP-NimBLE, que só faz LE e usa menos heap e flash"
+    - "Nenhum: o ESP32-C3 só tem o controlador, sem host"
+    - "ESP-Bluedroid no modo dual, para ter Classic de reserva"
+  resposta: 1
+  explicacao: |
+    O ESP-IDF oferece dois hosts: o ESP-Bluedroid (Classic e LE) e o ESP-NimBLE (só LE, menor). Os dois suportam GATT. O C3 nem tem Bluetooth Classic, então o Bluedroid só gastaria memória.
+  fonte: "ESP-IDF Programming Guide, API Guides, Bluetooth LE, Overview (ESP-Bluedroid e ESP-NimBLE)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T05-002
+  objetivo: O1
+  tipo: vf
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Verdadeiro ou falso: no advertising legado do Bluetooth LE 4.x, os dados de um pacote de anúncio têm no máximo 31 bytes, e há outros 31 bytes disponíveis na scan response.
+  resposta: true
+  explicacao: |
+    O limite de 31 bytes vale para o anúncio e para a scan response. O Bluetooth 5 trouxe o advertising estendido, com cargas maiores, suportado pelos ESP32-S3, C3 e C6.
+  fonte: "ESP-IDF Programming Guide, API Guides, Bluetooth LE, Get Started, Device Discovery"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T05-003
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um anúncio legado contém: Flags (3 bytes no total), a lista completa de UUIDs de 16 bits com um UUID (2 bytes de cabeçalho + 2) e o nome completo "Forja-Sensor-01" (2 bytes de cabeçalho + 1 byte por caractere). Quantos bytes sobram dos 31? Responda com um número inteiro.
+  resposta: {valor: 7, unidade: "bytes", tolerancia: 0}
+  explicacao: |
+    "Forja-Sensor-01" tem 15 caracteres → 17 bytes. Total: 3 + 4 + 17 = 24 bytes; sobram 31 − 24 = 7. Dados de fabricante precisariam de 2 de cabeçalho + 2 do ID da empresa, restando 3 bytes de dados.
+  fonte: "ESP-IDF Programming Guide, API Guides, Bluetooth LE, Get Started, Device Discovery (estrutura do pacote de advertising)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T05-004
+  objetivo: O1
+  tipo: multipla
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Marque as afirmações corretas sobre os papéis de GAP e o advertising.
+  alternativas:
+    - "Um beacon que só transmite e não aceita conexões atua como broadcaster"
+    - "O peripheral anuncia e aceita conexões; o central procura e inicia a conexão"
+    - "Os anúncios são transmitidos nos três canais de advertising, 37, 38 e 39"
+    - "O central escolhe o intervalo de advertising do peripheral"
+  resposta: [0, 1, 2]
+  explicacao: |
+    Broadcaster e observer não se conectam; peripheral e central sim. Os anúncios usam os canais 37, 38 e 39. O intervalo de advertising é do anunciante (20 ms a 10,24 s, passos de 0,625 ms); o central só escolhe os parâmetros da conexão que ele inicia.
+  fonte: "ESP-IDF Programming Guide, API Guides, Bluetooth LE, Get Started, Device Discovery e Connection"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T05-005
+  objetivo: O2
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Qual é a função do CCCD (Client Characteristic Configuration Descriptor, UUID 0x2902)?
+  alternativas:
+    - "Guardar o nome do dispositivo exibido no scanner"
+    - "Definir o intervalo de conexão"
+    - "Permitir que o cliente habilite ou desabilite notificações e indicações de uma característica"
+    - "Cifrar o valor da característica"
+  resposta: 2
+  explicacao: |
+    O CCCD é um descritor gravável: o bit 0 habilita notificações e o bit 1 indicações. Escrever nele é "assinar". Sem essa escrita, o servidor não envia notificações àquele cliente.
+  fonte: "ESP-IDF Programming Guide, API Guides, Bluetooth LE, Get Started, Data Exchange (Characteristic Descriptors)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T05-006
+  objetivo: O2
+  tipo: unica
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Qual é a diferença entre notify e indicate numa característica GATT?
+  alternativas:
+    - "Notify é iniciado pelo cliente; indicate, pelo servidor"
+    - "Indicate exige confirmação do cliente para cada envio, por isso é mais lento; notify não tem confirmação"
+    - "Notify só funciona com UUIDs de 16 bits"
+    - "Indicate dispensa a assinatura no CCCD"
+  resposta: 1
+  explicacao: |
+    Os dois são iniciados pelo servidor e exigem que o cliente tenha habilitado a opção no CCCD. A indicação espera a confirmação do cliente antes da próxima: mais garantia, menos vazão. A notificação não espera nada.
+  fonte: "ESP-IDF Programming Guide, API Guides, Bluetooth LE, Get Started, Data Exchange (GATT data operations)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T05-007
+  objetivo: O2
+  tipo: multipla
+  dificuldade: 3
+  bloom: avaliar
+  enunciado: |
+    Marque as práticas corretas no uso de UUIDs num servidor GATT.
+  alternativas:
+    - "Usar o UUID de 16 bits 0x2A6E (Temperature), definido pelo Bluetooth SIG, para uma temperatura no formato padronizado"
+    - "Gerar um UUID aleatório de 128 bits para um serviço próprio e derivar dele os UUIDs das características"
+    - "Escolher um UUID de 16 bits livre qualquer, como 0xABCD, para dados próprios, porque ocupa menos bytes no anúncio"
+    - "Reconhecer 00002a6e-0000-1000-8000-00805f9b34fb como a forma de 128 bits do UUID 0x2A6E"
+  resposta: [0, 1, 3]
+  explicacao: |
+    UUIDs de 16 bits são atribuídos pelo Bluetooth SIG (Assigned Numbers); apps genéricos os decodificam. Para dados próprios, use 128 bits aleatórios. Todo UUID de 16 bits corresponde a um de 128 bits na base do Bluetooth 0000xxxx-0000-1000-8000-00805f9b34fb. Inventar um de 16 bits pode colidir com um oficial.
+  fonte: "Bluetooth SIG, Assigned Numbers; ESP-IDF Programming Guide, API Guides, Bluetooth LE, Get Started, Data Exchange"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T05-008
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    A característica Temperature (0x2A6E) usa sint16 em centésimos de grau Celsius. Que valor inteiro o servidor deve enviar para −5,25 °C? Responda com o número inteiro com sinal.
+  resposta: {valor: -525, unidade: "centésimos de °C", tolerancia: 0}
+  explicacao: |
+    −5,25 °C × 100 = −525. Em complemento de dois de 16 bits, −525 = 0xFDF3, enviado em little-endian como F3 FD.
+  fonte: "Bluetooth SIG, Environmental Sensing Service e GATT Specification Supplement (Temperature)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T05-009
+  objetivo: O3
+  tipo: unica
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    No periférico NimBLE do roteiro, o tratamento de BLE_GAP_EVENT_DISCONNECT chama `anunciar()`. O que acontece se essa chamada for removida?
+  alternativas:
+    - "Nada: o NimBLE volta a anunciar sozinho"
+    - "O ESP32 reinicia por pânico"
+    - "As notificações continuam chegando ao celular desconectado"
+    - "Depois de uma desconexão o aparelho para de anunciar e nenhum central consegue encontrá-lo"
+  resposta: 3
+  explicacao: |
+    Ao conectar, o advertising conectável para; na desconexão, cabe à aplicação reiniciá-lo. Sem isso o aparelho fica invisível até reiniciar. É uma das falhas mais comuns em periféricos BLE.
+  fonte: "ESP-IDF, examples/bluetooth/nimble/bleprph (bleprph_gap_event); API Guides, Bluetooth LE, Get Started, Connection"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T05-010
+  objetivo: O3
+  tipo: vf
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Verdadeiro ou falso: no NimBLE, incluir BLE_GATT_CHR_F_NOTIFY nas flags de uma característica faz a pilha criar o CCCD automaticamente, e a aplicação descobre a assinatura do cliente pelo evento BLE_GAP_EVENT_SUBSCRIBE.
+  resposta: true
+  explicacao: |
+    Ao registrar a tabela com ble_gatts_add_svcs, o NimBLE gera os atributos de declaração, valor e, para características com notify ou indicate, o CCCD. Quando o cliente escreve nele, chega BLE_GAP_EVENT_SUBSCRIBE com attr_handle e cur_notify, e a aplicação passa a chamar ble_gatts_notify_custom.
+  fonte: "Apache Mynewt NimBLE, GATT Server API; ESP-IDF, examples/bluetooth/nimble/bleprph"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T05-011
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    O intervalo de advertising é dado em unidades de 0,625 ms. Quantas unidades correspondem a um intervalo de 100 ms (o valor que BLE_GAP_ADV_ITVL_MS(100) produz)? Responda com um número inteiro.
+  resposta: {valor: 160, unidade: "unidades", tolerancia: 0}
+  explicacao: |
+    100 ms / 0,625 ms = 160. A faixa permitida vai de 20 ms (32 unidades) a 10,24 s (16 384 unidades).
+  fonte: "ESP-IDF Programming Guide, API Guides, Bluetooth LE, Get Started, Device Discovery (Advertising Interval); NimBLE host/ble_gap.h"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T05-012
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Depois da troca de MTU, a conexão ficou com ATT MTU de 185 bytes. Quantos bytes de dados cabem numa única notificação? Responda com um número inteiro.
+  resposta: {valor: 182, unidade: "bytes", tolerancia: 0}
+  explicacao: |
+    A notificação leva 1 byte de opcode e 2 de handle: carga = MTU − 3 = 185 − 3 = 182 bytes. Com o MTU padrão de 23, seriam 20 bytes.
+  fonte: "ESP-IDF Programming Guide, API Guides, Bluetooth LE, Get Started, Connection (Maximum Transmission Unit)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T05-013
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Use o modelo simples do roteiro: vazão = pacotes por evento × carga por pacote / intervalo de conexão. Com MTU de 247 (carga de 244 bytes por notificação), 3 notificações por evento e intervalo de conexão de 15 ms, qual é a vazão? Responda em bytes/s, com um número inteiro.
+  resposta: {valor: 48800, unidade: "bytes/s", tolerancia: 0.002}
+  explicacao: |
+    3 × 244 = 732 bytes por evento; 732 / 0,015 s = 48 800 bytes/s (≈ 390 kbit/s). Na prática o número de pacotes por evento depende do controlador do celular, e a vazão real deve ser medida.
+  fonte: "ESP-IDF Programming Guide, API Guides, Bluetooth LE, Get Started, Connection; examples/bluetooth/nimble/throughput_app"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T05-014
+  objetivo: O3
+  tipo: unica
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Na função de acesso do roteiro, a escrita na característica "intervalo" (uint16, segundos de 1 a 3600) verifica o tamanho do valor recebido e a faixa. Um app envia 3 bytes. Qual resposta é a mais adequada?
+  alternativas:
+    - "Devolver BLE_ATT_ERR_INVALID_ATTR_VALUE_LEN, para o cliente saber que o tamanho está errado, e não alterar o intervalo"
+    - "Aceitar os dois primeiros bytes e ignorar o terceiro"
+    - "Devolver 0 (sucesso) e registrar um aviso no log"
+    - "Reiniciar o ESP32 para limpar o estado"
+  resposta: 0
+  explicacao: |
+    Dados vindos do rádio não são confiáveis: o servidor valida tamanho e faixa e devolve o código de erro ATT adequado (tamanho inválido aqui; BLE_ATT_ERR_VALUE_NOT_ALLOWED para valor fora da faixa). Aceitar parcialmente ou devolver sucesso esconde o erro do cliente; reiniciar é desproporcional e abre caminho para negação de serviço.
+  fonte: "Apache Mynewt NimBLE, GATT Server API (códigos BLE_ATT_ERR_*); ESP-IDF, examples/bluetooth/nimble/bleprph (gatt_svr.c)"
+  origem: ia
+  revisao: rascunho

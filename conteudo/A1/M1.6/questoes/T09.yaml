@@ -1,0 +1,240 @@
+- id: Q-M1.6.T09-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Segundo a documentação do ESP-IDF, o que a tabela de partições precisa ter, no mínimo, para usar as funções de OTA?
+  alternativas:
+    - "Uma partição factory e uma partição ota_0"
+    - "Dois slots de aplicação OTA (ota_0 e ota_1) e uma partição de dados otadata"
+    - "Uma partição SPIFFS para guardar a imagem baixada"
+    - "Só uma partição ota_0, porque o bootloader copia a imagem para a factory"
+  resposta: 1
+  explicacao: |
+    A OTA grava a imagem nova no slot que não está em execução e indica na otadata qual slot dar boot; por isso são necessários pelo menos dois slots OTA e a otadata. A factory é opcional e nunca é sobrescrita pela OTA.
+  fonte: "ESP-IDF Programming Guide, API Reference, System API, Over The Air Updates (OTA), OTA Process Overview"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T09-002
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    A partição otadata tem 0x2000 bytes. Quantos setores de flash de 4 KB ela ocupa? Responda com um número inteiro.
+  resposta: {valor: 2, unidade: "setores", tolerancia: 0}
+  explicacao: |
+    0x2000 = 8192 bytes = 2 × 4096. Os dois setores são apagados e gravados de forma independente, com um contador: se a energia cair durante a escrita de um, o outro continua válido.
+  fonte: "ESP-IDF Programming Guide, API Reference, Over The Air Updates (OTA), OTA Data Partition"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T09-003
+  objetivo: O1
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um aparelho com ota_0 e ota_1 (sem factory) está executando a aplicação da ota_1. Em que partição a próxima atualização será gravada?
+  alternativas:
+    - "Na ota_1, sobrescrevendo a aplicação em execução"
+    - "Na otadata"
+    - "Na ota_0, a partição que não está em execução"
+    - "Na NVS"
+  resposta: 2
+  explicacao: |
+    esp_ota_get_next_update_partition devolve o slot que não está rodando; a OTA nunca grava sobre a aplicação em execução. Os slots se alternam a cada atualização.
+  fonte: "ESP-IDF Programming Guide, API Reference, Over The Air Updates (OTA), OTA Process Overview"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T09-004
+  objetivo: O1
+  tipo: vf
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Verdadeiro ou falso: se a energia cair na metade do download de uma OTA (antes da troca da partição de boot), o aparelho volta a funcionar com a versão antiga no próximo boot.
+  resposta: true
+  explicacao: |
+    Durante o download, só o slot livre é gravado; a otadata continua apontando para a versão antiga, que segue intacta. A troca só acontece depois de a imagem estar completa e verificada. Perde-se apenas o download parcial.
+  fonte: "ESP-IDF Programming Guide, API Reference, Over The Air Updates (OTA), OTA Process Overview e OTA Data Partition"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T09-005
+  objetivo: O2
+  tipo: unica
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Na configuração do esp_http_client usada pela OTA, para que serve o campo `cert_pem` com o certificado do servidor embutido no firmware?
+  alternativas:
+    - "Para que o TLS só aceite um servidor que comprove possuir a chave correspondente, impedindo que outro servidor entregue um firmware falso"
+    - "Para assinar a imagem antes de gravá-la"
+    - "Para cifrar a flash"
+    - "Para comprimir o download"
+  resposta: 0
+  explicacao: |
+    O certificado (ou a CA) permite ao cliente TLS verificar a identidade do servidor. Sem a verificação, qualquer um no caminho poderia se passar pelo servidor. Assinatura da imagem e criptografia da flash são camadas diferentes.
+  fonte: "ESP-IDF Programming Guide, API Reference, ESP HTTPS OTA (Server Verification); ESP-TLS (TLS Server Verification)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T09-006
+  objetivo: O2
+  tipo: multipla
+  dificuldade: 3
+  bloom: avaliar
+  enunciado: |
+    Marque as afirmações corretas sobre a versão da aplicação na OTA com ESP-IDF.
+  alternativas:
+    - "A versão de esp_app_get_description() pode vir de PROJECT_VER no CMakeLists.txt, de um arquivo version.txt ou do git describe"
+    - "Com a API avançada, esp_https_ota_get_img_desc lê o cabeçalho da imagem remota antes de baixar o resto, permitindo desistir se a versão for a mesma"
+    - "Comparar versões como texto sempre funciona, porque \"1.10.0\" vem depois de \"1.9.0\" na ordem alfabética"
+    - "esp_ota_get_last_invalid_partition permite descobrir a versão que o rollback rejeitou e evitar baixá-la de novo"
+  resposta: [0, 1, 3]
+  explicacao: |
+    A versão vai no esp_app_desc_t da imagem, e a API avançada permite lê-la cedo. Na ordem de texto, "1.10.0" vem antes de "1.9.0" (o caractere 1 é menor que 9): compare números. A partição inválida guarda a descrição da versão rejeitada; sem verificá-la, o aparelho entra em laço de download e rollback.
+  fonte: "ESP-IDF Programming Guide, API Reference, App Image Format; ESP HTTPS OTA (Advanced APIs); examples/system/ota/native_ota_example"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T09-007
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Uma imagem de 570 128 bytes é baixada por OTA a uma vazão efetiva de 50 KB/s (1 KB = 1024 bytes). Quanto tempo leva o download? Responda em s, com 2 casas decimais.
+  resposta: {valor: 11.14, unidade: "s", tolerancia: 0.01}
+  explicacao: |
+    50 KB/s = 51 200 bytes/s. 570 128 / 51 200 = 11,135 s ≈ 11,14 s. Somam-se a conexão, a verificação e o reinício; num aparelho com bateria, é um gasto a considerar.
+  fonte: "ESP-IDF Programming Guide, API Reference, Over The Air Updates (OTA), Tuning OTA Performance"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T09-008
+  objetivo: O3
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Com CONFIG_BOOTLOADER_APP_ROLLBACK_ENABLE ligado, que função a aplicação nova deve chamar depois de passar no autoteste para não ser revertida?
+  alternativas:
+    - "esp_ota_set_boot_partition"
+    - "esp_ota_mark_app_invalid_rollback_and_reboot"
+    - "esp_restart"
+    - "esp_ota_mark_app_valid_cancel_rollback"
+  resposta: 3
+  explicacao: |
+    esp_ota_mark_app_valid_cancel_rollback muda o estado de PENDING_VERIFY para VALID. Sem isso, no próximo reinício o bootloader considera a imagem não confirmada e volta à anterior. A função ..._invalid_rollback_and_reboot faz o contrário.
+  fonte: "ESP-IDF Programming Guide, API Reference, Over The Air Updates (OTA), App Rollback"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T09-009
+  objetivo: O3
+  tipo: unica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Com rollback habilitado, uma versão nova entra em pânico logo no início do app_main, antes de qualquer autoteste. O que acontece?
+  alternativas:
+    - "O aparelho fica em laço de pânico e reinício na versão nova para sempre"
+    - "No boot seguinte, o bootloader encontra a imagem ainda em PENDING_VERIFY, marca-a como inválida e carrega a versão anterior"
+    - "O bootloader baixa de novo a imagem do servidor"
+    - "A otadata é apagada e o chip entra em modo de download"
+  resposta: 1
+  explicacao: |
+    A imagem nova tem uma única chance: se não se confirmar (por pânico, travamento ou queda de energia), o bootloader a marca como inválida no boot seguinte e volta à versão que funcionava. Sem rollback habilitado, o laço de pânico seria o resultado.
+  fonte: "ESP-IDF Programming Guide, API Reference, Over The Air Updates (OTA), App Rollback (Rollback Process, Unexpected Reset)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T09-010
+  objetivo: O3
+  tipo: multipla
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Num teste no QEMU, a versão 1.0.0 baixou uma 3.0.0 defeituosa, que foi revertida pelo rollback; em seguida, a 1.0.0 baixou a 3.0.0 de novo, e o ciclo se repetiu. Marque as afirmações corretas.
+  alternativas:
+    - "O laço acontece porque a 1.0.0 só compara a versão remota com a própria e não com a versão já rejeitada"
+    - "Consultar esp_ota_get_last_invalid_partition e comparar a versão dela com a remota evita o laço"
+    - "O autoteste deve ser lento e completo, de vários minutos, para ter certeza antes de confirmar"
+    - "Além de gastar banda e energia, o laço desgasta a flash, que é apagada e regravada a cada ciclo"
+  resposta: [0, 1, 3]
+  explicacao: |
+    A versão rejeitada continua no servidor e é diferente da atual, então a comparação simples manda baixá-la. Verificar a partição inválida (como faz o native_ota_example) interrompe o ciclo. Cada ciclo apaga e regrava o slot. O autoteste deve ser rápido: quanto mais longo, maior a chance de uma queda de energia comum provocar rollback indevido.
+  fonte: "ESP-IDF Programming Guide, API Reference, Over The Air Updates (OTA), App Rollback (Unexpected Reset); examples/system/ota/native_ota_example"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T09-011
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Numa flash de 4 MB, o primeiro slot de aplicação começa em 0x10000 e nada mais vem depois dos dois slots. Os dois slots (ota_0 e ota_1) devem ter o mesmo tamanho, e cada um precisa começar num múltiplo de 0x10000. Qual o maior tamanho possível de cada slot? Responda em KB (1 KB = 1024 bytes), com um número inteiro.
+  resposta: {valor: 1984, unidade: "KB", tolerancia: 0}
+  explicacao: |
+    Espaço disponível: 0x400000 − 0x10000 = 0x3F0000 (4032 KB). Metade daria 0x1F8000 (2016 KB), mas aí a ota_1 começaria em 0x208000, que não é múltiplo de 64 KB. O maior tamanho múltiplo de 0x10000 que cabe duas vezes é 0x1F0000 = 1984 KB.
+  fonte: "ESP-IDF Programming Guide, API Guides, Partition Tables (Offset & Size)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T09-012
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 3
+  bloom: avaliar
+  enunciado: |
+    Um firmware de 733 KB ocupa um slot de 1920 KB e cresce 15% ao ano. Por quantos anos ele ainda cabe no slot? Use n = ln(1920/733)/ln(1,15) e responda em anos, com 1 casa decimal.
+  resposta: {valor: 6.9, unidade: "anos", tolerancia: 0.01}
+  explicacao: |
+    ln(1920/733) = ln(2,6194) = 0,9629; ln(1,15) = 0,13976; n = 6,89 ≈ 6,9 anos. Como a OTA não muda a tabela de partições, esse é o limite de vida do produto sem regravação pela serial.
+  fonte: "ESP-IDF Programming Guide, API Guides, Partition Tables; API Reference, Over The Air Updates (OTA)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T09-013
+  objetivo: O4
+  tipo: multipla
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Marque as associações corretas entre o mecanismo de segurança e o que ele protege na OTA do ESP32.
+  alternativas:
+    - "TLS com verificação do certificado: garante que a imagem veio do servidor certo e não foi alterada no caminho"
+    - "Assinatura da imagem (Secure Boot v2 ou verificação só na atualização): o aparelho só aceita firmware assinado pela chave privada do fabricante"
+    - "Criptografia da flash: impede que alguém com o aparelho em mãos leia o firmware e os dados gravados"
+    - "Rollback de aplicação: impede que um atacante instale de propósito uma versão antiga assinada"
+  resposta: [0, 1, 2]
+  explicacao: |
+    TLS protege o transporte; a assinatura protege mesmo contra um servidor invadido; a criptografia da flash protege o conteúdo de um aparelho capturado. Quem impede a reinstalação deliberada de versão antiga é o anti-rollback (secure_version em eFuse); o rollback de aplicação só volta à versão anterior quando a nova falha.
+  fonte: "ESP-IDF Programming Guide, API Reference, Over The Air Updates (OTA), Anti-rollback e Secure OTA Updates Without Secure Boot; Security, Secure Boot v2 e Flash Encryption"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T09-014
+  objetivo: O4
+  tipo: unica
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Por que uma atualização OTA não pode aumentar o tamanho dos slots de aplicação de um aparelho em campo?
+  alternativas:
+    - "Porque a OTA grava apenas nos slots de aplicação; a tabela de partições e o bootloader ficam fora dela e só são alterados por regravação pela serial"
+    - "Porque o ESP32 não permite partições maiores que 1 MB"
+    - "Porque o tamanho dos slots fica gravado em eFuse"
+    - "Porque a otadata guarda o tamanho máximo de cada imagem"
+  resposta: 0
+  explicacao: |
+    A OTA escreve imagens de aplicação nos slots ota_N; mexer na tabela de partições ou no bootloader com o aparelho rodando poderia deixá-lo sem boot. Por isso os slots são dimensionados com folga desde a versão inicial.
+  fonte: "ESP-IDF Programming Guide, API Guides, Partition Tables; API Reference, Over The Air Updates (OTA)"
+  origem: ia
+  revisao: rascunho

@@ -1,0 +1,240 @@
+- id: Q-M1.6.T01-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Um produto precisa transmitir áudio para fones Bluetooth antigos pelo perfil A2DP, que usa o Bluetooth Classic (BR/EDR). Qual variante da família ESP32 atende?
+  alternativas:
+    - "ESP32-C3"
+    - "ESP32-S3"
+    - "ESP32 (o original, com núcleos Xtensa LX6)"
+    - "ESP32-C6"
+  resposta: 2
+  explicacao: |
+    Entre as variantes estudadas, só o ESP32 original tem Bluetooth Classic além do BLE. S3, C3 e C6 têm apenas Bluetooth LE 5, e o S2 não tem Bluetooth nenhum.
+  fonte: "Espressif, ESP32 Series Datasheet e ESP32-S3/C3/C6 Series Datasheets, seção Product Overview"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T01-002
+  objetivo: O1
+  tipo: vf
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Verdadeiro ou falso: o ESP32-C3 tem um único núcleo de arquitetura RISC-V, enquanto o ESP32 original tem dois núcleos Xtensa LX6.
+  resposta: true
+  explicacao: |
+    O ESP32-C3 usa um núcleo RISC-V de 32 bits (RV32IMC) de até 160 MHz; o ESP32 original usa dois núcleos Xtensa LX6 de até 240 MHz (há subvariantes de um núcleo). Para o programador em C com ESP-IDF, muda o compilador (riscv32-esp-elf × xtensa-esp-elf), não a API.
+  fonte: "Espressif, ESP32-C3 Series Datasheet e ESP32 Series Datasheet, seção Product Overview"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T01-003
+  objetivo: O1
+  tipo: multipla
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Quais variantes têm o periférico USB-Serial/JTAG embutido, que permite gravar e depurar pela USB sem um conversor USB-serial externo?
+  alternativas:
+    - "ESP32-C3"
+    - "ESP32 (o original)"
+    - "ESP32-S3"
+    - "ESP32-C6"
+  resposta: [0, 2, 3]
+  explicacao: |
+    S3, C3 e C6 têm o controlador USB-Serial/JTAG, que aparece no PC como porta serial e como JTAG. O ESP32 original não tem USB nenhum: os DevKits dele usam um CP2102 ou CH340 com o circuito de auto-reset por DTR/RTS.
+  fonte: "Espressif, ESP32-S3/C3/C6 Series Datasheets, seção Product Overview; ESP-IDF Programming Guide, API Guides, USB Serial/JTAG Controller Console"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T01-004
+  objetivo: O1
+  tipo: unica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Uma fechadura inteligente precisa entrar numa rede Matter sobre Thread (IEEE 802.15.4) e, como alternativa, se ligar a um roteador Wi-Fi 6. Qual variante oferece os dois rádios no mesmo chip?
+  alternativas:
+    - "ESP32-S3"
+    - "ESP32-C3"
+    - "ESP32-S2"
+    - "ESP32-C6"
+  resposta: 3
+  explicacao: |
+    O ESP32-C6 traz Wi-Fi 6 (802.11ax) de 2,4 GHz, BLE 5 e rádio IEEE 802.15.4 (Thread e Zigbee). S3 e C3 têm Wi-Fi 4 (802.11 b/g/n) e BLE, sem 802.15.4; o S2 só tem Wi-Fi.
+  fonte: "Espressif, ESP32-C6 Series Datasheet, seção Product Overview"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T01-005
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Qual é o período de clock da CPU de um ESP32-C3 rodando a 160 MHz? Responda em ns, com 2 casas decimais.
+  resposta: {valor: 6.25, unidade: "ns", tolerancia: 0.01}
+  explicacao: |
+    T = 1/f = 1/(160 × 10⁶ Hz) = 6,25 × 10⁻⁹ s = 6,25 ns. Compare com os 62,5 ns do ATmega328P a 16 MHz do M1.2: dez vezes mais rápido por ciclo, sem contar a largura de 32 bits.
+  fonte: "Espressif, ESP32-C3 Series Datasheet, seção CPU and Memory"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T01-006
+  objetivo: O2
+  tipo: unica
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Num módulo ESP32-WROOM-32E, onde fica o programa da aplicação e como a CPU o executa?
+  alternativas:
+    - "Numa flash interna do chip, lida diretamente pela CPU como no ATmega328P"
+    - "Numa flash SPI externa ao chip (dentro do módulo), mapeada em endereços pela MMU e lida através do cache"
+    - "Na ROM interna, gravada de fábrica pela Espressif"
+    - "Inteiro na SRAM, copiado da flash pelo bootloader antes de executar"
+  resposta: 1
+  explicacao: |
+    O ESP32 não tem flash de programa no silício: o código fica numa flash SPI externa (no módulo, sob a blindagem). A MMU mapeia regiões da flash em endereços (IROM e DROM) e o cache busca o que a CPU pede. Só as partes marcadas para IRAM/DRAM são copiadas para a SRAM pelo bootloader; a ROM guarda o primeiro estágio do bootloader e bibliotecas.
+  fonte: "Espressif, ESP32 Technical Reference Manual, capítulo System and Memory; ESP-IDF Programming Guide, API Guides, Memory Types"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T01-007
+  objetivo: O2
+  tipo: vf
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Verdadeiro ou falso: uma ISR comum, com o código em flash, pode ser executada normalmente enquanto o firmware grava um valor na NVS, porque a gravação da flash não interfere no cache.
+  resposta: false
+  explicacao: |
+    Durante gravações e apagamentos da flash, o cache é desabilitado. Código em flash não pode ser buscado nesse intervalo; uma ISR que precise rodar nele tem de estar em IRAM (atributo IRAM_ATTR e flag ESP_INTR_FLAG_IRAM), senão o chip entra em pânico com "Cache disabled but cached memory region accessed".
+  fonte: "ESP-IDF Programming Guide, API Guides, Memory Types (IRAM) e API Reference, SPI Flash API (Concurrency Constraints for Flash on SPI1)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T01-008
+  objetivo: O3
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Por que os GPIO6 a GPIO11 não devem ser usados num projeto com o módulo ESP32-WROOM-32E?
+  alternativas:
+    - "Estão ligados à flash SPI do módulo; usá-los trava o acesso ao programa"
+    - "São só entrada e não têm pull-up"
+    - "São os pinos do ADC2, ocupados pelo Wi-Fi"
+    - "São os pinos de strapping que escolhem o modo de boot"
+  resposta: 0
+  explicacao: |
+    No ESP32 original, os GPIO6 a GPIO11 formam a interface SPI com a flash (CLK, CMD, SD0–SD3). Os pinos só de entrada são os GPIO34–39; o ADC2 e os strapping são outros pinos.
+  fonte: "Espressif, ESP32 Series Datasheet, seção Pin Definitions; ESP32-WROOM-32E Datasheet, seção Pin Definitions"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T01-009
+  objetivo: O3
+  tipo: multipla
+  dificuldade: 2
+  bloom: lembrar
+  enunciado: |
+    Quais destes pinos são pinos de strapping do ESP32 original?
+  alternativas:
+    - "GPIO0"
+    - "GPIO33"
+    - "GPIO12 (MTDI)"
+    - "GPIO15 (MTDO)"
+  resposta: [0, 2, 3]
+  explicacao: |
+    Os strapping do ESP32 são GPIO0, GPIO2, GPIO5, GPIO12 (MTDI) e GPIO15 (MTDO). O GPIO33 é um GPIO comum do domínio RTC, boa escolha para botões que acordam o chip.
+  fonte: "Espressif, ESP32 Series Datasheet, seção Strapping Pins"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T01-010
+  objetivo: O3
+  tipo: unica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Uma placa com ESP32-WROOM-32 (flash de 3,3 V) passou a falhar no boot depois que um sensor com pull-up de 10 kΩ para 3,3 V foi ligado ao GPIO12. Qual é a causa mais provável?
+  alternativas:
+    - "O sensor consome corrente demais e provoca brownout"
+    - "O GPIO12 é só entrada e o sensor tenta acioná-lo"
+    - "No reset, o nível alto no GPIO12 (MTDI) seleciona a tensão de 1,8 V para a flash, que então não é lida"
+    - "O GPIO12 está ligado à PSRAM do módulo"
+  resposta: 2
+  explicacao: |
+    O GPIO12 (MTDI) é o strapping da tensão do VDD_SDIO, que alimenta a flash: em 1 no reset, o regulador interno fornece 1,8 V. Uma flash de 3,3 V não funciona assim. As soluções são mover o sensor para outro pino ou queimar o eFuse que fixa a tensão da flash em 3,3 V (irreversível).
+  fonte: "Espressif, ESP32 Series Datasheet, seção Strapping Pins; ESP32 Hardware Design Guidelines, Schematic Checklist, Strapping Pins"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T01-011
+  objetivo: O3
+  tipo: multipla
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Num ESP32-WROOM-32E, você quer ligar um botão entre um GPIO e o GND, usando o pull-up interno, e acordar o chip do deep sleep por ext0 quando o botão for apertado. Quais pinos atendem a todos os requisitos?
+  alternativas:
+    - "GPIO33"
+    - "GPIO35"
+    - "GPIO27"
+    - "GPIO10"
+  resposta: [0, 2]
+  explicacao: |
+    O ext0 exige um GPIO do domínio RTC; GPIO33 e GPIO27 são RTC GPIOs, têm pull-up interno e não são strapping. O GPIO35 é RTC, mas é só entrada e não tem pull-up nem pull-down internos (precisaria de resistor externo). O GPIO10 está ligado à flash do módulo.
+  fonte: "Espressif, ESP32 Series Datasheet, seções Pin Definitions e RTC and Low-Power Management; ESP-IDF Programming Guide, API Reference, Sleep Modes"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T01-012
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um LDO alimenta um ESP32 em 3,3 V a partir de 5,0 V da USB. Durante uma rajada de transmissão Wi-Fi, a corrente chega a 350 mA. Qual é a potência dissipada no LDO nesse instante? Responda em W, com 3 casas decimais.
+  resposta: {valor: 0.595, unidade: "W", tolerancia: 0.01}
+  explicacao: |
+    Num regulador linear, toda a diferença de tensão vira calor: P = (V_in − V_out) × I = (5,0 − 3,3) × 0,35 = 1,7 × 0,35 = 0,595 W. É um pico; a média depende do ciclo de trabalho do rádio, mas o regulador e o cobre em volta precisam aguentar.
+  fonte: "Espressif, ESP32 Hardware Design Guidelines, Schematic Checklist, Power Supply"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T01-013
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Uma placa com bateria de Li-ion usa um LDO de 3,3 V cujo dropout, na corrente de pico, é de 180 mV. Abaixo de que tensão de bateria o LDO deixa de regular os 3,3 V nesse pico? Responda em V, com 2 casas decimais.
+  resposta: {valor: 3.48, unidade: "V", tolerancia: 0.01}
+  explicacao: |
+    O LDO só regula se V_in ≥ V_out + V_dropout = 3,3 + 0,18 = 3,48 V. Abaixo disso a saída acompanha a bateria menos o dropout. Com o AMS1117 (dropout da ordem de 1 V), a regulação acabaria já em ~4,3 V, ou seja, com a bateria praticamente cheia: por isso ele não serve para Li-ion.
+  fonte: "Espressif, ESP32 Hardware Design Guidelines, Schematic Checklist, Power Supply"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.6.T01-014
+  objetivo: O4
+  tipo: multipla
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Sobre o circuito de auto-reset com dois transistores ligados a DTR e RTS de um conversor USB-serial, usado nos DevKits do ESP32, marque as afirmações corretas.
+  alternativas:
+    - "Com DTR e RTS acionados ao mesmo tempo, EN e GPIO0 continuam em nível alto, para que terminais que acionam as duas linhas ao abrir a porta não reiniciem a placa"
+    - "Para entrar em modo de download, o esptool mantém o chip em reset e libera o EN enquanto o GPIO0 está em nível baixo"
+    - "O circuito dispensa os botões EN e BOOT em qualquer situação, mesmo com um capacitor grande no EN"
+    - "Nas variantes com USB-Serial/JTAG, como o ESP32-C3, o mesmo efeito pode ser obtido pela própria USB, sem conversor nem transistores"
+  resposta: [0, 1, 3]
+  explicacao: |
+    Os transistores cruzados só atuam quando um sinal está ativo e o outro não; os dois juntos não mudam nada. O esptool põe EN em 0 (RTS), depois sobe o EN com GPIO0 em 0 (DTR), e o chip lê o strapping de download. Um capacitor grande no EN atrasa a subida e o GPIO0 já voltou a 1 quando o chip lê o strapping: aí os botões continuam necessários. O USB-Serial/JTAG faz o reset para download pela USB.
+  fonte: "Espressif, ESP32-DevKitC V4 Getting Started Guide (esquemático); esptool documentation, Boot Mode Selection; ESP32 Hardware Design Guidelines, Schematic Checklist, UART"
+  origem: ia
+  revisao: rascunho
