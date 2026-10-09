@@ -302,3 +302,31 @@ button.cor.ativa { outline: 3px solid var(--destaque); outline-offset: 2px; }
 .titulo-pagina { flex: 1; font-size: 18px; font-weight: 600; }
 .vazio-caderno { padding: 40px 16px; text-align: center; }
 @media (max-width: 760px) { .caderno { grid-template-columns: 1fr; padding: 12px; } .lista-caderno { max-height: 40vh; } }
+
+/* ---- Gaveta lateral do caderno */
+:root { --gaveta: 440px; }
+.gaveta { position: fixed; top: 0; right: 0; bottom: 0; width: var(--gaveta); z-index: 40; display: none; flex-direction: column;
+  background: var(--superficie); border-left: 2px solid var(--borda); box-shadow: var(--sombra); container-type: inline-size; }
+body.com-gaveta .gaveta { display: flex; }
+body.com-gaveta #app { margin-right: var(--gaveta); }
+body.gaveta-max .gaveta { width: 100vw; }
+body.gaveta-max #app { margin-right: 0; }
+body.arrastando, body.arrastando * { cursor: col-resize !important; user-select: none !important; }
+.alca-gaveta { position: absolute; left: -5px; top: 0; bottom: 0; width: 10px; cursor: col-resize; z-index: 1; }
+.alca-gaveta::after { content: ''; position: absolute; left: 3px; top: 50%; width: 4px; height: 48px; margin-top: -24px; border-radius: 2px; background: var(--borda); }
+.alca-gaveta:hover::after, .alca-gaveta:focus-visible::after { background: var(--destaque); }
+.cabeca-gaveta { display: flex; align-items: center; gap: 8px; padding: 10px 12px 10px 16px; border-bottom: 2px solid var(--borda); }
+.cabeca-gaveta h2 { margin: 0; font: 13px var(--fonte-pixel); color: var(--destaque); white-space: nowrap; }
+.cabeca-gaveta .espaco { flex: 1; }
+.cabeca-gaveta .btn { padding: 4px 10px; }
+.corpo-gaveta { flex: 1; min-height: 0; overflow: auto; }
+.corpo-gaveta .caderno { padding: 12px; height: 100%; }
+@container (max-width: 700px) {
+  .caderno { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
+  .lista-caderno { max-height: 22vh; }
+}
+@media (max-width: 760px) {
+  .gaveta { width: 100vw; }
+  body.com-gaveta #app { margin-right: 0; }
+  .alca-gaveta { display: none; }
+}

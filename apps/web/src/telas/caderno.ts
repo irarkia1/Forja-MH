@@ -201,9 +201,17 @@ export function criarEditor(inicial: ConteudoCaderno, salvar: (c: ConteudoCadern
   };
 }
 
-// ---- Tela do caderno -----------------------------------------------------------
+// ---- Caderno (lista + página): usado na gaveta lateral e na tela cheia ---------
 
-export async function telaCaderno(idInicial: string | undefined, nav: Navegar) {
+export interface Caderno {
+  el: HTMLElement;
+  abrirTopico: (topicoId: string) => Promise<void>;
+  descarregar: () => Promise<void>;
+  destruir: () => void;
+}
+
+// `naGaveta`: dentro do painel lateral — não navega (o estudo continua contando).
+export async function montarCaderno(o: { idInicial?: number; topicoInicial?: string; naGaveta?: boolean; nav?: Navegar } = {}): Promise<Caderno> {
   let itens: ItemCaderno[] = [];
   let filtroCor: CorCaderno | null = null;
   let busca = '';
@@ -241,69 +249,79 @@ export async function telaCaderno(idInicial: string | undefined, nav: Navegar) {
         ? h('div.marcas', {}, i.marcas.filter((m) => m.c === filtroCor).slice(0, 4).map((m) => h('mark.mt', { 'data-cor': m.c }, m.t)))
         : h('div.mudo.resumo', {}, i.resumo || '(vazia)'),
       h('div.cores-item', {}, i.cores.map((c) => h('span.ponto', { 'data-cor': c, title: c }))),
-    )) : h('p.mudo', {}, itens.length ? 'Nada com esse filtro.' : 'Caderno vazio. Crie uma página ou anote na tela de estudo de um tópico.'));
+    )) : h('p.mudo', {}, itens.length ? 'Nada com esse filtro.' : 'Caderno vazio. Crie uma página ou abra o caderno na tela de estudo de um tópico.'));
   }
 
   async function fecharAberta(): Promise<void> {
     if (!editor) return;
     await editor.descarregar();
     editor.destruir();
+    editor = null;
   }
 
-  async function abrir(id: number): Promise<void> {
-    await fecharAberta();
-    aberta = await api.get<PaginaCaderno>(`caderno/${id}`);
-    history.replaceState(null, '', `#/caderno/${id}`);
+  async function mostrar(p: PaginaCaderno): Promise<void> {
+    aberta = p;
+    if (!o.naGaveta && p.id) history.replaceState(null, '', `#/caderno/${p.id}`);
     pintarPagina();
     pintarLista();
   }
 
+  async function abrir(id: number): Promise<void> {
+    await fecharAberta();
+    await mostrar(await api.get<PaginaCaderno>(`caderno/${id}`));
+  }
+
+  // A página do tópico pode ainda não existir: nasce no primeiro salvamento.
+  async function abrirTopico(topicoId: string): Promise<void> {
+    if (aberta?.topico?.id === topicoId) return;
+    await fecharAberta();
+    await mostrar(await api.get<PaginaCaderno>(`topicos/${topicoId}/caderno`));
+  }
+
   function pintarPagina(): void {
     const p = aberta;
-    if (!p || p.id === null) {
-      preencher(area, h('div.vazio-caderno', {}, h('p', {}, '📓 Escolha uma página ao lado ou crie uma nova.'),
+    if (!p) {
+      preencher(area, h('div.vazio-caderno', {}, h('p', {}, '📓 Escolha uma página ou crie uma nova.'),
         h('p.mudo', {}, 'Selecione um trecho e clique numa cor para marcar: amarelo, vermelho, preto, branco ou azul.')));
-      editor = null;
       return;
     }
-    const id = p.id;
     editor = criarEditor(p.conteudo, async (c) => {
-      const r = await api.put<PaginaCaderno>(`caderno/${id}`, { conteudo: c });
-      atualizarItem(r);
-    }, { altura: 360, rotulo: `Página ${p.titulo}` });
+      const r = p.id === null
+        ? await api.put<PaginaCaderno>(`topicos/${p.topico!.id}/caderno`, { conteudo: c })
+        : await api.put<PaginaCaderno>(`caderno/${p.id}`, { conteudo: c });
+      if (aberta === p) aberta = r;
+      p.id = r.id;
+      void recarregar();
+    }, { altura: o.naGaveta ? 240 : 360, rotulo: `Página ${p.titulo}` });
     const titulo = p.topico
       ? h('h2', {}, p.titulo)
       : h('input.titulo-pagina', { type: 'text', value: p.titulo, 'aria-label': 'Título da página', maxlength: '120' });
     if (titulo instanceof HTMLInputElement) {
       titulo.addEventListener('change', async () => {
-        const r = await api.put<PaginaCaderno>(`caderno/${id}`, { titulo: titulo.value });
-        atualizarItem(r);
+        await api.put<PaginaCaderno>(`caderno/${p.id}`, { titulo: titulo.value });
+        void recarregar();
       });
     }
     preencher(area,
       h('div.cabeca-pagina', {}, titulo,
-        p.topico ? h('button.btn', { type: 'button', onclick: () => nav.ir(`#/estudo/${p.topico!.id}`) }, '📖 Estudar o tópico') : null,
+        p.topico && !o.naGaveta && o.nav ? h('button.btn', { type: 'button', onclick: () => o.nav!.ir(`#/estudo/${p.topico!.id}`) }, '📖 Estudar') : null,
         !p.topico ? h('button.btn.fantasma', {
           type: 'button',
           onclick: async () => {
             if (!confirm(`Apagar a página "${p.titulo}"?`)) return;
-            await api.del(`caderno/${id}`);
-            aberta = null;
+            editor?.destruir();
             editor = null;
-            history.replaceState(null, '', '#/caderno');
+            await api.del(`caderno/${p.id}`);
+            aberta = null;
+            if (!o.naGaveta) history.replaceState(null, '', '#/caderno');
             await recarregar();
             pintarPagina();
           },
         }, 'Apagar') : null,
       ),
-      p.topico ? h('p.mudo', { style: 'margin:0 0 8px;font-size:13px' }, `${p.topico.moduloId} · ${p.topico.moduloNome}`) : null,
+      p.topico ? h('p.mudo', { style: 'margin:0;font-size:13px' }, `${p.topico.moduloId} · ${p.topico.moduloNome}`) : null,
       editor.el,
     );
-  }
-
-  function atualizarItem(p: PaginaCaderno): void {
-    if (aberta && aberta.id === p.id) aberta = { ...aberta, titulo: p.titulo, atualizadaEm: p.atualizadaEm };
-    void recarregar();
   }
 
   const nova = h('button.btn.principal', {
@@ -318,16 +336,20 @@ export async function telaCaderno(idInicial: string | undefined, nav: Navegar) {
   }, '+ Nova página');
 
   await recarregar();
-  const inicial = Number(idInicial);
-  if (inicial > 0) await abrir(inicial).catch(() => pintarPagina());
+  if (o.topicoInicial) await abrirTopico(o.topicoInicial).catch(() => pintarPagina());
+  else if (o.idInicial) await abrir(o.idInicial).catch(() => pintarPagina());
   else pintarPagina();
 
+  const el = h('div.caderno', {}, h('div.lado-caderno', {}, nova, campoBusca, filtros, lista), area);
+  return { el, abrirTopico, descarregar: async () => { await editor?.descarregar(); }, destruir: () => void fecharAberta() };
+}
+
+// Tela cheia (#/caderno): a mesma coisa, ocupando a página.
+export async function telaCaderno(idInicial: string | undefined, nav: Navegar) {
+  const c = await montarCaderno({ idInicial: Number(idInicial) || undefined, nav });
   const el = h('section.tela', {},
     h('div.tela-topo', {}, h('button.btn.fantasma', { onclick: () => nav.ir('#/mundo') }, '← Mapa'), h('h1', {}, '📓 Caderno')),
-    h('div.caderno', {},
-      h('aside.lado-caderno', {}, nova, campoBusca, filtros, lista),
-      area,
-    ),
+    c.el,
   );
-  return { el, destruir: () => void fecharAberta() };
+  return { el, destruir: c.destruir };
 }

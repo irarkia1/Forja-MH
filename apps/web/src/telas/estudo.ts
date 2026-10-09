@@ -1,5 +1,5 @@
-import { api, ErroApi, type DetalheTopico, type Luta, type PaginaCaderno, type Sessao } from '../api';
-import { criarEditor } from './caderno';
+import { api, ErroApi, type DetalheTopico, type Luta, type Sessao } from '../api';
+import { abrirCaderno, aoMudarGaveta, cadernoAberto, fecharCaderno } from '../gaveta';
 import { fatorTempo, recarregarEu } from '../estado';
 import { barra, h, markdown, modal, relogio, tempo, toast } from '../ui';
 import type { Navegar } from './mapa';
@@ -9,10 +9,7 @@ const MIN_NOTA = 80;
 
 // Tela de estudo: roteiro + cronômetro com pulso (a autoridade é o servidor).
 export async function telaEstudo(topicoId: string, nav: Navegar) {
-  const [t, pagina] = await Promise.all([
-    api.get<DetalheTopico>(`topicos/${topicoId}`),
-    api.get<PaginaCaderno>(`topicos/${topicoId}/caderno`),
-  ]);
+  const t = await api.get<DetalheTopico>(`topicos/${topicoId}`);
   const derrotado = t.estado === 'derrotado';
   let sessao: Sessao | null = null;
   let estudado = t.estudadoSeg;
@@ -83,9 +80,11 @@ export async function telaEstudo(topicoId: string, nav: Navegar) {
       )
     : null;
 
-  const caderno = criarEditor(pagina.conteudo, async (c) => {
-    await api.put<PaginaCaderno>(`topicos/${topicoId}/caderno`, { conteudo: c });
-  }, { altura: 140, rotulo: `Caderno de ${t.nome}` });
+  // O caderno abre numa gaveta ao lado: a sessão continua e o tempo continua contando.
+  const botaoCaderno = h('button.btn', { type: 'button', onclick: () => void (cadernoAberto() ? fecharCaderno() : abrirCaderno(topicoId)) });
+  const pintarBotaoCaderno = (aberto: boolean) => (botaoCaderno.textContent = aberto ? '✕ Fechar caderno' : '📓 Abrir caderno');
+  pintarBotaoCaderno(cadernoAberto());
+  const pararGaveta = aoMudarGaveta(pintarBotaoCaderno);
 
   // A guarda acompanha o mostrador (servidor + estimativa entre pulsos).
   function pintarGuarda(seg: number): void {
@@ -225,10 +224,9 @@ export async function telaEstudo(topicoId: string, nav: Navegar) {
         objetivos,
         h('section.cartao', {}, h('h4', {}, '✍ NOTA PESSOAL'), nota, h('div', { style: 'display:flex;justify-content:space-between;align-items:center;margin-top:8px;gap:8px' }, contagem, salvarNota)),
         h('section.cartao', {},
-          h('div', { style: 'display:flex;justify-content:space-between;align-items:baseline;gap:8px' },
-            h('h4', {}, '📓 CADERNO'), h('a', { href: '#/caderno', style: 'font-size:13px' }, 'abrir caderno')),
-          h('p.mudo', { style: 'font-size:12px;margin:0 0 6px' }, 'Anote à vontade. Selecione um trecho e escolha a cor do marca-texto.'),
-          caderno.el),
+          h('h4', {}, '📓 CADERNO'),
+          h('p.mudo', { style: 'font-size:12px;margin:0 0 8px' }, 'Abre ao lado, sem sair do estudo: o tempo continua contando. Marca-texto em 5 cores.'),
+          botaoCaderno),
         cartaoEvidencia,
         h('section.cartao', {}, atacar, h('div', { style: 'height:8px' }), motivo),
       ),
@@ -244,7 +242,7 @@ export async function telaEstudo(topicoId: string, nav: Navegar) {
       clearInterval(mostrador);
       document.removeEventListener('visibilitychange', visibilidade);
       window.removeEventListener('pagehide', saindo);
-      caderno.destruir();
+      pararGaveta();
       void encerrar();
     },
   };
