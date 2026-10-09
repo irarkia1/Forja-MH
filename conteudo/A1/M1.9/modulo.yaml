@@ -1,45 +1,128 @@
 id: M1.9
 ato: A1
 nome: "Conectividade IoT"
+missao: "Os mensageiros da Vila da Forja só sabem gritar de uma torre à outra: ensine as máquinas a falar pelas camadas da rede, a escolher entre o Wi-Fi da praça, o sussurro do BLE, a malha das casas e o grito longo do LoRa e do celular, faça a conta de quantos decibéis a mensagem perde até o outro vale e decida, com números, que estrada de rádio cada produto da vila vai percorrer."
 horas: 180
 trilha: firmware
 ordem: 16
 requer: ["M1.6"]
 tags_chefe: []
+# Ordem didática: modelos OSI e TCP/IP (o mapa de camadas onde todo o resto se encaixa, com sockets em C: é a linguagem comum de todos os tópicos) → IP, DHCP, DNS e NAT (endereçar e achar as coisas; o IPv6 e o 6LoWPAN preparam o Thread) → Wi-Fi a fundo (o rádio que carrega IP direto, aprofundando o Wi-Fi do M1.6.T04 com canais, RSSI, roaming e energia) → BLE a fundo (o segundo rádio do ESP32, aprofundando o M1.6.T05 com camada de enlace, vazão e segurança) → Zigbee, Thread e Matter (as malhas de curto alcance, que reaproveitam o IPv6 do T02 e o comissionamento por BLE do T04, e o ESP-NOW) → antenas e link budget (a ponte do curto para o longo alcance: aprofunda a FSPL do M0.3 com sensibilidade, margem e Fresnel, ferramenta obrigatória do elite seguinte) → LoRa e LoRaWAN (o elite: usa o link budget para escolher SF e o laboratório põe um nó na TTN) → NB-IoT e LTE-M (o longo alcance licenciado, comparado com o LoRaWAN e o Sigfox) → escolher a rede certa (fecha o módulo com a matriz de decisão que usa os números de todos os tópicos).
 topicos:
   - id: M1.9.T01
     nome: "Modelos OSI e TCP/IP"
     tipo: comum
     peso: 1
+    objetivos:
+      - id: O1
+        texto: "Relacionar as camadas do modelo OSI e da pilha TCP/IP aos protocolos de um dispositivo IoT (802.11, 802.15.4, BLE, IP, 6LoWPAN, TCP, UDP, TLS e protocolos de aplicação) e descrever o encapsulamento de uma mensagem"
+      - id: O2
+        texto: "Calcular o overhead de cabeçalhos (Ethernet, IPv4, IPv6, TCP, UDP), o MTU e o MSS e a eficiência de uma mensagem pequena de sensor"
+      - id: O3
+        texto: "Comparar TCP e UDP (conexão, handshake de três vias, números de sequência, confirmação, retransmissão, controle de fluxo e de congestionamento, encerramento) e escolher o transporte adequado a cada tráfego de IoT"
+      - id: O4
+        texto: "Escrever em C clientes e servidores TCP e UDP com a API de sockets (POSIX e lwIP no ESP-IDF), tratando erros, tempos limite e mensagens parciais, e conferir o tráfego numa captura"
   - id: M1.9.T02
     nome: "IP, DHCP, DNS, NAT"
     tipo: comum
     peso: 1
+    objetivos:
+      - id: O1
+        texto: "Calcular endereço de rede, broadcast, máscara e número de hosts de sub-redes IPv4 em notação CIDR e reconhecer as faixas privadas e especiais"
+      - id: O2
+        texto: "Explicar o endereçamento IPv6 (formato, abreviação, prefixos, link-local, SLAAC, fim do NAT) e o papel do 6LoWPAN em redes de baixa potência"
+      - id: O3
+        texto: "Descrever o DHCP (DORA, concessão e renovação) e o DNS (resolução recursiva, registros A, AAAA e CNAME, TTL, mDNS) e usá-los no firmware com getaddrinfo e esp_netif"
+      - id: O4
+        texto: "Explicar o NAT e o CGNAT e suas consequências para dispositivos IoT (conexões iniciadas pelo dispositivo, keepalive, mapeamentos que expiram) e diagnosticar a rede com ping, traceroute, nslookup e Wireshark"
   - id: M1.9.T03
     nome: "Wi-Fi a fundo"
     tipo: comum
     peso: 1
+    objetivos:
+      - id: O1
+        texto: "Descrever a camada física e a de enlace do 802.11 (padrões b/g/n/ax, canais de 2,4 GHz e 5 GHz e sua sobreposição, largura de canal, taxas, CSMA/CA) e escolher o canal de uma instalação"
+      - id: O2
+        texto: "Explicar os quadros de gerenciamento e a sequência de conexão (beacon, probe, autenticação, associação, handshake de 4 vias) e as seguranças WPA2-PSK, WPA3-SAE e WPA2-Enterprise"
+      - id: O3
+        texto: "Interpretar RSSI, ruído e SNR, relacionar o sinal à taxa de transmissão e configurar no ESP-IDF a varredura, o limiar de RSSI e o roaming assistido por 802.11k e 802.11v"
+      - id: O4
+        texto: "Estimar o consumo de energia de um dispositivo Wi-Fi (transmissão, recepção, modem sleep com DTIM e listen interval, conexão rápida) e decidir entre ficar conectado e reconectar a cada envio"
   - id: M1.9.T04
     nome: "BLE a fundo"
     tipo: comum
     peso: 1
-  - id: M1.9.T05
-    nome: "LoRa e LoRaWAN"
-    tipo: elite
-    peso: 2
-  - id: M1.9.T06
-    nome: "NB-IoT e LTE-M"
-    tipo: comum
-    peso: 1
+    objetivos:
+      - id: O1
+        texto: "Descrever a camada física e a de enlace do BLE (PHYs 1M, 2M e Coded, 40 canais, salto adaptativo de frequência, formato do pacote, intervalo entre quadros) e os estados da camada de enlace"
+      - id: O2
+        texto: "Configurar advertising legado e estendido e scanning (tipos de PDU, intervalo de advertising, janela e intervalo de varredura, scan response) e estimar o tempo de descoberta e o consumo do anunciante"
+      - id: O3
+        texto: "Calcular a vazão e a latência de uma conexão BLE a partir do intervalo de conexão, do PHY, do Data Length Extension e do MTU e ajustar a latência do periférico e o tempo de supervisão"
+      - id: O4
+        texto: "Explicar a segurança do BLE (LE Legacy × LE Secure Connections, métodos de associação, bonding, modos e níveis de segurança, privacidade com endereços resolúveis) e configurar pareamento com proteção MITM no NimBLE"
   - id: M1.9.T07
     nome: "Zigbee, Thread e Matter"
     tipo: comum
     peso: 1
+    objetivos:
+      - id: O1
+        texto: "Descrever o IEEE 802.15.4 (faixas, canais de 2,4 GHz, taxa, tamanho de quadro, CSMA-CA, endereços curtos e longos) como base comum do Zigbee e do Thread"
+      - id: O2
+        texto: "Explicar o Zigbee (coordenador, roteador, dispositivo final, malha, Zigbee Cluster Library, Zigbee 3.0, chave de rede) e o Thread (IPv6 sobre 6LoWPAN, líder, roteador, REED, dispositivo final sonolento, border router)"
+      - id: O3
+        texto: "Explicar o Matter (modelo de dados, transportes Wi-Fi, Thread e Ethernet, comissionamento por BLE, fabrics, certificado de atestação DAC, bridges) e seu lugar entre os padrões de casa conectada"
+      - id: O4
+        texto: "Usar o ESP-NOW entre placas ESP32 (pares, envio e recepção por callback, criptografia, limites) e escolher entre ESP-NOW, Zigbee, Thread e BLE Mesh para uma rede local"
   - id: M1.9.T08
     nome: "Antenas e link budget (introdução)"
     tipo: comum
     peso: 1
+    objetivos:
+      - id: O1
+        texto: "Montar o orçamento de enlace completo (potência, perdas de cabo e conector, ganhos de antena, EIRP, perda no espaço livre, sensibilidade e margem) e calcular o alcance máximo resultante"
+      - id: O2
+        texto: "Estimar a sensibilidade de um receptor a partir do ruído térmico, da largura de banda, da figura de ruído e da SNR exigida e explicar por que o LoRa demodula abaixo do ruído"
+      - id: O3
+        texto: "Calcular o raio da zona de Fresnel e a altura de antena necessária e estimar perdas reais com o modelo log-distância, paredes, vegetação e margem de desvanecimento"
+      - id: O4
+        texto: "Escolher e posicionar antenas para IoT (dipolo, monopolo, PCB, chip, direcional; dBi e dBd, polarização, diagrama de irradiação, plano de terra, metal e corpo por perto) respeitando os limites de potência da Anatel"
+  - id: M1.9.T05
+    nome: "LoRa e LoRaWAN"
+    tipo: elite
+    peso: 2
+    objetivos:
+      - id: O1
+        texto: "Explicar a modulação LoRa (chirp, fator de espalhamento, largura de banda, taxa de codificação) e calcular a taxa de bits, a sensibilidade e o tempo no ar pela fórmula da Semtech"
+      - id: O2
+        texto: "Descrever a arquitetura e a camada MAC do LoRaWAN (dispositivo, gateway, servidores de rede, de join e de aplicação; classes A, B e C; janelas RX1 e RX2; formato do quadro; ADR) e o plano regional AU915 usado no Brasil"
+      - id: O3
+        texto: "Comparar a ativação OTAA e ABP (DevEUI, JoinEUI, AppKey, DevAddr, chaves de sessão, contadores de quadro) e aplicar as regras de uso do espectro (duty cycle, dwell time, política de uso justo da TTN)"
+      - id: O4
+        texto: "Montar um nó LoRaWAN com ESP32 e rádio SX127x ou SX126x (ou modem AT), registrá-lo na The Things Network, enviar uplinks e decodificá-los, medindo RSSI, SNR e tempo no ar"
+  - id: M1.9.T06
+    nome: "NB-IoT e LTE-M"
+    tipo: comum
+    peso: 1
+    objetivos:
+      - id: O1
+        texto: "Comparar NB-IoT, LTE-M e Sigfox com o LoRaWAN (espectro licenciado ou não, largura de banda, taxas, cobertura e MCL, mobilidade, latência, custo e disponibilidade no Brasil)"
+      - id: O2
+        texto: "Explicar o caminho do dado na rede celular para IoT (UE, eNodeB, núcleo, APN, attach e registro, PDN) e os modos de economia PSM e eDRX com os temporizadores T3412 e T3324"
+      - id: O3
+        texto: "Controlar um modem celular por comandos AT (AT+CFUN, AT+CEREG, AT+CSQ, AT+CESQ, AT+CGDCONT, AT+COPS, AT+CPSMS, AT+CEDRXS), codificar os temporizadores do PSM e interpretar as respostas"
+      - id: O4
+        texto: "Escrever em C um driver de modem AT robusto (envio, leitura com tempo limite, respostas não solicitadas, máquina de estados) e estimar o consumo de um ciclo com PSM"
   - id: M1.9.T09
     nome: "Escolher a rede certa para o produto"
     tipo: comum
     peso: 1
+    objetivos:
+      - id: O1
+        texto: "Levantar os requisitos de conectividade de um produto (alcance, volume de dados, latência, energia, mobilidade, cobertura, escala e custos de módulo, de infraestrutura e recorrentes)"
+      - id: O2
+        texto: "Comparar Wi-Fi, BLE, LoRaWAN, NB-IoT, LTE-M, Sigfox, Zigbee, Thread e ESP-NOW numa matriz quantitativa de alcance, taxa, energia por mensagem e custo"
+      - id: O3
+        texto: "Calcular a energia por mensagem e a autonomia de bateria de cada tecnologia candidata e o custo total de propriedade ao longo da vida do produto"
+      - id: O4
+        texto: "Justificar a arquitetura de rede de um produto, incluindo gateways, redundância, segurança (WPA2/WPA3, chaves LoRaWAN, TLS com certificados no dispositivo) e homologação na Anatel, num registro de decisão"

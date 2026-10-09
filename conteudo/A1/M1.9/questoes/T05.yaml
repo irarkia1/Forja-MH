@@ -1,0 +1,225 @@
+- id: Q-M1.9.T05-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Mantendo a largura de banda de 125 kHz, o que acontece quando o fator de espalhamento LoRa passa de SF9 para SF10?
+  alternativas:
+    - "O tempo de símbolo cai pela metade e a sensibilidade piora"
+    - "A largura de banda ocupada dobra"
+    - "O tempo de símbolo dobra, cada símbolo carrega 1 bit a mais e a sensibilidade melhora cerca de 2,5 dB"
+    - "A taxa de codificação muda de 4/5 para 4/8"
+  resposta: 2
+  explicacao: |
+    T_sym = 2^SF / BW: cada passo de SF dobra o símbolo, que passa a carregar SF bits. A taxa cai quase pela metade, e a SNR mínima fica 2,5 dB mais negativa (−12,5 dB em SF9, −15 dB em SF10). A banda e a CR não mudam.
+  fonte: "Semtech, AN1200.22 LoRa Modulation Basics, Spreading Factor e LoRa Bit Rate; SX1276/77/78/79 Datasheet, LoRa Modem"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T05-002
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Qual é o tempo de símbolo LoRa em SF10 com largura de banda de 125 kHz? Responda em ms, com 3 casas decimais.
+  resposta: {valor: 8.192, unidade: "ms", tolerancia: 0.01}
+  explicacao: |
+    T_sym = 2^SF / BW = 1024 / 125 000 Hz = 8,192 ms.
+  fonte: "Semtech, AN1200.22 LoRa Modulation Basics, LoRa Modulation"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T05-003
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Calcule o tempo no ar de um uplink LoRaWAN com 12 bytes de aplicação (PHYPayload de 25 bytes) em SF9, BW 125 kHz, CR 4/5, preâmbulo de 8 símbolos, cabeçalho explícito e CRC ligado, pela fórmula da Semtech. Responda em ms, com 1 casa decimal.
+  resposta: {valor: 205.8, unidade: "ms", tolerancia: 0.01}
+  explicacao: |
+    T_sym = 4,096 ms; DE = 0. T_pre = (8 + 4,25) × 4,096 = 50,18 ms. Símbolos de payload = 8 + ⌈(200 − 36 + 28 + 16) / 36⌉ × 5 = 8 + 6 × 5 = 38 → 155,65 ms. Total = 205,8 ms.
+  fonte: "Semtech, AN1200.22 LoRa Modulation Basics, Time on Air; SX1276/77/78/79 Datasheet, Time on air"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T05-004
+  objetivo: O2
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Num dispositivo LoRaWAN classe A, quando o servidor de rede consegue lhe entregar um downlink?
+  alternativas:
+    - "Só nas janelas RX1 e RX2 que se abrem depois de cada uplink do próprio dispositivo"
+    - "A qualquer momento, porque o receptor fica sempre ligado"
+    - "Em ping slots periódicos sincronizados por beacons"
+    - "Somente durante o join"
+  resposta: 0
+  explicacao: |
+    Classe A abre duas janelas curtas depois de cada uplink (1 s e 2 s por padrão). Receptor sempre ligado é a classe C; ping slots com beacons, a classe B.
+  fonte: "LoRa Alliance, LoRaWAN L2 1.0.4 Specification, LoRaWAN Classes e Class A (Receive Windows)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T05-005
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    No plano AU915, os canais de uplink de 125 kHz começam em 915,2 MHz com passo de 200 kHz (canal 0). Em que frequência sai um uplink no canal 10, da sub-banda 2 usada pela TTN? Responda em MHz, com 1 casa decimal.
+  resposta: {valor: 917.2, unidade: "MHz", tolerancia: 0.001}
+  explicacao: |
+    f = 915,2 + 0,2 × 10 = 917,2 MHz. A sub-banda 2 vai dos canais 8 (916,8 MHz) a 15 (918,2 MHz).
+  fonte: "LoRa Alliance, RP002-1.0.4 LoRaWAN Regional Parameters, AU915-928MHz ISM Band, Channel Frequencies"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T05-006
+  objetivo: O2
+  tipo: multipla
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Marque as afirmações corretas sobre a arquitetura e o quadro do LoRaWAN 1.0.x.
+  alternativas:
+    - "O gateway repassa ao servidor de rede todos os quadros que ouve, sem decifrá-los, e vários gateways podem repassar o mesmo quadro"
+    - "O FRMPayload de aplicação é cifrado com a AppSKey, que o servidor de rede não precisa conhecer"
+    - "O dispositivo precisa se associar a um gateway específico antes de transmitir, como no Wi-Fi"
+    - "O overhead mínimo de um quadro de dados com FPort e sem FOpts é de 13 bytes: MHDR, FHDR, FPort e MIC"
+  resposta: [0, 1, 3]
+  explicacao: |
+    Os gateways são repetidores transparentes; o servidor de rede elimina duplicatas. A AppSKey fica com o servidor de aplicação. MHDR (1) + DevAddr, FCtrl e FCnt (7) + FPort (1) + MIC (4) = 13. Não há associação a gateway no LoRaWAN.
+  fonte: "LoRa Alliance, LoRaWAN L2 1.0.4 Specification, MAC Message Formats e MAC Frame Payload Encryption"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T05-007
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Um nó fixo está em SF12 e a maior SNR dos últimos 20 uplinks foi 2 dB. Pelo algoritmo de ADR recomendado (margem = SNR máxima − SNR mínima do SF atual − margem de instalação de 10 dB; um passo de SF para cada 3 dB inteiros de margem, até SF7), com SNR mínima de −20 dB em SF12, para que SF o servidor manda o nó? Responda com o número do fator de espalhamento (inteiro).
+  resposta: {valor: 8, unidade: "SF", tolerancia: 0}
+  explicacao: |
+    Margem = 2 − (−20) − 10 = 12 dB; 12/3 = 4 passos: SF12 → SF11 → SF10 → SF9 → SF8. O tempo no ar de um pacote de 17 bytes cai de 1318,9 ms para 92,7 ms.
+  fonte: "Semtech, LoRaWAN simple rate adaptation recommended algorithm; LoRaWAN L2 1.0.4 Specification, LinkADRReq"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T05-008
+  objetivo: O3
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: num dispositivo ABP, se o contador de quadros voltar a zero depois de uma troca de bateria, a rede continua aceitando os uplinks normalmente, porque as chaves de sessão não mudaram.
+  resposta: false
+  explicacao: |
+    O servidor descarta quadros com contador igual ou menor que o último recebido (proteção contra replay). Com ABP, o FCnt precisa ser guardado em memória não volátil; com OTAA, um novo join renova chaves e contadores.
+  fonte: "LoRa Alliance, LoRaWAN L2 1.0.4 Specification, Frame counter (FCnt) e Activation by Personalization"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T05-009
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Na TTN, cada dispositivo tem 30 s de tempo no ar de uplink por dia. Um nó envia pacotes com 329,7 ms de tempo no ar (4 bytes em SF10). Quantos uplinks inteiros por dia ele pode enviar sem exceder a política? Responda com um número inteiro de mensagens por dia.
+  resposta: {valor: 90, unidade: "mensagens/dia", tolerancia: 0}
+  explicacao: |
+    30 000 ms / 329,7 ms = 90,99 → 90 mensagens por dia, uma a cada 16 min. Em SF7 (51,5 ms) seriam 583.
+  fonte: "The Things Network, Fair Use Policy; Semtech, AN1200.22 LoRa Modulation Basics, Time on Air"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T05-010
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Na Europa (EU868), uma sub-banda tem duty cycle de 1%. Um nó envia pacotes de 1318,9 ms de tempo no ar (SF12). Qual é o intervalo mínimo entre os inícios de duas transmissões nessa sub-banda? Responda em s, com 1 casa decimal.
+  resposta: {valor: 131.9, unidade: "s", tolerancia: 0.01}
+  explicacao: |
+    Com 1%, o tempo de transmissão não pode passar de 1% do período: T_período ≥ 1,3189 / 0,01 = 131,9 s (130,6 s de silêncio depois de cada pacote).
+  fonte: "LoRa Alliance, RP002-1.0.4 LoRaWAN Regional Parameters, EU863-870MHz ISM Band"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T05-011
+  objetivo: O3
+  tipo: unica
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Um nó AU915 com dwell time de 400 ms ativo (UplinkDwellTime = 1) tenta enviar em SF11/125 kHz e a pilha recusa. Qual é a explicação?
+  alternativas:
+    - "SF11 não existe no plano AU915"
+    - "A sub-banda 2 da TTN não aceita SF11"
+    - "SF11 só é permitido em downlink"
+    - "Mesmo o menor quadro LoRaWAN (13 bytes) leva cerca de 577 ms em SF11, acima do limite de 400 ms; com o dwell time ativo, DR0 e DR1 ficam indisponíveis para uplink"
+  resposta: 3
+  explicacao: |
+    Com PL = 13, T_sym = 16,384 ms e DE = 1, a fórmula da Semtech dá 577,5 ms. O SF10 cabe com até 11 bytes de aplicação (370,7 ms para 24 bytes no ar). Por isso as tabelas de payload máximo do AU915 marcam DR0 e DR1 como não disponíveis quando o dwell time está ativo.
+  fonte: "LoRa Alliance, RP002-1.0.4 LoRaWAN Regional Parameters, AU915-928MHz ISM Band (Maximum Payload Size, TxParamSetupReq); Semtech, AN1200.22, Time on Air"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T05-012
+  objetivo: O4
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Ao registrar na TTN um nó que vai operar no Brasil, que plano de frequências se escolhe?
+  alternativas:
+    - "Europe 863-870 MHz (SF9 for RX2)"
+    - "Australia 915-928 MHz, FSB 2 (used by TTN)"
+    - "United States 902-928 MHz, FSB 2"
+    - "Asia 920-923 MHz"
+  resposta: 1
+  explicacao: |
+    No Brasil, a TTN usa o plano AU915 com a sub-banda 2 (canais 8 a 15 e 65). EU868 está fora da faixa permitida; o US915 usa outra tabela de taxas e de canais de downlink.
+  fonte: "The Things Network, Frequency Plans; LoRa Alliance, RP002-1.0.4, AU915-928MHz ISM Band"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T05-013
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    O nó do laboratório envia 4 bytes: temperatura em int16 com sinal (0,01 °C, big-endian) seguida da bateria em uint16 (mV). O console mostra o payload FF 38 0C 80. Qual é a temperatura? Responda em °C, com 2 casas decimais.
+  resposta: {valor: -2.0, unidade: "°C", tolerancia: 0.01}
+  explicacao: |
+    0xFF38 = 65 336; como int16, 65 336 − 65 536 = −200 → −2,00 °C. A bateria é 0x0C80 = 3200 mV.
+  fonte: "The Things Network, Payload Formatters, JavaScript (decodeUplink)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T05-014
+  objetivo: O4
+  tipo: multipla
+  dificuldade: 3
+  bloom: avaliar
+  enunciado: |
+    Um nó ESP32 + SX1276 nunca completa o join na TTN, embora haja um gateway da comunidade a 300 m. Marque as causas plausíveis a investigar.
+  alternativas:
+    - "Módulo de 868 MHz comprado por engano"
+    - "Sub-banda não configurada, com o nó sorteando entre os 64 canais e o gateway ouvindo só 8"
+    - "AppKey ou DevEUI copiados com a ordem de bytes trocada em relação ao que a biblioteca espera"
+    - "Falta de um payload formatter no console da aplicação"
+  resposta: [0, 1, 2]
+  explicacao: |
+    Rádio na faixa errada não é ouvido; sem a sub-banda 2, a maioria dos Join-requests sai em canais que o gateway não escuta; chaves ou EUIs com bytes trocados fazem o MIC falhar. O formatter só decodifica uplinks depois do join e não interfere nele.
+  fonte: "The Things Network, Adding Devices e Frequency Plans; ttn-esp32, Get Started; LoRaWAN L2 1.0.4 Specification, Over-the-Air Activation"
+  origem: ia
+  revisao: rascunho

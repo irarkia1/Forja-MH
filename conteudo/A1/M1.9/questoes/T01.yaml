@@ -1,0 +1,230 @@
+- id: Q-M1.9.T01-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Um firmware publica em MQTT na porta 1883 de um servidor. Em que camada da pilha TCP/IP fica o número de porta que identifica o processo MQTT no servidor?
+  alternativas:
+    - "Enlace"
+    - "Rede"
+    - "Transporte"
+    - "Física"
+  resposta: 2
+  explicacao: |
+    As portas de 16 bits são endereços da camada de transporte (TCP e UDP): o IP leva o datagrama até a máquina, e a porta entrega o segmento ao processo certo. O enlace usa endereços MAC e a rede, endereços IP.
+  fonte: "Kurose & Ross, Computer Networking: A Top-Down Approach, Multiplexing and Demultiplexing; RFC 793, Header Format"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T01-002
+  objetivo: O1
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: se o ESP32 está conectado a um roteador com WPA2, as leituras que ele envia por HTTP sem TLS chegam cifradas até o servidor na nuvem.
+  resposta: false
+  explicacao: |
+    O WPA2 é segurança da camada de enlace do 802.11: cifra só o trecho de rádio entre o ESP32 e o ponto de acesso. Dali em diante o tráfego HTTP segue em claro pela internet. Proteção de ponta a ponta exige TLS (sobre TCP) ou DTLS (sobre UDP).
+  fonte: "Kurose & Ross, Computer Networking: A Top-Down Approach, Protocol Layers and Their Service Models e Securing Wireless LANs"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T01-003
+  objetivo: O1
+  tipo: multipla
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Marque as afirmações corretas sobre onde as tecnologias de IoT se encaixam nas camadas.
+  alternativas:
+    - "O Thread leva IPv6 sobre quadros IEEE 802.15.4 graças à camada de adaptação 6LoWPAN"
+    - "No uso comum, o BLE não usa IP: por cima do Link Layer vêm L2CAP, ATT e GATT"
+    - "O Zigbee e o Thread compartilham a camada física e a de enlace do 802.15.4, mas o Zigbee tem camada de rede própria, sem IP"
+    - "O LoRaWAN atribui um endereço IPv4 a cada dispositivo final, e o gateway faz NAT para a internet"
+  resposta: [0, 1, 2]
+  explicacao: |
+    Thread = 802.15.4 + 6LoWPAN + IPv6. BLE tem pilha própria (L2CAP/ATT/GATT); IPv6 sobre BLE existe (RFC 7668), mas é raro. Zigbee usa o mesmo rádio e MAC do 802.15.4 com rede e aplicação próprias. O LoRaWAN não usa IP no rádio: o dispositivo tem um DevAddr de 32 bits e o gateway repassa os quadros ao network server.
+  fonte: "RFC 4944, Introduction; Kurose & Ross, Computer Networking: A Top-Down Approach, Protocol Layers and Their Service Models; LoRa Alliance, LoRaWAN L2 1.0.4 Specification"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T01-004
+  objetivo: O1
+  tipo: unica
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Uma leitura de 20 bytes é enviada por UDP sobre IPv4 numa rede Ethernet. Qual é a ordem dos campos no quadro, do primeiro byte transmitido ao último?
+  alternativas:
+    - "Cabeçalho IPv4, cabeçalho UDP, cabeçalho Ethernet, dados, FCS"
+    - "Cabeçalho Ethernet, cabeçalho IPv4, cabeçalho UDP, dados, FCS"
+    - "Cabeçalho Ethernet, cabeçalho UDP, cabeçalho IPv4, dados, FCS"
+    - "Cabeçalho UDP, cabeçalho IPv4, dados, cabeçalho Ethernet, FCS"
+  resposta: 1
+  explicacao: |
+    No encapsulamento, cada camada põe o seu cabeçalho na frente do que recebeu de cima: o UDP envolve os dados, o IP envolve o segmento UDP e o Ethernet envolve o datagrama IP, acrescentando também o FCS (CRC) no final do quadro.
+  fonte: "Kurose & Ross, Computer Networking: A Top-Down Approach, Protocol Layers and Their Service Models (Encapsulation)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T01-005
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Num enlace Wi-Fi com MTU de 1500 bytes, qual é o MSS de uma conexão TCP sobre IPv4 com cabeçalhos sem opções? Responda em bytes, com um número inteiro.
+  resposta: {valor: 1460, unidade: "bytes", tolerancia: 0}
+  explicacao: |
+    MSS = MTU − cabeçalho IPv4 − cabeçalho TCP = 1500 − 20 − 20 = 1460 bytes. Em IPv6 seriam 1500 − 40 − 20 = 1440.
+  fonte: "RFC 791, Internet Header Format; RFC 793, Header Format (opção Maximum Segment Size)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T01-006
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um sensor envia 32 bytes de dados num segmento TCP sobre IPv6, numa rede Ethernet (cabeçalho de 14 bytes e FCS de 4 bytes; IPv6 e TCP sem opções). Que porcentagem do quadro são dados úteis? Responda em %, com 1 casa decimal.
+  resposta: {valor: 29.1, unidade: "%", tolerancia: 0.01}
+  explicacao: |
+    Quadro = 14 + 40 (IPv6) + 20 (TCP) + 32 + 4 = 110 bytes. Eficiência = 32/110 = 0,2909 ≈ 29,1%. Mais de dois terços do quadro são cabeçalhos.
+  fonte: "RFC 8200, IPv6 Header Format; RFC 793, Header Format; Kurose & Ross, Computer Networking: A Top-Down Approach, TCP Segment Structure"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T01-007
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um firmware de exatamente 1 048 576 bytes é baixado por TCP sobre IPv6 numa rede Ethernet, com MSS de 1440 bytes e todos os segmentos cheios, exceto o último. Somando, em todos os segmentos de dados, os cabeçalhos Ethernet (14 bytes), o FCS (4), o IPv6 (40) e o TCP (20), quantos bytes de overhead foram transmitidos? Ignore os ACKs e o handshake. Responda em bytes, com um número inteiro.
+  resposta: {valor: 56862, unidade: "bytes", tolerancia: 0}
+  explicacao: |
+    Segmentos = ⌈1 048 576 / 1440⌉ = ⌈728,18⌉ = 729. Overhead por segmento = 14 + 4 + 40 + 20 = 78 bytes. Total = 729 × 78 = 56 862 bytes, cerca de 5,4% do arquivo.
+  fonte: "RFC 8200, IPv6 Header Format; RFC 793, Header Format; Kurose & Ross, Computer Networking: A Top-Down Approach, TCP Segment Structure"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T01-008
+  objetivo: O2
+  tipo: multipla
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Um dispositivo IoT precisa enviar relatórios de 3000 bytes por UDP sobre IPv4 através de um caminho com MTU de 1500 bytes. Marque as afirmações corretas.
+  alternativas:
+    - "O datagrama será fragmentado em IP, e a perda de um único fragmento faz o datagrama inteiro ser descartado no destino"
+    - "O UDP divide o relatório em segmentos e retransmite os que se perderem"
+    - "Dividir o relatório em mensagens de aplicação que caibam num pacote, cada uma com número de sequência, evita a fragmentação e permite reenviar só o pedaço perdido"
+    - "Se o mesmo relatório fosse por IPv6, um roteador no meio do caminho poderia fragmentá-lo, como no IPv4"
+  resposta: [0, 2]
+  explicacao: |
+    3000 + 8 + 20 bytes não cabem em 1500: o IPv4 fragmenta, e o datagrama só é remontado se todos os fragmentos chegarem. O UDP não segmenta nem retransmite. Mensagens de aplicação menores que o MTU, numeradas, são a solução usual em IoT. No IPv6 só a origem fragmenta; roteadores descartam e devolvem ICMPv6 Packet Too Big.
+  fonte: "RFC 791, Fragmentation and Reassembly; RFC 8200, Fragment Header e Packet Size Issues; RFC 768"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T01-009
+  objetivo: O3
+  tipo: unica
+  dificuldade: 2
+  bloom: avaliar
+  enunciado: |
+    Um medidor de temperatura envia uma leitura a cada 10 s para um servidor na rede local; perder uma leitura de vez em quando é aceitável, e o aparelho funciona a bateria. Qual é a escolha de transporte mais adequada?
+  alternativas:
+    - "TCP, abrindo e fechando uma conexão por leitura, para garantir a entrega"
+    - "TCP com keepalive padrão do sistema, para detectar quedas rapidamente"
+    - "IP puro, sem camada de transporte, para economizar 8 bytes"
+    - "UDP, um datagrama por leitura, com número de sequência na mensagem"
+  resposta: 3
+  explicacao: |
+    Com perda tolerável e bateria, UDP manda 1 datagrama por leitura, sem handshake nem encerramento; o número de sequência deixa o servidor contar as perdas. Abrir uma conexão TCP por leitura custa cerca de 9 segmentos. O keepalive padrão do TCP só age depois de 2 horas. Sem transporte não há porta para entregar ao processo.
+  fonte: "Kurose & Ross, Computer Networking: A Top-Down Approach, Connectionless Transport: UDP; RFC 768; RFC 1122, TCP Keep-Alives"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T01-010
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um cliente TCP escolhe número de sequência inicial 5000. Depois do handshake, envia três segmentos de 100 bytes, que chegam todos ao servidor. Qual é o número de reconhecimento (ACK) que o servidor envia depois de receber o terceiro? Responda com um número inteiro, em número de sequência (bytes).
+  resposta: {valor: 5301, unidade: "número de sequência", tolerancia: 0}
+  explicacao: |
+    O SYN consome o número 5000; os dados ocupam 5001 a 5300. O ACK é cumulativo e indica o próximo byte esperado: 5301.
+  fonte: "RFC 793, Sequence Numbers e Establishing a connection; Kurose & Ross, Computer Networking: A Top-Down Approach, TCP Segment Structure"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T01-011
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um ESP32 baixa um arquivo por TCP de um servidor distante. A janela de recepção anunciada é de 8760 bytes e o RTT é de 120 ms; o enlace de rádio é muito mais rápido que isso. Qual é a vazão máxima da conexão, limitada pela janela? Responda em kbit/s, com um número inteiro (1 kbit = 1000 bits).
+  resposta: {valor: 584, unidade: "kbit/s", tolerancia: 0.01}
+  explicacao: |
+    No máximo uma janela por RTT: 8760 bytes / 0,120 s = 73 000 B/s = 584 000 bit/s = 584 kbit/s. Para ir mais rápido é preciso janela maior (mais RAM no lwIP) ou RTT menor.
+  fonte: "Kurose & Ross, Computer Networking: A Top-Down Approach, Flow Control e TCP Congestion Control; ESP-IDF Programming Guide, API Guides, lwIP"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T01-012
+  objetivo: O4
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Num servidor TCP com sockets POSIX, qual chamada bloqueia até um cliente completar o handshake e devolve um novo descritor para conversar com ele?
+  alternativas:
+    - "accept"
+    - "listen"
+    - "bind"
+    - "connect"
+  resposta: 0
+  explicacao: |
+    bind associa o socket a um endereço e porta; listen o põe em modo passivo com uma fila de conexões; accept retira uma conexão completa da fila e devolve um socket novo para ela. connect é do lado do cliente.
+  fonte: "Beej's Guide to Network Programming, System Calls or Bust (accept()); Kurose & Ross, Computer Networking: A Top-Down Approach, Socket Programming with TCP"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T01-013
+  objetivo: O4
+  tipo: vf
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Verdadeiro ou falso: se o cliente TCP chama send() uma vez com uma mensagem de 30 bytes, o servidor recebe esses 30 bytes num único recv(), separados da mensagem seguinte.
+  resposta: false
+  explicacao: |
+    TCP é um fluxo de bytes sem fronteiras de mensagem. Os 30 bytes podem chegar em dois recv() ou junto com a mensagem seguinte. O protocolo da aplicação precisa delimitar as mensagens (prefixo de tamanho ou delimitador) e o receptor deve repetir recv() até completar cada uma. No UDP, ao contrário, cada datagrama chega inteiro.
+  fonte: "Beej's Guide to Network Programming, Slightly Advanced Techniques (Handling Partial send()s, Serialization); RFC 793"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T01-014
+  objetivo: O4
+  tipo: unica
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Uma tarefa do ESP32 envia leituras por TCP e espera a resposta com recv(). Quando o roteador perde a energia, a tarefa trava para sempre e o watchdog nunca reclama, porque a tarefa está bloqueada, não presa num laço. Qual correção resolve a causa?
+  alternativas:
+    - "Aumentar a prioridade da tarefa para ela sair do bloqueio"
+    - "Trocar recv() por read(), que não bloqueia"
+    - "Configurar SO_RCVTIMEO no socket, tratar o tempo esgotado fechando o socket e reconectar com recuo"
+    - "Chamar o recv() dentro do handler de IP_EVENT_STA_LOST_IP"
+  resposta: 2
+  explicacao: |
+    Sem tempo limite, recv() espera indefinidamente por um servidor que sumiu sem enviar FIN. Com SO_RCVTIMEO, recv() devolve −1 com errno EAGAIN, e o firmware pode fechar, reconectar com recuo e guardar as medidas. Prioridade não desbloqueia; read() em socket bloqueia do mesmo jeito; e chamadas de socket não devem ser feitas no handler de eventos.
+  fonte: "ESP-IDF Programming Guide, API Guides, lwIP (BSD Sockets API); Beej's Guide to Network Programming, Slightly Advanced Techniques; RFC 1122, TCP Keep-Alives"
+  origem: ia
+  revisao: rascunho

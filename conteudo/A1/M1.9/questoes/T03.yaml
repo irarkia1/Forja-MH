@@ -1,0 +1,230 @@
+- id: Q-M1.9.T03-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Em 2,4 GHz, com canais de 20 MHz, qual conjunto de canais pode ser usado por três redes vizinhas sem sobreposição entre elas?
+  alternativas:
+    - "1, 2 e 3"
+    - "1, 4 e 7"
+    - "1, 6 e 11"
+    - "3, 6 e 9"
+  resposta: 2
+  explicacao: |
+    Os centros estão a 5 MHz uns dos outros (f = 2407 + 5n MHz), mas cada sinal ocupa cerca de 20 a 22 MHz. 1, 6 e 11 ficam a 25 MHz de distância, sem sobreposição; é a recomendação clássica. Em 1, 4 e 7 (15 MHz) e em 3, 6 e 9 (15 MHz) os vizinhos se sobrepõem, e em 1, 2 e 3 quase inteiramente.
+  fonte: "Kurose & Ross, Computer Networking: A Top-Down Approach, The 802.11 Wireless LAN Architecture; Gast, 802.11 Wireless Networks: The Definitive Guide, The PHY"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T03-002
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Qual é a frequência central do canal 11 do Wi-Fi em 2,4 GHz? Responda em MHz, com um número inteiro.
+  resposta: {valor: 2462, unidade: "MHz", tolerancia: 0}
+  explicacao: |
+    f = 2407 + 5 × n = 2407 + 55 = 2462 MHz. Com 20 MHz de largura, o canal ocupa cerca de 2452 a 2472 MHz.
+  fonte: "Gast, 802.11 Wireless Networks: The Definitive Guide, The PHY (canais de 2,4 GHz); ESP-IDF Programming Guide, API Guides, Wi-Fi Driver, Wi-Fi Country Code"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T03-003
+  objetivo: O1
+  tipo: multipla
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Marque as afirmações corretas sobre o acesso ao meio no 802.11 (CSMA/CA) e suas consequências para um sensor Wi-Fi.
+  alternativas:
+    - "Antes de transmitir, a estação escuta o canal e, com o meio livre, ainda espera um recuo aleatório"
+    - "Quadros de dados unicast são confirmados por ACK; sem ACK, a estação retransmite com janela de recuo maior"
+    - "Como o Wi-Fi é full-duplex, o sensor transmite e recebe ao mesmo tempo sem disputar o canal"
+    - "Num canal congestionado, o sensor gasta mais energia esperando e retransmitindo, mesmo com o firmware correto"
+  resposta: [0, 1, 3]
+  explicacao: |
+    O DCF usa escuta, DIFS e recuo aleatório; o receptor confirma com ACK depois de um SIFS e a falta de ACK dobra a janela de contenção. O Wi-Fi é half-duplex e o canal é compartilhado, por isso o congestionamento custa tempo de rádio e bateria.
+  fonte: "Gast, 802.11 Wireless Networks: The Definitive Guide, The 802.11 MAC (Contention-Based Access Using the DCF); Kurose & Ross, Computer Networking: A Top-Down Approach, The 802.11 MAC Protocol"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T03-004
+  objetivo: O1
+  tipo: vf
+  dificuldade: 2
+  bloom: lembrar
+  enunciado: |
+    Verdadeiro ou falso: o ESP32-C3 e o ESP32-S3 operam em Wi-Fi de 5 GHz, o que permite fugir do congestionamento de 2,4 GHz.
+  resposta: false
+  explicacao: |
+    ESP32, S2, S3, C3 e C6 têm Wi-Fi só em 2,4 GHz (o C6 com 802.11ax). Para 5 GHz na família Espressif é preciso o ESP32-C5, de banda dupla.
+  fonte: "Espressif, ESP32-C3 Series Datasheet e ESP32-S3 Series Datasheet, Product Overview; ESP32-C5 Series Datasheet"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T03-005
+  objetivo: O2
+  tipo: unica
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Numa rede WPA2-PSK, em que etapa da conexão a senha errada configurada no cliente faz a conexão falhar?
+  alternativas:
+    - "Na recepção do beacon"
+    - "Na autenticação Open System"
+    - "No pedido de IP ao DHCP"
+    - "No handshake de 4 vias (EAPOL)"
+  resposta: 3
+  explicacao: |
+    Beacon, autenticação Open System e associação não usam a senha. É no handshake de 4 vias que AP e cliente provam ter a mesma PMK, derivada da senha; com senha errada, a mensagem com MIC não confere e a conexão cai (no ESP-IDF, motivo 15, 4WAY_HANDSHAKE_TIMEOUT). O DHCP só acontece depois.
+  fonte: "Gast, 802.11 Wireless Networks: The Definitive Guide, Management Operations; ESP-IDF Programming Guide, API Guides, Wi-Fi Driver, Wi-Fi Reason Code"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T03-006
+  objetivo: O2
+  tipo: multipla
+  dificuldade: 3
+  bloom: avaliar
+  enunciado: |
+    Marque as afirmações corretas sobre WPA2-PSK, WPA3-SAE e WPA2-Enterprise.
+  alternativas:
+    - "No WPA2-PSK, quem captura um handshake de 4 vias pode testar senhas por dicionário fora do ar, sem interagir com o AP"
+    - "O WPA3-SAE dispensa o PMF, porque a troca SAE já protege os quadros de gerenciamento"
+    - "No WPA2-Enterprise com EAP-TLS, cada dispositivo pode ter o seu certificado e ser revogado sem trocar a credencial dos outros"
+    - "O WPA3-SAE resiste a ataques de dicionário fora do ar, porque cada tentativa exige uma troca com o AP"
+  resposta: [0, 2, 3]
+  explicacao: |
+    A PMK do WPA2-PSK é derivada só da senha e do SSID, o que permite testar senhas contra um handshake capturado. O SAE (Dragonfly) exige interação por tentativa. O WPA3 exige PMF (802.11w), que protege deauth e disassoc; o SAE não faz isso sozinho. No 802.1X, credenciais são individuais.
+  fonte: "Wi-Fi Alliance, WPA3 Specification; ESP-IDF Programming Guide, API Guides, Wi-Fi Security (Protected Management Frames, WPA3-Personal, WPA2-Enterprise); Kurose & Ross, Securing Wireless LANs and 4G/5G Cellular Networks"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T03-007
+  objetivo: O2
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: um AP configurado com intervalo de beacon de 100 TU envia um beacon exatamente a cada 100 ms.
+  resposta: false
+  explicacao: |
+    1 TU (Time Unit) do 802.11 vale 1024 µs. 100 TU = 102,4 ms. A diferença importa nas contas de consumo com DTIM e listen interval.
+  fonte: "Gast, 802.11 Wireless Networks: The Definitive Guide, Management Operations (Power Conservation); IEEE 802.11-2020"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T03-008
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Para cumprir um limite de certificação, o firmware deve limitar a potência de transmissão do ESP32 a 17 dBm. Que valor deve ser passado a esp_wifi_set_max_tx_power()? Responda com um número inteiro, na unidade da API (0,25 dBm).
+  resposta: {valor: 68, unidade: "× 0,25 dBm", tolerancia: 0}
+  explicacao: |
+    A API usa passos de 0,25 dBm: 17 / 0,25 = 68. O valor 78 corresponde a 19,5 dBm, o máximo típico.
+  fonte: "ESP-IDF Programming Guide, API Reference, Networking APIs, Wi-Fi (esp_wifi_set_max_tx_power)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T03-009
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Estime o piso de ruído de um receptor Wi-Fi num canal de 20 MHz, partindo do ruído térmico de −174 dBm/Hz e considerando figura de ruído de 5 dB, sem interferência. Responda em dBm, com 1 casa decimal.
+  resposta: {valor: -96.0, unidade: "dBm", tolerancia: 0.01}
+  explicacao: |
+    N = −174 + 10·log₁₀(20 × 10⁶) + NF = −174 + 73,0 + 5 = −96,0 dBm. Com interferência de outras redes, o piso real sobe para −95 a −90 dBm ou mais.
+  fonte: "Gast, 802.11 Wireless Networks: The Definitive Guide, The PHY; Texas Instruments, Analog Engineer's Pocket Reference (ruído térmico)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T03-010
+  objetivo: O3
+  tipo: unica
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Num galpão com quatro APs do mesmo SSID, um sensor ESP32 conecta sempre no AP da entrada, a −80 dBm, embora outro AP esteja a −55 dBm, e depois nunca troca. Os APs suportam 802.11k e 802.11v. Que conjunto de ajustes no wifi_sta_config_t resolve melhor?
+  alternativas:
+    - "Aumentar a potência de transmissão do ESP32 para 19,5 dBm e manter a configuração padrão"
+    - "scan_method = WIFI_ALL_CHANNEL_SCAN, sort_method = WIFI_CONNECT_AP_BY_SIGNAL, threshold.rssi, rm_enabled e btm_enabled, e tratar o evento WIFI_EVENT_STA_BSS_RSSI_LOW"
+    - "scan_method = WIFI_FAST_SCAN com sort_method = WIFI_CONNECT_AP_BY_SIGNAL"
+    - "Trocar para WPA3-SAE, que escolhe automaticamente o AP mais forte"
+  resposta: 1
+  explicacao: |
+    A varredura rápida conecta no primeiro AP que encontra; com varredura completa e ordenação por sinal, o sensor escolhe o melhor na conexão. O limiar ignora APs fracos. 802.11k (vizinhos) e 802.11v (transição sugerida pelo AP), mais o evento de RSSI baixo, fazem a troca depois de conectado. Potência e tipo de segurança não mudam a escolha do AP.
+  fonte: "ESP-IDF Programming Guide, API Guides, Wi-Fi Driver (Scan, Station Basic Configuration); examples/wifi/roaming"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T03-011
+  objetivo: O3
+  tipo: unica
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Num site survey, quatro posições mediram os RSSI abaixo para o mesmo AP. Em qual delas o sinal é mais forte?
+  alternativas:
+    - "−82 dBm"
+    - "−67 dBm"
+    - "−45 dBm"
+    - "−91 dBm"
+  resposta: 2
+  explicacao: |
+    RSSI em dBm é negativo: quanto mais perto de zero, mais forte. −45 dBm é excelente; −67 dBm é bom; −82 dBm é instável; −91 dBm está perto do limite de sensibilidade.
+  fonte: "Espressif, ESP32 Series Datasheet, Wi-Fi Radio (sensibilidade); ESP-IDF Programming Guide, API Guides, Wi-Fi Driver (Scan)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T03-012
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um ESP32 conectado acorda a cada DTIM, com DTIM = 2 e beacon de 102,4 ms. Em cada despertar fica 4 ms ouvindo a 100 mA; no resto do tempo consome 2 mA. Qual é a corrente média? Responda em mA, com 2 casas decimais.
+  resposta: {valor: 3.91, unidade: "mA", tolerancia: 0.01}
+  explicacao: |
+    Período = 2 × 102,4 = 204,8 ms. I = 2 + (100 − 2) × 4 / 204,8 = 2 + 1,914 = 3,91 mA.
+  fonte: "ESP-IDF Programming Guide, API Guides, Low Power Mode in Wi-Fi Scenarios; API Guides, Wi-Fi Driver, Power-saving Mode"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T03-013
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Um sensor Wi-Fi pode ficar conectado com corrente média de 4,2 mA, ou dormir em deep sleep (0,03 mA, incluindo a placa) e reconectar a cada envio, gastando 0,07 mAh por conexão completa. A partir de quantos envios por hora ficar conectado passa a ser mais econômico? Responda em envios por hora, com 1 casa decimal.
+  resposta: {valor: 59.6, unidade: "envios/h", tolerancia: 0.01}
+  explicacao: |
+    Por hora: conectado = 4,2 mAh; reconectando = 0,03 + 0,07 × N. Igualando: N = (4,2 − 0,03) / 0,07 = 59,57 ≈ 59,6 envios por hora (cerca de um por minuto). Abaixo disso, reconectar gasta menos.
+  fonte: "ESP-IDF Programming Guide, API Guides, Low Power Mode in Wi-Fi Scenarios e Sleep Modes"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T03-014
+  objetivo: O4
+  tipo: multipla
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Marque as decisões corretas de energia para um produto Wi-Fi a bateria.
+  alternativas:
+    - "Projetar a autonomia para o DTIM do roteador do cliente no pior caso, porque o firmware não controla esse parâmetro"
+    - "Guardar canal, BSSID e IP na memória RTC para encurtar a reconexão depois do deep sleep"
+    - "Projetar a bateria com a corrente medida em WIFI_PS_NONE durante um teste de vazão com iperf"
+    - "Reduzir a potência de transmissão de 19,5 para 10 dBm como principal medida de economia"
+  resposta: [0, 1]
+  explicacao: |
+    O DTIM é do AP; projete para o pior caso. Conexão rápida (canal e BSSID conhecidos, IP fixo ou reaproveitado) corta o maior gasto do ciclo de reconexão. WIFI_PS_NONE com tráfego contínuo mede o pior caso de vazão, não o perfil do produto. Reduzir a potência diminui pouco o consumo do transmissor, aumenta retransmissões e reduz alcance.
+  fonte: "ESP-IDF Programming Guide, API Guides, Low Power Mode in Wi-Fi Scenarios; API Guides, Wi-Fi Driver (Power-saving Mode, Station Basic Configuration); ESP32 Series Datasheet, RF Power-Consumption Specifications"
+  origem: ia
+  revisao: rascunho

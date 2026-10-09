@@ -1,0 +1,235 @@
+- id: Q-M1.9.T02-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Qual destes endereços IPv4 pertence a uma das faixas privadas da RFC 1918?
+  alternativas:
+    - "172.32.1.1"
+    - "172.20.5.4"
+    - "192.169.0.1"
+    - "100.64.0.1"
+  resposta: 1
+  explicacao: |
+    As faixas privadas são 10.0.0.0/8, 172.16.0.0/12 (172.16.0.0 a 172.31.255.255) e 192.168.0.0/16. 172.32.1.1 está logo fora da faixa /12; 192.169.0.1 é público; 100.64.0.1 é do espaço compartilhado do CGNAT (RFC 6598), que não é uma faixa da RFC 1918.
+  fonte: "RFC 1918, Private Address Space; RFC 6598"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T02-002
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um sensor tem o endereço 192.168.10.77/27. Qual é o último octeto do último endereço de host utilizável dessa sub-rede? Responda com um número inteiro (o valor do octeto, adimensional).
+  resposta: {valor: 94, unidade: "octeto", tolerancia: 0}
+  explicacao: |
+    /27 deixa 5 bits de host: blocos de 32 endereços. 77 está no bloco 64–95. Rede = .64, broadcast = .95; o último host utilizável é .94.
+  fonte: "RFC 4632, Classless Inter-domain Routing; Kurose & Ross, Computer Networking: A Top-Down Approach, IPv4 Addressing"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T02-003
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Uma fábrica recebeu o bloco 10.20.0.0/22 e quer dividi-lo em sub-redes iguais, do menor tamanho que ainda comporte 50 dispositivos cada. Quantas sub-redes desse tamanho cabem no bloco? Responda com um número inteiro de sub-redes.
+  resposta: {valor: 16, unidade: "sub-redes", tolerancia: 0}
+  explicacao: |
+    50 hosts exigem 6 bits de host (2⁶ − 2 = 62; com 5 bits seriam só 30): prefixo /26. Do /22 ao /26 há 4 bits a mais de rede: 2⁴ = 16 sub-redes de 62 hosts.
+  fonte: "RFC 4632, Classless Inter-domain Routing; Kurose & Ross, Computer Networking: A Top-Down Approach, IPv4 Addressing"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T02-004
+  objetivo: O1
+  tipo: vf
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Verdadeiro ou falso: um ESP32 com 192.168.1.200/25 e um PC com 192.168.1.100/25 estão na mesma sub-rede e trocam pacotes diretamente pelo enlace, sem passar pelo roteador.
+  resposta: false
+  explicacao: |
+    Com /25, o último octeto se divide em 0–127 e 128–255. O PC está na sub-rede 192.168.1.0/25 e o ESP32 na 192.168.1.128/25. Cada um manda o tráfego para o outro via gateway.
+  fonte: "RFC 4632; Kurose & Ross, Computer Networking: A Top-Down Approach, IPv4 Addressing"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T02-005
+  objetivo: O2
+  tipo: unica
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Qual é a forma abreviada correta do endereço IPv6 2001:0db8:0000:0000:0000:ff00:0042:8329?
+  alternativas:
+    - "2001:db8::ff:42:8329"
+    - "2001:db8:0:0::ff00:42:8329::"
+    - "2001:0db8::ff00::8329"
+    - "2001:db8::ff00:42:8329"
+  resposta: 3
+  explicacao: |
+    Zeros à esquerda de cada grupo podem ser omitidos (0db8 → db8, 0042 → 42), mas não zeros à direita (ff00 continua ff00). Uma única sequência de grupos zerados vira ::. Usar :: duas vezes torna o endereço ambíguo.
+  fonte: "RFC 4291, Text Representation of Addresses; RFC 5952"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T02-006
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um provedor entrega a uma empresa o prefixo IPv6 2001:db8:abcd::/48. Quantas sub-redes /64 a empresa pode criar dentro dele? Responda com um número inteiro de sub-redes.
+  resposta: {valor: 65536, unidade: "sub-redes", tolerancia: 0}
+  explicacao: |
+    De /48 a /64 há 16 bits para numerar sub-redes: 2¹⁶ = 65 536 sub-redes, cada uma com 2⁶⁴ identificadores de interface.
+  fonte: "RFC 4291, IPv6 Addressing Architecture (Global Unicast Addresses)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T02-007
+  objetivo: O2
+  tipo: multipla
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Marque as afirmações corretas sobre IPv6 e 6LoWPAN em redes de dispositivos de baixa potência.
+  alternativas:
+    - "Com IPv6 cada dispositivo pode ter endereço global, mas o firewall do roteador doméstico normalmente bloqueia conexões iniciadas de fora"
+    - "O 6LoWPAN pode omitir os endereços IPv6 link-local do cabeçalho comprimido quando eles derivam dos endereços MAC do 802.15.4"
+    - "Como o 802.15.4 tem quadros de 127 bytes, o IPv6 reduz o seu MTU mínimo para 127 bytes nessas redes"
+    - "Com SLAAC, o nó forma o próprio endereço a partir do prefixo anunciado pelo roteador, sem servidor DHCP"
+  resposta: [0, 1, 3]
+  explicacao: |
+    Endereço global não significa exposição: o firewall com estado barra a entrada. O IPHC (RFC 6282) reconstrói endereços derivados do cabeçalho MAC. O MTU mínimo do IPv6 continua 1280 bytes; é o 6LoWPAN que fragmenta para caber nos quadros de 127 bytes. SLAAC usa o Router Advertisement.
+  fonte: "RFC 8200, Packet Size Issues; RFC 4944, Introduction; RFC 6282; RFC 4862"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T02-008
+  objetivo: O3
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Qual é a ordem das quatro mensagens com que um cliente obtém um endereço pelo DHCP?
+  alternativas:
+    - "Request, Offer, Discover, Ack"
+    - "Discover, Request, Offer, Ack"
+    - "Discover, Offer, Request, Ack"
+    - "Offer, Discover, Ack, Request"
+  resposta: 2
+  explicacao: |
+    DORA: o cliente difunde um Discover, os servidores respondem com Offer, o cliente pede um deles com Request e o servidor confirma com Ack, trazendo máscara, gateway, DNS e tempo de concessão.
+  fonte: "RFC 2131, Client-server interaction - allocating a network address"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T02-009
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um ESP32 recebeu uma concessão DHCP de 24 horas e não conseguiu renovar com o servidor original. Depois de quantas horas, contadas do início da concessão, ele passa a tentar renovar em broadcast com qualquer servidor (T2, no valor padrão)? Responda em h, com um número inteiro.
+  resposta: {valor: 21, unidade: "h", tolerancia: 0}
+  explicacao: |
+    Valores padrão da RFC 2131: T1 = 0,5 × concessão (12 h, unicast ao servidor original) e T2 = 0,875 × concessão = 21 h (broadcast a qualquer servidor).
+  fonte: "RFC 2131, Reacquisition and expiration"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T02-010
+  objetivo: O3
+  tipo: multipla
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Marque as afirmações corretas sobre DNS e mDNS.
+  alternativas:
+    - "Um registro CNAME diz ao resolvedor que o nome é apelido de outro nome, que precisa ser resolvido em seguida"
+    - "O TTL de um registro informa por quantos segundos a resposta pode ser guardada em cache"
+    - "O mDNS envia as consultas por TCP na porta 53 para o roteador"
+    - "Um dispositivo normalmente consulta um resolvedor recursivo, que pergunta aos servidores raiz, de domínio de topo e autoritativos"
+  resposta: [0, 1, 3]
+  explicacao: |
+    CNAME é apelido; TTL controla o cache; o dispositivo delega a resolução ao recursivo informado pelo DHCP. O mDNS (RFC 6762) usa multicast UDP para 224.0.0.251 na porta 5353, sem servidor: quem tem o nome responde.
+  fonte: "RFC 1034, Domain Names - Concepts and Facilities; RFC 1035, Resource records; RFC 6762, Multicast DNS"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T02-011
+  objetivo: O3
+  tipo: unica
+  dificuldade: 2
+  bloom: analisar
+  enunciado: |
+    Para conectar mais rápido, o firmware desliga o cliente DHCP com esp_netif_dhcpc_stop e configura IP, máscara e gateway com esp_netif_set_ip_info. O ping para 8.8.8.8 funciona, mas getaddrinfo falha para qualquer nome. Qual é a causa mais provável?
+  alternativas:
+    - "Nenhum servidor DNS foi configurado, porque a opção de DNS vinha do DHCP"
+    - "O gateway está errado"
+    - "A máscara impede o tráfego UDP"
+    - "O lwIP não suporta DNS com IP fixo"
+  resposta: 0
+  explicacao: |
+    Se o ping a um IP da internet funciona, enlace, IP, máscara e gateway estão certos. O que faltou é o servidor DNS, que o DHCP informaria na opção 6. Com IP fixo é preciso chamar esp_netif_set_dns_info.
+  fonte: "ESP-IDF Programming Guide, API Reference, Networking APIs, ESP-NETIF; RFC 2132 (opção Domain Name Server)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T02-012
+  objetivo: O4
+  tipo: unica
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Por que, na arquitetura típica de IoT, é o dispositivo que abre a conexão com o servidor na nuvem, e não o contrário?
+  alternativas:
+    - "Porque o TCP só permite que o lado com IP privado inicie a conexão"
+    - "Porque o DNS não consegue resolver nomes de dispositivos"
+    - "Porque o servidor não sabe o MAC do dispositivo"
+    - "Porque o dispositivo está atrás de NAT (às vezes CGNAT), que só traduz pacotes de entrada para mapeamentos criados por tráfego de saída"
+  resposta: 3
+  explicacao: |
+    Atrás de NAT, um pacote que chega ao IP público sem mapeamento não tem destino interno. O dispositivo abre a conexão (criando o mapeamento) e os comandos descem por ela. Port forwarding é frágil e impossível sob CGNAT.
+  fonte: "RFC 3022, Traditional IP Network Address Translator; RFC 6598; Kurose & Ross, Computer Networking: A Top-Down Approach, Network Address Translation (NAT)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T02-013
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    O roteador de um cliente apaga mapeamentos UDP ociosos depois de 30 s. Para não perder comandos, o firmware envia um keepalive a cada 20 s. Quantos keepalives ele envia por dia? Responda com um número inteiro de mensagens por dia.
+  resposta: {valor: 4320, unidade: "mensagens/dia", tolerancia: 0}
+  explicacao: |
+    86 400 s por dia / 20 s = 4320 keepalives. Cada um liga o rádio: num aparelho a bateria esse custo entra no orçamento de energia (T09).
+  fonte: "RFC 4787, Mapping Refresh; RFC 3022"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T02-014
+  objetivo: O4
+  tipo: unica
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Um integrador quer acessar remotamente um gateway de IoT instalado num cliente com internet 4G, por port forwarding. O traceroute a partir do gateway mostra no segundo salto o endereço 100.65.12.1, e a página do roteador indica IP WAN 100.72.3.9. Qual é o diagnóstico e o caminho adequado?
+  alternativas:
+    - "O roteador está com DHCP desligado; basta reativá-lo e criar o port forwarding"
+    - "Há CGNAT da operadora; o port forwarding não vai funcionar, e o gateway deve abrir e manter uma conexão de saída com um servidor (ou VPN) por onde passa o acesso remoto"
+    - "O endereço 100.x é link-local; reiniciar o modem 4G resolve"
+    - "O traceroute está bloqueado; os endereços mostrados não significam nada"
+  resposta: 1
+  explicacao: |
+    100.64.0.0/10 é o espaço compartilhado do CGNAT (RFC 6598): o IP WAN não é público e há um NAT da operadora antes da internet. Só conexões iniciadas de dentro funcionam: túnel, VPN ou conexão MQTT mantida pelo próprio gateway. Link-local IPv4 é 169.254.0.0/16.
+  fonte: "RFC 6598; RFC 3927; Kurose & Ross, Computer Networking: A Top-Down Approach, Network Address Translation (NAT) e ICMP"
+  origem: ia
+  revisao: rascunho

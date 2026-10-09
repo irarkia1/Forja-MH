@@ -1,0 +1,235 @@
+- id: Q-M1.9.T04-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Quais são os canais de advertising primários do Bluetooth LE?
+  alternativas:
+    - "37, 38 e 39"
+    - "1, 6 e 11"
+    - "0, 1 e 2"
+    - "11, 15 e 20"
+  resposta: 0
+  explicacao: |
+    O BLE tem 40 canais de 2 MHz. Os índices 37 (2402 MHz), 38 (2426 MHz) e 39 (2480 MHz) são os de advertising; os índices 0 a 36 são de dados. 1, 6 e 11 são canais de Wi-Fi.
+  fonte: "Bluetooth Core Specification, Vol 6, Part A, Frequency bands and channel arrangement; Vol 6, Part B, Physical channel indices"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T04-002
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Quanto tempo leva no ar, no LE 1M, um pacote ADV_NONCONN_IND com 20 bytes de dados de anúncio? Considere preâmbulo de 1 byte, access address de 4, cabeçalho da PDU de 2, endereço do anunciante de 6 e CRC de 3. Responda em µs, com um número inteiro.
+  resposta: {valor: 288, unidade: "µs", tolerancia: 0}
+  explicacao: |
+    PDU = 2 + 6 + 20 = 28 bytes; pacote = 1 + 4 + 28 + 3 = 36 bytes. No LE 1M, 8 µs por byte: 36 × 8 = 288 µs, repetidos em cada um dos três canais.
+  fonte: "Bluetooth Core Specification, Vol 6, Part B, Packet format for the LE Uncoded PHYs e Advertising physical channel PDU"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T04-003
+  objetivo: O1
+  tipo: multipla
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Marque as afirmações corretas sobre os PHYs e a camada de enlace do BLE.
+  alternativas:
+    - "O LE Coded com S=8 transmite a 125 kbit/s e ganha sensibilidade, aumentando o alcance em relação ao LE 1M"
+    - "Entre dois pacotes consecutivos de um evento de conexão há um intervalo fixo de 150 µs (T_IFS)"
+    - "Numa conexão, todos os eventos usam o mesmo canal de dados, escolhido no CONNECT_IND"
+    - "O mapa de canais permite ao central excluir canais ruins do salto de frequência, como os ocupados por um Wi-Fi"
+  resposta: [0, 1, 3]
+  explicacao: |
+    O Coded PHY troca taxa por ganho de codificação (500 kbit/s com S=2, 125 kbit/s com S=8). O T_IFS é de 150 µs. A conexão salta de canal a cada evento pelo algoritmo de seleção #1 ou #2, e o mapa de canais implementa o salto adaptativo.
+  fonte: "Bluetooth Core Specification, Vol 6, Part B, Inter Frame Space, Channel Selection algorithm #1 e #2, Connection state"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T04-004
+  objetivo: O1
+  tipo: vf
+  dificuldade: 2
+  bloom: lembrar
+  enunciado: |
+    Verdadeiro ou falso: o ESP32 clássico (ESP32-D0WD, Xtensa LX6) pode usar o LE 2M PHY e o LE Coded PHY, como o ESP32-C3.
+  resposta: false
+  explicacao: |
+    O ESP32 clássico tem Bluetooth 4.2 no LE e usa só o LE 1M. O ESP32-C3, o S3 e o C6 suportam Bluetooth 5 LE, com 2M, Coded PHY e advertising estendido.
+  fonte: "ESP-IDF Programming Guide, API Guides, Bluetooth LE, Bluetooth LE Overview; Espressif, ESP32-C3 Series Datasheet"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T04-005
+  objetivo: O2
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Um sensor de temperatura só transmite as leituras dentro do anúncio, sem aceitar conexão nem scan request. Que PDU de advertising ele deve usar?
+  alternativas:
+    - "ADV_IND"
+    - "ADV_DIRECT_IND"
+    - "ADV_NONCONN_IND"
+    - "CONNECT_IND"
+  resposta: 2
+  explicacao: |
+    ADV_NONCONN_IND é não conectável e não aceita SCAN_REQ: o beacon puro. ADV_IND é conectável; ADV_DIRECT_IND é dirigido a um central conhecido; CONNECT_IND é enviado pelo central para iniciar a conexão.
+  fonte: "Bluetooth Core Specification, Vol 6, Part B, Advertising physical channel PDU"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T04-006
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um anunciante gasta 20 µC por evento de advertising e consome 3 µA dormindo. Com intervalo de advertising de 500 ms, qual é a corrente média? Responda em µA, com um número inteiro.
+  resposta: {valor: 43, unidade: "µA", tolerancia: 0.01}
+  explicacao: |
+    Corrente média = repouso + carga por evento / período = 3 µA + 20 µC / 0,5 s = 3 + 40 = 43 µA.
+  fonte: "Nordic Semiconductor, Online Power Profiler for Bluetooth LE; Bluetooth Core Specification, Vol 6, Part B, Advertising state"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T04-007
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um beacon numa CR2032 de 220 mAh gasta 15 µC por evento de advertising, anuncia a cada 1 s e consome 2 µA dormindo. Desconsiderando a autodescarga e a queda de capacidade com o pulso de corrente, quanto tempo dura a bateria? Responda em anos (1 ano = 8760 h), com 2 casas decimais.
+  resposta: {valor: 1.48, unidade: "anos", tolerancia: 0.01}
+  explicacao: |
+    I média = 2 + 15/1 = 17 µA = 0,017 mA. Autonomia = 220 / 0,017 = 12 941 h; 12 941 / 8760 = 1,48 ano. Na prática, a CR2032 entrega menos sob picos de corrente, por isso esse número é um teto.
+  fonte: "Nordic Semiconductor, Online Power Profiler for Bluetooth LE; Bluetooth SIG, Bluetooth Low Energy Primer"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T04-008
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Uma conexão BLE usa intervalo de 100 ms e latência do periférico 4. A especificação exige que o tempo de supervisão seja maior que um certo limite. Qual é esse limite? Responda em ms, com um número inteiro.
+  resposta: {valor: 1000, unidade: "ms", tolerancia: 0}
+  explicacao: |
+    connSupervisionTimeout > (1 + latência) × intervalo × 2 = (1 + 4) × 100 × 2 = 1000 ms. Escolhe-se um valor bem acima (ex.: 4 s) para tolerar eventos perdidos.
+  fonte: "Bluetooth Core Specification, Vol 6, Part B, Connection state (Supervision timeout)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T04-009
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Estime a vazão máxima teórica de notificações num sentido, no LE 1M, com DLE (payload de 251 bytes na camada de enlace), enlace cifrado (MIC de 4 bytes) e MTU que permita 244 bytes de dado por notificação. Cada ciclo é pacote de dados + 150 µs + pacote vazio cifrado (10 bytes) + 150 µs; o pacote de dados tem 1 + 4 + 2 + 251 + 4 + 3 bytes. Responda em kbit/s, com 1 casa decimal.
+  resposta: {valor: 780.8, unidade: "kbit/s", tolerancia: 0.01}
+  explicacao: |
+    Pacote de dados = 265 bytes × 8 µs = 2120 µs; vazio = 10 × 8 = 80 µs; ciclo = 2120 + 150 + 80 + 150 = 2500 µs. Dado útil = 251 − 4 (L2CAP) − 3 (ATT) = 244 bytes. Vazão = 244 × 8 bits / 2500 µs = 780,8 kbit/s. É o teto; o celular limita os pacotes por evento.
+  fonte: "Bluetooth Core Specification, Vol 6, Part B, Packet format for the LE Uncoded PHYs e Inter Frame Space; Bluetooth SIG, Understanding Bluetooth LE Throughput"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T04-010
+  objetivo: O3
+  tipo: multipla
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Um app de celular precisa baixar 200 KB de registros de um sensor BLE o mais rápido possível. Marque as medidas que de fato aumentam a vazão.
+  alternativas:
+    - "Negociar o Data Length Extension, para pacotes de até 251 bytes na camada de enlace"
+    - "Aumentar só o MTU para 247, mantendo pacotes de 27 bytes na camada de enlace, e esperar ganho de 10 vezes"
+    - "Pedir um intervalo de conexão curto e usar o LE 2M PHY quando os dois lados suportarem"
+    - "Usar indicações em vez de notificações, porque a confirmação acelera o envio"
+  resposta: [0, 2]
+  explicacao: |
+    O DLE aumenta o pacote no ar e reduz a proporção de cabeçalhos e de T_IFS; o 2M reduz o tempo de cada pacote; intervalos curtos dão mais eventos por segundo. MTU grande sem DLE só fragmenta a notificação no L2CAP, com ganho pequeno. Indicações esperam confirmação a cada pacote e são mais lentas.
+  fonte: "Bluetooth SIG, Understanding Bluetooth LE Throughput; ESP-IDF Programming Guide, API Guides, Bluetooth LE (Data Exchange); examples/bluetooth/nimble/throughput_app"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T04-011
+  objetivo: O3
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Em que passos (unidade) é especificado o intervalo de conexão do BLE?
+  alternativas:
+    - "1,25 ms"
+    - "0,625 ms"
+    - "10 ms"
+    - "1 ms"
+  resposta: 0
+  explicacao: |
+    O intervalo de conexão vai de 7,5 ms a 4 s em passos de 1,25 ms. O intervalo de advertising usa passos de 0,625 ms e o tempo de supervisão, de 10 ms.
+  fonte: "Bluetooth Core Specification, Vol 6, Part B, Connection events; Vol 4, Part E, HCI LE Create Connection command"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T04-012
+  objetivo: O4
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Uma fechadura BLE tem só uma tela (IO capability DisplayOnly) e o celular tem teclado. Com MITM exigido, que método de associação o Security Manager vai escolher?
+  alternativas:
+    - "Just Works"
+    - "Numeric Comparison"
+    - "Out of Band"
+    - "Passkey Entry: a fechadura mostra 6 dígitos e o usuário os digita no celular"
+  resposta: 3
+  explicacao: |
+    Pela tabela de mapeamento das capacidades de E/S, DisplayOnly × KeyboardDisplay (ou KeyboardOnly) leva a Passkey Entry, com o display no dispositivo e a entrada no celular. Numeric Comparison exige tela com sim/não nos dois; OOB só se os dois tiverem dados fora da banda.
+  fonte: "Bluetooth Core Specification, Vol 3, Part H, Security Manager Specification (Selecting key generation method)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T04-013
+  objetivo: O4
+  tipo: multipla
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Marque as afirmações corretas sobre pareamento e privacidade no BLE.
+  alternativas:
+    - "No LE Legacy Pairing com Just Works, um atacante que grave o pareamento com um sniffer consegue obter as chaves e decifrar a sessão"
+    - "No LE Secure Connections, a chave vem de uma troca ECDH P-256, e um sniffer passivo não a obtém, nem com Just Works"
+    - "O bonding faz o dispositivo repetir o pareamento completo a cada conexão, para gerar chaves novas"
+    - "Um endereço privado resolúvel é gerado a partir da IRK e só os aparelhos que têm essa IRK reconhecem o dispositivo"
+  resposta: [0, 1, 3]
+  explicacao: |
+    No Legacy, a TK do Just Works é zero e a chave de curto prazo pode ser deduzida da gravação (ataque do crackle). O Secure Connections usa ECDH; o Just Works dele só fica sem proteção contra MITM ativo. O bonding guarda a LTK para recifrar sem parear de novo. RPA e IRK formam a privacidade do LE.
+  fonte: "Bluetooth Core Specification, Vol 3, Part H, Security Manager Specification; Vol 3, Part C, Privacy feature; Ryan, Bluetooth: With Low Energy comes Low Security (WOOT 2013)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T04-014
+  objetivo: O4
+  tipo: unica
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Um sensor médico vestível, sem tela e sem botão, precisa de enlace com proteção contra MITM (nível 3 ou 4) ao ser pareado pelo app do fabricante. Qual solução atende ao requisito?
+  alternativas:
+    - "Just Works com LE Secure Connections, que já é nível 4"
+    - "Pareamento Out of Band com uma chave única por aparelho, impressa como QR code na embalagem e lida pelo app"
+    - "Passkey fixa 123456 gravada no firmware de todos os aparelhos"
+    - "Desligar a criptografia e usar endereço privado resolúvel"
+  resposta: 1
+  explicacao: |
+    Sem E/S, o único método com MITM é OOB: um canal fora do rádio (QR code, NFC) entrega um segredo único por aparelho. Just Works é no máximo nível 2 (sem autenticação). Passkey fixa e igual em todos vira segredo público. Privacidade de endereço não substitui criptografia.
+  fonte: "Bluetooth Core Specification, Vol 3, Part H, Pairing Methods (Out of Band); Vol 3, Part C, LE security mode 1"
+  origem: ia
+  revisao: rascunho

@@ -1,0 +1,235 @@
+- id: Q-M1.9.T09-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Ao levantar requisitos de conectividade, qual tipo de requisito costuma ser esquecido e mais restringe a escolha entre LPWANs?
+  alternativas:
+    - "A cor do invólucro"
+    - "O tráfego de descida: comandos para o aparelho e atualização de firmware (OTA)"
+    - "O nome do produto"
+    - "A linguagem de programação do firmware"
+  resposta: 1
+  explicacao: |
+    Uplinks pequenos cabem em qualquer LPWAN, mas comandos com latência curta e OTA de centenas de KB eliminam opções: LoRaWAN na TTN tem 10 downlinks por dia; NB-IoT é lento; Sigfox tem 4 downlinks de 8 bytes.
+  fonte: "The Things Network, Fair Use Policy; Sigfox Technical Overview; GSMA, NB-IoT Deployment Guide to Basic Feature Set Requirements"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T09-002
+  objetivo: O1
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um sensor de vazamento vai dentro de um quadro de medidores de concreto no subsolo de prédios em várias cidades, envia um alarme raro e uma leitura diária, funciona a pilha por 8 anos e o cliente não tem equipe de TI. Qual requisito elimina o Wi-Fi do cliente antes de qualquer conta?
+  alternativas:
+    - "A taxa de dados exigida"
+    - "O tamanho do payload"
+    - "Quem instala e mantém a rede, somado ao alcance no subsolo: o Wi-Fi depende de senha, roteador e sinal que o fabricante não controla"
+    - "A latência do alarme"
+  resposta: 2
+  explicacao: |
+    O Wi-Fi do cliente não chega ao subsolo com confiança e depende de terceiros (senha, troca de roteador). Taxa, payload e latência seriam atendidos por Wi-Fi se ele estivesse lá. Sobram opções como NB-IoT ou LoRaWAN com gateway no prédio.
+  fonte: "Kurose & Ross, Computer Networking: A Top-Down Approach, Wireless Links and Network Characteristics; GSMA, NB-IoT Deployment Guide to Basic Feature Set Requirements"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T09-003
+  objetivo: O1
+  tipo: multipla
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Marque os itens que devem constar, com números, nos requisitos de conectividade de um produto IoT.
+  alternativas:
+    - "Volume e frequência de dados em cada sentido"
+    - "Autonomia exigida e fonte de energia"
+    - "A tecnologia de rádio preferida da equipe"
+    - "Custos de módulo, de infraestrutura e recorrentes aceitos pelo cliente"
+  resposta: [0, 1, 3]
+  explicacao: |
+    Dados, energia e custos são requisitos mensuráveis que eliminam ou favorecem tecnologias. A preferência da equipe não é requisito: escolher a tecnologia antes dos requisitos inverte o processo.
+  fonte: "Nygard, Documenting Architecture Decisions; GSMA, Mobile IoT Deployment Map"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T09-004
+  objetivo: O2
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Entre as tecnologias abaixo, qual tem a maior perda máxima de acoplamento (MCL) nominal, favorecendo aparelhos em subsolos?
+  alternativas:
+    - "NB-IoT"
+    - "Wi-Fi 802.11n"
+    - "BLE 1M"
+    - "LTE-M"
+  resposta: 0
+  explicacao: |
+    O NB-IoT foi especificado para 164 dB de MCL, contra 156 dB do LTE-M; Wi-Fi e BLE ficam muito abaixo, com sensibilidades de −70 a −95 dBm e potências pequenas.
+  fonte: "3GPP TR 45.820; GSMA, NB-IoT Deployment Guide to Basic Feature Set Requirements"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T09-005
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Numa matriz ponderada, os pesos são alcance 40%, energia 30% e custo 30%. Uma candidata recebeu notas 8 (alcance), 6 (energia) e 7 (custo). Qual é a nota final? Responda com 1 casa decimal (pontos, escala de 0 a 10).
+  resposta: {valor: 7.1, unidade: "pontos", tolerancia: 0.01}
+  explicacao: |
+    0,4 × 8 + 0,3 × 6 + 0,3 × 7 = 3,2 + 1,8 + 2,1 = 7,1 pontos.
+  fonte: "Nygard, Documenting Architecture Decisions (registro das opções e da decisão)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T09-006
+  objetivo: O2
+  tipo: multipla
+  dificuldade: 3
+  bloom: avaliar
+  enunciado: |
+    Marque as boas práticas no uso de uma matriz ponderada para escolher a rede de um produto.
+  alternativas:
+    - "Aplicar critérios eliminatórios (cobertura inexistente, regulatório, autonomia impossível) antes de somar notas"
+    - "Justificar cada nota com um número (margem de enlace, mA·s por mensagem, R$ por unidade)"
+    - "Ajustar os pesos depois de ver o resultado, até a tecnologia preferida vencer"
+    - "Registrar a segunda colocada como plano B, com a condição que a acionaria"
+  resposta: [0, 1, 3]
+  explicacao: |
+    Eliminatórios primeiro, notas justificadas e plano B documentado tornam a decisão auditável. Ajustar pesos depois do resultado transforma a matriz em justificativa de uma escolha prévia.
+  fonte: "Nygard, Documenting Architecture Decisions"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T09-007
+  objetivo: O2
+  tipo: vf
+  dificuldade: 2
+  bloom: avaliar
+  enunciado: |
+    Verdadeiro ou falso: atualizar por rádio um firmware de 1 MB em sensores classe A conectados à TTN é viável no dia a dia, desde que se use SF7.
+  resposta: false
+  explicacao: |
+    A TTN limita cada dispositivo a 10 downlinks por dia, de poucas dezenas a ~240 bytes cada; 1 MB exigiria milhares de downlinks. FUOTA existe (multicast e fragmentação, com classe C temporária), mas pede servidor próprio e planejamento; na prática, OTA fica por cabo, BLE ou Wi-Fi local.
+  fonte: "The Things Network, Fair Use Policy; LoRa Alliance, RP002-1.0.4, AU915-928MHz ISM Band (Maximum Payload Size)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T09-008
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um nó LoRaWAN gasta 2 mA·s por mensagem, envia 96 mensagens por dia e tem corrente média de repouso de 8 µA (incluindo a placa). Qual é o consumo diário? Responda em mAh/dia, com 3 casas decimais.
+  resposta: {valor: 0.245, unidade: "mAh/dia", tolerancia: 0.01}
+  explicacao: |
+    Mensagens: 2 × 96 / 3600 = 0,0533 mAh. Repouso: 8 µA × 24 h = 0,192 mAh. Total = 0,245 mAh/dia: o repouso já pesa mais que o rádio.
+  fonte: "Semtech, AN1200.22 LoRa Modulation Basics, Time on Air; ESP-IDF Programming Guide, API Guides, Sleep Modes"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T09-009
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um sensor NB-IoT passa a agrupar 4 leituras numa mensagem por hora: 24 mensagens por dia de 246 mA·s cada, com repouso médio de 6 µA. Com 2400 mAh úteis, qual é a autonomia? Responda em anos (365 dias), com 2 casas decimais.
+  resposta: {valor: 3.69, unidade: "anos", tolerancia: 0.01}
+  explicacao: |
+    Consumo diário = 24 × 246 / 3600 + 6 × 24 / 1000 = 1,640 + 0,144 = 1,784 mAh. Autonomia = 2400 / 1,784 / 365 = 3,69 anos, contra menos de 1 ano enviando 96 mensagens por dia.
+  fonte: "GSMA, NB-IoT Deployment Guide to Basic Feature Set Requirements, Power Saving Mode"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T09-010
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Calcule o custo total de propriedade em 5 anos de 500 sensores NB-IoT com módulo de R$ 90 e plano de dados de R$ 1,50 por mês por unidade, sem infraestrutura própria. Responda em R$, com um número inteiro.
+  resposta: {valor: 90000, unidade: "R$", tolerancia: 0}
+  explicacao: |
+    Por unidade: 90 + 1,50 × 60 meses = R$ 180. Total: 500 × 180 = R$ 90 000. O recorrente iguala o custo do módulo.
+  fonte: "GSMA, Mobile IoT Deployment Map; modelo de TCO do roteiro M1.9.T09"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T09-011
+  objetivo: O3
+  tipo: unica
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    O cálculo de autonomia de um nó LoRaWAN em SF7 deu 26,8 anos com 2400 mAh. Como esse resultado deve ser tratado no registro de decisão?
+  alternativas:
+    - "Como garantia de 26 anos de funcionamento, a ser anunciada no catálogo"
+    - "Como sinal de que o rádio deixou de ser o gargalo: a autonomia real será limitada pela autodescarga, pela vida da pilha e pela temperatura, tipicamente a cerca de 10 anos, e a margem pode ser trocada por mensagens mais frequentes ou bateria menor"
+    - "Como erro de cálculo, porque nenhum rádio permite mais de 2 anos"
+    - "Como motivo para usar SF12 em todos os nós, já que sobra energia"
+  resposta: 1
+  explicacao: |
+    Quando a conta passa de uma década, outros efeitos dominam (autodescarga de 1 a 3% ao ano, prateleira, frio). A folga é um recurso de projeto. Usar SF12 sem necessidade gasta cota e canal e reduz a autonomia a cerca de 5 anos no mesmo exemplo.
+  fonte: "Semtech, AN1200.22 LoRa Modulation Basics; ESP-IDF Programming Guide, API Guides, Sleep Modes"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T09-012
+  objetivo: O4
+  tipo: vf
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: com TLS mútuo e um certificado próprio em cada unidade, o servidor pode revogar um aparelho roubado sem afetar os demais.
+  resposta: true
+  explicacao: |
+    Cada unidade se autentica com a sua chave privada e o seu certificado; revogar um certificado barra só aquele aparelho. Com uma senha comum, seria preciso trocá-la em todos.
+  fonte: "Kurose & Ross, Computer Networking: A Top-Down Approach, Securing TCP Connections: TLS; ESP-IDF Programming Guide, API Reference, ESP-TLS"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T09-013
+  objetivo: O4
+  tipo: multipla
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Marque as afirmações corretas sobre onde a segurança mora numa arquitetura IoT.
+  alternativas:
+    - "No LoRaWAN, o servidor de rede autentica os quadros, mas os dados de aplicação vão cifrados com uma chave que só o servidor de aplicação conhece"
+    - "WPA3 no Wi-Fi do cliente garante que os dados chegam cifrados até a nuvem"
+    - "O TLS exige que o dispositivo saiba a hora correta, para validar a vigência dos certificados"
+    - "Gravar a mesma AppKey em todos os nós LoRaWAN de um lote faz com que um aparelho comprometido exponha os demais"
+  resposta: [0, 2, 3]
+  explicacao: |
+    AppSKey separa rede e aplicação. Segurança de enlace (WPA3) cobre só o rádio até o roteador. Certificados têm validade; sem SNTP o ESP32 começa em 1970. Chaves iguais em todo o lote transformam um vazamento num comprometimento geral.
+  fonte: "LoRa Alliance, LoRaWAN Security white paper; ESP-IDF Programming Guide, API Reference, ESP-TLS; Kurose & Ross, Securing TCP Connections: TLS"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T09-014
+  objetivo: O4
+  tipo: multipla
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Uma startup vai vender no Brasil um sensor com módulo ESP32-WROOM e módulo LoRa já homologados. Marque as decisões corretas quanto à homologação na Anatel.
+  alternativas:
+    - "Consultar um OCD no início do projeto para saber quais ensaios o produto final exige e incluir prazo e custo no cronograma e no TCO"
+    - "Manter a antena avaliada na homologação, ou de ganho igual ou menor, em vez de trocar por uma de ganho maior sem reavaliar"
+    - "Vender o lote piloto sem homologação, porque os módulos já são homologados e isso dispensa qualquer avaliação do produto"
+    - "Tratar à parte as certificações de ecossistema (LoRa Alliance, Bluetooth SIG, CSA), que não substituem a da Anatel"
+  resposta: [0, 1, 3]
+  explicacao: |
+    O módulo homologado reduz ensaios e risco, mas o produto final em geral também precisa ser homologado, com a antena avaliada. Certificações de ecossistema são independentes da Anatel. Vender sem homologação expõe a multa e apreensão.
+  fonte: "Anatel, Resolução n.º 715/2019 (Regulamento de Avaliação da Conformidade e de Homologação de Produtos para Telecomunicações); Ato n.º 14448/2017"
+  origem: ia
+  revisao: rascunho

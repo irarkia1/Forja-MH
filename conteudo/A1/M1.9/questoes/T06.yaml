@@ -1,0 +1,235 @@
+- id: Q-M1.9.T06-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Qual é a largura de banda de canal do NB-IoT?
+  alternativas:
+    - "1,4 MHz"
+    - "125 kHz"
+    - "20 MHz"
+    - "180 kHz, um bloco de recursos do LTE"
+  resposta: 3
+  explicacao: |
+    O NB-IoT ocupa 180 kHz (um PRB), podendo operar dentro de uma portadora LTE, na banda de guarda ou isolado. 1,4 MHz é o LTE-M; 125 kHz é uma largura típica do LoRa; 20 MHz é um canal LTE ou Wi-Fi.
+  fonte: "GSMA, NB-IoT Deployment Guide to Basic Feature Set Requirements, Introduction; 3GPP TS 36.300"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T06-002
+  objetivo: O1
+  tipo: multipla
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Marque as comparações corretas entre NB-IoT, LTE-M, LoRaWAN e Sigfox.
+  alternativas:
+    - "NB-IoT e LTE-M usam espectro licenciado das operadoras; LoRaWAN e Sigfox usam faixas ISM"
+    - "O LTE-M suporta handover entre células em conexão, o que o favorece em aplicações móveis"
+    - "O NB-IoT tem MCL maior que o LTE-M, alcançado em parte com repetições das transmissões"
+    - "O Sigfox permite mensagens de até 1 KB e downlinks ilimitados"
+  resposta: [0, 1, 2]
+  explicacao: |
+    As variantes celulares usam espectro da operadora; LoRa e Sigfox, faixas livres. O LTE-M tem mobilidade com handover; o NB-IoT (Rel-13) só reseleção em ocioso. MCL: 164 dB no NB-IoT contra 156 dB no LTE-M, com cobertura estendida por repetições. O Sigfox limita o uplink a 12 bytes e a poucos downlinks de 8 bytes por dia.
+  fonte: "3GPP TR 45.820; GSMA, LTE-M e NB-IoT Deployment Guides to Basic Feature Set Requirements; Sigfox Technical Overview"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T06-003
+  objetivo: O1
+  tipo: unica
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Um rastreador de carga vai em caminhões por rodovias de vários estados, envia posição a cada 2 minutos em movimento e precisa receber comandos com latência de poucos segundos. Qual tecnologia é a mais adequada?
+  alternativas:
+    - "LTE-M, por ter handover, latência menor e taxa maior, com cobertura das operadoras nas rodovias"
+    - "LoRaWAN na TTN, porque é gratuito"
+    - "NB-IoT, por ter o maior MCL"
+    - "Sigfox, pelo menor consumo"
+  resposta: 0
+  explicacao: |
+    Mobilidade com handover, latência de dezenas a centenas de ms e cobertura nacional da operadora favorecem o LTE-M. LoRaWAN depende de gateways ao longo do caminho e da cota de uso; NB-IoT tem mobilidade limitada e latência de segundos; Sigfox não comporta a frequência de mensagens nem os comandos.
+  fonte: "GSMA, LTE-M Deployment Guide to Basic Feature Set Requirements; GSMA, Mobile IoT Deployment Map"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T06-004
+  objetivo: O2
+  tipo: vf
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: um modem NB-IoT em PSM pode receber a qualquer momento um comando do servidor, com atraso de no máximo um ciclo de paging.
+  resposta: false
+  explicacao: |
+    Em PSM o rádio fica desligado e o aparelho é inalcançável até acordar por conta própria (para enviar ou na atualização periódica T3412). Quem fica alcançável com atraso controlado é o eDRX.
+  fonte: "GSMA, NB-IoT Deployment Guide to Basic Feature Set Requirements, Power Saving Mode e eDRX; 3GPP TS 24.301, Power saving mode"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T06-005
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    A rede concedeu o T3412 estendido "01000011" (GPRS Timer 3: 3 bits de unidade, 5 de valor; unidade 010 = 10 h). Qual é o período da atualização periódica? Responda em h, com um número inteiro.
+  resposta: {valor: 30, unidade: "h", tolerancia: 0}
+  explicacao: |
+    Unidade 010 = 10 h; valor 00011 = 3. T3412 = 3 × 10 h = 30 h.
+  fonte: "3GPP TS 24.008, GPRS Timer 3; 3GPP TS 27.007, Power saving mode setting +CPSMS"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T06-006
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    O T3324 (GPRS Timer 2) recebido foi "00100010", em que a unidade 001 vale 1 min. Por quanto tempo o aparelho fica alcançável em ocioso antes de entrar em PSM? Responda em s, com um número inteiro.
+  resposta: {valor: 120, unidade: "s", tolerancia: 0}
+  explicacao: |
+    Unidade 001 = 1 min; valor 00010 = 2. T3324 = 2 min = 120 s.
+  fonte: "3GPP TS 24.008, GPRS Timer 2; 3GPP TS 27.007, Power saving mode setting +CPSMS"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T06-007
+  objetivo: O2
+  tipo: multipla
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Marque as afirmações corretas sobre o caminho do dado e a economia de energia no IoT celular.
+  alternativas:
+    - "O APN determina por qual gateway de pacotes o dado sai: internet, rede privada da empresa ou plataforma da operadora"
+    - "Os temporizadores de PSM e eDRX pedidos pelo dispositivo podem ser alterados ou recusados pela rede"
+    - "Ao sair do PSM para transmitir, o modem sempre refaz o attach completo"
+    - "Depois do último pacote, a rede costuma manter a conexão RRC por alguns segundos de inatividade antes de liberá-la, o que consome energia"
+  resposta: [0, 1, 3]
+  explicacao: |
+    O APN escolhe o P-GW e a rede de destino. A rede concede os valores de PSM e eDRX (confira com +CEREG=4). O PSM existe justamente para voltar a transmitir sem novo attach, porque o registro foi mantido. O tempo de inatividade antes da liberação é uma parcela grande do gasto.
+  fonte: "Kurose & Ross, Computer Networking: A Top-Down Approach, 4G LTE Cellular Networks: Architecture and Elements; GSMA, NB-IoT Deployment Guide, Power Saving Mode"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T06-008
+  objetivo: O3
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Que comando AT do TS 27.007 informa o estado de registro do modem na rede LTE (EPS), inclusive se está em roaming?
+  alternativas:
+    - "AT+CSQ"
+    - "AT+CGDCONT"
+    - "AT+CEREG?"
+    - "AT+CFUN=1"
+  resposta: 2
+  explicacao: |
+    +CEREG mostra o stat (1 = rede de origem, 5 = roaming, 2 = procurando, 3 = negado). +CSQ é o sinal, +CGDCONT define o contexto e o APN, +CFUN liga o rádio.
+  fonte: "3GPP TS 27.007, EPS network registration status +CEREG"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T06-009
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um modem responde +CSQ: 6,99. Qual é o RSSI correspondente, pela tabela do TS 27.007 (0 = −113 dBm, passo de 2 dB)? Responda em dBm, com um número inteiro.
+  resposta: {valor: -101, unidade: "dBm", tolerancia: 0}
+  explicacao: |
+    RSSI = −113 + 2 × 6 = −101 dBm. O valor 99 indicaria sinal desconhecido. No LTE, prefira o RSRP do +CESQ.
+  fonte: "3GPP TS 27.007, Signal quality +CSQ"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T06-010
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Na resposta +CESQ: 99,99,255,255,20,42, o último campo é o índice de RSRP, em que cada unidade vale 1 dB e o valor aproximado é índice − 141 dBm. Qual é o RSRP? Responda em dBm, com um número inteiro.
+  resposta: {valor: -99, unidade: "dBm", tolerancia: 0}
+  explicacao: |
+    RSRP ≈ 42 − 141 = −99 dBm (a faixa do índice 42 é −99 ≤ RSRP < −98 dBm). O campo anterior, 20, é o RSRQ: ≈ −20 + 20/2 = −10 dB. Sinal bom para NB-IoT e LTE-M.
+  fonte: "3GPP TS 27.007, Extended signal quality +CESQ"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T06-011
+  objetivo: O3
+  tipo: unica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Que valor do T3412 estendido se passa no AT+CPSMS para pedir atualização periódica a cada 24 horas?
+  alternativas:
+    - "00011000"
+    - "00111000"
+    - "01011000"
+    - "11111000"
+  resposta: 1
+  explicacao: |
+    Unidade 001 = 1 h e valor 11000 = 24: "00111000". Com a unidade 000 (10 min), 24 daria 4 h; 010 (10 h) daria 240 h; 111 desativa o temporizador.
+  fonte: "3GPP TS 24.008, GPRS Timer 3; 3GPP TS 27.007, Power saving mode setting +CPSMS"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T06-012
+  objetivo: O4
+  tipo: unica
+  dificuldade: 2
+  bloom: analisar
+  enunciado: |
+    O driver envia AT+CSQ e, antes da resposta, chega a linha +CEREG: 1,"1A2B","0C3D4E5F",9. Como um driver robusto deve tratar essa linha?
+  alternativas:
+    - "Como resposta do AT+CSQ, e tentar extrair dela o sinal"
+    - "Como URC: repassar ao tratador de eventos de registro e continuar esperando +CSQ e o código final, com tempo limite"
+    - "Como erro, abortando o comando"
+    - "Descartar tudo o que chegar até o próximo OK, inclusive o +CSQ"
+  resposta: 1
+  explicacao: |
+    Respostas não solicitadas podem chegar a qualquer momento. O driver reconhece o prefixo de URC, entrega ao tratador e continua lendo linha a linha até OK, ERROR ou +CME ERROR, guardando a linha com o prefixo esperado.
+  fonte: "3GPP TS 27.007, EPS network registration status +CEREG (unsolicited result code); Quectel, BG95 AT Commands Manual"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T06-013
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um sensor NB-IoT envia uma vez por hora. A cada hora: 2 s transmitindo a 70 mA de média, 8 s esperando a liberação da conexão a 10 mA, 6 s em ocioso (T3324) a 2 mA e o resto da hora em PSM a 4 µA. Quanto ele consome por dia? Responda em mAh, com 2 casas decimais.
+  resposta: {valor: 1.64, unidade: "mAh", tolerancia: 0.01}
+  explicacao: |
+    Por hora: 2 × 70 + 8 × 10 + 6 × 2 + (3600 − 16) × 0,004 = 140 + 80 + 12 + 14,34 = 246,34 mA·s = 0,0684 mAh. Por dia: 24 × 0,0684 = 1,64 mAh. A transmissão e a espera pela liberação somam 89% do gasto.
+  fonte: "GSMA, NB-IoT Deployment Guide to Basic Feature Set Requirements, Power Saving Mode; Quectel, BG95 Low Power Mode Application Note"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T06-014
+  objetivo: O4
+  tipo: multipla
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Marque as características de um driver de modem AT pronto para produto.
+  alternativas:
+    - "Toda leitura tem tempo limite, e um comando sem resposta devolve um código de erro em vez de travar a tarefa"
+    - "Os comandos são enviados com um delay fixo entre eles, sem ler as respostas, para ganhar tempo"
+    - "Uma máquina de estados conduz ligar, configurar, registrar, enviar e dormir, com recuperação por CFUN e por reset de hardware após falhas repetidas"
+    - "AT+CMEE=1 é ativado para que os erros venham com código numérico interpretável"
+  resposta: [0, 2, 3]
+  explicacao: |
+    Tempo limite, máquina de estados com recuperação escalonada e códigos +CME ERROR são a base. Delays fixos sem ler as respostas quebram quando o modem demora, responde em partes ou manda URCs.
+  fonte: "3GPP TS 27.007, Mobile termination error result code +CME ERROR; Quectel, BG95 AT Commands Manual"
+  origem: ia
+  revisao: rascunho

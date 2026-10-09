@@ -1,0 +1,225 @@
+- id: Q-M1.9.T08-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Num orçamento de enlace, um rádio de +20 dBm alimenta, por um cabo com 2 dB de perda, uma antena de 6 dBi. Qual expressão dá o EIRP?
+  alternativas:
+    - "20 dBm − 2 dB + 6 dBi = 24 dBm"
+    - "20 dBm + 2 dB + 6 dBi = 28 dBm"
+    - "20 dBm × 6 dBi − 2 dB = 118 dBm"
+    - "20 dBm − 6 dBi + 2 dB = 16 dBm"
+  resposta: 0
+  explicacao: |
+    EIRP = P_tx − perdas até a antena + ganho da antena, tudo em dB: 20 − 2 + 6 = 24 dBm. Em dB, ganhos e perdas se somam e subtraem; dBm + dB dá dBm. Multiplicar valores em dB não tem sentido.
+  fonte: "Semtech, AN1200.22 LoRa Modulation Basics, Link Budget and Receiver Sensitivity; Texas Instruments, AN058 Antenna Selection Guide"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T08-002
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Calcule a perda no espaço livre (FSPL) a 2 km em 915 MHz, usando FSPL = 20·log₁₀(d em km) + 20·log₁₀(f em MHz) + 32,44. Responda em dB, com 1 casa decimal.
+  resposta: {valor: 97.7, unidade: "dB", tolerancia: 0.01}
+  explicacao: |
+    20·log₁₀(2) = 6,02; 20·log₁₀(915) = 59,23; soma com 32,44 = 97,69 ≈ 97,7 dB.
+  fonte: "ITU-R P.525, Calculation of free-space attenuation; Semtech, AN1200.22 LoRa Modulation Basics"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T08-003
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Enlace LoRa a 3 km em 915 MHz, em espaço livre: nó com +14 dBm, 1 dB de perdas e antena de 2 dBi; gateway com antena de 6 dBi e 1,5 dB de cabo; sensibilidade do receptor −130 dBm. Qual é a margem do enlace? Use FSPL = 20·log₁₀(d em km) + 20·log₁₀(f em MHz) + 32,44. Responda em dB, com 1 casa decimal.
+  resposta: {valor: 48.3, unidade: "dB", tolerancia: 0.01}
+  explicacao: |
+    FSPL = 9,54 + 59,23 + 32,44 = 101,21 dB. P_rx = 14 − 1 + 2 − 101,21 + 6 − 1,5 = −81,71 dBm. Margem = −81,71 − (−130) = 48,3 dB. Em espaço livre sobra muito; o terreno e a zona de Fresnel consomem boa parte disso no mundo real.
+  fonte: "ITU-R P.525; Semtech, AN1200.22 LoRa Modulation Basics, Link Budget and Receiver Sensitivity"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T08-004
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Dois módulos de 2,4 GHz (use f = 2400 MHz) transmitem a +8 dBm com antenas de 2 dBi nos dois lados; a sensibilidade é −96 dBm e o projeto exige 20 dB de margem. Qual é o alcance máximo em espaço livre? Use FSPL = 20·log₁₀(d em km) + 20·log₁₀(f em MHz) + 32,44. Responda em m, com um número inteiro.
+  resposta: {valor: 250, unidade: "m", tolerancia: 0.01}
+  explicacao: |
+    Perda máxima = 8 + 2 + 2 − (−96 + 20) = 88 dB. 20·log₁₀(d) = 88 − 67,60 − 32,44 = −12,04 → d = 10^(−0,602) km ≈ 0,250 km = 250 m. Dentro de casa, com paredes, o alcance real é bem menor.
+  fonte: "ITU-R P.525; Texas Instruments, AN058 Antenna Selection Guide"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T08-005
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Estime a sensibilidade de um receptor LoRa em SF9, BW de 125 kHz, figura de ruído de 6 dB e SNR mínima de −12,5 dB, partindo de −174 dBm/Hz. Responda em dBm, com 1 casa decimal.
+  resposta: {valor: -129.5, unidade: "dBm", tolerancia: 0.01}
+  explicacao: |
+    S = −174 + 10·log₁₀(125 000) + 6 + (−12,5) = −174 + 50,97 + 6 − 12,5 = −129,5 dBm.
+  fonte: "Semtech, AN1200.22 LoRa Modulation Basics, Link Budget and Receiver Sensitivity; Semtech, SX1276/77/78/79 Datasheet, tabela de SNR por fator de espalhamento"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T08-006
+  objetivo: O2
+  tipo: vf
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: um receptor LoRa em SF12 consegue demodular um sinal cuja potência está abaixo do piso de ruído no canal, porque o espalhamento em chirp dá ganho de processamento.
+  resposta: true
+  explicacao: |
+    A SNR mínima do LoRa é negativa (cerca de −20 dB em SF12): a correlação com o chirp concentra a energia de 2^SF chips num pico, enquanto o ruído não se soma da mesma forma. O preço é o tempo no ar maior.
+  fonte: "Semtech, AN1200.22 LoRa Modulation Basics, LoRa Modulation e Link Budget and Receiver Sensitivity"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T08-007
+  objetivo: O2
+  tipo: multipla
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Marque as afirmações corretas sobre a sensibilidade de receptores.
+  alternativas:
+    - "Mantidas NF e SNR mínima, reduzir a largura de banda de 500 kHz para 125 kHz melhora a sensibilidade em cerca de 6 dB"
+    - "Uma figura de ruído 3 dB maior piora a sensibilidade em 3 dB"
+    - "Duas sensibilidades de datasheet podem ser comparadas diretamente, mesmo que uma seja medida a 1 Mbit/s e a outra a 125 kbit/s"
+    - "Modulações densas, que levam mais bits por símbolo, exigem SNR maior e por isso têm sensibilidade pior"
+  resposta: [0, 1, 3]
+  explicacao: |
+    10·log₁₀(500/125) = 6,02 dB a menos de ruído. A NF entra somada na fórmula. Sensibilidade depende da taxa, da banda e do critério de erro: só se compara na mesma condição. 64-QAM exige muito mais SNR que BPSK.
+  fonte: "Semtech, AN1200.22 LoRa Modulation Basics; Kurose & Ross, Computer Networking: A Top-Down Approach, Wireless Links and Network Characteristics"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T08-008
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Qual é o raio da primeira zona de Fresnel no ponto médio de um enlace de 2 km em 2,4 GHz? Use r₁ (m) ≈ 8,66·√(d em km / f em GHz). Responda em m, com 1 casa decimal.
+  resposta: {valor: 7.9, unidade: "m", tolerancia: 0.01}
+  explicacao: |
+    r₁ = 8,66·√(2/2,4) = 8,66 × 0,913 = 7,9 m. Para 60% de desobstrução, 4,7 m de espaço livre em torno da visada no meio do caminho.
+  fonte: "ITU-R P.526, Propagation by diffraction (Fresnel ellipsoids and Fresnel zones)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T08-009
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Num galpão, você mediu −40 dBm a 1 m do transmissor e −82 dBm a 25 m (médias de várias leituras). Pelo modelo log-distância, qual é o expoente de perda n? Responda com 2 casas decimais (adimensional).
+  resposta: {valor: 3.0, unidade: "adimensional", tolerancia: 0.01}
+  explicacao: |
+    PL(25) − PL(1) = 42 dB = 10·n·log₁₀(25) = 13,98·n → n = 3,00. Bem acima dos 2 do espaço livre: obstruções e multipercurso.
+  fonte: "Kurose & Ross, Computer Networking: A Top-Down Approach, Wireless Links and Network Characteristics; Texas Instruments, DN018 Range Measurements in an Open Field Environment"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T08-010
+  objetivo: O3
+  tipo: unica
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Um gateway LoRa a 3 m de altura, num galpão de fazenda, deveria cobrir sensores a 6 km em terreno plano, com nós a 1,5 m do chão. A conta de espaço livre dá mais de 40 dB de margem, mas os nós além de 2 km não chegam. Qual é a melhor explicação e ação?
+  alternativas:
+    - "A potência do nó é baixa; trocar para +20 dBm resolve sem mudar o gateway"
+    - "O SF está alto demais; baixar para SF7 aumenta o alcance"
+    - "A antena do gateway tem ganho baixo; uma de 15 dBi resolve"
+    - "A zona de Fresnel (dezenas de metros de raio a 6 km em 915 MHz) está obstruída pelo solo e pela vegetação; subir a antena do gateway, de preferência acima de 20 a 30 m, é a medida principal"
+  resposta: 3
+  explicacao: |
+    A 6 km em 915 MHz, r₁ no meio ≈ 8,66·√(6/0,915) ≈ 22 m; 60% ≈ 13 m. Com antenas a 3 m e 1,5 m, o solo ocupa a zona de Fresnel e a perda real fica muito acima da FSPL. Altura é a solução; SF menor reduz alcance; potência e ganho altos ajudam pouco e esbarram em limites.
+  fonte: "ITU-R P.526, Propagation by diffraction; Texas Instruments, DN018 Range Measurements in an Open Field Environment"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T08-011
+  objetivo: O3
+  tipo: unica
+  dificuldade: 2
+  bloom: lembrar
+  enunciado: |
+    Que desobstrução mínima da primeira zona de Fresnel a regra prática de projeto de enlaces recomenda?
+  alternativas:
+    - "10% do raio"
+    - "60% do raio"
+    - "100% do raio, sempre"
+    - "Nenhuma: basta haver visada direta entre as antenas"
+  resposta: 1
+  explicacao: |
+    Mantém-se ao menos 60% do raio da primeira zona livre de obstáculos (incluindo a curvatura da Terra). Visada direta sozinha não basta: obstáculos dentro da zona causam perda por difração.
+  fonte: "ITU-R P.526, Propagation by diffraction; ITU-R P.530"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T08-012
+  objetivo: O4
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Qual é o ganho de um dipolo de meia onda em relação à antena isotrópica?
+  alternativas:
+    - "0 dBi"
+    - "6 dBi"
+    - "2,15 dBi"
+    - "−2,15 dBi"
+  resposta: 2
+  explicacao: |
+    O dipolo de meia onda tem 2,15 dBi de ganho (diagrama em rosquinha). Daí a relação dBi = dBd + 2,15. A isotrópica, referência teórica, tem 0 dBi.
+  fonte: "Texas Instruments, AN058 Antenna Selection Guide; SWRA479 Antenna Selection Quick Guide"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T08-013
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Pela regra geral de radiação restrita para essas faixas, a potência conduzida máxima é 30 dBm com antena de até 6 dBi, e acima disso a potência deve ser reduzida dB a dB pelo ganho excedente. Qual é a potência conduzida máxima com uma antena de 10 dBi? Responda em dBm, com um número inteiro.
+  resposta: {valor: 26, unidade: "dBm", tolerancia: 0}
+  explicacao: |
+    Excesso de ganho = 10 − 6 = 4 dB. Potência máxima = 30 − 4 = 26 dBm. O EIRP máximo permanece em 36 dBm.
+  fonte: "Anatel, Ato n.º 14448/2017 (requisitos técnicos de radiação restrita, faixas 902–907,5 MHz, 915–928 MHz e 2400–2483,5 MHz); Resolução n.º 680/2017"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.9.T08-014
+  objetivo: O4
+  tipo: multipla
+  dificuldade: 3
+  bloom: avaliar
+  enunciado: |
+    Marque as boas práticas de antena para um sensor IoT com módulo ESP32-WROOM dentro de um invólucro.
+  alternativas:
+    - "Deixar a antena de PCB do módulo na borda da placa, sem cobre em nenhuma camada sob ela e longe de metal"
+    - "Montar o gateway e os nós com antenas na mesma polarização, normalmente vertical"
+    - "Instalar o invólucro metálico fechado em volta da antena, porque o metal reflete e aumenta o ganho"
+    - "Validar o alcance com o produto montado no invólucro e no local de uso, não com a placa nua na bancada"
+  resposta: [0, 1, 3]
+  explicacao: |
+    A área livre e a posição na borda seguem as Hardware Design Guidelines; polarizações cruzadas perdem muitos dB; invólucro, metal e corpo desafinam e bloqueiam a antena, por isso a medição vale montada. Metal em volta não dá ganho: bloqueia e desafina.
+  fonte: "Espressif, ESP32 Hardware Design Guidelines, PCB Layout Design (Antenna); Texas Instruments, AN058 Antenna Selection Guide"
+  origem: ia
+  revisao: rascunho
