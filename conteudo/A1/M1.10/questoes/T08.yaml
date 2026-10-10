@@ -1,0 +1,230 @@
+- id: Q-M1.10.T08-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    No modelo de dados do InfluxDB, qual elemento é indexado e serve para filtrar e agrupar, como o id do dispositivo?
+  alternativas:
+    - "O campo (field)"
+    - "O timestamp"
+    - "A tag"
+    - "O valor do campo"
+  resposta: 2
+  explicacao: |
+    Tags são pares chave/valor de texto indexados; campos guardam os valores medidos e não são indexados. Por isso o id do aparelho é tag e a temperatura é campo.
+  fonte: "InfluxDB OSS v2 Documentation, Key concepts, Data elements"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T08-002
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Uma medida tem as tags id (2000 dispositivos) e modelo (3 valores, cada aparelho tem um só modelo) e 4 campos. Quantas séries existem? Responda em séries, como número inteiro.
+  resposta: {valor: 8000, unidade: "séries", tolerancia: 0}
+  explicacao: |
+    As combinações de tags que existem são 2000 (o modelo acompanha o aparelho e não multiplica); vezes 4 campos = 8000 séries. Se o modelo variasse independentemente, seriam 2000 × 3 × 4.
+  fonte: "InfluxDB OSS v2 Documentation, Key concepts (series) e Resolve high series cardinality"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T08-003
+  objetivo: O1
+  tipo: multipla
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Marque as linhas de line protocol que vão causar problema num InfluxDB que já recebe leitura,id=forja-001 t=23.5,u=61i com precision=s.
+  alternativas:
+    - "leitura,id=forja-001,seq=88231 t=23.4 1791633600, porque o número de sequência como tag cria uma série por mensagem"
+    - "leitura,id=forja-002 t=22.0,u=58i 1791633600"
+    - "leitura,id=forja-001 t=\"23.4\" 1791633600, porque o tipo do campo t muda de float para string"
+    - "leitura,id=forja-001 t=23.4 1791633600000, porque com precision=s esse número fica fora do intervalo de tempo aceito"
+  resposta: [0, 2, 3]
+  explicacao: |
+    seq como tag tem cardinalidade ilimitada; o tipo de um campo não pode mudar (o InfluxDB recusa com field type conflict); um timestamp em milissegundos lido como segundos passa do limite de tempo do InfluxDB (nanossegundos em 64 bits, até 2262) e a escrita é recusada com "time outside range". A terceira linha é uma leitura normal de outro aparelho.
+  fonte: "InfluxDB OSS v2 Documentation, Line protocol e Resolve high series cardinality; InfluxDB API, precision"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T08-004
+  objetivo: O2
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Na linguagem Flux, que função agrupa os pontos em janelas de tempo e aplica uma agregação como mean ou max?
+  alternativas:
+    - "range()"
+    - "aggregateWindow()"
+    - "filter()"
+    - "to()"
+  resposta: 1
+  explicacao: |
+    aggregateWindow(every: 1h, fn: mean) cria as janelas e agrega. range recorta o período, filter escolhe medida, campo e tags, e to grava o resultado em outro bucket.
+  fonte: "InfluxDB OSS v2 Documentation, Query data, Get started with Flux; Flux reference, aggregateWindow()"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T08-005
+  objetivo: O2
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: no InfluxDB, gravar de novo um ponto com a mesma medida, as mesmas tags e o mesmo timestamp cria uma segunda linha, e a consulta passa a mostrar os dois valores.
+  resposta: false
+  explicacao: |
+    Mesma série e mesmo instante identificam o mesmo ponto: a escrita nova sobrescreve os campos. No laboratório, o valor 23,7 virou 23,9. É o que torna a duplicata do QoS 1 inofensiva quando o dispositivo envia o próprio horário.
+  fonte: "InfluxDB OSS v2 Documentation, Write data (Handle duplicate data points)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T08-006
+  objetivo: O2
+  tipo: unica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    No TimescaleDB, que construção mantém automaticamente a média horária por dispositivo a partir de uma hypertable de leituras brutas?
+  alternativas:
+    - "Uma visão materializada com timescaledb.continuous (agregado contínuo) e uma política de atualização"
+    - "Um índice B-tree na coluna ts"
+    - "Uma chave primária composta (id, ts)"
+    - "A função create_hypertable com intervalo de 1 hora"
+  resposta: 0
+  explicacao: |
+    O agregado contínuo (CREATE MATERIALIZED VIEW ... WITH (timescaledb.continuous) com time_bucket) é recalculado pela política add_continuous_aggregate_policy. A chave (id, ts) trata duplicatas; o intervalo da hypertable define o tamanho das partições.
+  fonte: "Timescale Documentation, Continuous aggregates e time_bucket()"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T08-007
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    O bucket bruto recebe uma leitura a cada 10 s; a tarefa horária grava média, mínimo e máximo de cada campo. Por qual fator o número de valores de cada campo é reduzido? Responda com o fator adimensional, como número inteiro.
+  resposta: {valor: 120, unidade: "vezes", tolerancia: 0}
+  explicacao: |
+    Uma hora tem 360 leituras de 10 s; elas viram 3 valores (média, mín, máx): 360 / 3 = 120.
+  fonte: "InfluxDB OSS v2 Documentation, Process data, Downsample data"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T08-008
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    500 dispositivos gravam 2 campos a cada 30 s. Supondo 2 bytes por valor depois da compressão, quanto o bucket bruto ocupa com 30 dias de retenção? Responda em MB (10^6 bytes), com 1 casa decimal.
+  resposta: {valor: 172.8, unidade: "MB", tolerancia: 0.01}
+  explicacao: |
+    Valores = 500 × 2 × 2 por minuto × 1440 × 30 = 86,4 milhões; × 2 bytes = 172,8 MB. A taxa real de compressão depende dos dados: meça com um dia realista.
+  fonte: "InfluxDB OSS v2 Documentation, Manage buckets (retention) e Key concepts"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T08-009
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    1000 dispositivos, 3 campos. A camada horária guarda média, mínimo e máximo de cada campo por 2 anos (730 dias). Quantos valores ela contém quando está cheia? Responda em milhões de valores, com 2 casas decimais.
+  resposta: {valor: 157.68, unidade: "milhões de valores", tolerancia: 0.01}
+  explicacao: |
+    3 agregados × 3 campos × 24 h × 730 dias × 1000 = 157,68 milhões. O bruto de 30 dias, a cada 10 s, tem 777,6 milhões: a camada que guarda 24 vezes mais tempo é 5 vezes menor.
+  fonte: "InfluxDB OSS v2 Documentation, Downsample data e Manage buckets"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T08-010
+  objetivo: O3
+  tipo: unica
+  dificuldade: 2
+  bloom: avaliar
+  enunciado: |
+    Uma câmara fria ficou 50 minutos a 4 °C e 10 minutos a 12 °C numa mesma hora. O limite é 8 °C. Por que a tarefa de downsampling deve guardar também o máximo?
+  alternativas:
+    - "Porque a média horária (5,3 °C) esconde o pico de 12 °C que estragou a carga"
+    - "Porque o InfluxDB não calcula média de valores negativos"
+    - "Porque o máximo ocupa menos espaço que a média"
+    - "Porque a média só pode ser calculada no bucket bruto"
+  resposta: 0
+  explicacao: |
+    (50 × 4 + 10 × 12) / 60 = 5,3 °C, dentro do limite. Só o máximo da janela mostra a violação depois que o bruto expirar.
+  fonte: "InfluxDB OSS v2 Documentation, Downsample data; Flux reference, aggregateWindow() (fn: max)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T08-011
+  objetivo: O4
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Que plugin do Telegraf assina tópicos MQTT para transformá-los em métricas?
+  alternativas:
+    - "outputs.influxdb_v2"
+    - "inputs.cpu"
+    - "processors.starlark"
+    - "inputs.mqtt_consumer"
+  resposta: 3
+  explicacao: |
+    inputs.mqtt_consumer assina os tópicos e, com um parser (JSON, line protocol, etc.), cria métricas; outputs.influxdb_v2 grava; processors.starlark transforma no meio do caminho.
+  fonte: "Telegraf, plugin inputs.mqtt_consumer (README)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T08-012
+  objetivo: O4
+  tipo: multipla
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Marque as decisões corretas para um serviço que grava a telemetria do broker no InfluxDB.
+  alternativas:
+    - "Gravar com o horário enviado pelo dispositivo, e não com a hora de chegada"
+    - "Escrever em lotes, com novas tentativas quando o banco falha"
+    - "Usar o token de administrador da organização, para não ter erro de permissão"
+    - "Refazer as assinaturas no callback de conexão, para valerem também depois de uma reconexão"
+  resposta: [0, 1, 3]
+  explicacao: |
+    O horário do dispositivo põe dados atrasados no lugar certo e faz duplicatas se sobrescreverem; lotes reduzem requisições; reassinar no on_connect cobre reconexões. O gravador deve ter um token só de escrita no bucket.
+  fonte: "InfluxDB OSS v2 Documentation, Manage API tokens; influxdb-client-python, README (Batching); Eclipse Paho, paho-mqtt (on_connect)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T08-013
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    O simulador publicou 60 leituras de cada um de 3 dispositivos, mais uma duplicata exata (mesmo dispositivo e mesmo horário), uma leitura atrasada 1 h com horário válido, uma mensagem malformada e uma com horário de 1970. O gravador usa o horário do dispositivo e recusa as duas últimas. Quantos pontos do campo t existem no banco ao final? Responda em pontos, como número inteiro.
+  resposta: {valor: 181, unidade: "pontos", tolerancia: 0}
+  explicacao: |
+    180 leituras + a atrasada (instante novo) = 181; a duplicata sobrescreve um ponto existente; as duas recusadas não entram. No laboratório: 60 + 61 + 60 = 181, com 182 gravações enviadas.
+  fonte: "InfluxDB OSS v2 Documentation, Write data (duplicate points); roteiro M1.10.T08, gravador.py"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T08-014
+  objetivo: O4
+  tipo: vf
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Verdadeiro ou falso: um gravador que usa a hora de chegada como timestamp também elimina as duplicatas do QoS 1, porque o InfluxDB sobrescreve pontos repetidos.
+  resposta: false
+  explicacao: |
+    Com a hora de chegada, a cópia repetida chega em outro instante e vira um ponto diferente; a sobrescrita só acontece com mesma série e mesmo timestamp. Daí a regra: o dispositivo manda o próprio horário (ou um número de sequência que o gravador usa para descartar repetições).
+  fonte: "InfluxDB OSS v2 Documentation, Write data (Handle duplicate data points); OASIS MQTT Version 3.1.1, QoS 1"
+  origem: ia
+  revisao: rascunho

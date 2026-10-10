@@ -1,0 +1,230 @@
+- id: Q-M1.10.T03-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Sobre que transporte o CoAP da RFC 7252 funciona, e em que porta padrão sem segurança?
+  alternativas:
+    - "TCP, porta 1883"
+    - "TCP, porta 443"
+    - "UDP, porta 5683"
+    - "UDP, porta 8883"
+  resposta: 2
+  explicacao: |
+    CoAP usa UDP na porta 5683 (coap://) e DTLS na 5684 (coaps://). 1883 e 8883 são do MQTT; 443, do HTTPS. Há uma variante sobre TCP e WebSocket (RFC 8323), mas o CoAP original é UDP.
+  fonte: "IETF RFC 7252, The Constrained Application Protocol (CoAP), CoAP URIs e Securing CoAP"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T03-002
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Uma requisição CoAP GET confirmável tem token de 2 bytes e dois Uri-Path, "sensores" (8 bytes) e "temp" (4 bytes), sem payload. Quantos bytes tem a mensagem? Responda em bytes, como número inteiro.
+  resposta: {valor: 20, unidade: "bytes", tolerancia: 0}
+  explicacao: |
+    Cabeçalho fixo 4 + token 2 + opção "sensores" (1 byte de delta/comprimento + 8) + opção "temp" (1 + 4) = 20 bytes. Sem payload, não há o marcador 0xFF. Conferido contra o aiocoap.
+  fonte: "IETF RFC 7252, Message Format (Messages, Option Format)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T03-003
+  objetivo: O1
+  tipo: multipla
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Marque as afirmações corretas sobre o formato da mensagem CoAP.
+  alternativas:
+    - "As opções vêm em ordem crescente de número, e cada uma guarda a diferença (delta) para a anterior"
+    - "O código 2.05 Content é codificado como 0x45: classe 2 nos 3 bits altos e detalhe 5 nos 5 bits baixos"
+    - "O payload é precedido por 2 bytes com o seu comprimento"
+    - "O token, de 0 a 8 bytes, casa a requisição com a resposta, mesmo quando a resposta vem em outra mensagem"
+  resposta: [0, 1, 3]
+  explicacao: |
+    Opções em ordem crescente com delta; Code = classe << 5 | detalhe; o token correlaciona requisição e resposta. O payload não tem comprimento: é precedido pelo marcador 0xFF e vai até o fim do datagrama.
+  fonte: "IETF RFC 7252, Message Format e Message Correlation"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T03-004
+  objetivo: O2
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Que tipo de mensagem CoAP exige um ACK do receptor e é retransmitida se ele não vier?
+  alternativas:
+    - "CON (confirmable)"
+    - "NON (non-confirmable)"
+    - "RST (reset)"
+    - "ACK (acknowledgement)"
+  resposta: 0
+  explicacao: |
+    CON exige ACK com o mesmo Message ID e é retransmitida com recuo exponencial até MAX_RETRANSMIT vezes. NON não tem confirmação; RST indica que o receptor não tem contexto para a mensagem.
+  fonte: "IETF RFC 7252, Message Semantics (Messages Transmitted Reliably)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T03-005
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Com os parâmetros padrão da RFC 7252 (ACK_TIMEOUT = 2 s, ACK_RANDOM_FACTOR = 1,5, MAX_RETRANSMIT = 4), qual é o MAX_TRANSMIT_WAIT, o tempo máximo que um remetente pode esperar desde o primeiro envio de um CON até desistir? Responda em s, como número inteiro.
+  resposta: {valor: 93, unidade: "s", tolerancia: 0}
+  explicacao: |
+    MAX_TRANSMIT_WAIT = ACK_TIMEOUT × (2^(MAX_RETRANSMIT + 1) − 1) × ACK_RANDOM_FACTOR = 2 × 31 × 1,5 = 93 s. O MAX_TRANSMIT_SPAN, até a última retransmissão, é 2 × 15 × 1,5 = 45 s.
+  fonte: "IETF RFC 7252, Transmission Parameters (Changing the Parameters, Time Values Derived from Transmission Parameters)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T03-006
+  objetivo: O2
+  tipo: unica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Um servidor CoAP precisa de 4 s para ler um sensor lento antes de responder a um GET confirmável. O que ele deve fazer para evitar que o cliente retransmita?
+  alternativas:
+    - "Responder RST e esperar que o cliente tente de novo mais tarde"
+    - "Mandar logo um ACK vazio e depois a resposta num CON próprio, com o mesmo token e outro Message ID"
+    - "Mandar a resposta num ACK com outro Message ID, para não confundir com o pedido"
+    - "Ignorar as retransmissões até a leitura terminar"
+  resposta: 1
+  explicacao: |
+    É a resposta separada: o ACK vazio (4 bytes) para as retransmissões; a resposta chega depois num CON com o token da requisição, e o cliente a confirma com ACK. O Message ID casa CON e ACK; o token casa requisição e resposta.
+  fonte: "IETF RFC 7252, Request/Response Semantics (Piggybacked, Separate)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T03-007
+  objetivo: O2
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: ao retransmitir uma mensagem CON, o remetente usa um Message ID novo, para que o receptor saiba que é uma nova tentativa.
+  resposta: false
+  explicacao: |
+    A retransmissão usa o mesmo Message ID; é isso que permite ao receptor reconhecer a duplicata, reenviar o mesmo ACK e não processar a requisição duas vezes. No teste do roteiro, os cinco datagramas tinham mid=0x5F37.
+  fonte: "IETF RFC 7252, Messages Transmitted Reliably e Message Deduplication"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T03-008
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Na opção Block2, o campo SZX vale 4. Qual é o tamanho de cada bloco? Responda em bytes, como número inteiro.
+  resposta: {valor: 256, unidade: "bytes", tolerancia: 0}
+  explicacao: |
+    Tamanho = 2^(SZX + 4) = 2^8 = 256 bytes. SZX vai de 0 (16 bytes) a 6 (1024 bytes); 7 é reservado.
+  fonte: "IETF RFC 7959, Block-Wise Transfers in CoAP, Structure of a Block Option"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T03-009
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um recurso de 1428 bytes é baixado com Block2 e SZX = 2. Quantos blocos são necessários? Responda em blocos, como número inteiro.
+  resposta: {valor: 23, unidade: "blocos", tolerancia: 0}
+  explicacao: |
+    Blocos de 2^(2+4) = 64 bytes: ⌈1428/64⌉ = 23 (22 de 64 bytes e o último de 20). O espião do roteiro mostrou o bloco num=22 com 20 bytes e M=0.
+  fonte: "IETF RFC 7959, Block2 in Responses"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T03-010
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Uma imagem de firmware de 100 kB (102 400 bytes) é baixada por CoAP com Block2 em blocos de 256 bytes, cada bloco pedido por um CON e respondido num ACK piggybacked, sem perdas. Quantos datagramas UDP trafegam no total? Responda em datagramas, como número inteiro.
+  resposta: {valor: 800, unidade: "datagramas", tolerancia: 0}
+  explicacao: |
+    102 400 / 256 = 400 blocos exatos; cada um custa 1 CON + 1 ACK = 2 datagramas: 800. Com blocos de 1024 bytes (SZX 6), seriam 100 blocos e 200 datagramas.
+  fonte: "IETF RFC 7959, Block2 in Responses; RFC 7252, Piggybacked"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T03-011
+  objetivo: O3
+  tipo: unica
+  dificuldade: 3
+  bloom: entender
+  enunciado: |
+    Na observação de recursos (RFC 7641), para que serve o número de sequência levado na opção Observe das notificações?
+  alternativas:
+    - "Para o cliente pedir a retransmissão de notificações perdidas"
+    - "Para indicar quantos observadores o recurso tem"
+    - "Para cifrar a notificação"
+    - "Para o cliente descartar notificações que chegam fora de ordem e não sobrescrever um estado novo com um velho"
+  resposta: 3
+  explicacao: |
+    UDP pode entregar fora de ordem. O número crescente (com a regra de tempo da RFC 7641) permite descartar uma notificação mais velha que a última. A observação garante consistência eventual, não a entrega de todos os estados.
+  fonte: "IETF RFC 7641, Observing Resources in CoAP, The Observe Option e Client-Side Requirements (Reordering)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T03-012
+  objetivo: O4
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um medidor NB-IoT em PSM acorda a cada 6 horas, manda 30 bytes e volta a dormir; raramente recebe uma nova tarifa. Que combinação é a mais adequada?
+  alternativas:
+    - "MQTT com keepalive de 60 s e conexão sempre aberta"
+    - "HTTP/1.1 com um POST de JSON a cada envio e TLS completo"
+    - "CoAP sobre UDP, payload em CBOR e DTLS-PSK (ou OSCORE), buscando a tarifa quando acorda"
+    - "WebSocket com o servidor empurrando a tarifa a qualquer momento"
+  resposta: 2
+  explicacao: |
+    Sem conexão para manter, cabeçalho de 4 bytes e sem handshake TCP/TLS por mensagem, o CoAP é o que menos acorda o rádio. Manter MQTT ou WebSocket abertos impede o PSM; HTTP com TLS a cada envio custa vários round-trips.
+  fonte: "IETF RFC 7252, Introduction (Features) e DTLS-Secured CoAP; RFC 8613, OSCORE, Introduction"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T03-013
+  objetivo: O4
+  tipo: multipla
+  dificuldade: 3
+  bloom: avaliar
+  enunciado: |
+    Marque as afirmações corretas sobre segurança e uso do CoAP no ESP32 com a libcoap.
+  alternativas:
+    - "coaps:// usa DTLS na porta 5684, com modos PreSharedKey, RawPublicKey ou certificados X.509"
+    - "A libcoap cuida das retransmissões e da deduplicação; o firmware precisa chamar coap_io_process para a rede andar"
+    - "No ESP-IDF 5.x, a libcoap vem do componente espressif/coap, declarado no idf_component.yml"
+    - "No modo PSK, a mesma chave pode ser gravada em toda a frota, porque a identidade já diferencia os aparelhos"
+  resposta: [0, 1, 2]
+  explicacao: |
+    DTLS na 5684 com os três modos da RFC 7252; a libcoap trata a camada de mensagens dentro de coap_io_process; o componente vem do registro. Uma chave comum a toda a frota faz o vazamento de um aparelho comprometer todos: a chave PSK deve ser única por dispositivo.
+  fonte: "IETF RFC 7252, DTLS-Secured CoAP; libcoap, API documentation (Context Handling, DTLS); Espressif, ESP Component Registry, espressif/coap"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T03-014
+  objetivo: O4
+  tipo: vf
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Verdadeiro ou falso: como o CoAP não mantém conexão, um servidor na nuvem consegue mandar uma requisição a um dispositivo atrás de NAT a qualquer momento, horas depois da última mensagem do dispositivo, desde que saiba o IP público e a porta que viu da última vez.
+  resposta: false
+  explicacao: |
+    O mapeamento UDP do NAT expira depois de um tempo ocioso (às vezes menos de um minuto em redes celulares). Depois disso, o pacote do servidor não tem para onde ir. O servidor só alcança o dispositivo logo depois de ele falar, ou se o dispositivo mantiver o mapeamento vivo com tráfego periódico.
+  fonte: "IETF RFC 7252, Introduction; M1.9.T02 (NAT e mapeamentos que expiram)"
+  origem: ia
+  revisao: rascunho

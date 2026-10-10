@@ -1,0 +1,240 @@
+- id: Q-M1.10.T06-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    No Mosquitto 2.0, que opção do mosquitto.conf impede que clientes sem usuário e senha se conectem?
+  alternativas:
+    - "require_certificate true"
+    - "allow_anonymous false"
+    - "persistence false"
+    - "max_keepalive 0"
+  resposta: 1
+  explicacao: |
+    allow_anonymous false exige autenticação (com password_file ou um plugin). require_certificate exige certificado de cliente num listener TLS; as outras opções tratam de persistência e keepalive.
+  fonte: "Eclipse Mosquitto, mosquitto.conf(5), General Options (allow_anonymous, password_file)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T06-002
+  objetivo: O1
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Na ACL do Mosquitto existe a linha "pattern write forja/v1/%u/tele". O dispositivo autenticado como forja-001, com client id teste, tenta publicar em forja/v1/forja-002/tele e em forja/v1/forja-001/tele. O que acontece?
+  alternativas:
+    - "As duas publicações são aceitas, porque pattern vale para todos"
+    - "As duas são negadas, porque o client id não é forja-001"
+    - "Só forja/v1/forja-002/tele é aceita"
+    - "Só forja/v1/forja-001/tele é aceita, porque %u é substituído pelo usuário autenticado"
+  resposta: 3
+  explicacao: |
+    %u vira o nome de usuário (forja-001), independente do client id; %c seria o client id (teste). Por isso a identidade autenticada (%u) é a escolha certa para a ACL por dispositivo.
+  fonte: "Eclipse Mosquitto, mosquitto.conf(5), acl_file (pattern, %c, %u)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T06-003
+  objetivo: O1
+  tipo: multipla
+  dificuldade: 3
+  bloom: avaliar
+  enunciado: |
+    Marque as práticas corretas para o arquivo de senhas e a ACL de um Mosquitto em produção.
+  alternativas:
+    - "Dar readwrite em # ao usuário do painel web, para evitar erros de permissão"
+    - "Uma senha longa e aleatória por dispositivo, gerada na fábrica e gravada na NVS, nunca no código"
+    - "Depois de recarregar senhas ou ACL com SIGHUP, ler o log e rodar o teste automático de ACL"
+    - "Usar MQTT 5 nos testes de ACL, para ver o reason code 0x87 numa publicação negada"
+  resposta: [1, 2, 3]
+  explicacao: |
+    Senha por aparelho permite revogar um só; no laboratório, uma ACL ilegível no recarregamento deixou o Mosquitto 2.0.20 liberando tudo, e só o log e o teste revelaram; no 3.1.1 a publicação negada some sem aviso. O painel deve ter privilégio mínimo: ler e mandar comandos, não escrever telemetria.
+  fonte: "Eclipse Mosquitto, mosquitto.conf(5) e mosquitto_passwd(1); OASIS MQTT Version 5.0, Reason Code; HiveMQ, MQTT Security Fundamentals, Authorization"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T06-004
+  objetivo: O2
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Qual é a porta registrada para MQTT sobre TLS?
+  alternativas:
+    - "1883"
+    - "5683"
+    - "8883"
+    - "443"
+  resposta: 2
+  explicacao: |
+    8883 é MQTT sobre TLS (secure-mqtt); 1883 é MQTT sem TLS; 5683 é CoAP. A 443 é usada por MQTT sobre WebSocket com TLS ou por ALPN em algumas plataformas, mas não é a porta registrada do MQTT sobre TLS.
+  fonte: "OASIS MQTT Version 3.1.1, Introduction e Security (porta 8883); Eclipse Mosquitto, mosquitto.conf(5), Listeners"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T06-005
+  objetivo: O2
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: um dispositivo que conecta em broker.forja.com.br recusa o certificado do broker se o SAN tiver só DNS:broker.forja.local, mesmo que o certificado tenha sido assinado pela CA certa.
+  resposta: true
+  explicacao: |
+    Além da cadeia, o cliente confere se o nome ou IP usado está no Subject Alternative Name. Nome fora do SAN dá hostname mismatch; a correção é reemitir o certificado com o nome certo, não desligar a verificação.
+  fonte: "IETF RFC 5280, Subject Alternative Name; HiveMQ, MQTT Security Fundamentals, TLS / SSL - Best Practices"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T06-006
+  objetivo: O2
+  tipo: unica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Num listener com require_certificate true e use_identity_as_username true, o dispositivo apresenta um certificado com CN forja-002 assinado pela CA do broker e não envia senha. O que o broker faz?
+  alternativas:
+    - "Aceita a conexão e trata o cliente como o usuário forja-002, aplicando a ACL desse usuário"
+    - "Recusa, porque falta a senha do password_file"
+    - "Aceita como anônimo, sem aplicar ACL"
+    - "Recusa, porque o client id precisa ser igual ao número de série do certificado"
+  resposta: 0
+  explicacao: |
+    Com TLS mútuo, o certificado é a credencial e o CN vira o usuário; padrões com %u funcionam igual. Foi o caso 4 do teste_broker.py: conexão aceita e publicação em forja/v1/forja-002/tele autorizada.
+  fonte: "Eclipse Mosquitto, mosquitto.conf(5), Certificate based SSL/TLS Support (require_certificate, use_identity_as_username)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T06-007
+  objetivo: O2
+  tipo: multipla
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Sobre a CA própria usada para o broker e os dispositivos, marque as afirmações corretas.
+  alternativas:
+    - "O ca.crt é público e pode ir no firmware de todos os aparelhos"
+    - "A chave privada do broker pode ser gravada no firmware dos dispositivos para eles conferirem o servidor"
+    - "A chave da CA deve ficar fora do servidor do broker e do repositório, porque quem a tiver emite certificados de qualquer dispositivo"
+    - "O certificado do dispositivo para mTLS deve ter a extensão de uso de chave estendido clientAuth"
+  resposta: [0, 2, 3]
+  explicacao: |
+    O certificado da CA é a âncora pública de confiança; a chave da CA é o segredo maior do sistema; o EKU clientAuth identifica o uso como cliente. A chave privada do broker nunca sai do broker: os aparelhos conferem o servidor com o ca.crt.
+  fonte: "OpenSSL, x509v3_config(5) (Extended Key Usage); Eclipse Mosquitto, mosquitto-tls(7); HiveMQ, MQTT Security Fundamentals, X509 Client Certificate Authentication"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T06-008
+  objetivo: O3
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Na ponte do broker de borda está a linha "topic +/tele out 1 casa/ forja/v1/". Um sensor publica localmente em casa/forja-003/tele. Em que tópico a mensagem chega ao broker central?
+  alternativas:
+    - "casa/forja-003/tele"
+    - "forja/v1/casa/forja-003/tele"
+    - "forja/v1/forja-003/tele"
+    - "Não chega, porque out só vale para comandos"
+  resposta: 2
+  explicacao: |
+    O padrão +/tele é combinado com o prefixo local casa/ e, ao sair, o prefixo local é trocado pelo remoto forja/v1/. A direção out leva do broker local para o remoto.
+  fonte: "Eclipse Mosquitto, mosquitto.conf(5), Configuring Bridges (topic pattern [[[out | in | both] qos-level] local-prefix remote-prefix])"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T06-009
+  objetivo: O3
+  tipo: vf
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Verdadeiro ou falso: duas pontes configuradas com "topic # both 1" e sem prefixos, uma em cada broker apontando para o outro, podem fazer a mesma mensagem circular indefinidamente entre os brokers.
+  resposta: true
+  explicacao: |
+    Cada broker repassa ao outro o que recebe, inclusive o que acabou de chegar pela ponte. Direções explícitas por tópico, prefixos distintos e try_private (que marca a conexão como ponte) evitam o laço.
+  fonte: "Eclipse Mosquitto, mosquitto.conf(5), Configuring Bridges (try_private, topic)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T06-010
+  objetivo: O3
+  tipo: unica
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Que recurso do EMQX permite selecionar mensagens por SQL, como SELECT payload.t FROM "forja/v1/+/tele" WHERE payload.t > 30, e encaminhá-las a um banco ou webhook sem um serviço externo?
+  alternativas:
+    - "O motor de regras (Rule Engine, em Data Integration)"
+    - "A ponte MQTT"
+    - "A sessão persistente"
+    - "O listener WebSocket"
+  resposta: 0
+  explicacao: |
+    O motor de regras do EMQX aplica SQL ao fluxo de mensagens e dispara ações (republicar, gravar, chamar HTTP). No Mosquitto, isso exige um serviço à parte que assina os tópicos.
+  fonte: "EMQX Documentation 5.x, Data Integration (Rule Engine, Rule SQL Reference)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T06-011
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Uma frota de 20 000 dispositivos manda uma leitura a cada 30 s. Quantas mensagens por segundo chegam ao broker, em média? Responda em mensagens/s, com 1 casa decimal.
+  resposta: {valor: 666.7, unidade: "mensagens/s", tolerancia: 0.01}
+  explicacao: |
+    20 000 / 30 = 666,7 mensagens por segundo, antes de contar as cópias entregues a cada assinante.
+  fonte: "Eclipse Mosquitto, mosquitto(8), $SYS/broker/load/messages/received; HiveMQ, MQTT Essentials"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T06-012
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    No laboratório, 1000 conexões TLS ociosas elevaram a memória do Mosquitto em cerca de 26 kB por conexão. Quanta memória as conexões de uma frota de 15 000 dispositivos exigiriam? Responda em MB (1000 kB), como número inteiro.
+  resposta: {valor: 390, unidade: "MB", tolerancia: 0}
+  explicacao: |
+    15 000 × 26 kB = 390 000 kB = 390 MB, só para as conexões, sem filas de sessões persistentes nem retidos. Uma VPS de 1 GB comporta, com folga para o sistema.
+  fonte: "Eclipse Mosquitto, mosquitto.conf(5), max_queued_messages; medida do roteiro com docker stats"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T06-013
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    10 000 dispositivos mandam uma leitura por minuto; cada PUBLISH ocupa cerca de 170 bytes no fio (100 do pacote MQTT, ~29 do registro TLS e 40 de IPv4 e TCP). Quantos dados entram no broker num mês de 30 dias? Responda em GB (10^9 bytes), com 1 casa decimal.
+  resposta: {valor: 73.4, unidade: "GB", tolerancia: 0.01}
+  explicacao: |
+    10 000 × 60 × 24 × 30 = 432 000 000 mensagens × 170 B = 73,44 × 10^9 B ≈ 73,4 GB, sem keepalive e sem as cópias aos assinantes.
+  fonte: "OASIS MQTT Version 3.1.1, PUBLISH; IETF RFC 5246/8446 (formato do registro TLS)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T06-014
+  objetivo: O4
+  tipo: unica
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Depois de renovar o certificado do broker, metade da frota parou de conectar e o log do broker mostra "tlsv1 alert unknown ca" para esses aparelhos. Qual é a causa mais provável?
+  alternativas:
+    - "A senha dos aparelhos expirou junto com o certificado"
+    - "O novo certificado foi emitido por uma CA (ou um intermediário) que esses aparelhos não têm no firmware"
+    - "O keepalive dos aparelhos ficou maior que o max_keepalive"
+    - "A ACL foi apagada na renovação"
+  resposta: 1
+  explicacao: |
+    "unknown ca" é o cliente avisando que não confia na cadeia apresentada. A metade que funciona provavelmente tem um firmware com a CA nova (ou um pacote de CAs). Erros de senha ou ACL aparecem depois do TLS, no CONNACK ou nos PUBACKs.
+  fonte: "Eclipse Mosquitto, mosquitto.conf(5), cafile e certfile; HiveMQ, MQTT Security Fundamentals, TLS / SSL - Best Practices"
+  origem: ia
+  revisao: rascunho

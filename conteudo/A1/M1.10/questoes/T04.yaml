@@ -1,0 +1,235 @@
+- id: Q-M1.10.T04-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Com que código de status o servidor aceita o handshake de abertura de um WebSocket?
+  alternativas:
+    - "200 OK"
+    - "101 Switching Protocols"
+    - "201 Created"
+    - "426 Upgrade Required"
+  resposta: 1
+  explicacao: |
+    A resposta 101 Switching Protocols, com Upgrade: websocket, Connection: Upgrade e o Sec-WebSocket-Accept, conclui o handshake; daí em diante a conexão TCP passa a levar quadros WebSocket. Qualquer outro código significa que o WebSocket não abriu.
+  fonte: "IETF RFC 6455, The WebSocket Protocol, Opening Handshake (Server-Side Requirements)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T04-002
+  objetivo: O1
+  tipo: unica
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Qual é a finalidade do cabeçalho Sec-WebSocket-Accept na resposta do servidor?
+  alternativas:
+    - "Cifrar os quadros seguintes com a chave enviada pelo cliente"
+    - "Autenticar o usuário, como uma senha"
+    - "Provar que o servidor entende o protocolo WebSocket, pois só quem conhece o algoritmo e o GUID da RFC calcula o valor a partir da chave"
+    - "Informar o tamanho máximo de quadro aceito"
+  resposta: 2
+  explicacao: |
+    O valor é base64(SHA-1(Sec-WebSocket-Key + GUID fixo)). Não é segurança nem autenticação: evita que um servidor HTTP comum, ou um cache, seja confundido com um servidor WebSocket.
+  fonte: "IETF RFC 6455, Introduction (Opening Handshake) e Server-Side Requirements"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T04-003
+  objetivo: O1
+  tipo: multipla
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Marque as afirmações corretas sobre o handshake de abertura do WebSocket.
+  alternativas:
+    - "Depois do 101, cada mensagem ainda leva cabeçalhos HTTP como Host e Content-Length"
+    - "A chave Sec-WebSocket-Key são 16 bytes aleatórios em base64, novos a cada conexão"
+    - "O servidor deve conferir o cabeçalho Origin enviado pelo navegador para recusar páginas de outros sites"
+    - "O subprotocolo (por exemplo, mqtt) é negociado pelo cabeçalho Sec-WebSocket-Protocol"
+  resposta: [1, 2, 3]
+  explicacao: |
+    Chave aleatória por conexão, Origin conferido contra cross-site WebSocket hijacking e subprotocolo negociado no handshake. Depois do 101, o HTTP sai de cena: só quadros de 2 a 14 bytes de cabeçalho.
+  fonte: "IETF RFC 6455, Opening Handshake (Client Requirements, Server-Side Requirements) e Security Considerations"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T04-004
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um cliente WebSocket envia uma mensagem de texto de 10 bytes. Quantos bytes tem o quadro completo (cabeçalho, chave de máscara e payload)? Responda em bytes, como número inteiro.
+  resposta: {valor: 16, unidade: "bytes", tolerancia: 0}
+  explicacao: |
+    2 bytes de cabeçalho (FIN + opcode; MASK + comprimento 10) + 4 bytes da chave de máscara obrigatória do cliente + 10 de payload = 16. O mesmo texto enviado pelo servidor, sem máscara, teria 12 bytes.
+  fonte: "IETF RFC 6455, Base Framing Protocol e Client-to-Server Masking"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T04-005
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    O cliente envia um quadro binário de 70 000 bytes de payload. Quantos bytes de cabeçalho (incluindo comprimento estendido e chave de máscara) o quadro tem antes do payload? Responda em bytes, como número inteiro.
+  resposta: {valor: 14, unidade: "bytes", tolerancia: 0}
+  explicacao: |
+    70 000 não cabe em 16 bits (máximo 65 535): o comprimento de 7 bits vale 127 e os 8 bytes seguintes trazem o tamanho. Total: 2 + 8 + 4 (máscara) = 14 bytes (82 FF 00 00 00 00 00 01 11 70 + máscara).
+  fonte: "IETF RFC 6455, Base Framing Protocol (Payload length)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T04-006
+  objetivo: O2
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: a máscara dos quadros do cliente garante que quem escuta a rede não consegue ler o conteúdo das mensagens.
+  resposta: false
+  explicacao: |
+    A chave de máscara viaja no próprio quadro; qualquer um desfaz o XOR. A máscara existe para impedir que scripts controlem os bytes exatos que passam por proxies e caches (ataques à infraestrutura). Sigilo é papel do TLS, com wss://.
+  fonte: "IETF RFC 6455, Client-to-Server Masking e Security Considerations (Attacks On Infrastructure)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T04-007
+  objetivo: O2
+  tipo: unica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Uma mensagem de texto é enviada em três fragmentos e, entre o segundo e o terceiro, chega um ping. Qual é a sequência correta de valores do primeiro byte (FIN e opcode) dos quatro quadros, na ordem em que chegam?
+  alternativas:
+    - "81, 81, 89, 81"
+    - "01, 01, 89, 80"
+    - "81, 00, 89, 80"
+    - "01, 00, 89, 80"
+  resposta: 3
+  explicacao: |
+    Primeiro fragmento: FIN 0 e opcode texto (01); fragmento do meio: FIN 0, continuação (00); o ping, de controle, pode ser intercalado e não é fragmentado (89 = FIN 1, opcode 9); último fragmento: FIN 1, continuação (80).
+  fonte: "IETF RFC 6455, Fragmentation e Control Frames"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T04-008
+  objetivo: O3
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    No esp_http_server, o que indica que uma rota deve tratar WebSocket?
+  alternativas:
+    - "O método HTTP_WEBSOCKET na estrutura httpd_uri_t"
+    - "Chamar httpd_ws_start depois de httpd_start"
+    - "Uma URI que começa com ws://"
+    - "O campo is_websocket = true na estrutura httpd_uri_t, com CONFIG_HTTPD_WS_SUPPORT ligado"
+  resposta: 3
+  explicacao: |
+    A rota é registrada com método HTTP_GET e is_websocket = true; o suporte precisa estar ligado no menuconfig (CONFIG_HTTPD_WS_SUPPORT). Os quadros são lidos com httpd_ws_recv_frame.
+  fonte: "Espressif, ESP-IDF Programming Guide, HTTP Server (Websocket Server); exemplo http_server/ws_echo_server"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T04-009
+  objetivo: O3
+  tipo: multipla
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    O ESP32 serve uma página e difunde uma leitura por segundo a todos os navegadores conectados por WebSocket. Marque as práticas corretas no firmware.
+  alternativas:
+    - "Enviar pela tarefa do servidor, agendando com httpd_queue_work e chamando httpd_ws_send_frame_async"
+    - "Aceitar qualquer número de abas, porque o esp_http_server cria sockets sob demanda sem limite"
+    - "Filtrar os clientes com httpd_ws_get_fd_info, mandando só aos que são WebSocket"
+    - "Ler o quadro recebido primeiro com max_len = 0 para saber o tamanho, e limitar o tamanho aceito"
+  resposta: [0, 2, 3]
+  explicacao: |
+    O envio assíncrono deve rodar na tarefa do servidor; nem todo socket é WebSocket (a página HTML usa HTTP comum); ler o tamanho antes evita estouro. A configuração padrão tem 7 sockets (max_open_sockets): o limite existe e precisa ser dimensionado.
+  fonte: "Espressif, ESP-IDF Programming Guide, HTTP Server (Websocket Server, httpd_queue_work, httpd_get_client_list)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T04-010
+  objetivo: O3
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: o componente esp_websocket_client permite que o ESP32 abra um WebSocket com um servidor, reconecte sozinho e envie pings periódicos configurados por ping_interval_sec.
+  resposta: true
+  explicacao: |
+    O esp_websocket_client (componente espressif/esp_websocket_client do registro) é o cliente WebSocket do ESP-IDF, com eventos CONNECTED, DATA, DISCONNECTED e ERROR, reconexão automática e ping configurável. O roteiro o executou no QEMU contra um servidor de eco em Python.
+  fonte: "Espressif, ESP Component Registry, espressif/esp_websocket_client (README e exemplo)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T04-011
+  objetivo: O4
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Como os pacotes MQTT viajam quando um painel no navegador usa MQTT sobre WebSocket?
+  alternativas:
+    - "Cada pacote MQTT vai em quadros WebSocket binários, com o subprotocolo mqtt"
+    - "Como texto JSON convertido pelo broker"
+    - "Em requisições HTTP POST ao broker"
+    - "Em datagramas UDP abertos pelo navegador"
+  resposta: 0
+  explicacao: |
+    A especificação MQTT define o WebSocket como transporte: pacotes em quadros binários e o subprotocolo mqtt no handshake. O broker (no Mosquitto, um listener com protocol websockets) entrega aos mesmos tópicos dos clientes TCP.
+  fonte: "OASIS MQTT Version 3.1.1, Using WebSocket as a network transport; mosquitto.conf(5), protocol websockets"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T04-012
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um painel faz polling HTTP a cada 5 s, gastando 500 bytes por ciclo (requisição mais resposta). Quanto tráfego de aplicação ele gera em uma hora? Responda em kB (1000 bytes), como número inteiro.
+  resposta: {valor: 360, unidade: "kB", tolerancia: 0}
+  explicacao: |
+    3600 / 5 = 720 ciclos × 500 B = 360 000 B = 360 kB por hora, por aba. Por WebSocket, 720 quadros de 2 + 30 bytes dariam 23 kB.
+  fonte: "IETF RFC 6202, Known Issues and Best Practices for the Use of Long Polling and Streaming in Bidirectional HTTP; RFC 6455, Base Framing Protocol"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T04-013
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Um painel recebe a temperatura a cada segundo. Por polling, cada ciclo custa 500 bytes; por WebSocket, o servidor manda um quadro de 2 bytes de cabeçalho com 20 bytes de JSON. Quantas vezes o polling gasta mais que o WebSocket, ignorando pings? Responda com o fator adimensional, com 1 casa decimal.
+  resposta: {valor: 22.7, unidade: "vezes", tolerancia: 0.01}
+  explicacao: |
+    500 / (2 + 20) = 22,7. Por hora: 1,8 MB contra 79,2 kB. E o WebSocket só manda quando há dado novo.
+  fonte: "IETF RFC 6455, Base Framing Protocol; RFC 6202, HTTP Long Polling"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T04-014
+  objetivo: O4
+  tipo: unica
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Um painel web em JavaScript vai assinar a telemetria da frota direto no broker, por MQTT sobre WebSocket. Qual configuração é a mais segura?
+  alternativas:
+    - "wss:// com um usuário MQTT próprio do painel, cuja ACL só permite ler os tópicos de telemetria e estado"
+    - "ws:// com o mesmo usuário e senha dos dispositivos, para simplificar"
+    - "wss:// com o usuário administrador do broker, guardado numa variável do JavaScript"
+    - "ws:// sem usuário, já que a página só lê dados"
+  resposta: 0
+  explicacao: |
+    Tudo o que roda no navegador é visível ao usuário, inclusive a senha. Com TLS e um usuário de privilégio mínimo (só leitura dos tópicos necessários), um vazamento não permite comandar dispositivos nem se passar por eles. ws:// expõe tudo na rede.
+  fonte: "HiveMQ, MQTT Essentials, MQTT over WebSockets; mosquitto.conf(5), acl_file; IETF RFC 6455, Security Considerations"
+  origem: ia
+  revisao: rascunho

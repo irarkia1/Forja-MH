@@ -1,0 +1,240 @@
+- id: Q-M1.10.T07-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    No AWS IoT Core, como um dispositivo com MQTT sobre TLS normalmente prova a sua identidade?
+  alternativas:
+    - "Com um certificado X.509 próprio, ligado à coisa e a uma política"
+    - "Com o endereço MAC enviado no CONNECT"
+    - "Com o mesmo usuário e senha da conta AWS do fabricante"
+    - "Não precisa: o endpoint aceita conexões anônimas"
+  resposta: 0
+  explicacao: |
+    O padrão é TLS mútuo com um certificado por dispositivo, registrado na conta e ligado a uma coisa e a uma política. Credenciais da conta nunca vão para o dispositivo; não há acesso anônimo.
+  fonte: "AWS IoT Core Developer Guide, Security, Authentication (X.509 client certificates)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T07-002
+  objetivo: O1
+  tipo: multipla
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Marque as afirmações corretas sobre o AWS IoT Core.
+  alternativas:
+    - "Tópicos que começam com $aws/ são reservados para serviços da plataforma, como a sombra e os jobs"
+    - "Com a variável ${iot:Connection.Thing.ThingName}, uma única política pode restringir cada coisa à própria árvore de tópicos"
+    - "O gateway de mensagens implementa QoS 2 exatamente como a especificação MQTT"
+    - "O motor de regras usa uma sintaxe SQL para filtrar mensagens e disparar ações"
+  resposta: [0, 1, 3]
+  explicacao: |
+    $aws/ é reservado; variáveis de política fazem o papel do %u do Mosquitto; as regras usam o AWS IoT SQL. O AWS IoT Core não suporta QoS 2 (veja as diferenças em relação à especificação MQTT).
+  fonte: "AWS IoT Core Developer Guide, Reserved topics, Policy variables, AWS IoT SQL reference e MQTT (differences from MQTT specification)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T07-003
+  objetivo: O1
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: um ESP32 pode conectar ao AWS IoT Core com o componente esp-mqtt do ESP-IDF, usando mTLS com o certificado e a chave da coisa e a raiz Amazon Root CA 1, sem usuário nem senha.
+  resposta: true
+  explicacao: |
+    O gateway de mensagens é um broker MQTT sobre TLS na porta 8883; qualquer cliente MQTT com mTLS funciona. O repositório esp-aws-iot oferece as bibliotecas oficiais da AWS, mas não é obrigatório.
+  fonte: "AWS IoT Core Developer Guide, Device communication protocols (MQTT) e Server authentication; Espressif, ESP-IDF Programming Guide, ESP-MQTT"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T07-004
+  objetivo: O2
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    No documento da sombra da AWS, qual seção representa o estado que o app ou a nuvem quer que o dispositivo assuma?
+  alternativas:
+    - "reported"
+    - "metadata"
+    - "desired"
+    - "delta"
+  resposta: 2
+  explicacao: |
+    desired é o estado pedido; reported é o que o dispositivo informa; delta é a diferença calculada pela plataforma; metadata guarda os horários de atualização de cada campo.
+  fonte: "AWS IoT Core Developer Guide, Device Shadow service documents"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T07-005
+  objetivo: O2
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    A sombra tem desired {"a":1,"b":2} e reported {"a":1,"b":3,"c":4}. Qual é o delta?
+  alternativas:
+    - "{\"b\":3,\"c\":4}"
+    - "{\"b\":2}"
+    - "{\"b\":2,\"c\":null}"
+    - "{\"a\":1,\"b\":2}"
+  resposta: 1
+  explicacao: |
+    O delta tem só os campos desejados cujo valor difere do relatado: a coincide, b difere (2 desejado). Campos que só existem no reported, como c, não entram.
+  fonte: "AWS IoT Core Developer Guide, Device Shadow service documents (Delta state)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T07-006
+  objetivo: O2
+  tipo: unica
+  dificuldade: 3
+  bloom: avaliar
+  enunciado: |
+    Um sensor a bateria acorda a cada hora, conecta sem sessão persistente e só assina $aws/things/forja-001/shadow/update/delta. O app mudou o desired enquanto ele dormia. O que acontece e qual é a correção?
+  alternativas:
+    - "O sensor recebe o delta ao assinar, porque ele é retido"
+    - "O sensor recebe o delta no próximo keepalive"
+    - "A AWS reenvia o delta a cada minuto até o dispositivo confirmar"
+    - "O delta foi publicado enquanto ele estava desconectado e se perdeu; o sensor deve publicar em .../shadow/get ao acordar e ler o delta no get/accepted"
+  resposta: 3
+  explicacao: |
+    O delta é publicado no momento da mudança. Ao acordar, o dispositivo pede o documento (get) e recebe state.delta no get/accepted. Foi o padrão usado no firmware do roteiro, executado no QEMU contra o simulador.
+  fonte: "AWS IoT Core Developer Guide, Using shadows in devices e Device Shadow MQTT topics"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T07-007
+  objetivo: O2
+  tipo: vf
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Verdadeiro ou falso: quando o desired traz um valor que o firmware considera inválido, o certo é o dispositivo relatar no reported exatamente o valor desejado, para que o delta desapareça e o app não fique esperando.
+  resposta: false
+  explicacao: |
+    O reported deve dizer o estado real. Relatar o desejado esconderia que a mudança não foi aplicada. O delta pendente (como na versão 4 da simulação) é a informação correta; o firmware pode relatar também o motivo, e o app pode limpar o desejado com null.
+  fonte: "AWS IoT Core Developer Guide, Using shadows in devices e Device Shadow service documents"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T07-008
+  objetivo: O3
+  tipo: unica
+  dificuldade: 2
+  bloom: lembrar
+  enunciado: |
+    Na API MQTT de dispositivo do ThingsBoard, como o token de acesso do dispositivo é enviado?
+  alternativas:
+    - "No payload de cada mensagem de telemetria"
+    - "Como nome de usuário no CONNECT"
+    - "No client id, precedido de token="
+    - "Num cabeçalho HTTP antes da conexão MQTT"
+  resposta: 1
+  explicacao: |
+    Com autenticação por token, o token vai como username do CONNECT, sem senha. A telemetria é publicada em v1/devices/me/telemetry, sem o id no tópico: o broker sabe quem é pelo token.
+  fonte: "ThingsBoard Documentation, Connectivity, MQTT Device API (MQTT basics, Telemetry upload API)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T07-009
+  objetivo: O3
+  tipo: multipla
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Marque os pares de tópico e uso corretos na API MQTT de dispositivo do ThingsBoard.
+  alternativas:
+    - "v1/devices/me/telemetry para publicar séries temporais, com ou sem ts em milissegundos"
+    - "v1/devices/me/rpc/request/+ para assinar comandos do servidor; a resposta vai em v1/devices/me/rpc/response/{id}"
+    - "v1/devices/me/attributes para publicar atributos do cliente e, assinado, para receber mudanças de atributos compartilhados"
+    - "$aws/things/{id}/shadow/update para relatar o estado"
+  resposta: [0, 1, 2]
+  explicacao: |
+    Telemetria, RPC e atributos usam os tópicos v1/devices/me/... O $aws/... é da AWS; no ThingsBoard, o papel do desired é dos atributos compartilhados.
+  fonte: "ThingsBoard Documentation, MQTT Device API (Telemetry upload API, Attributes API, RPC API)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T07-010
+  objetivo: O3
+  tipo: unica
+  dificuldade: 2
+  bloom: analisar
+  enunciado: |
+    No Azure IoT Hub, um app precisa mudar o intervalo de envio de um sensor que dorme quase o tempo todo. Que mecanismo usar?
+  alternativas:
+    - "Uma propriedade desejada do device twin, que o dispositivo lê e aplica quando acordar"
+    - "Um método direto, porque responde na hora"
+    - "Uma mensagem para o tópico de telemetria do dispositivo"
+    - "O DPS, que reprovisiona o dispositivo com a configuração nova"
+  resposta: 0
+  explicacao: |
+    O twin guarda o estado desejado até o dispositivo voltar (como a sombra da AWS). O método direto é síncrono e falha com o aparelho offline; o DPS cuida do registro inicial, não de configuração.
+  fonte: "Microsoft, Azure IoT Hub, Understand and use device twins e Understand and invoke direct methods"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T07-011
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Uma frota de 1000 dispositivos manda uma leitura por minuto durante 30 dias. A US$ 1,00 por milhão de mensagens, quanto custam as mensagens no mês? Responda em US$, com 2 casas decimais.
+  resposta: {valor: 43.2, unidade: "US$", tolerancia: 0.01}
+  explicacao: |
+    1000 × 60 × 24 × 30 = 43,2 milhões de mensagens × US$ 1,00 por milhão = US$ 43,20 (sem conexão, sombra nem regras).
+  fonte: "AWS IoT Core Pricing (valores de exemplo; confira a página atual)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T07-012
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    5000 dispositivos ficam conectados o mês inteiro (30 dias). A US$ 0,08 por milhão de minutos de conexão, quanto custa a conectividade no mês? Responda em US$, com 2 casas decimais.
+  resposta: {valor: 17.28, unidade: "US$", tolerancia: 0.01}
+  explicacao: |
+    5000 × 43 200 min = 216 milhões de minutos × 0,08 / milhão = US$ 17,28. Se cada um ficasse conectado só 1 minuto por hora, seriam 3,6 milhões de minutos e US$ 0,29.
+  fonte: "AWS IoT Core Pricing (valores de exemplo; confira a página atual)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T07-013
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Com US$ 1,00 por milhão de mensagens e US$ 0,08 por milhão de minutos de conexão, qual é o custo mensal (30 dias) de 1000 dispositivos conectados o mês todo, cada um com uma leitura por minuto e sem assinantes MQTT? Responda em US$, com 2 casas decimais.
+  resposta: {valor: 46.66, unidade: "US$", tolerancia: 0.01}
+  explicacao: |
+    Mensagens: 43,2 milhões → US$ 43,20. Conexão: 43,2 milhões de minutos → US$ 3,456. Total: US$ 46,656 ≈ US$ 46,66 por mês, cerca de US$ 0,047 por dispositivo, antes das regras e do banco de destino.
+  fonte: "AWS IoT Core Pricing (valores de exemplo; confira a página atual)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T07-014
+  objetivo: O4
+  tipo: multipla
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Uma startup com 300 sensores e um desenvolvedor decide entre uma plataforma gerenciada e um broker próprio numa VPS. Marque os argumentos corretos.
+  alternativas:
+    - "O broker próprio sai sempre mais barato, porque a VPS tem preço fixo e o tempo de operação não conta"
+    - "A plataforma reduz o trabalho de operação, provisionamento e plantão, que pesa muito para uma equipe de uma pessoa"
+    - "Isolar no firmware uma camada de nuvem reduz o custo de trocar de plataforma depois"
+    - "Tópicos $aws/..., sombra e regras são recursos específicos do fornecedor e aumentam a dependência"
+  resposta: [1, 2, 3]
+  explicacao: |
+    Operação e plantão são custo real; uma interface de nuvem no firmware limita a dependência, que vem dos recursos proprietários. O tempo de quem opera o broker entra na conta: com 300 sensores, a fatura da plataforma pode ser menor que esse tempo.
+  fonte: "AWS IoT Core Developer Guide, How AWS IoT works; ThingsBoard Documentation, Getting Started; Eclipse Mosquitto, mosquitto.conf(5)"
+  origem: ia
+  revisao: rascunho

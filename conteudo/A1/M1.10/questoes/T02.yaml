@@ -1,0 +1,235 @@
+- id: Q-M1.10.T02-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    No MQTT, quem entrega uma mensagem publicada aos clientes interessados nela?
+  alternativas:
+    - "O próprio publicador, que mantém uma lista de assinantes"
+    - "O broker, que compara o tópico da mensagem com os filtros assinados por cada cliente"
+    - "Os assinantes, que consultam o publicador periodicamente"
+    - "O roteador da rede, por multicast IP"
+  resposta: 1
+  explicacao: |
+    Publicador e assinante não se conhecem: ambos falam só com o broker, que casa o tópico com os filtros e entrega. É o desacoplamento no espaço do modelo publicar/assinar.
+  fonte: "HiveMQ, MQTT Essentials, Publish & Subscribe; OASIS MQTT Version 3.1.1, Introduction"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T02-002
+  objetivo: O1
+  tipo: multipla
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Marque os tópicos que casam com o filtro forja/+/tele/#.
+  alternativas:
+    - "forja/a/tele"
+    - "forja/a/b/tele"
+    - "forja/a/tele/t1"
+    - "Forja/a/tele"
+  resposta: [0, 2]
+  explicacao: |
+    O + casa exatamente um nível e o # casa zero ou mais níveis, inclusive nenhum. forja/a/b/tele tem dois níveis no lugar do +; Forja difere em maiúscula, e tópicos diferenciam maiúsculas.
+  fonte: "OASIS MQTT Version 3.1.1, Operational behavior, Topic Names and Topic Filters (Topic wildcards)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T02-003
+  objetivo: O1
+  tipo: vf
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Verdadeiro ou falso: um painel que assina # recebe também as mensagens de $SYS/broker/clients/connected.
+  resposta: false
+  explicacao: |
+    Filtros que começam com curinga não casam tópicos iniciados por $. Para receber as estatísticas do broker, é preciso assinar explicitamente $SYS/# (ou um tópico $SYS específico).
+  fonte: "OASIS MQTT Version 3.1.1, Topic Names and Topic Filters (Topics beginning with $)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T02-004
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um PUBLISH com QoS 1 tem tópico de 27 bytes e payload de 4 bytes. Qual é o tamanho total do pacote MQTT 3.1.1? Responda em bytes, como número inteiro.
+  resposta: {valor: 37, unidade: "bytes", tolerancia: 0}
+  explicacao: |
+    Cabeçalho variável: 2 (comprimento do tópico) + 27 + 2 (packet id) = 31; payload 4; remaining length 35 (1 byte). Total: 1 + 1 + 35 = 37 bytes, o valor medido pelo espião.
+  fonte: "OASIS MQTT Version 3.1.1, MQTT Control Packet format (Fixed header, Remaining Length) e PUBLISH"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T02-005
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um PUBLISH com QoS 0 tem tópico de 19 bytes e payload de 300 bytes. Quantos bytes ocupa o cabeçalho fixo (byte de tipo e flags mais o remaining length)? Responda em bytes, como número inteiro.
+  resposta: {valor: 3, unidade: "bytes", tolerancia: 0}
+  explicacao: |
+    Remaining length = 2 + 19 + 300 = 321, maior que 127: precisa de 2 bytes (C1 02). Cabeçalho fixo = 1 + 2 = 3 bytes; pacote total = 324 bytes.
+  fonte: "OASIS MQTT Version 3.1.1, Fixed header (Remaining Length)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T02-006
+  objetivo: O2
+  tipo: unica
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Qual é a sequência de pacotes de uma publicação com QoS 2 entre o publicador e o broker?
+  alternativas:
+    - "PUBLISH → PUBACK"
+    - "PUBLISH → PUBREL → PUBREC → PUBCOMP"
+    - "PUBLISH → PUBREC → PUBREL → PUBCOMP"
+    - "PUBLISH → PUBCOMP"
+  resposta: 2
+  explicacao: |
+    O receptor responde PUBREC; o emissor libera com PUBREL; o receptor fecha com PUBCOMP. O receptor guarda o packet id entre PUBREC e PUBREL para descartar repetições. PUBLISH → PUBACK é o QoS 1.
+  fonte: "OASIS MQTT Version 3.1.1, Quality of Service levels and protocol flows (QoS 2: Exactly once delivery)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T02-007
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Um publicador envia uma mensagem com QoS 2 e o único assinante assinou o filtro com QoS 1. Quantos pacotes MQTT trafegam no total, somando os dois trechos (publicador → broker e broker → assinante), para entregar essa mensagem? Responda em pacotes, como número inteiro.
+  resposta: {valor: 6, unidade: "pacotes", tolerancia: 0}
+  explicacao: |
+    Trecho 1 em QoS 2: PUBLISH, PUBREC, PUBREL, PUBCOMP (4). O assinante recebe no menor QoS entre publicação e assinatura, 1: PUBLISH e PUBACK (2). Total: 6.
+  fonte: "OASIS MQTT Version 3.1.1, Quality of Service levels and protocol flows e SUBSCRIBE (Requested QoS)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T02-008
+  objetivo: O3
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    O que acontece com o Last Will and Testament de um cliente que encerra a conexão enviando um DISCONNECT normal no MQTT 3.1.1?
+  alternativas:
+    - "O broker publica o testamento imediatamente"
+    - "O broker publica o testamento depois de 1,5 × keepalive"
+    - "O broker guarda o testamento para a próxima conexão"
+    - "O broker descarta o testamento sem publicá-lo"
+  resposta: 3
+  explicacao: |
+    O testamento só é publicado quando a conexão termina de forma anormal (queda de rede, keepalive vencido, erro de protocolo). Um DISCONNECT normal o descarta. No MQTT 5, o cliente pode pedir o envio com o reason code 0x04.
+  fonte: "OASIS MQTT Version 3.1.1, CONNECT (Will Flag) e DISCONNECT; HiveMQ, MQTT Essentials, Last Will and Testament"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T02-009
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um cliente conecta com keepalive de 45 s. Pela especificação, depois de quanto tempo sem receber nenhum pacote do cliente o broker deve considerá-lo desconectado? Responda em s, com 1 casa decimal.
+  resposta: {valor: 67.5, unidade: "s", tolerancia: 0.01}
+  explicacao: |
+    O servidor desconecta se não receber nenhum pacote em 1,5 × keepalive: 1,5 × 45 = 67,5 s. Na prática o Mosquitto confere os prazos periodicamente; nas medidas do roteiro, o testamento saiu alguns segundos depois do prazo teórico.
+  fonte: "OASIS MQTT Version 3.1.1, CONNECT (Keep Alive); HiveMQ, MQTT Essentials, Keep Alive and Client Take-Over"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T02-010
+  objetivo: O3
+  tipo: multipla
+  dificuldade: 3
+  bloom: avaliar
+  enunciado: |
+    Num produto com atuador de válvula, marque os usos corretos de retain.
+  alternativas:
+    - "O comando abrir válvula, para garantir que o atuador o receba mesmo se estiver desligado"
+    - "Estado online/offline do dispositivo, com o testamento offline também retido"
+    - "Configuração desejada (intervalo de envio), para o aparelho recebê-la ao conectar"
+    - "O último valor de um sensor lento, para o painel mostrá-lo assim que abrir"
+  resposta: [1, 2, 3]
+  explicacao: |
+    Retain serve para estado: quem assina depois recebe o último valor. Um comando retido é reentregue a cada nova assinatura e a válvula abriria de novo a cada reconexão. Para comando que precisa esperar o dispositivo, use sessão persistente com QoS 1 e, no MQTT 5, Message Expiry.
+  fonte: "HiveMQ, MQTT Essentials, Retained Messages; OASIS MQTT Version 5.0, Message Expiry Interval"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T02-011
+  objetivo: O3
+  tipo: unica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    No MQTT 5, um app publica com QoS 1 um comando com Message Expiry Interval = 2 s para um atuador com sessão persistente (Session Expiry Interval = 3600 s) que está desconectado. O atuador reconecta 3 s depois. O que ele recebe?
+  alternativas:
+    - "O comando, com o flag DUP ligado"
+    - "Nada: o comando venceu na fila do broker e foi descartado, embora a sessão continue existindo"
+    - "O comando, porque mensagens de QoS 1 nunca são descartadas"
+    - "Um CONNACK com session present = 0, porque a sessão expirou"
+  resposta: 1
+  explicacao: |
+    A sessão vale 1 h e continua existindo (session present = 1), mas a mensagem tinha prazo de 2 s e o broker a descarta ao vencer. Foi o que o mqtt5.py do roteiro mostrou no Mosquitto.
+  fonte: "OASIS MQTT Version 5.0, PUBLISH Properties (Message Expiry Interval) e CONNECT Properties (Session Expiry Interval)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T02-012
+  objetivo: O4
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    No esp-mqtt, que evento avisa que uma mensagem publicada com QoS 1 foi confirmada pelo broker?
+  alternativas:
+    - "MQTT_EVENT_PUBLISHED"
+    - "MQTT_EVENT_DATA"
+    - "MQTT_EVENT_SUBSCRIBED"
+    - "MQTT_EVENT_CONNECTED"
+  resposta: 0
+  explicacao: |
+    MQTT_EVENT_PUBLISHED chega com o msg_id quando o PUBACK (QoS 1) ou o PUBCOMP (QoS 2) é recebido. MQTT_EVENT_DATA é mensagem recebida; SUBSCRIBED confirma uma assinatura.
+  fonte: "Espressif, ESP-IDF Programming Guide, ESP-MQTT, Events"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T02-013
+  objetivo: O4
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: dois ESP32 da mesma frota podem usar o mesmo client id no mesmo broker, desde que tenham usuários diferentes.
+  resposta: false
+  explicacao: |
+    O client id identifica a sessão no broker. Se um segundo cliente conecta com o mesmo id, o broker derruba o primeiro (tomada de conexão), e os dois aparelhos passam a se derrubar em laço, independentemente do usuário.
+  fonte: "OASIS MQTT Version 3.1.1, CONNECT (Client Identifier) e CONNECT Actions; HiveMQ, MQTT Essentials, Keep Alive and Client Take-Over"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T02-014
+  objetivo: O4
+  tipo: multipla
+  dificuldade: 3
+  bloom: avaliar
+  enunciado: |
+    No laboratório, o broker ficou fora do ar 15 s e o ESP32 continuou gerando leituras com esp_mqtt_client_enqueue(..., qos = 1, store = true). Quando o broker voltou, a leitura seq 11 apareceu duas vezes no assinante. Marque as conclusões corretas.
+  alternativas:
+    - "As leituras feitas com o broker fora ficaram no outbox e foram enviadas depois da reconexão"
+    - "A duplicata prova que o broker está com defeito e deve ser trocado por um que faça QoS 1 sem duplicar"
+    - "A duplicata é compatível com QoS 1, que garante entrega pelo menos uma vez"
+    - "O consumidor deve descartar repetições usando o id do dispositivo e o número de sequência"
+  resposta: [0, 2, 3]
+  explicacao: |
+    O outbox do esp-mqtt guarda as mensagens até a confirmação; QoS 1 pode repetir quando a confirmação se perde na queda; tratar duplicatas é tarefa do consumidor (idempotência). Nenhum broker elimina duplicatas do QoS 1, por definição do nível.
+  fonte: "Espressif, ESP-IDF Programming Guide, ESP-MQTT (MQTT Message Retransmission); OASIS MQTT Version 3.1.1, QoS 1: At least once delivery"
+  origem: ia
+  revisao: rascunho

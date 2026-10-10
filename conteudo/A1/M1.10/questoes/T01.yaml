@@ -1,0 +1,240 @@
+- id: Q-M1.10.T01-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Numa mensagem HTTP/1.1, o que separa os cabeçalhos do corpo?
+  alternativas:
+    - "O cabeçalho Content-Length, que sempre vem por último"
+    - "Uma linha vazia, ou seja, a sequência CRLF CRLF depois do último cabeçalho"
+    - "Um byte nulo (0x00)"
+    - "O fechamento da conexão TCP"
+  resposta: 1
+  explicacao: |
+    Cada linha termina em CRLF, e uma linha vazia marca o fim dos cabeçalhos. O Content-Length (ou o chunked) diz quantos bytes de corpo vêm depois; a ordem dos cabeçalhos não importa.
+  fonte: "IETF RFC 9112, HTTP/1.1, Message Format"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T01-002
+  objetivo: O1
+  tipo: multipla
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Pela RFC 9110, marque os métodos que são idempotentes.
+  alternativas:
+    - "POST"
+    - "PUT"
+    - "DELETE"
+    - "GET"
+  resposta: [1, 2, 3]
+  explicacao: |
+    GET (e todo método seguro), PUT e DELETE são idempotentes: repetir tem o mesmo efeito pretendido que fazer uma vez. POST não é: repetir pode criar dois recursos ou disparar a ação duas vezes.
+  fonte: "IETF RFC 9110, HTTP Semantics, Common Method Properties (Idempotent Methods)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T01-003
+  objetivo: O1
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: o HTTP/2 mudou os métodos e os códigos de status do HTTP, por isso uma API precisa ser reescrita para ser servida em HTTP/2.
+  resposta: false
+  explicacao: |
+    A semântica (métodos, status, campos) está na RFC 9110 e é a mesma no HTTP/1.1, no HTTP/2 e no HTTP/3. O HTTP/2 muda o formato no fio: quadros binários, multiplexação e compressão de cabeçalhos.
+  fonte: "IETF RFC 9110, HTTP Semantics, Introduction; RFC 9113, HTTP/2, Introduction"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T01-004
+  objetivo: O1
+  tipo: unica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Um aparelho recebe 503 Service Unavailable num POST de leitura e, em outra tentativa, 422 Unprocessable Content. Qual é a política correta para as duas respostas?
+  alternativas:
+    - "Repetir as duas imediatamente, até dar certo"
+    - "Descartar as duas, porque ambas indicam erro"
+    - "Repetir a 422 com recuo e descartar a 503"
+    - "Repetir a 503 com recuo, respeitando Retry-After se vier, e não repetir a 422, que vai falhar sempre"
+  resposta: 3
+  explicacao: |
+    5xx indica falha do servidor, possivelmente temporária. 4xx indica problema na requisição: 422 significa conteúdo inválido e repetir a mesma mensagem não muda nada. As exceções da classe 4xx que valem repetição são 408 e 429.
+  fonte: "IETF RFC 9110, HTTP Semantics, Status Codes (422, 503) e Retry-After"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T01-005
+  objetivo: O2
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Que código de status uma API REST deve devolver quando um POST cria um novo item numa coleção?
+  alternativas:
+    - "201 Created, com o cabeçalho Location apontando o novo recurso"
+    - "200 OK, sempre"
+    - "204 No Content"
+    - "302 Found"
+  resposta: 0
+  explicacao: |
+    201 indica que um recurso foi criado; o Location informa a URI dele. 204 é sucesso sem corpo, típico de PUT ou DELETE.
+  fonte: "IETF RFC 9110, HTTP Semantics, Status Codes (201 Created) e POST"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T01-006
+  objetivo: O2
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um recurso de configuração vale {"intervalo_s":60,"rele":true}. O cliente envia o corpo {"intervalo_s":30} com PUT. Pela semântica do PUT, qual deve ser o estado depois?
+  alternativas:
+    - "{\"intervalo_s\":30,\"rele\":true}, porque só o campo enviado muda"
+    - "O servidor deve recusar com 405"
+    - "{\"intervalo_s\":30}: a representação enviada substitui o estado inteiro, e o rele some ou volta ao padrão"
+    - "{\"intervalo_s\":60,\"rele\":true}, porque PUT é idempotente"
+  resposta: 2
+  explicacao: |
+    PUT substitui o estado do recurso pela representação enviada. Alteração parcial é o papel do PATCH (RFC 5789). Por isso um PUT deve levar a representação completa.
+  fonte: "IETF RFC 9110, HTTP Semantics, Method Definitions (PUT); RFC 5789, PATCH Method for HTTP"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T01-007
+  objetivo: O2
+  tipo: multipla
+  dificuldade: 3
+  bloom: avaliar
+  enunciado: |
+    Marque as boas práticas para a API REST de uma frota de dispositivos.
+  alternativas:
+    - "Versão no caminho (/v1/), porque o firmware em campo não acompanha as mudanças da API"
+    - "GET /rele?ligar=1 para acionar o relé, por ser mais simples de testar no navegador"
+    - "Um token por dispositivo no cabeçalho Authorization, sempre sobre TLS"
+    - "Respostas de erro em application/problem+json com type, title e status"
+  resposta: [0, 2, 3]
+  explicacao: |
+    Versão no caminho mantém a v1 viva para os aparelhos antigos; token por dispositivo permite revogar um só; Problem Details (RFC 9457) padroniza os erros. GET é método seguro: proxies, pré-buscas e robôs podem chamá-lo e disparar o relé.
+  fonte: "IETF RFC 9110, Safe Methods; RFC 6750, Bearer Token Usage; RFC 9457, Problem Details for HTTP APIs"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T01-008
+  objetivo: O2
+  tipo: unica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    O aplicativo do técnico leu a configuração com ETag "a1". Depois, o painel administrativo alterou a mesma configuração (ETag "b2"). O app envia PATCH com If-Match: "a1". O que acontece numa API que implementa requisições condicionais, e por quê?
+  alternativas:
+    - "200 OK, porque o PATCH só muda os campos enviados e não há conflito"
+    - "304 Not Modified, porque o ETag do app está desatualizado"
+    - "409 Conflict sempre que dois clientes alteram o mesmo recurso no mesmo dia"
+    - "412 Precondition Failed: a condição If-Match não confere, nada é gravado e o app precisa reler antes de reaplicar"
+  resposta: 3
+  explicacao: |
+    If-Match faz a gravação depender da versão. Como o recurso mudou, a precondição falha com 412 e evita a atualização perdida. 304 é a resposta de um GET com If-None-Match quando nada mudou.
+  fonte: "IETF RFC 9110, HTTP Semantics, Conditional Requests (If-Match) e Status Codes (412 Precondition Failed)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T01-009
+  objetivo: O3
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    No esp_http_client, qual campo da configuração faz o cliente conferir o certificado do servidor contra o pacote de CAs embutido no ESP-IDF?
+  alternativas:
+    - "crt_bundle_attach = esp_crt_bundle_attach"
+    - "skip_cert_common_name_check = true"
+    - "is_async = true"
+    - "keep_alive_enable = true"
+  resposta: 0
+  explicacao: |
+    crt_bundle_attach liga o ESP x509 Certificate Bundle à conexão TLS. skip_cert_common_name_check desliga a conferência do nome, o contrário do desejado; os outros campos não tratam de certificado.
+  fonte: "Espressif, ESP-IDF Programming Guide, ESP HTTP Client (HTTPS Request) e ESP x509 Certificate Bundle"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T01-010
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um cliente faz até 6 tentativas. Depois de cada falha, espera 1 s na primeira vez e dobra a espera a cada nova falha, com teto de 30 s; ignore o sorteio. Quanto tempo de espera se acumula entre a primeira e a sexta tentativa? Responda em s, como número inteiro.
+  resposta: {valor: 31, unidade: "s", tolerancia: 0}
+  explicacao: |
+    Há 5 esperas entre 6 tentativas: 1 + 2 + 4 + 8 + 16 = 31 s. O teto de 30 s ainda não foi atingido (a próxima espera seria 30 s, e não 32).
+  fonte: "Espressif, ESP-IDF Programming Guide, ESP HTTP Client; IETF RFC 9110, Retry-After"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T01-011
+  objetivo: O3
+  tipo: multipla
+  dificuldade: 3
+  bloom: avaliar
+  enunciado: |
+    Mil sensores perderam a rede no mesmo apagão e voltam juntos. Marque as medidas no cliente HTTP que evitam derrubar o servidor e não perdem dados.
+  alternativas:
+    - "Recuo exponencial com um atraso aleatório (jitter) entre as tentativas"
+    - "Repetir só falhas transitórias (sem resposta, 408, 429, 5xx)"
+    - "Tentar de novo imediatamente em laço até conseguir, para não atrasar os dados"
+    - "Reenviar a mesma chave de idempotência a cada nova tentativa da mesma leitura"
+  resposta: [0, 1, 3]
+  explicacao: |
+    O sorteio espalha as reconexões; não repetir 4xx evita tráfego inútil; a chave fixa permite ao servidor descartar uma leitura já gravada quando a resposta se perdeu. Laço imediato multiplica a carga justamente quando o servidor está voltando.
+  fonte: "IETF RFC 9110, Idempotent Methods e Retry-After; RFC 6585, 429 Too Many Requests"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T01-012
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Uma requisição POST tem 206 bytes de linha de requisição e cabeçalhos e um corpo JSON de 17 bytes. Que fração da requisição é dado útil? Responda em %, com 1 casa decimal.
+  resposta: {valor: 7.6, unidade: "%", tolerancia: 0.01}
+  explicacao: |
+    Total = 206 + 17 = 223 bytes; 17 / 223 = 7,6%. Contando a resposta (204 bytes), a eficiência na camada de aplicação cai para 17/427 = 4,0%.
+  fonte: "IETF RFC 9112, HTTP/1.1, Message Format"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T01-013
+  objetivo: O4
+  tipo: vf
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Verdadeiro ou falso: num manipulador do esp_http_server, uma única chamada de httpd_req_recv sempre devolve o corpo inteiro, desde que o buffer seja maior que o content_len.
+  resposta: false
+  explicacao: |
+    O TCP é um fluxo de bytes: o corpo pode chegar em vários segmentos e a chamada devolve só o que já chegou. É preciso ler em laço até completar o content_len, tratando HTTPD_SOCK_ERR_TIMEOUT.
+  fonte: "Espressif, ESP-IDF Programming Guide, HTTP Server (httpd_req_recv) e exemplo http_server/simple"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T01-014
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Um POST tem 180 bytes de cabeçalhos. Em vez de mandar 10 leituras de 20 bytes em 10 POSTs, o firmware passa a mandar um array JSON com as 10 (leituras separadas por 9 vírgulas, mais os dois colchetes) num POST só, com o mesmo cabeçalho. Qual é a eficiência (corpo/requisição) do POST em lote? Responda em %, com 1 casa decimal.
+  resposta: {valor: 54.0, unidade: "%", tolerancia: 0.01}
+  explicacao: |
+    Corpo = 10 × 20 + 9 + 2 = 211 bytes; requisição = 391 bytes; 211/391 = 54,0%. Com um POST por leitura, seriam 20/200 = 10%, e dez vezes os segmentos TCP.
+  fonte: "IETF RFC 9112, HTTP/1.1, Message Format; RFC 9110, POST"
+  origem: ia
+  revisao: rascunho

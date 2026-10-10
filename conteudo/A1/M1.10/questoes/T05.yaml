@@ -1,0 +1,230 @@
+- id: Q-M1.10.T05-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    No cJSON, depois de usar a árvore devolvida por cJSON_Parse, o que o firmware precisa fazer para não vazar memória?
+  alternativas:
+    - "Chamar free() em cada nó, do último para o primeiro"
+    - "Nada: a árvore é liberada quando a função retorna"
+    - "Chamar cJSON_Delete na raiz, que libera a árvore inteira"
+    - "Chamar cJSON_free em cada string lida"
+  resposta: 2
+  explicacao: |
+    cJSON_Parse aloca os nós no heap; cJSON_Delete na raiz percorre e libera todos. cJSON_free é para o texto gerado por cJSON_Print*. Liberar filhos à mão e depois a raiz causa liberação dupla.
+  fonte: "cJSON, README, Usage (Parsing JSON, Working with the data structure)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T05-002
+  objetivo: O1
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    O firmware lê o campo intervalo_s de um comando com cJSON_GetObjectItemCaseSensitive e usa direto o valueint. O painel envia {"intervalo_s":"30"}. O que acontece e como corrigir?
+  alternativas:
+    - "O cJSON converte a string \"30\" para o número 30 automaticamente"
+    - "O nó é do tipo string e o valueint não traz 30; é preciso conferir cJSON_IsNumber antes de usar o valor e recusar o comando"
+    - "cJSON_Parse devolve NULL, porque número entre aspas é JSON inválido"
+    - "O firmware trava, porque o cJSON aborta em tipos inesperados"
+  resposta: 1
+  explicacao: |
+    "30" é uma string JSON válida; o nó tem tipo string e o valueint fica 0. Validar o tipo com cJSON_IsNumber (que aceita NULL e responde falso) é o que separa o firmware robusto do que aplica intervalo zero.
+  fonte: "cJSON, README, Usage (Data Structure, Parsing JSON); IETF RFC 8259, Strings e Numbers"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T05-003
+  objetivo: O1
+  tipo: vf
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Verdadeiro ou falso: passar a variável float t = 23.1f para cJSON_AddNumberToObject faz o texto gerado conter exatamente 23.1, porque o cJSON imprime o menor número de dígitos que representa o valor.
+  resposta: false
+  explicacao: |
+    O float é convertido para double com o erro de representação de 23,1 em 32 bits, e o cJSON imprime 23.100000381469727. Arredonde antes (round(t*10)/10.0) ou mande inteiros escalados (2310 centésimos).
+  fonte: "cJSON, README, Printing JSON; IETF RFC 8259, Numbers"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T05-004
+  objetivo: O2
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    No CBOR (RFC 8949), o que os 3 bits mais altos do byte inicial de um item indicam?
+  alternativas:
+    - "O tipo maior (inteiro, negativo, bytes, texto, array, mapa, tag, simples/float)"
+    - "O comprimento do item em bytes"
+    - "A versão do formato CBOR"
+    - "Se o item é o último de um mapa"
+  resposta: 0
+  explicacao: |
+    Os 3 bits altos são o tipo maior (0 a 7). Os 5 bits baixos trazem o argumento (0 a 23) ou dizem em quantos bytes seguintes ele está (24 a 27).
+  fonte: "IETF RFC 8949, Concise Binary Object Representation, Specification of the CBOR Encoding (Major Types)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T05-005
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Quantos bytes ocupa, em CBOR na forma preferida, o inteiro 3712? Responda em bytes, como número inteiro.
+  resposta: {valor: 3, unidade: "bytes", tolerancia: 0}
+  explicacao: |
+    3712 não cabe em 0–23 nem em 1 byte (até 255), mas cabe em 2 bytes: cabeçalho 0x19 (tipo 0, argumento 25 = "2 bytes a seguir") + 0E 80. Total: 3 bytes.
+  fonte: "IETF RFC 8949, Major Types e Preferred Serialization"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T05-006
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Codifique em CBOR determinístico o mapa {"t": 23.5, "u": 61, "id": "forja-001", "ts": 1760000000, "bat": 3712}, com 23,5 em float de 16 bits (exato em meia precisão). Quantos bytes tem a mensagem? Responda em bytes, como número inteiro.
+  resposta: {valor: 38, unidade: "bytes", tolerancia: 0}
+  explicacao: |
+    A5 (1) + "t" (2) + F9 4D E0 (3) + "u" (2) + 18 3D (2) + "id" (3) + texto de 9 (10) + "ts" (3) + 1A + 4 bytes (5) + "bat" (4) + 19 0E 80 (3) = 38 bytes, contra 61 do JSON compacto.
+  fonte: "IETF RFC 8949, Major Types, Floating-Point Numbers and Values with No Content e Deterministically Encoded CBOR"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T05-007
+  objetivo: O2
+  tipo: multipla
+  dificuldade: 3
+  bloom: entender
+  enunciado: |
+    Marque as afirmações corretas sobre a codificação CBOR.
+  alternativas:
+    - "−200 é codificado como tipo maior 1 com argumento 199, ou seja, 38 C7"
+    - "Os argumentos de 2, 4 e 8 bytes vêm em big-endian"
+    - "Um inteiro negativo é guardado em complemento de dois com bit de sinal, como em C"
+    - "Na codificação determinística, cada argumento usa a menor forma possível e não há comprimentos indefinidos"
+  resposta: [0, 1, 3]
+  explicacao: |
+    Negativos usam o tipo 1 com valor −1 − n, sem complemento de dois. Os argumentos multibyte são big-endian. A codificação determinística exige a forma mais curta, comprimentos definidos e chaves ordenadas.
+  fonte: "IETF RFC 8949, Major Types e Core Deterministic Encoding Requirements"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T05-008
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Num .proto, o campo é declarado como uint32 umidade = 4. Qual é o valor do byte de tag que precede esse campo no fio? Responda em decimal, como número inteiro.
+  resposta: {valor: 32, unidade: "valor do byte", tolerancia: 0}
+  explicacao: |
+    Tag = (número do campo << 3) | tipo de fio. uint32 usa VARINT (0): (4 << 3) | 0 = 32 = 0x20. Para uma string no campo 1 (LEN = 2), a tag seria 0x0A.
+  fonte: "Protocol Buffers Documentation, Encoding, Message Structure"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T05-009
+  objetivo: O3
+  tipo: unica
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    A temperatura pode ser negativa e quase sempre está entre −50 °C e +60 °C, transmitida em centésimos. Que tipo Protobuf é mais adequado e por quê?
+  alternativas:
+    - "int32, porque é o tipo padrão para inteiros com sinal"
+    - "uint32, porque o varint não aceita negativos"
+    - "string, para evitar problemas de sinal"
+    - "sint32, porque o zigzag leva números negativos pequenos a varints curtos, enquanto um int32 negativo ocupa 10 bytes"
+  resposta: 3
+  explicacao: |
+    Um int32 negativo é estendido para 64 bits e vira varint de 10 bytes. O sint32 mapeia 0, −1, 1, −2… para 0, 1, 2, 3…: −200 vira 399, codificado em 2 bytes (8F 03).
+  fonte: "Protocol Buffers Documentation, Encoding, More Integer Types (Signed Integers); Language Guide (proto 3), Scalar Value Types"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T05-010
+  objetivo: O3
+  tipo: unica
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Um campo umidade = 4 foi apagado do .proto. Meses depois, um colega cria uint32 pressao = 4. Aparelhos antigos, que ainda mandam umidade no campo 4, continuam em campo. Qual é a consequência e o que deveria ter sido feito?
+  alternativas:
+    - "Nenhuma: o Protobuf identifica os campos pelo nome, que mudou"
+    - "As mensagens antigas são recusadas pelo decodificador com erro de esquema"
+    - "As umidades antigas são lidas como pressão, sem erro algum; o número 4 deveria ter sido marcado como reserved e a pressão ganhar um número novo"
+    - "O nanopb converte automaticamente a umidade para a unidade de pressão"
+  resposta: 2
+  explicacao: |
+    Só o número do campo viaja; o decodificador novo interpreta o campo 4 como pressão. É dado errado silencioso. A regra de Updating A Message Type é nunca reutilizar números: reserved 4.
+  fonte: "Protocol Buffers Documentation, Language Guide (proto 3), Reserved Fields e Updating A Message Type"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T05-011
+  objetivo: O3
+  tipo: vf
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Verdadeiro ou falso: se uma mensagem Protobuf de 25 bytes chegar truncada em 22 bytes, o pb_decode do nanopb sempre devolve erro, porque a mensagem leva consigo o próprio comprimento.
+  resposta: false
+  explicacao: |
+    A mensagem não carrega o próprio comprimento. Se o corte cair na fronteira de um campo, a decodificação é aceita e o campo ausente vale o padrão (0). Executado: cortada em 24 bytes, recusada (meio de um varint); em 22, aceita com bat_mv = 0. A delimitação e a integridade ficam com o transporte ou um CRC.
+  fonte: "nanopb, Concepts (Streams, Message framing); Protocol Buffers Documentation, Encoding (Message Structure)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T05-012
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Um dispositivo envia 1 leitura por minuto durante 30 dias. Quantas mensagens são enviadas no mês? Responda em mensagens, como número inteiro.
+  resposta: {valor: 43200, unidade: "mensagens", tolerancia: 0}
+  explicacao: |
+    60 × 24 × 30 = 43 200 mensagens. Com 61 bytes de JSON, são 2,64 MB de payload por mês; com 25 de Protobuf, 1,08 MB.
+  fonte: "Protocol Buffers Documentation, Encoding; IETF RFC 8259"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T05-013
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Uma frota de 2 000 dispositivos manda uma leitura a cada 5 minutos. Quanto payload a frota gera por mês de 30 dias se trocar o JSON de 61 bytes pelo Protobuf de 25 bytes, ou seja, qual é a economia? Responda em GB (10^9 bytes), com 3 casas decimais.
+  resposta: {valor: 0.622, unidade: "GB", tolerancia: 0.01}
+  explicacao: |
+    Mensagens = 2 000 × 12 × 24 × 30 = 17 280 000. Economia = 17 280 000 × (61 − 25) = 622 080 000 B = 0,622 GB (de 1,054 GB para 0,432 GB), sem contar cabeçalhos do protocolo.
+  fonte: "Protocol Buffers Documentation, Encoding; IETF RFC 8259"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T05-014
+  objetivo: O4
+  tipo: multipla
+  dificuldade: 3
+  bloom: avaliar
+  enunciado: |
+    Marque as escolhas de formato bem justificadas.
+  alternativas:
+    - "JSON compacto para um dispositivo na tomada, em Wi-Fi, que manda uma leitura por minuto para um sistema web"
+    - "CBOR num servidor CoAP, anunciado com o Content-Format application/cbor"
+    - "Protobuf com nanopb num rastreador NB-IoT cobrado por MB, com o esquema versionado no .proto"
+    - "Uma struct C copiada com memcpy, sem packed e sem campo de versão, para um produto cujo esquema vai evoluir"
+  resposta: [0, 1, 2]
+  explicacao: |
+    No Wi-Fi, a legibilidade do JSON compensa os bytes; CBOR é o formato natural do CoAP; num enlace caro com esquema em evolução, o Protobuf economiza e mantém compatibilidade. A struct sem packed tem preenchimento dependente do compilador, ordem de bytes implícita e nenhuma forma de evoluir.
+  fonte: "IETF RFC 8949, Introduction; RFC 7252, CoAP Content-Formats; Protocol Buffers Documentation, Updating A Message Type"
+  origem: ia
+  revisao: rascunho

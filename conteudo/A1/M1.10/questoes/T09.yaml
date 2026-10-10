@@ -1,0 +1,240 @@
+- id: Q-M1.10.T09-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Num painel de frota de IoT, que informação deve ficar em destaque no topo, para responder "está tudo funcionando?"
+  alternativas:
+    - "A média de temperatura de todos os aparelhos no último ano"
+    - "Um gráfico de pizza com a distribuição dos modelos de aparelho"
+    - "A lista de versões de firmware"
+    - "O estado da frota: aparelhos em alarme e a idade da última leitura de cada um"
+  resposta: 3
+  explicacao: |
+    A primeira pergunta do operador é se há algo a fazer. Alarmes ativos e a idade da última leitura respondem em um segundo; médias longas e distribuições de cadastro são informação de outro painel.
+  fonte: "Grafana Documentation, Dashboard best practices; Google, Site Reliability Engineering, Monitoring Distributed Systems"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T09-002
+  objetivo: O1
+  tipo: multipla
+  dificuldade: 2
+  bloom: avaliar
+  enunciado: |
+    Marque as boas práticas de projeto para um painel de operação de IoT.
+  alternativas:
+    - "Unidade em todo valor exibido (°C, %, V, s)"
+    - "Cores com significado (verde ok, laranja atenção, vermelho agir), sem cores decorativas"
+    - "Uma variável para escolher aparelhos, em vez de um gráfico por aparelho"
+    - "Mostrar só a média horária, para o gráfico ficar mais limpo"
+  resposta: [0, 1, 2]
+  explicacao: |
+    Unidade, cor com significado e variáveis tornam o painel legível e escalável. Só a média esconde picos que importam (o máximo de 10 minutos que estraga a carga): mostre também mínimo e máximo quando o pico for relevante.
+  fonte: "Grafana Documentation, Dashboard best practices e Configure thresholds; Stephen Few, Information Dashboard Design"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T09-003
+  objetivo: O1
+  tipo: unica
+  dificuldade: 3
+  bloom: avaliar
+  enunciado: |
+    Um projeto precisa de gráficos de séries temporais com alertas e, quando um alerta dispara, mandar um comando MQTT ao aparelho. Qual divisão de papéis é a mais adequada?
+  alternativas:
+    - "Node-RED para todos os gráficos históricos e Grafana para mandar o comando MQTT"
+    - "Grafana para os gráficos e as regras de alerta; Node-RED para receber o webhook do alerta e publicar o comando"
+    - "Só o Grafana, porque ele publica comandos MQTT nativamente"
+    - "Só o InfluxDB, com tarefas Flux publicando no broker"
+  resposta: 1
+  explicacao: |
+    O Grafana é forte em séries e alertas, mas não comanda dispositivos; o Node-RED é forte em lógica entre HTTP e MQTT. Foi a divisão usada no laboratório: webhook do Grafana → fluxo do Node-RED → comando MQTT.
+  fonte: "Grafana Documentation, Alerting (Contact points: webhook); Node-RED Documentation, User Guide (http in, mqtt out)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T09-004
+  objetivo: O2
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Numa consulta Flux de um painel do Grafana, qual variável dá o intervalo de agregação automático, calculado a partir da janela de tempo e da largura do painel?
+  alternativas:
+    - "v.timeRangeStart"
+    - "v.defaultBucket"
+    - "v.timeRangeStop"
+    - "v.windowPeriod"
+  resposta: 3
+  explicacao: |
+    v.windowPeriod é usado em aggregateWindow(every: v.windowPeriod, ...): com 30 minutos na tela ele é pequeno, com 30 dias, grande, e a consulta devolve algumas centenas de pontos. v.timeRangeStart e v.timeRangeStop recortam a janela.
+  fonte: "Grafana Documentation, Data sources, InfluxDB (Flux query editor, macros)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T09-005
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um painel mostra 30 dias de uma série gravada a cada 10 s, sem aggregateWindow. Quantos pontos a consulta devolve para essa série? Responda em pontos, como número inteiro.
+  resposta: {valor: 259200, unidade: "pontos", tolerancia: 0}
+  explicacao: |
+    6 por minuto × 1440 × 30 = 259 200 pontos, muito mais do que os pixels do painel. Com aggregateWindow(every: v.windowPeriod), o Grafana pede algumas centenas.
+  fonte: "Grafana Documentation, Data sources, InfluxDB; InfluxData, Flux aggregateWindow()"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T09-006
+  objetivo: O2
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: com o painel provisionado de um arquivo JSON e allowUiUpdates: false, as alterações feitas pela interface do Grafana não substituem a versão do arquivo, que continua sendo a fonte da verdade no git.
+  resposta: true
+  explicacao: |
+    O provisionamento lê os painéis da pasta configurada; com allowUiUpdates: false, a interface não salva por cima. Mudanças entram pelo arquivo (aqui, gerado pelo gerar_painel.py), revisadas e versionadas.
+  fonte: "Grafana Documentation, Administration, Provisioning (Dashboards)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T09-007
+  objetivo: O2
+  tipo: multipla
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    O painel tem a variável dispositivo (vários valores e All), preenchida por schema.tagValues. Marque o que está correto.
+  alternativas:
+    - "A variável faz o InfluxDB criar uma tag nova para cada valor escolhido"
+    - "${dispositivo:json} se transforma numa lista como [\"forja-001\",\"forja-002\"], usável em contains(value: r.id, set: ...)"
+    - "A lista de valores vem do próprio banco, então aparelhos novos aparecem sem editar o painel"
+    - "displayName com ${__field.labels.id} nomeia cada série pelo id do aparelho"
+  resposta: [1, 2, 3]
+  explicacao: |
+    O formato :json gera a lista para o Flux; schema.tagValues lê os valores existentes; o displayName usa o rótulo da série. A variável só altera a consulta; nada é gravado no banco.
+  fonte: "Grafana Documentation, Variables (Add and manage variables, Variable syntax: advanced formatting options); InfluxData, Flux schema.tagValues()"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T09-008
+  objetivo: O3
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Uma regra dispara acima de 30 °C e só normaliza abaixo de 28 °C (recovery threshold), sem pendência, com uma avaliação por leitura. A sequência é 27, 31, 31, 29, 29, 27 °C. Em que estado o alerta está depois da quinta leitura (29 °C)?
+  alternativas:
+    - "Normal, porque 29 °C está abaixo de 30 °C"
+    - "Pending, aguardando a confirmação"
+    - "Alerting, porque com a histerese ele só normaliza abaixo de 28 °C"
+    - "NoData, porque o valor ficou entre os dois limites"
+  resposta: 2
+  explicacao: |
+    Disparado aos 31 °C, o alerta só volta a Normal abaixo do limite de normalização (28 °C). Foi o que o laboratório mostrou: a 29 °C a ventilação continuou ligada, e a normalização veio só a 26 °C.
+  fonte: "Grafana Documentation, Alerting, Configure alert rules (recovery threshold)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T09-009
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Uma regra é avaliada a cada 10 s, tem pendência (for) de 30 s e a política espera group_wait de 10 s antes da primeira notificação. Ignorando o atraso do gravador e da rede, qual é o menor tempo entre a avaliação que vê a condição verdadeira pela primeira vez e o envio da notificação? Responda em s, como número inteiro.
+  resposta: {valor: 40, unidade: "s", tolerancia: 0}
+  explicacao: |
+    A instância fica Pending por 30 s (até a avaliação que completa a pendência) e então vira Alerting; a política segura o grupo por mais 10 s: 30 + 10 = 40 s. Somando até 10 s até a primeira avaliação ver o dado, e o lote do Telegraf, chega-se aos ~50 s medidos no laboratório.
+  fonte: "Grafana Documentation, Alerting (Alert rule evaluation, pending period; Notification policies, group_wait)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T09-010
+  objetivo: O3
+  tipo: unica
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Um aparelho travou e parou de enviar dados enquanto estava a 35 °C. A frota tem só a regra "temperatura > 30 °C", com noDataState: OK. O que acontece e como corrigir?
+  alternativas:
+    - "O alerta de temperatura continua disparado para sempre, então não há problema"
+    - "O Grafana estima a temperatura pela tendência e mantém o alerta"
+    - "O InfluxDB repete o último valor a cada minuto, mantendo o alerta"
+    - "A série do aparelho some da janela da consulta, o alarme de temperatura não continua disparado para ele, e o travamento passa despercebido; falta uma regra sobre a idade da última leitura"
+  resposta: 3
+  explicacao: |
+    Sem dados na janela, a instância daquele aparelho deixa de existir ou vai para o estado de sem dados configurado (aqui, OK). A regra sobre a idade da última leitura, com janela longa, é que detecta o aparelho calado — no laboratório, o forja-003 foi pego assim.
+  fonte: "Grafana Documentation, Alerting, Configure no data and error handling e State and health of alert rules"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T09-011
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    200 aparelhos perdem a rede ao mesmo tempo e a regra "Dispositivo calado" dispara para todos. A política agrupa por alertname e id. Quantas notificações saem depois do group_wait? Responda em notificações, como número inteiro.
+  resposta: {valor: 200, unidade: "notificações", tolerancia: 0}
+  explicacao: |
+    Agrupar por id faz cada aparelho virar um grupo: 200 notificações. Agrupando só por alertname, sairia uma notificação com os 200 alertas — melhor para quedas em massa.
+  fonte: "Grafana Documentation, Alerting, Notification policies (group_by, group_wait)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T09-012
+  objetivo: O4
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Na cadeia do laboratório, que componente transforma as mensagens MQTT em pontos do InfluxDB?
+  alternativas:
+    - "O Grafana"
+    - "O Node-RED"
+    - "O Telegraf, com inputs.mqtt_consumer e outputs.influxdb_v2"
+    - "O próprio Mosquitto"
+  resposta: 2
+  explicacao: |
+    O Telegraf assina os tópicos, converte o JSON em campos, tira o id do tópico e grava em lotes. O Grafana só lê; o Node-RED reage aos alertas; o Mosquitto não grava em banco.
+  fonte: "Telegraf, plugins inputs.mqtt_consumer e outputs.influxdb_v2"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T09-013
+  objetivo: O4
+  tipo: multipla
+  dificuldade: 2
+  bloom: avaliar
+  enunciado: |
+    Marque as práticas corretas no fluxo do Node-RED que recebe o webhook do Grafana e manda comandos aos aparelhos.
+  alternativas:
+    - "Validar o id do aparelho antes de montá-lo no tópico do comando"
+    - "Usar o mesmo usuário MQTT dos dispositivos, para simplificar a ACL"
+    - "Mandar ligar quando o status é firing e desligar quando é resolved"
+    - "Dar ao Node-RED credenciais MQTT que só permitem escrever em forja/v1/+/cmd/#"
+  resposta: [0, 2, 3]
+  explicacao: |
+    O que chega por HTTP é dado externo e precisa ser validado; o status indica disparo e normalização; o Node-RED deve ter o privilégio mínimo (T06). Compartilhar credencial com os dispositivos mistura identidades e impede revogar um sem afetar o outro.
+  fonte: "Node-RED Documentation, Writing Functions; Grafana Documentation, Alerting (webhook notifier); Eclipse Mosquitto, mosquitto.conf(5), acl_file"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.10.T09-014
+  objetivo: O4
+  tipo: vf
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Verdadeiro ou falso: como a cadeia sensor → MQTT → InfluxDB → Grafana → Node-RED → comando funcionou no laboratório, ela pode substituir o intertravamento de firmware que desliga um aquecedor acima de 60 °C.
+  resposta: false
+  explicacao: |
+    A cadeia levou cerca de 50 s entre o fato e o comando e depende de rede, broker, banco, Grafana e Node-RED. Intertravamento de segurança precisa agir em milissegundos e funcionar sem rede: fica no firmware (e em hardware, se a norma pedir); a nuvem registra e avisa.
+  fonte: "Grafana Documentation, Alerting (Alert rule evaluation); roteiro M1.10.T09, demonstração de ponta a ponta"
+  origem: ia
+  revisao: rascunho

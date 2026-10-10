@@ -1,45 +1,128 @@
 id: M1.10
 ato: A1
 nome: "Protocolos de aplicação e nuvem"
+missao: "As máquinas da Vila da Forja já sabem chegar à estrada da rede, mas ainda não sabem o que dizer nem a quem: ensine-as a pedir e responder em HTTP, a gritar recados no mercado de mensagens do MQTT, a sussurrar em CoAP quando a bateria é curta, a empacotar cada palavra em poucos bytes, a erguer uma torre de correio própria e trancada, a guardar a memória de cada medição no arquivo do tempo e a acender no painel do conselho o alarme que acorda o ferreiro de plantão antes que a fornalha apague."
 horas: 160
 trilha: firmware
 ordem: 17
 requer: ["M1.9"]
 tags_chefe: []
+# Ordem didática: HTTP e REST (o protocolo de aplicação que o aluno já usou na OTA do M1.6 e o vocabulário de recursos, métodos e status que CoAP e as plataformas reaproveitam) → JSON, CBOR, Protobuf (o que vai dentro da mensagem: precisa estar pronto antes do MQTT, porque todo exemplo daqui em diante carrega um payload e compara tamanhos) → MQTT (o elite central: pub/sub, pacotes e QoS contados byte a byte, retain, LWT, sessão e MQTT 5, com broker local em Docker) → CoAP (o contraponto sobre UDP para dispositivos restritos e NB-IoT, lido à luz do REST do T01 e do CBOR do T05) → WebSocket (o canal bidirecional até o navegador, que também transporta MQTT e prepara o dashboard) → Broker próprio (o segundo elite: o Mosquitto do T02 vira serviço de verdade, com TLS, usuários, ACL e ponte, e o EMQX como alternativa) → Plataformas (AWS IoT Core e ThingsBoard comparados com o broker próprio, com shadow, regras e custo) → Banco de séries temporais (onde as mensagens viram histórico, com retenção e downsampling) → Dashboard (o terceiro elite fecha a cadeia dispositivo → MQTT → banco → painel → alerta, usando tudo o que veio antes).
 topicos:
   - id: M1.10.T01
     nome: "HTTP e REST"
     tipo: comum
     peso: 1
-  - id: M1.10.T02
-    nome: "MQTT (QoS, retain, LWT)"
-    tipo: elite
-    peso: 2
-  - id: M1.10.T03
-    nome: "CoAP"
-    tipo: comum
-    peso: 1
-  - id: M1.10.T04
-    nome: "WebSocket"
-    tipo: comum
-    peso: 1
+    objetivos:
+      - id: O1
+        texto: "Descrever as mensagens HTTP (linha de requisição, linha de status, cabeçalhos, corpo, conexões persistentes, HTTP/2 e HTTP/3) e classificar métodos e códigos de status pelas propriedades de segurança, idempotência e cache da RFC 9110"
+      - id: O2
+        texto: "Projetar uma API REST para dispositivos (recursos e URIs, métodos, códigos de status, versionamento, paginação, ETag e requisições condicionais, autenticação por token) e escolher entre PUT, PATCH e POST"
+      - id: O3
+        texto: "Escrever um cliente HTTPS no ESP-IDF com esp_http_client (GET e POST com JSON, tempo limite, verificação de certificado, leitura do corpo, tratamento do status e novas tentativas com recuo exponencial)"
+      - id: O4
+        texto: "Implementar um servidor REST simples (esp_http_server no ESP32 e Python no PC), testá-lo com curl e calcular o overhead do HTTP em relação ao dado útil de um sensor"
   - id: M1.10.T05
     nome: "JSON, CBOR, Protobuf"
     tipo: comum
     peso: 1
+    objetivos:
+      - id: O1
+        texto: "Gerar e analisar JSON no firmware com cJSON (criação, impressão, análise, verificação de tipos, liberação de memória) e reconhecer o custo do JSON em bytes, em memória e em processamento"
+      - id: O2
+        texto: "Codificar e decodificar CBOR pela RFC 8949 (tipos maiores, argumento, inteiros, strings, arrays, mapas, ponto flutuante, tags, codificação determinística) à mão e com bibliotecas"
+      - id: O3
+        texto: "Definir mensagens Protocol Buffers (arquivo .proto, números de campo, tipos de fio, varint e zigzag, campos opcionais e repetidos, regras de compatibilidade) e usá-las no ESP32 com nanopb"
+      - id: O4
+        texto: "Comparar o tamanho e o custo de JSON, CBOR, Protobuf e struct binária para o mesmo payload e escolher o formato conforme o enlace, a evolução do esquema e as ferramentas do lado da nuvem"
+  - id: M1.10.T02
+    nome: "MQTT (QoS, retain, LWT)"
+    tipo: elite
+    peso: 2
+    objetivos:
+      - id: O1
+        texto: "Explicar o modelo publicar/assinar do MQTT (broker, clientes, desacoplamento no espaço, no tempo e na sincronização) e projetar uma árvore de tópicos com curingas + e #, tópicos $SYS e boas práticas de nomes"
+      - id: O2
+        texto: "Descrever os pacotes do MQTT 3.1.1 (cabeçalho fixo, remaining length, CONNECT, CONNACK, PUBLISH, SUBSCRIBE, PINGREQ) e os fluxos de QoS 0, 1 e 2, codificando os pacotes e contando bytes"
+      - id: O3
+        texto: "Aplicar retain, Last Will and Testament, sessão persistente, keepalive e os recursos do MQTT 5 (reason codes, propriedades, expiração de sessão e de mensagem, assinaturas compartilhadas, aliases de tópico, request/response)"
+      - id: O4
+        texto: "Construir clientes MQTT com esp-mqtt no ESP32 e paho-mqtt no PC, com TLS, LWT, reconexão e fila local, e verificar QoS, retain, LWT e sessão num broker local"
+  - id: M1.10.T03
+    nome: "CoAP"
+    tipo: comum
+    peso: 1
+    objetivos:
+      - id: O1
+        texto: "Descrever o CoAP da RFC 7252 (modelo REST sobre UDP, cabeçalho de 4 bytes, token, opções codificadas por delta, métodos, códigos de resposta, URIs coap e coaps) e codificar uma mensagem byte a byte"
+      - id: O2
+        texto: "Explicar a camada de mensagens do CoAP (CON, NON, ACK e RST, Message ID, retransmissão com recuo exponencial, ACK_TIMEOUT e MAX_RETRANSMIT, deduplicação, respostas piggybacked e separadas)"
+      - id: O3
+        texto: "Usar a observação de recursos da RFC 7641 e a transferência em blocos da RFC 7959 (Block1, Block2, SZX) e calcular o número de blocos e de mensagens de uma transferência"
+      - id: O4
+        texto: "Implementar servidor e cliente CoAP (aiocoap no PC, libcoap no ESP-IDF), protegê-los com DTLS e comparar CoAP, MQTT e HTTP para um dispositivo restrito"
+  - id: M1.10.T04
+    nome: "WebSocket"
+    tipo: comum
+    peso: 1
+    objetivos:
+      - id: O1
+        texto: "Descrever o handshake de abertura do WebSocket da RFC 6455 (Upgrade, Connection, Sec-WebSocket-Key, Sec-WebSocket-Accept, subprotocolos) e calcular o valor de aceitação"
+      - id: O2
+        texto: "Decodificar e montar quadros WebSocket (FIN, opcode, bit de máscara, comprimento de 7, 16 e 64 bits, chave de mascaramento) e explicar fragmentação e os quadros de controle ping, pong e close"
+      - id: O3
+        texto: "Escrever um servidor WebSocket no ESP32 com esp_http_server e clientes com esp_websocket_client e Python websockets para atualizar uma página em tempo real"
+      - id: O4
+        texto: "Usar MQTT sobre WebSocket no navegador e comparar WebSocket, HTTP com polling, long polling, Server-Sent Events e MQTT para empurrar dados ao usuário"
   - id: M1.10.T06
     nome: "Broker próprio (Mosquitto/EMQX)"
     tipo: elite
     peso: 2
+    objetivos:
+      - id: O1
+        texto: "Instalar e configurar o Mosquitto em Docker ou numa VPS (listeners, persistência, logs, limites, password_file com mosquitto_passwd, ACL por usuário e por padrão com %c e %u)"
+      - id: O2
+        texto: "Proteger o broker com TLS na porta 8883 (CA própria, certificado do servidor com SAN, TLS mútuo com certificado por dispositivo, use_identity_as_username) e credenciais únicas por dispositivo"
+      - id: O3
+        texto: "Configurar uma ponte entre brokers (direção e prefixos de tópicos, QoS, TLS e credenciais na ponte, laços) e explicar o EMQX (cluster, autenticação e autorização em banco, motor de regras, painel)"
+      - id: O4
+        texto: "Operar o broker: dimensionar conexões, memória e banda para uma frota, monitorar pelos tópicos $SYS, testar carga e diagnosticar falhas de conexão, autenticação e autorização"
   - id: M1.10.T07
     nome: "Plataformas (AWS IoT, ThingsBoard)"
     tipo: comum
     peso: 1
+    objetivos:
+      - id: O1
+        texto: "Descrever o AWS IoT Core (registro de coisas, certificados X.509 e políticas, gateway de mensagens MQTT, tópicos reservados $aws, motor de regras com SQL, cotas e cobrança por mensagem)"
+      - id: O2
+        texto: "Usar o Device Shadow (estados desired e reported, delta, versão, tópicos update, get e delta) para sincronizar o estado de um dispositivo que passa a maior parte do tempo dormindo"
+      - id: O3
+        texto: "Conectar um dispositivo ao ThingsBoard (token de acesso, API MQTT de telemetria e atributos, RPC, perfis, cadeia de regras) e reconhecer os equivalentes no Azure IoT Hub (device twin, métodos diretos, DPS)"
+      - id: O4
+        texto: "Comparar plataformas gerenciadas e broker próprio (custo por mensagem e por dispositivo, dependência de fornecedor, provisionamento em massa, segurança, operação) e estimar o custo mensal de uma frota"
   - id: M1.10.T08
     nome: "Banco de séries temporais"
     tipo: comum
     peso: 1
+    objetivos:
+      - id: O1
+        texto: "Explicar o modelo de séries temporais (medida, tags, campos, timestamp, série e cardinalidade) e escrever pontos no line protocol do InfluxDB com a precisão de tempo correta"
+      - id: O2
+        texto: "Gravar e consultar dados no InfluxDB (API de escrita, buckets, tokens, consultas com janelas e agregações) e no TimescaleDB (hypertable, time_bucket, agregados contínuos)"
+      - id: O3
+        texto: "Projetar retenção e downsampling (períodos de retenção, tarefas de agregação, camadas bruta, por minuto e por hora) e estimar o volume de pontos e o armazenamento"
+      - id: O4
+        texto: "Montar o caminho MQTT → banco com Telegraf ou um serviço em Python, tratando timestamps, duplicatas, dados atrasados, reconexão e escrita em lotes"
   - id: M1.10.T09
     nome: "Dashboard"
     tipo: elite
     peso: 2
+    objetivos:
+      - id: O1
+        texto: "Projetar um dashboard de IoT para quem opera (pergunta de cada painel, último valor, séries, estado da frota, unidades, escalas e cores com significado) e escolher entre Grafana, Node-RED e ThingsBoard"
+      - id: O2
+        texto: "Construir painéis no Grafana sobre o InfluxDB (fonte de dados, consultas, intervalo automático, variáveis de template, transformações) e provisioná-los como código"
+      - id: O3
+        texto: "Configurar alertas no Grafana (regra com limiar e pendência, estados sem dados e erro, histerese, pontos de contato, políticas de notificação, silêncios) e evitar alarmes falsos e alarmes que nunca disparam"
+      - id: O4
+        texto: "Montar a cadeia completa dispositivo → MQTT → banco → dashboard → alerta com docker-compose e um fluxo do Node-RED e demonstrá-la de ponta a ponta, incluindo falhas provocadas"
