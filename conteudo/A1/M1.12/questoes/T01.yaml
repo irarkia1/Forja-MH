@@ -1,0 +1,240 @@
+- id: Q-M1.12.T01-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Qual destes requisitos de uma estação de monitoramento a bateria é mensurável e verificável?
+  alternativas:
+    - "A estação deve ter uma autonomia boa para o uso em campo"
+    - "A estação deve enviar os dados de forma rápida e segura"
+    - "A estação deve medir temperatura e umidade a cada 300 s ± 10 s"
+    - "A estação deve ser robusta a falhas de rede, se possível"
+  resposta: 2
+  explicacao: |
+    Só o requisito do período traz grandeza, valor e tolerância: dá para escrever o teste (log de 24 h e intervalo entre medidas) antes de construir. "Boa", "rápida", "segura", "robusta" e "se possível" são termos vagos que a IEEE 29148 manda evitar.
+  fonte: "ISO/IEC/IEEE 29148:2018 (Characteristics of individual requirements; Requirement language criteria)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.12.T01-002
+  objetivo: O1
+  tipo: multipla
+  dificuldade: 2
+  bloom: analisar
+  enunciado: |
+    Quais destes requisitos estão escritos de forma singular e verificável?
+  alternativas:
+    - "RNF-05: pelo menos 99 % das medidas devem estar no banco ao fim de um ensaio de 7 dias, contadas pelo número de sequência"
+    - "RF-02: a estação deve medir, enviar ao broker e mostrar os dados no dashboard com segurança"
+    - "RNF-01: o sensor deve ser preciso o suficiente para a aplicação"
+    - "RNF-06: o custo da BOM deve ser de no máximo R$ 150 por unidade, sem frete, com cotação datada"
+  resposta: [0, 3]
+  explicacao: |
+    A entrega de 99 % em 7 dias e o custo ≤ R$ 150 têm um só assunto, número, unidade e forma de conferir. O requisito que mede, envia e mostra junta três requisitos e usa "com segurança", que não se verifica; "preciso o suficiente" não tem valor nem faixa.
+  fonte: "ISO/IEC/IEEE 29148:2018 (Characteristics of individual requirements); NASA Systems Engineering Handbook (How to Write a Good Requirement — Checklist)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.12.T01-003
+  objetivo: O1
+  tipo: unica
+  dificuldade: 3
+  bloom: avaliar
+  enunciado: |
+    O cliente pediu "o alerta deve ser rápido". Qual reescrita atende melhor aos critérios SMART e permite um teste de aceite sem discussão?
+  alternativas:
+    - "O alerta deve chegar o mais rápido possível, sem atrasos perceptíveis para o usuário"
+    - "A notificação deve chegar ao celular em ≤ 60 s contados a partir da medida que cruza o limiar, em pelo menos 19 de 20 ensaios"
+    - "O alerta deve usar MQTT com QoS 2 para garantir a entrega imediata"
+    - "A latência média do sistema deve ser baixa em condições normais de operação"
+  resposta: 1
+  explicacao: |
+    A reescrita boa diz o que se mede (da medida que cruza o limiar até a notificação), o limite (60 s) e o método estatístico (19 de 20 ensaios). "O mais rápido possível" e "baixa" não são mensuráveis, e impor QoS 2 é uma solução, não um requisito — e o QoS nem garante tempo.
+  fonte: "George T. Doran, There's a S.M.A.R.T. way to write management's goals and objectives (1981); ISO/IEC/IEEE 29148:2018 (Requirement language criteria)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.12.T01-004
+  objetivo: O2
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    No formato de ADR proposto por Michael Nygard, o que se faz quando uma decisão já registrada é trocada por outra?
+  alternativas:
+    - "Edita-se o ADR antigo com a nova decisão, para o repositório ficar sempre atual"
+    - "Apaga-se o ADR antigo, porque decisões abandonadas confundem quem lê"
+    - "Registra-se a mudança só na mensagem de commit do código afetado"
+    - "Escreve-se um ADR novo e marca-se o antigo como substituído, mantendo os dois no repositório"
+  resposta: 3
+  explicacao: |
+    Os ADRs são um registro histórico: o antigo continua lá com o status de substituído (superseded) e aponta para o novo. Assim se preserva por que a decisão anterior fazia sentido no contexto da época.
+  fonte: "Michael Nygard, Documenting Architecture Decisions (Cognitect, 2011)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.12.T01-005
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Orçamento de latência de um alerta, no pior caso de cada etapa: medida → decisão 0,02 s; associação Wi-Fi com canal e BSSID salvos 1,5 s; DHCP 0,3 s; TCP + TLS + CONNECT 1,2 s; PUBLISH com PUBACK 0,1 s; flush do Telegraf 10 s; avaliação da regra no Grafana 10 s; group wait da política de notificação 30 s; entrega da notificação 2 s. Qual é a latência total? Responda em s, com 1 casa decimal.
+  resposta: {valor: 55.1, unidade: "s", tolerancia: 0.01}
+  explicacao: |
+    0,02 + 1,5 + 0,3 + 1,2 + 0,1 + 10 + 10 + 30 + 2 = 55,12 s ≈ 55,1 s. Passa no critério de 60 s por pouco, e a maior parcela (30 s) é um valor padrão de configuração da política de notificação, não uma limitação do rádio.
+  fonte: "Grafana Labs, Grafana Alerting (Notification policies: group wait); InfluxData, Telegraf configuration (flush_interval)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.12.T01-006
+  objetivo: O2
+  tipo: multipla
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    O ADR-002 decidiu que a estação mede a cada 5 min, guarda as medidas na memória RTC e conecta a cada 6 medidas ou na hora quando há alerta. Quais consequências desse ADR precisam constar no registro?
+  alternativas:
+    - "O dashboard passa a mostrar dados com até 30 min de atraso fora dos alertas"
+    - "O QoS das mensagens de lote pode ser 0, porque o buffer já garante a entrega"
+    - "Cada medida precisa de número de sequência e carimbo de tempo próprios, porque chegam várias numa só mensagem"
+    - "Uma perda total de energia apaga as medidas ainda não enviadas, o que precisa aparecer na FMEA"
+  resposta: [0, 2, 3]
+  explicacao: |
+    Enviar em lote atrasa o dado (aceito pelo requisito de 30 min), exige identificar e datar cada medida dentro da mensagem e cria um risco novo: a memória RTC não sobrevive à queda de alimentação. O buffer não dispensa a confirmação do broker; sem PUBACK, a estação não sabe se pode apagar as medidas.
+  fonte: "Michael Nygard, Documenting Architecture Decisions (Context, Decision, Consequences)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.12.T01-007
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Um modo de falha da estação tem severidade 7, ocorrência 4 e detecção 5. Qual é o RPN? Responda como número inteiro, sem unidade.
+  resposta: {valor: 140, unidade: "(adimensional)", tolerancia: 0}
+  explicacao: |
+    RPN = S × O × D = 7 × 4 × 5 = 140. Pela regra do roteiro (ação para RPN ≥ 100 ou S ≥ 9), este modo de falha precisa de uma ação definida.
+  fonte: "AIAG & VDA, FMEA Handbook (2019), como referência geral sobre severidade, ocorrência e detecção"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.12.T01-008
+  objetivo: O3
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Na FMEA, o modo de falha "o alerta não chega ao celular (regra ou ponto de contato errado)" recebeu D = 7, porque só seria percebido quando um problema real acontecesse. Qual ação reduz a nota de detecção?
+  alternativas:
+    - "Um teste automático e periódico que provoca um alerta de teste e confere se a notificação chegou"
+    - "Trocar o sensor por um modelo de maior exatidão"
+    - "Aumentar a capacidade da bateria"
+    - "Pedir ao operador que tome mais cuidado ao configurar as regras"
+  resposta: 0
+  explicacao: |
+    Detecção mede a chance de a falha ser percebida antes de causar o efeito. Um alerta de teste agendado descobre a regra ou o ponto de contato quebrado antes do dia em que ele é necessário. Sensor e bateria não mexem nessa causa, e "tomar cuidado" não muda nem O nem D.
+  fonte: "AIAG & VDA, FMEA Handbook (2019), como referência geral sobre ações de detecção"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.12.T01-009
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    O modo de falha "alerta não chega" tinha S = 9, O = 3 e D = 7. Depois de implantar um alerta de teste diário, a detecção foi reavaliada para D = 3, sem mudar S e O. De quantos por cento o RPN caiu? Responda em %, com 1 casa decimal.
+  resposta: {valor: 57.1, unidade: "%", tolerancia: 0.01}
+  explicacao: |
+    Antes: 9 × 3 × 7 = 189. Depois: 9 × 3 × 3 = 81. Queda: (189 − 81) / 189 = 57,1 %. A severidade continua 9: a falha, se acontecer, é tão grave quanto antes; só fica mais provável percebê-la a tempo.
+  fonte: "AIAG & VDA, FMEA Handbook (2019), como referência geral"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.12.T01-010
+  objetivo: O3
+  tipo: unica
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Primeira passada da FMEA, com notas S, O e D: X "alerta não chega" (9, 2, 5); Y "ruído de ±0,2 °C na leitura" (3, 8, 4); Z "firmware preso acordado drena a bateria" (9, 3, 4); W "etiqueta da caixa descola" (2, 7, 2). A regra do projeto é agir em todo RPN ≥ 100 e em toda severidade ≥ 9. Só há tempo para uma ação nesta semana. Qual modo de falha atacar primeiro?
+  alternativas:
+    - "Y, porque tem a maior ocorrência da tabela"
+    - "Z, porque atende aos dois critérios ao mesmo tempo: RPN 108 e severidade 9"
+    - "X, porque é o único com severidade 9"
+    - "W, porque é a ação mais barata"
+  resposta: 1
+  explicacao: |
+    RPNs: X = 90, Y = 96, Z = 108, W = 28. Z passa do limiar de RPN e tem S = 9; X também exige ação pela severidade, e entra logo depois. Y tem ocorrência alta, mas efeito pequeno e RPN abaixo de 100. Ordenar só pela ocorrência ou pelo custo ignora o efeito no usuário.
+  fonte: "AIAG & VDA, FMEA Handbook (2019), Action Priority, como referência geral"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.12.T01-011
+  objetivo: O4
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Qual método de verificação é o adequado para o requisito "o custo da BOM deve ser de no máximo R$ 150 por unidade, sem frete"?
+  alternativas:
+    - "Teste, com estímulo controlado e medida instrumentada"
+    - "Demonstração, mostrando o protótipo funcionando"
+    - "Inspeção, conferindo a lista de materiais com a cotação datada"
+    - "Análise por simulação de Monte Carlo"
+  resposta: 2
+  explicacao: |
+    Custo se verifica olhando e somando um documento: é inspeção. Teste exige estímulo e medida; demonstração mostra o comportamento funcionando; análise calcula ou simula, como na autonomia projetada.
+  fonte: "NASA Systems Engineering Handbook (Product Verification); ISO/IEC/IEEE 29148:2018 (Requirements attributes)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.12.T01-012
+  objetivo: O4
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: na matriz de rastreabilidade, um teste que não aponta para nenhum requisito indica que o teste é desnecessário ou que falta um requisito no documento.
+  resposta: true
+  explicacao: |
+    A rastreabilidade vale nos dois sentidos: todo requisito tem pelo menos um teste e todo teste verifica pelo menos um requisito. Um teste órfão ou mede algo que ninguém pediu ou revela uma necessidade que ainda não foi escrita.
+  fonte: "ISO/IEC/IEEE 29148:2018 (Characteristics of a set of requirements; Requirements attributes)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.12.T01-013
+  objetivo: O4
+  tipo: unica
+  dificuldade: 3
+  bloom: avaliar
+  enunciado: |
+    No ensaio TC-05, só 17 de 20 alertas chegaram em até 60 s (o critério é 19 de 20). A apresentação do projeto é daqui a dois dias. Qual é a conduta correta?
+  alternativas:
+    - "Medir cada etapa da latência, corrigir a que domina e repetir o ensaio; se não der, mudar o requisito por escrito, num ADR, com a justificativa"
+    - "Trocar o critério para 17 de 20 no plano de testes e marcar o teste como aprovado"
+    - "Repetir o ensaio até sair uma rodada com 19 de 20 e registrar só essa"
+    - "Retirar o TC-05 do plano, porque latência de alerta é um requisito de prioridade baixa"
+  resposta: 0
+  explicacao: |
+    Critério que falha não se relaxa em silêncio nem se escolhe a rodada favorável. Primeiro se ataca a causa (no orçamento típico, o group wait de 30 s); se o requisito precisar mudar, a mudança é registrada e justificada. A latência do alerta tem severidade alta na FMEA: não é item que se descarta.
+  fonte: "ISO/IEC/IEEE 29148:2018 (Requirements attributes); Michael Nygard, Documenting Architecture Decisions"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.12.T01-014
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Critério de aceite: autonomia ≥ 183 dias com margem de 30 %. Bateria de 2600 mAh, fração útil 0,85, fração de vida 0,9 e autodescarga de 52 mAh a cada 30 dias. Usando dias = C·f_útil·f_vida / [(Q_dia + Q_auto)·(1 + margem)], qual é a maior carga diária consumida pelo nó (Q_dia) que ainda cumpre o critério? Responda em mAh/dia, com 2 casas decimais.
+  resposta: {valor: 6.63, unidade: "mAh/dia", tolerancia: 0.01}
+  explicacao: |
+    Capacidade útil: 2600 × 0,85 × 0,9 = 1989 mAh. Q_auto = 52 / 30 = 1,733 mAh/dia. Para 183 dias: Q_dia + Q_auto = 1989 / (183 × 1,3) = 8,361 mAh/dia, logo Q_dia ≤ 8,361 − 1,733 = 6,63 mAh/dia (≈ 276 µA médios). É o teto que o T05 vai confrontar com o perfil medido.
+  fonte: "Roteiro M1.11.T02 (capacidade útil, margem e vida-alvo)"
+  origem: ia
+  revisao: rascunho

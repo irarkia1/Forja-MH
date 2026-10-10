@@ -1,0 +1,230 @@
+- id: Q-M1.12.T02-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Na estação, o SHT31 e os resistores de pull-up do I²C são alimentados pelo mesmo GPIO, que fica em nível baixo durante o deep sleep. Qual é o principal motivo dessa escolha?
+  alternativas:
+    - "Aumentar a velocidade do barramento I²C durante a medida"
+    - "Garantir que nada do sensor consuma corrente no sono e evitar que ele seja alimentado pelos pinos de dados"
+    - "Dispensar o cálculo do CRC, porque o sensor reinicia a cada medida"
+    - "Permitir que o sensor meça enquanto o ESP32 dorme"
+  resposta: 1
+  explicacao: |
+    Com sensor e pull-ups no mesmo trilho chaveado, o sono fica sem fuga por esse caminho. Se os pull-ups ficassem no 3,3 V permanente com o sensor desligado, o sensor se alimentaria pelos diodos de proteção dos pinos SDA e SCL. O CRC continua necessário, e o sensor desligado não mede.
+  fonte: "Roteiro M1.11.T03 (fugas no sono); Sensirion, SHT3x-DIS datasheet"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.12.T02-002
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    O SHT31 devolveu o código de temperatura S_T = 0x7000 (28 672 em decimal), com CRC correto. Pela conversão do datasheet, T = −45 + 175·S_T/65 535, qual é a temperatura? Responda em °C, com 2 casas decimais.
+  resposta: {valor: 31.56, unidade: "°C", tolerancia: 0.01}
+  explicacao: |
+    T = −45 + 175 × 28 672 / 65 535 = −45 + 76,56 = 31,56 °C. Acima do limiar padrão de 30 °C: esta medida dispararia o alerta se a estação estivesse em estado normal.
+  fonte: "Sensirion, SHT3x-DIS datasheet (Conversion of Signal Output)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.12.T02-003
+  objetivo: O1
+  tipo: unica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    O driver manda o comando de medida ao SHT31, chama vTaskDelay(pdMS_TO_TICKS(16)) e lê os 6 bytes. Com o tick do FreeRTOS em 100 Hz, a leitura falha com NACK em parte das vezes. Qual é a causa e a correção adequada?
+  alternativas:
+    - "O SHT31 não aceita 100 kHz; a correção é subir o I²C para 400 kHz"
+    - "O CRC está sendo calculado com o polinômio errado; a correção é usar 0x07"
+    - "Falta o pull-up interno do ESP32; a correção é habilitá-lo além dos externos"
+    - "pdMS_TO_TICKS(16) vale 1 tick, e vTaskDelay(1) pode esperar quase nada; a correção é esperar ticks suficientes para garantir os 15,5 ms, por exemplo pdMS_TO_TICKS(16) + 2"
+  resposta: 3
+  explicacao: |
+    A 100 Hz, 16 ms viram 1 tick por divisão inteira, e vTaskDelay(n) espera entre n − 1 e n ticks. A medida de alta repetibilidade leva até 15,5 ms; lida antes, o sensor responde com NACK. Com 3 ticks a espera é de pelo menos 20 ms. Velocidade do barramento, polinômio e pull-ups não explicam uma falha que depende do instante da leitura.
+  fonte: "Sensirion, SHT3x-DIS datasheet (Measurement Commands for Single Shot Data Acquisition Mode); FreeRTOS, vTaskDelay"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.12.T02-004
+  objetivo: O2
+  tipo: vf
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: depois de calcular ganho e offset com dois pontos de referência, medir de novo nesses mesmos dois pontos é suficiente para provar que o requisito de exatidão foi atendido.
+  resposta: false
+  explicacao: |
+    Nos pontos de ajuste o erro é zero por construção: a correção foi calculada para isso. A verificação precisa de um ponto independente, de preferência no meio da faixa de uso, comparado com a referência e com a incerteza declarada.
+  fonte: "Roteiro M1.8.T06 (planejar a calibração e o ponto de verificação)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.12.T02-005
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Calibração de dois pontos: com a referência em 2,00 °C a estação leu 2,45 °C; com a referência em 30,00 °C, leu 30,20 °C. Aplicando a correção linear obtida, qual é a temperatura corrigida para uma leitura bruta de 15,00 °C? Responda em °C, com 2 casas decimais.
+  resposta: {valor: 14.66, unidade: "°C", tolerancia: 0.01}
+  explicacao: |
+    Ganho = (30,00 − 2,00)/(30,20 − 2,45) = 28/27,75 = 1,00901. Offset = 2,00 − 1,00901 × 2,45 = −0,4721 °C. Corrigida = 1,00901 × 15,00 − 0,4721 = 14,66 °C.
+  fonte: "Roteiro M1.8.T06 (modelo de offset e ganho)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.12.T02-006
+  objetivo: O2
+  tipo: unica
+  dificuldade: 3
+  bloom: avaliar
+  enunciado: |
+    O requisito é erro ≤ ±0,5 °C. No ponto de verificação independente, o erro medido foi 0,38 °C, e a incerteza estimada da verificação é 0,20 °C. Qual é o veredito correto para o relatório?
+  alternativas:
+    - "Aprovado, porque 0,38 °C é menor que 0,5 °C"
+    - "Reprovado, porque a incerteza é maior que 10 % do limite"
+    - "Inconclusivo, porque o erro somado à incerteza (0,58 °C) passa do limite; é preciso melhorar a referência ou o arranjo e repetir"
+    - "Aprovado, desde que se subtraia a incerteza do erro medido"
+  resposta: 2
+  explicacao: |
+    Com a incerteza da verificação, o erro verdadeiro pode estar entre 0,18 e 0,58 °C: não dá para afirmar que está dentro de 0,5 °C. Declarar aprovado ignora a incerteza; subtraí-la é escolher o lado favorável.
+  fonte: "Roteiro M0.2.T10 (erro e incerteza); roteiro M1.8.T06 (erro residual)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.12.T02-007
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Para verificar o requisito de ±0,5 °C, as contribuições de incerteza são: referência 0,10 °C, não uniformidade entre referência e sensor 0,15 °C, resolução e ruído da leitura 0,05 °C, independentes entre si. Qual é o maior erro medido no ponto de verificação que ainda permite declarar o requisito atendido, com o erro somado à incerteza combinada dentro do limite? Responda em °C, com 2 casas decimais.
+  resposta: {valor: 0.31, unidade: "°C", tolerancia: 0.02}
+  explicacao: |
+    Incerteza combinada (raiz da soma dos quadrados): √(0,10² + 0,15² + 0,05²) = √0,035 = 0,187 °C. Erro máximo para aprovação conclusiva: 0,5 − 0,187 = 0,31 °C. A maior parcela é a não uniformidade: prender sensor e referência juntos rende mais que comprar um termômetro melhor.
+  fonte: "Roteiro M0.2.T10 (combinação de incertezas); roteiro M1.8.T06"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.12.T02-008
+  objetivo: O3
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    No ESP32, onde deve ficar o buffer de medidas e o número de sequência para sobreviverem ao deep sleep entre os ciclos?
+  alternativas:
+    - "Numa variável declarada com RTC_DATA_ATTR, na memória RTC"
+    - "Numa variável global comum, na SRAM principal"
+    - "Na pilha da tarefa de controle"
+    - "No heap, alocado com malloc a cada boot"
+  resposta: 0
+  explicacao: |
+    No deep sleep a SRAM principal é desligada e o chip reinicia ao acordar: globais, pilhas e heap começam do zero. A memória RTC continua alimentada; RTC_DATA_ATTR põe a variável lá. Ela só se perde numa queda de alimentação.
+  fonte: "Espressif, ESP-IDF Programming Guide (Sleep Modes; RTC memory)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.12.T02-009
+  objetivo: O3
+  tipo: vf
+  dificuldade: 2
+  bloom: lembrar
+  enunciado: |
+    Verdadeiro ou falso: no ESP-IDF, o tamanho de pilha passado a xTaskCreate e o valor devolvido por uxTaskGetStackHighWaterMark são em bytes, ao contrário do FreeRTOS original, que usa palavras.
+  resposta: true
+  explicacao: |
+    O ESP-IDF adaptou a API: pilha em bytes. Uma pilha de 3072 no ESP-IDF tem 768 palavras de 32 bits. Copiar tamanhos de exemplos do FreeRTOS original para o ESP-IDF dá pilhas quatro vezes menores que as pretendidas.
+  fonte: "Espressif, ESP-IDF Programming Guide (FreeRTOS (IDF))"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.12.T02-010
+  objetivo: O3
+  tipo: multipla
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    No firmware da estação, o app_main cria as tarefas medir (prioridade 5), controle (4) e rede (3) e espera o bit de fim de ciclo por até 30 s antes de mandar dormir. Quais afirmações sobre esse desenho estão corretas?
+  alternativas:
+    - "Se a tarefa de rede ficar bloqueada esperando um evento de rede que nunca chega, o app_main ainda consegue mandar o nó dormir quando o prazo vence"
+    - "Como o app_main tem a menor prioridade, ele nunca roda enquanto alguma tarefa de rede existir"
+    - "Iniciar o Wi-Fi em paralelo com a medida, quando já se sabe que a vigília vai enviar, encurta o tempo acordado"
+    - "O prazo de 30 s substitui a necessidade de tempo limite nas transações I²C"
+  resposta: [0, 2]
+  explicacao: |
+    Tarefa bloqueada não usa CPU: o app_main roda quando seu prazo vence e manda dormir. A conexão (1–3 s) se sobrepõe à medida (dezenas de ms). Prioridade baixa só impede o app_main de rodar se uma tarefa mais alta ficar em laço ativo. O prazo do supervisor é a última defesa; sem tempo limite no driver, toda falha de sensor custaria 30 s acordado.
+  fonte: "Roteiro M1.7.T09 (supervisor e prioridades); Elecia White, Making Embedded Systems (Managing the Flow of Activity)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.12.T02-011
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    A estação mede a cada 5 min, envia com lote de 6 medidas e usa recuo exponencial: depois de f falhas seguidas, só tenta enviar com 6·2^f medidas guardadas. Acabou de falhar pela 2ª vez seguida, com 12 medidas no buffer. Daqui a quantos minutos acontece a próxima tentativa de envio, sem alertas no meio? Responda em min, como número inteiro.
+  resposta: {valor: 60, unidade: "min", tolerancia: 0}
+  explicacao: |
+    Com f = 2, o limiar é 6 × 2² = 24 medidas. Faltam 24 − 12 = 12 medidas, uma a cada 5 min: 12 × 5 = 60 min. Sem o recuo, cada vigília com o roteador desligado gastaria a carga de uma tentativa de conexão inteira.
+  fonte: "Roteiro M1.12.T02 (regras de decisão do ciclo)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.12.T02-012
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    O critério de aceite exige folga mínima de pilha de 25 % em cada tarefa. A tarefa de rede tem pilha de 4096 bytes, e o menor high water mark registrado em 24 h foi 700 bytes. Qual é a folga em porcentagem? Responda em %, com 1 casa decimal.
+  resposta: {valor: 17.1, unidade: "%", tolerancia: 0.01}
+  explicacao: |
+    700 / 4096 = 17,1 %, abaixo de 25 %: o critério falha. Aumente a pilha e meça de novo no pior caso (ciclo de envio com handshake TLS), antes de seguir para o T03.
+  fonte: "Espressif, ESP-IDF Programming Guide (FreeRTOS (IDF): uxTaskGetStackHighWaterMark)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.12.T02-013
+  objetivo: O4
+  tipo: multipla
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    O teste TC-01 verifica RF-01 (medir a cada 300 s ± 10 s) e o pior caso do ciclo acordado. Quais evidências fazem parte de uma verificação bem feita?
+  alternativas:
+    - "O log serial de 24 h com o carimbo de tempo do PC em cada linha"
+    - "Uma captura de tela do monitor serial mostrando alguns ciclos seguidos"
+    - "A saída de um script que conta os ciclos e lista os intervalos fora de 300 ± 10 s e os ciclos acima de 30 s"
+    - "O mesmo log analisado também quanto à menor folga de pilha de cada tarefa"
+  resposta: [0, 2, 3]
+  explicacao: |
+    O log completo com carimbo externo é o dado; o script torna a conferência repetível e objetiva; o mesmo log responde ao critério de pilha. Uma captura de alguns ciclos não mostra as 24 h nem os casos raros.
+  fonte: "Roteiro M1.12.T01 (plano de testes); roteiro M1.12.T02 (log de 24 h)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.12.T02-014
+  objetivo: O4
+  tipo: unica
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    O log de 24 h mostrou 287 ciclos, todos com intervalo entre 300,9 e 301,6 s, nenhum ciclo acordado acima de 3 s e folgas de pilha acima de 30 %. O firmware desconta do sono o tempo medido desde o início do app_main. O critério do TC-01 é 288 ± 2 ciclos, intervalo 300 ± 10 s e nenhum ciclo acima de 30 s. Qual é a conclusão correta?
+  alternativas:
+    - "O teste falhou, porque o número de ciclos não é exatamente 288"
+    - "O teste passou; o atraso sistemático de ~1 s por ciclo vem do tempo da ROM e do bootloader, que o app_main não enxerga, e pode ser compensado com uma constante se for importante"
+    - "O teste passou, mas o atraso indica que o supervisor está estourando o prazo em todos os ciclos"
+    - "O teste é inválido, porque o RC do RTC deveria dar intervalos exatos de 300 s"
+  resposta: 1
+  explicacao: |
+    287 está dentro de 288 ± 2 e todos os intervalos estão em 300 ± 10 s. Um desvio constante de ~1 s por ciclo indica tempo que o desconto não vê (ROM, bootloader, inicialização antes do app_main) ou a calibração do RC lento. O supervisor só age acima de 30 s, e o RC do RTC nunca é exato.
+  fonte: "Espressif, ESP-IDF Programming Guide (Sleep Modes); roteiro M1.12.T02 (período ancorado)"
+  origem: ia
+  revisao: rascunho

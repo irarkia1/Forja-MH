@@ -1,0 +1,235 @@
+- id: Q-M1.12.T03-001
+  objetivo: O1
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: no Mosquitto 2.0, com MQTT 3.1.1, quando uma estação publica com QoS 1 num tópico que a ACL não permite, ela recebe um PUBACK normal e a mensagem é descartada sem chegar a nenhum assinante.
+  resposta: true
+  explicacao: |
+    O MQTT 3.1.1 não tem como informar a recusa no PUBACK; o broker confirma e descarta. A estação acha que entregou e apaga o buffer. No MQTT 5, o PUBACK traz o reason code 0x87 (Not authorized). Por isso a perda silenciosa só aparece na contagem do número de sequência no servidor.
+  fonte: "OASIS, MQTT Version 5.0 (Reason Codes); Eclipse Mosquitto, mosquitto.conf(5) (acl_file)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.12.T03-002
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Qual teste negativo prova que a estação está de fato verificando o certificado do broker?
+  alternativas:
+    - "Publicar com a senha certa e conferir que o PUBACK chega"
+    - "Conectar sem TLS na porta 1883 interna"
+    - "Desligar o broker e conferir que a estação guarda as medidas"
+    - "Gravar na estação uma CA diferente da que assinou o certificado do broker e conferir que a conexão falha"
+  resposta: 3
+  explicacao: |
+    Se a conexão funcionar com uma CA que não assinou o certificado do broker, a estação não verifica nada e aceitaria um broker falso. O caminho feliz, a porta interna e a queda do broker testam outras coisas.
+  fonte: "Eclipse Mosquitto, mosquitto-tls(7); Espressif, ESP-IDF Programming Guide (ESP-MQTT: broker.verification)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.12.T03-003
+  objetivo: O1
+  tipo: multipla
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    O arquivo de ACL do Mosquitto tem as linhas "pattern write forja/estacao/%u/lote" e "pattern read forja/estacao/%u/config", e cada estação usa como nome de usuário o próprio id (est-01, est-02...). Quais afirmações estão corretas?
+  alternativas:
+    - "A est-01 pode publicar em forja/estacao/est-02/lote, porque o padrão vale para todas as estações"
+    - "Uma estação nova não exige mudar a ACL, só criar o usuário com o id dela"
+    - "A est-01 pode assinar forja/estacao/est-01/config para receber a configuração retida"
+    - "Se uma estação for configurada com o usuário certo mas o id errado no tópico, as publicações dela são aceitas"
+  resposta: [1, 2]
+  explicacao: |
+    %u é substituído pelo nome de usuário de quem conecta: a est-01 só escreve em forja/estacao/est-01/lote e só lê a própria config. Estação nova precisa só do usuário. Um id errado no tópico cai fora do padrão e a publicação é negada (em silêncio, no MQTT 3.1.1).
+  fonte: "Eclipse Mosquitto, mosquitto.conf(5) (acl_file: pattern, %u, %c)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.12.T03-004
+  objetivo: O2
+  tipo: unica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    Qual combinação de QoS e retain é a adequada para a mensagem de alerta de temperatura da estação?
+  alternativas:
+    - "QoS 0, com retain"
+    - "QoS 1, sem retain"
+    - "QoS 0, sem retain"
+    - "QoS 2, com retain"
+  resposta: 1
+  explicacao: |
+    O alerta precisa de confirmação (QoS 1) para a estação saber que ele chegou. Retido, ele seria entregue de novo a cada assinante novo como se fosse atual. QoS 2 só acrescentaria trocas de pacotes e tempo acordado.
+  fonte: "OASIS, MQTT Version 3.1.1 (Quality of Service levels and protocol flows; PUBLISH: RETAIN)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.12.T03-005
+  objetivo: O2
+  tipo: multipla
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Quais medidas encurtam o tempo de conexão de uma estação ESP32 que acorda do deep sleep para enviar um lote?
+  alternativas:
+    - "Guardar na memória RTC o canal e o BSSID do AP e usá-los na configuração da estação"
+    - "Usar IP estático (reserva no roteador) em vez de DHCP"
+    - "Aumentar o keepalive do MQTT para 600 s"
+    - "Configurar esp_wifi_set_storage(WIFI_STORAGE_RAM) para não regravar a configuração na flash"
+  resposta: [0, 1, 3]
+  explicacao: |
+    Canal e BSSID salvos dispensam a varredura; IP estático elimina o DHCP; guardar a configuração em RAM evita escrita na flash a cada boot. O keepalive só importa em conexões longas; numa sessão de 2 s ele não muda nada.
+  fonte: "Espressif, ESP-IDF Programming Guide (Wi-Fi Driver: Station Basic Configuration, Scan)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.12.T03-006
+  objetivo: O2
+  tipo: unica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Um colega configurou um Last Will and Testament na estação para avisar quando ela sair do ar. A estação conecta, publica, manda DISCONNECT e dorme 30 min. Um dia a bateria acaba. O que acontece com o LWT?
+  alternativas:
+    - "O broker publica o LWT assim que o keepalive da última conexão vence"
+    - "O broker publica o LWT no próximo horário em que a estação deveria conectar"
+    - "Nada: a última conexão terminou com DISCONNECT limpo, e o broker só publica o testamento em desconexões anormais; a queda se detecta pela ausência de dados"
+    - "O broker publica o LWT quando a sessão persistente expira"
+  resposta: 2
+  explicacao: |
+    O DISCONNECT limpo descarta o testamento. Quando a bateria acaba, não há conexão aberta para cair: o broker não tem o que detectar. Para nós que dormem, a queda se descobre por uma regra de "estação muda" no servidor.
+  fonte: "OASIS, MQTT Version 3.1.1 (CONNECT: Will Flag; DISCONNECT)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.12.T03-007
+  objetivo: O2
+  tipo: unica
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Um colega propõe trocar o QoS 1 dos lotes por QoS 2 "para não haver duplicatas no banco". A estação conecta com sessão limpa a cada ciclo, e cada medida já leva número de sequência e carimbo de tempo. Qual é a melhor avaliação?
+  alternativas:
+    - "Não compensa: o QoS 2 acrescenta PUBREC, PUBREL e PUBCOMP a cada mensagem e não impede a duplicata quando a estação reenvia o lote numa conexão nova; as duplicatas do QoS 1 já são inofensivas, porque o mesmo ponto gravado de novo sobrescreve o anterior"
+    - "Compensa: o QoS 2 garante exatamente uma entrega mesmo entre sessões diferentes"
+    - "Compensa, desde que se desligue o número de sequência para economizar bytes"
+    - "Não compensa porque o Mosquitto não implementa o QoS 2"
+  resposta: 0
+  explicacao: |
+    A garantia de "exatamente uma vez" do QoS 2 vale dentro de uma sessão. Se o PUBCOMP não chega antes do prazo, a estação reenvia o lote no próximo ciclo, com sessão nova, e o broker o trata como mensagem nova. O custo extra é tempo acordado; a solução para duplicatas é a escrita idempotente (mesma medida, mesmo carimbo).
+  fonte: "OASIS, MQTT Version 3.1.1 (QoS 2: Exactly once delivery; Session state)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.12.T03-008
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um lote de 12 medidas tem payload de 624 bytes e é publicado com QoS 1 no tópico forja/estacao/est-01/lote (25 bytes). O pacote PUBLISH tem cabeçalho fixo de 1 byte mais o remaining length codificado em bytes de 7 bits; o cabeçalho variável tem 2 bytes de comprimento do tópico, o tópico e 2 bytes de identificador do pacote. Quantos bytes tem o pacote inteiro? Responda em bytes, como número inteiro.
+  resposta: {valor: 656, unidade: "bytes", tolerancia: 0}
+  explicacao: |
+    Remaining length = 2 + 25 + 2 + 624 = 653; como passa de 127 (e é menor que 16 384), ocupa 2 bytes. Total = 1 + 2 + 653 = 656 bytes. Perto disso, o handshake TLS de alguns kB domina o tráfego de uma conexão curta.
+  fonte: "OASIS, MQTT Version 3.1.1 (Fixed header: Remaining Length; PUBLISH)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.12.T03-009
+  objetivo: O3
+  tipo: vf
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: no lote, cada medida deve levar o carimbo de tempo do instante do envio, para o servidor saber quando a mensagem saiu da estação.
+  resposta: false
+  explicacao: |
+    O carimbo é o da medida. Com envio a cada 30 min, ou reenvio depois de horas sem rede, o carimbo do envio poria todas as medidas no mesmo instante no gráfico e esconderia o que aconteceu entre elas.
+  fonte: "Roteiro M1.12.T03 (contrato das mensagens)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.12.T03-010
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    A estação mede a cada 5 min e guarda até 48 medidas na memória RTC, descartando a mais antiga quando o buffer enche. O buffer estava vazio quando o broker saiu do ar, e o broker ficou fora por 5 h. Quantas medidas foram descartadas até o fim da queda? Responda como número inteiro de medidas.
+  resposta: {valor: 12, unidade: "medidas", tolerancia: 0}
+  explicacao: |
+    5 h × 12 medidas/h = 60 medidas; o buffer guarda 48; descartadas: 60 − 48 = 12, as mais antigas. O campo perd do próximo lote deve informar exatamente esse número, para o servidor separar perda contada de perda silenciosa.
+  fonte: "Roteiro M1.12.T02 (regras do buffer); roteiro M1.12.T03 (armazenar e reenviar)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.12.T03-011
+  objetivo: O3
+  tipo: unica
+  dificuldade: 2
+  bloom: analisar
+  enunciado: |
+    No banco, a sequência da est-01 tem uma lacuna de 6 medidas, mas o campo perd dos lotes seguintes não mudou e o contador de boots também não. O que essa lacuna indica?
+  alternativas:
+    - "Um power-on da estação, que zerou a sequência"
+    - "Descarte por buffer cheio durante uma queda longa do broker"
+    - "Duplicatas do QoS 1 que o banco removeu"
+    - "Uma perda não explicada pela estação, por exemplo um lote confirmado pelo broker mas descartado pela ACL ou perdido no caminho até o banco"
+  resposta: 3
+  explicacao: |
+    Power-on mudaria o boot e zeraria a sequência; buffer cheio aumentaria perd; duplicatas não criam lacunas. Uma lacuna sem explicação da estação aponta para o servidor: ACL silenciosa do MQTT 3.1.1, falha no Telegraf ou no banco. É o que o RNF-05 existe para pegar.
+  fonte: "Roteiro M1.12.T03 (sequência e perdas)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.12.T03-012
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Em 200 ciclos de envio medidos, 3 precisaram de segunda tentativa. Qual é a taxa de sucesso na primeira tentativa? Responda em %, com 1 casa decimal.
+  resposta: {valor: 98.5, unidade: "%", tolerancia: 0.002}
+  explicacao: |
+    197 / 200 = 98,5 %. O critério é ≥ 99 %: não atende. Investigue o RSSI, a perda do canal salvo e o tempo limite antes de seguir.
+  fonte: "Roteiro M1.12.T03 (medir fases, entrega e bytes)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.12.T03-013
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um ciclo de envio medido tem: boot e medida, 0,30 s a 40 mA; associação e DHCP, 0,85 s a 120 mA; DNS, TCP, TLS e CONNECT, 0,55 s a 110 mA; PUBLISH até o PUBACK, 0,06 s a 130 mA. Qual é a carga do ciclo? Responda em mA·s, com 1 casa decimal.
+  resposta: {valor: 182.3, unidade: "mA·s", tolerancia: 0.01}
+  explicacao: |
+    0,30 × 40 + 0,85 × 120 + 0,55 × 110 + 0,06 × 130 = 12 + 102 + 60,5 + 7,8 = 182,3 mA·s. A associação é mais da metade; o dado útil (PUBLISH) é 4 %. É o número que o T05 usa no orçamento.
+  fonte: "Roteiro M1.11.T02 (perfil de ciclo de trabalho); roteiro M1.12.T03 (fases da conexão)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.12.T03-014
+  objetivo: O4
+  tipo: unica
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    O p95 do ciclo de envio deu 3,4 s, e o log mostra que todas as conexões fazem varredura completa de canais, embora o firmware salve o canal e o BSSID na memória RTC ao conectar. O tratador de eventos zera o canal salvo em todo WIFI_EVENT_STA_DISCONNECTED, e o ciclo termina com esp_wifi_stop(). Qual é a causa mais provável e a correção?
+  alternativas:
+    - "A memória RTC é apagada no deep sleep; a correção é gravar o canal na NVS"
+    - "O esp_wifi_stop() do fim do ciclo também gera WIFI_EVENT_STA_DISCONNECTED, que apaga o canal salvo; a correção é só apagá-lo quando a falha acontece antes de obter IP, ou remover o tratador antes de parar o Wi-Fi"
+    - "O roteador troca de canal a cada conexão; a correção é fixar o canal no roteador"
+    - "O BSSID não pode ser usado junto com o canal; a correção é salvar só o canal"
+  resposta: 1
+  explicacao: |
+    A RTC sobrevive ao deep sleep (o mesmo mecanismo guarda o buffer). O sintoma "sempre varredura completa" com canal salvo aponta para algo que o apaga em todo ciclo: a desconexão intencional dispara o mesmo evento de uma falha. Distinguir falha antes do IP de desconexão normal resolve; gravar na NVS desgastaria a flash e não atacaria a causa.
+  fonte: "Espressif, ESP-IDF Programming Guide (Wi-Fi Driver: Wi-Fi Event Description, WIFI_EVENT_STA_DISCONNECTED)"
+  origem: ia
+  revisao: rascunho

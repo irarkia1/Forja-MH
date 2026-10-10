@@ -1,0 +1,240 @@
+- id: Q-M1.12.T04-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    No Telegraf da estação, cada medida do lote é gravada com o carimbo de tempo do campo t da própria medida. Por quê?
+  alternativas:
+    - "Porque o InfluxDB recusa pontos gravados com a hora de chegada"
+    - "Porque o lote reúne medidas de até 30 min, ou de horas num reenvio, e cada uma precisa aparecer no instante em que foi medida"
+    - "Porque assim o Telegraf grava mais rápido"
+    - "Porque o carimbo da medida dispensa o número de sequência"
+  resposta: 1
+  explicacao: |
+    Com a hora de chegada, todas as medidas de um lote cairiam no mesmo instante, e um reenvio de 4 h apareceria todo "agora". O número de sequência continua necessário para contar perdas.
+  fonte: "InfluxData, Telegraf JSON v2 parser (object: timestamp_key)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.12.T04-002
+  objetivo: O1
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: com o Telegraf assinando os lotes com QoS 1 e persistent_session = true, as mensagens publicadas enquanto o Telegraf reinicia ficam guardadas no broker e são entregues quando ele reconecta.
+  resposta: true
+  explicacao: |
+    Com sessão persistente, o broker mantém a assinatura e enfileira as mensagens QoS 1 do cliente desconectado. Sem ela, o broker esquece a assinatura na desconexão, e o que chega nesse intervalo não é entregue ao Telegraf: vira uma lacuna silenciosa.
+  fonte: "OASIS, MQTT Version 3.1.1 (Session state; CONNECT: Clean Session); InfluxData, MQTT Consumer Input Plugin"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.12.T04-003
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Num ensaio de 7 dias sem power-on, o menor número de sequência no banco é 0, o maior é 2015, e há 2010 números distintos. Qual é a taxa de entrega? Responda em %, com 2 casas decimais.
+  resposta: {valor: 99.70, unidade: "%", tolerancia: 0.001}
+  explicacao: |
+    Esperadas: 2015 − 0 + 1 = 2016. Entrega: 2010 / 2016 = 99,70 %. Atende a ≥ 99 %; ainda assim, confira se as 6 lacunas batem com o campo perd da estação (perda explicada) ou não (perda silenciosa).
+  fonte: "Roteiro M1.12.T04 (provar que nada se perde)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.12.T04-004
+  objetivo: O1
+  tipo: unica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Uma tarefa do InfluxDB calcula médias horárias a cada hora, no minuto 0, sobre a última hora. As estações enviam lotes a cada 30 min, com medidas de até 30 min antes. Qual é o problema e a correção?
+  alternativas:
+    - "Nenhum problema: o InfluxDB espera os dados chegarem antes de executar a tarefa"
+    - "A média sai alta demais; a correção é usar a mediana"
+    - "A tarefa roda antes de os lotes com medidas daquela hora chegarem, e a média fica incompleta; um offset de mais de 30 min atrasa a execução mantendo a mesma janela"
+    - "A tarefa duplica os pontos; a correção é apagar o bucket bruto depois de cada execução"
+  resposta: 2
+  explicacao: |
+    No minuto 0, parte das medidas da hora ainda está no buffer das estações. O offset da tarefa atrasa a execução sem deslocar a janela de tempo, e a média é calculada quando os dados já chegaram. Reenvios de horas depois ainda pedem reprocessamento.
+  fonte: "InfluxData, InfluxDB 2.x (Process data with InfluxDB tasks: offset; Downsample data)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.12.T04-005
+  objetivo: O2
+  tipo: unica
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Qual painel do dashboard responde à pergunta "a estação ainda está mandando dados?"
+  alternativas:
+    - "A idade do último lote, em minutos"
+    - "O gráfico de temperatura das últimas 24 h"
+    - "O gráfico de umidade relativa"
+    - "A tensão da bateria nos últimos 30 dias"
+  resposta: 0
+  explicacao: |
+    A idade do último dado cresce quando a estação para. Os gráficos só desenham os pontos que existem: uma linha parada há horas pode passar por normal.
+  fonte: "Roteiro M1.12.T04 (o dashboard: um painel por pergunta)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.12.T04-006
+  objetivo: O2
+  tipo: multipla
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Quais pares painel → pergunta estão bem formados para o dashboard da estação?
+  alternativas:
+    - "RSSI ao longo do tempo → o enlace piorou e vai aumentar o tempo de rádio e o consumo?"
+    - "Tensão da bateria em 30 dias → a descarga segue a projeção do orçamento de energia?"
+    - "Número total de pontos no banco → o projeto está bonito?"
+    - "Entrega no período → chegaram pelo menos 99 % das medidas?"
+  resposta: [0, 1, 3]
+  explicacao: |
+    Cada painel útil responde a uma pergunta de quem opera e leva a uma ação. Uma contagem total de pontos não diz se algo está errado nem o que fazer: é decoração.
+  fonte: "Grafana Labs, Grafana documentation (Dashboards: Build dashboards)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.12.T04-007
+  objetivo: O2
+  tipo: unica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    O dashboard mostra a temperatura em 23 °C, a entrega no período em 100 % e a idade do último lote em 190 min. O que está acontecendo?
+  alternativas:
+    - "A estação está bem; a idade alta é normal com lotes de 30 min"
+    - "A estação parou de mandar dados há mais de 3 h; a entrega dá 100 % porque só conta as sequências entre a menor e a maior que chegaram, e o valor de temperatura é o último recebido"
+    - "O banco perdeu as medidas recentes, mas a estação continua enviando"
+    - "O relógio do Grafana está adiantado"
+  resposta: 1
+  explicacao: |
+    Com lotes de 30 min, a idade passa de 35 min só com atraso, e 190 min indica estação muda (bateria, rede, firmware). A consulta de entrega não enxerga medidas que nunca chegaram depois da última; o valor "atual" é o último ponto. Por isso a regra de "estação muda" existe à parte.
+  fonte: "Roteiro M1.12.T04 (provar que nada se perde; o dashboard)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.12.T04-008
+  objetivo: O3
+  tipo: vf
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: o período pendente (pending period, o "for") de uma regra de alerta filtra picos curtos, mas soma diretamente ao tempo até a notificação.
+  resposta: true
+  explicacao: |
+    A regra só passa de pendente para disparada quando a condição dura todo o período. Um "for" de 10 min evita alarme de porta aberta na câmara fria, mas o alerta chega pelo menos 10 min depois do cruzamento do limiar.
+  fonte: "Grafana Labs, Grafana Alerting (Pending period)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.12.T04-009
+  objetivo: O3
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Por que a regra "estação muda" calcula a idade do último dado de cada estação, em vez de disparar pelo estado No Data da consulta?
+  alternativas:
+    - "Porque o Grafana não permite No Data em regras de Flux"
+    - "Porque a idade é mais rápida de calcular"
+    - "Porque No Data só funciona com Prometheus"
+    - "Porque, sem dados, a consulta não devolve a série nem o rótulo estacao, e o alerta não diria qual estação calou"
+  resposta: 3
+  explicacao: |
+    Calculando a idade do último ponto de cada estação, existe uma série por estação, com o rótulo, e o limiar de 65 min dispara para a estação certa. O No Data fica como reserva (nenhum dado em 7 dias).
+  fonte: "Grafana Labs, Grafana Alerting (Configure no data and error handling)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.12.T04-010
+  objetivo: O3
+  tipo: multipla
+  dificuldade: 3
+  bloom: avaliar
+  enunciado: |
+    Quais decisões sobre as regras de alerta da estação estão corretas?
+  alternativas:
+    - "Regra de temperatura com for: 0s, porque a estação já aplica histerese e só publica ao cruzar o limiar"
+    - "Regra de bateria baixa sem período pendente, para avisar no primeiro pulso de rádio que derrubar a tensão"
+    - "Na regra de bateria baixa, ausência de dados tratada como OK, porque quem cuida da estação sem dados é a regra de estação muda"
+    - "Cada regra com rótulo de severidade e anotação com o procedimento de resposta"
+  resposta: [0, 2, 3]
+  explicacao: |
+    A histerese no dispositivo dispensa o período pendente da temperatura; a ausência de dados é decidida regra a regra, sem duplicar alertas; rótulos roteiam e anotações dizem o que fazer. A bateria precisa de período pendente (1 h no projeto): um pulso de milissegundos não é motivo para trocar a célula.
+  fonte: "Grafana Labs, Grafana Alerting (Alert rules; Annotations and labels)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.12.T04-011
+  objetivo: O3
+  tipo: unica
+  dificuldade: 4
+  bloom: criar
+  enunciado: |
+    Na variante da câmara fria (2–8 °C), abrir a porta faz a temperatura passar de 8 °C por alguns minutos sem risco ao produto. O cliente quer saber de uma falha real "rápido". Qual é o desenho mais adequado de regra e requisito?
+  alternativas:
+    - "Período pendente de 0 s e requisito de 60 s a partir do cruzamento, aceitando alarmes a cada abertura"
+    - "Regra com período pendente de 10 min, e o requisito reescrito: notificação em ≤ 60 s depois de 10 min contínuos acima de 8 °C"
+    - "Aumentar o limiar para 15 °C e manter o requisito de 60 s"
+    - "Desligar a regra de temperatura e confiar no dashboard"
+  resposta: 1
+  explicacao: |
+    O período pendente filtra a porta aberta, e o requisito passa a dizer o que se mede: a latência conta depois de a condição durar 10 min. Alarme a cada abertura ensina a ignorar alertas; subir o limiar perde a faixa do produto; tirar a regra elimina a função.
+  fonte: "Grafana Labs, Grafana Alerting (Pending period); ISO/IEC/IEEE 29148:2018 (Characteristics of individual requirements)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.12.T04-012
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Pior caso de cada etapa do alerta: rádio da estação 3 s; flush do Telegraf para os alertas 1 s; avaliação da regra a cada 10 s; período pendente 0 s; group wait 5 s; entrega da notificação 2 s. Qual é a latência de pior caso? Responda em s, como número inteiro.
+  resposta: {valor: 21, unidade: "s", tolerancia: 0}
+  explicacao: |
+    3 + 1 + 10 + 0 + 5 + 2 = 21 s: o critério de 60 s passa com folga. O maior termo restante é o intervalo de avaliação da regra.
+  fonte: "Roteiro M1.12.T04 (a latência do alerta, medida)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.12.T04-013
+  objetivo: O4
+  tipo: unica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Com a política de notificação padrão (group wait 30 s, group interval 5 min, agrupando por regra e estação), três episódios de temperatura alta da mesma estação, de 60 s cada e espaçados de 2 min, geraram só uma notificação de disparo. Por quê?
+  alternativas:
+    - "A regra estava em erro durante o 2.º e o 3.º episódios"
+    - "O Telegraf descartou os alertas repetidos como duplicatas"
+    - "Depois da 1.ª notificação, o grupo só envia novidades a cada 5 min; o 2.º e o 3.º episódios começaram e terminaram dentro dessa janela, e quando chegou a vez de notificar o estado já era resolvido"
+    - "O ponto de contato tem limite de uma mensagem a cada 5 min"
+  resposta: 2
+  explicacao: |
+    É o group interval funcionando como configurado: mudanças num grupo existente esperam o próximo envio do grupo. Um episódio curto pode desaparecer. Para alertas críticos, use group wait e group interval curtos e teste também alertas repetidos.
+  fonte: "Grafana Labs, Grafana Alerting (Notification policies: group wait, group interval)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.12.T04-014
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Configuração inicial de um colega: rádio da estação 3 s; Telegraf com uma só saída, flush de 10 s; avaliação da regra a cada 10 s; período pendente de 1 min; group wait de 30 s; entrega de 2 s. Qual é a latência de pior caso do alerta? Responda em s, como número inteiro.
+  resposta: {valor: 115, unidade: "s", tolerancia: 0}
+  explicacao: |
+    3 + 10 + 10 + 60 + 30 + 2 = 115 s: reprova o critério de 60 s. Com histerese na estação, o período pendente pode ir a 0; uma saída do Telegraf só para alertas com flush de 1 s e group wait de 5 s levam o pior caso para ~21 s.
+  fonte: "Roteiro M1.12.T04 (a latência do alerta, medida); InfluxData, Telegraf configuration (flush_interval)"
+  origem: ia
+  revisao: rascunho

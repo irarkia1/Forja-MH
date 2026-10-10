@@ -1,33 +1,89 @@
 id: M1.12
 ato: A1
 nome: "Projeto integrador IoT 1"
+missao: "Chegou a prova do ferreiro: com tudo o que aprendeu na Vila da Forja e na Floresta dos Microcontroladores, forje a sua primeira máquina inteira — uma sentinela a bateria que sente o mundo com número e incerteza, pensa com várias tarefas, fala por rádio cifrado com a torre do conselho, acende o alarme no painel antes que o mal aconteça e dorme meses com uma só carga medida gota a gota — e apresente-a à vila com requisitos, provas e um registro que qualquer mestre possa conferir, para levar ao acampamento o Rádio do Explorador."
 horas: 150
 trilha: integrador
 ordem: 19
 requer: ["M1.7", "M1.8", "M1.10", "M1.11"]
 tags_chefe: []
+# Ordem didática (a da grade, mantida, porque é a ordem de um projeto de verdade): requisitos e arquitetura (nada se constrói antes de saber o que é "pronto": requisitos mensuráveis, ADRs, FMEA e plano de testes com rastreabilidade definem os critérios de aceite de todas as etapas seguintes) → sensor + MCU + RTOS (o nó funciona sozinho, sem rede: hardware, driver, calibração e o ciclo acordar–medir–dormir em FreeRTOS, verificado por 24 h de log) → rádio e nuvem (o nó passa a falar: broker próprio com TLS e ACL, MQTT com QoS escolhido, contrato de mensagens e reenvio quando a rede cai) → dashboard e alertas (as mensagens viram histórico, painel e notificação; aqui se mede a latência fim a fim do alerta) → bateria e autonomia medida (só com o firmware e a rede definitivos o perfil de corrente é o do produto: medir, orçar, otimizar e validar a autonomia) → documentação e vídeo (fecha o projeto: README, diagramas, BOM com custo, relatório de aceite, vídeo de 3–5 min e a apresentação para portfólio e entrevista).
 topicos:
   - id: M1.12.T01
     nome: "Requisitos e arquitetura"
     tipo: elite
     peso: 2
+    objetivos:
+      - id: O1
+        texto: "Escrever o documento de requisitos de um nó IoT a bateria, escolhendo uma das variantes do projeto, separando requisitos funcionais e não funcionais e redigindo cada um de forma SMART e verificável segundo as características da IEEE 29148"
+      - id: O2
+        texto: "Desenhar a arquitetura de ponta a ponta (diagrama de blocos do sensor à notificação, interfaces, árvore de tópicos e formato das mensagens) e registrar as decisões principais em ADRs no formato de Nygard"
+      - id: O3
+        texto: "Identificar os riscos do projeto e os modos de falha do produto, montar uma FMEA pequena com severidade, ocorrência, detecção e RPN e definir as ações que reduzem os itens mais críticos"
+      - id: O4
+        texto: "Montar o plano de testes com a matriz de rastreabilidade requisito → teste, o método de verificação de cada requisito (inspeção, análise, demonstração ou teste) e os critérios de aceite de cada etapa do projeto"
   - id: M1.12.T02
     nome: "Sensor + MCU + RTOS"
     tipo: elite
     peso: 2
+    objetivos:
+      - id: O1
+        texto: "Montar o hardware do nó (ESP32, sensor, alimentação chaveada do sensor, divisor de bateria chaveado) e escrever o driver do sensor com verificação de CRC, tempo limite e teste de plausibilidade"
+      - id: O2
+        texto: "Calibrar o sensor do projeto contra uma referência, estimar o erro residual, guardar os coeficientes na NVS e verificar o requisito de exatidão num ponto independente dos pontos de ajuste"
+      - id: O3
+        texto: "Projetar e implementar o firmware em FreeRTOS como máquina de estados de um ciclo acordar–medir–decidir–dormir, com tarefas, fila, event group, buffer na memória RTC e um supervisor que garante a volta ao sono"
+      - id: O4
+        texto: "Verificar a etapa com testes unitários no PC, log serial de 24 h, high water mark das pilhas e duração do ciclo acordado, comparando cada resultado com o critério de aceite"
   - id: M1.12.T03
     nome: "Rádio e nuvem"
     tipo: elite
     peso: 2
+    objetivos:
+      - id: O1
+        texto: "Configurar o broker próprio (Mosquitto com TLS, usuário por dispositivo e ACL) e provar com testes negativos que conexões sem certificado válido, sem senha ou fora do ramo de tópicos do dispositivo são recusadas"
+      - id: O2
+        texto: "Implementar no ESP32 a conexão Wi-Fi rápida e o cliente MQTT sobre TLS (verificação do certificado, QoS, retain, espera da confirmação antes de dormir) e escolher o QoS e o retain de cada tipo de mensagem"
+      - id: O3
+        texto: "Definir o contrato das mensagens (árvore de tópicos, payload com identificador, número de sequência, lote e carimbo de tempo, configuração retida) e implementar o armazenamento e reenvio quando a rede ou o broker falham"
+      - id: O4
+        texto: "Medir a duração de cada fase da conexão, a taxa de entrega e os bytes por mensagem em centenas de ciclos e confrontar os resultados com os requisitos de latência, entrega e energia"
   - id: M1.12.T04
     nome: "Dashboard e alertas"
     tipo: elite
     peso: 2
+    objetivos:
+      - id: O1
+        texto: "Montar o caminho dos dados do broker ao banco de séries temporais (Telegraf, InfluxDB, retenção e downsampling) em Docker Compose e provar pela contagem dos números de sequência que nenhuma medida se perde"
+      - id: O2
+        texto: "Construir no Grafana um dashboard de operação (séries, valor atual, bateria, RSSI, idade do último dado) e justificar cada painel pela pergunta que ele responde"
+      - id: O3
+        texto: "Projetar regras de alerta (limiar com histerese, período pendente, estação muda, bateria baixa, tratamento de ausência de dados) com pontos de contato, políticas de notificação e anotações com o procedimento de resposta"
+      - id: O4
+        texto: "Medir a latência fim a fim do alerta somando as etapas do dispositivo à notificação, comparar com o critério de aceite e ajustar os intervalos que dominam o tempo"
   - id: M1.12.T05
     nome: "Bateria e autonomia medida"
     tipo: elite
     peso: 2
+    objetivos:
+      - id: O1
+        texto: "Medir o perfil de corrente de cada tipo de ciclo do nó (sono, só medir, medir e enviar, alerta, eventos raros) com o método do M1.11.T04 e gravá-lo em CSV com instrumento, data e condições"
+      - id: O2
+        texto: "Montar o orçamento diário a partir das cargas medidas e calcular a autonomia com capacidade útil, envelhecimento, autodescarga e margem de 30 %, verificando o requisito de autonomia"
+      - id: O3
+        texto: "Identificar o que domina o consumo e aplicar otimizações de firmware e de hardware (lote, conexão rápida, sensor e divisor chaveados, placa sem fugas), medindo o ganho de cada uma"
+      - id: O4
+        texto: "Validar a projeção com um ensaio de longa duração (carga acumulada medida e tensão da bateria por telemetria) e tratar a diferença entre a medida e o orçamento"
   - id: M1.12.T06
     nome: "Documentação e vídeo de demonstração"
     tipo: elite
     peso: 2
+    objetivos:
+      - id: O1
+        texto: "Escrever o README do repositório (problema, demonstração, arquitetura, como reproduzir, resultados medidos contra os requisitos, limitações) e organizar o repositório com licença, segredos fora do git e versão marcada"
+      - id: O2
+        texto: "Produzir os diagramas finais (blocos, elétrico, máquina de estados, fluxo de dados) e a BOM com quantidades, fornecedores e custo por unidade em 1 e em 100 unidades"
+      - id: O3
+        texto: "Roteirizar, gravar e editar um vídeo de demonstração de 3 a 5 minutos que prove ao vivo os requisitos principais, com relógio visível e números medidos"
+      - id: O4
+        texto: "Fechar o projeto com o relatório de aceite (requisito, resultado, evidência, situação), a retrospectiva e uma apresentação do projeto para portfólio e entrevista"

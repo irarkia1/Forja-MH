@@ -1,0 +1,225 @@
+- id: Q-M1.12.T05-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Para medir a autonomia da estação, onde o instrumento de corrente deve ser ligado?
+  alternativas:
+    - "Entre o LDO e o pino de 3,3 V do ESP32"
+    - "No cabo USB que liga o DevKit ao PC"
+    - "Entre a bateria (ou a fonte que a imita) e a placa, antes do regulador"
+    - "Em série com o sensor, no trilho chaveado pelo GPIO"
+  resposta: 2
+  explicacao: |
+    A corrente que esvazia a bateria inclui o Iq do LDO, o divisor, a proteção da célula e as fugas. Depois do regulador tudo isso some da conta; pela USB, entram o conversor e outro caminho de terra; no sensor, mede-se só uma parcela.
+  fonte: "Roteiro M1.11.T02 (o caminho de alimentação); roteiro M1.11.T04"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.12.T05-002
+  objetivo: O1
+  tipo: vf
+  dificuldade: 2
+  bloom: avaliar
+  enunciado: |
+    Verdadeiro ou falso: um registrador com INA226 e shunt de 0,1 Ω (resolução de 25 µA) mede adequadamente a corrente de sono de 14 µA da estação, desde que se faça a média de muitas amostras.
+  resposta: false
+  explicacao: |
+    O sono está abaixo de um LSB, e o offset do INA226 (até 10 µV, ou 100 µA com 0,1 Ω) é sistemático: a média não o remove. O sono se mede à parte, com o multímetro em µA, um shunt alto ou um instrumento de faixa comutada, e soma-se ao orçamento.
+  fonte: "Roteiro M1.11.T04 (dimensionar o shunt; integrar o perfil); Texas Instruments, INA226 datasheet"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.12.T05-003
+  objetivo: O1
+  tipo: multipla
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Quais informações devem ir no cabeçalho do CSV de um perfil de corrente da estação, para que a medida possa ser comparada com outras depois?
+  alternativas:
+    - "Instrumento, faixa e data da medida"
+    - "Tensão de alimentação e temperatura no momento da medida"
+    - "A autonomia que se espera obter com essa medida"
+    - "Versão do firmware e RSSI do local"
+  resposta: [0, 1, 3]
+  explicacao: |
+    Instrumento, tensão, temperatura, firmware e RSSI mudam a corrente medida; sem eles, duas medidas não se comparam. A autonomia esperada é resultado da análise, não condição da medida — escrevê-la ali convida a enxergar o número desejado.
+  fonte: "Roteiro M1.12.T05 (onde e como medir)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.12.T05-004
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 1
+  bloom: aplicar
+  enunciado: |
+    O orçamento com as cargas medidas deu 6,858 mAh por dia. Qual é a corrente média do nó? Responda em µA, arredondado para inteiro.
+  resposta: {valor: 286, unidade: "µA", tolerancia: 0.01}
+  explicacao: |
+    6,858 mAh / 24 h = 0,2858 mA ≈ 286 µA. É a corrente média, não a do sono: a maior parte vem dos ciclos de envio.
+  fonte: "Roteiro M1.11.T02 (perfil de ciclo de trabalho)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.12.T05-005
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    A carga diária medida do nó é 4,2 mAh. Bateria de 2600 mAh, fração útil 0,85, fração de vida 0,9, autodescarga de 52 mAh a cada 30 dias e margem de 30 %. Qual é a autonomia projetada? Responda em dias, arredondado para inteiro.
+  resposta: {valor: 258, unidade: "dias", tolerancia: 0.01}
+  explicacao: |
+    Útil: 2600 × 0,85 × 0,9 = 1989 mAh. Autodescarga: 52/30 = 1,733 mAh/dia. Dias = 1989 / [(4,2 + 1,733) × 1,3] = 1989 / 7,713 ≈ 258 dias. Atende ao requisito de 183 dias.
+  fonte: "Roteiro M1.11.T02 (capacidade útil, margem e vida-alvo)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.12.T05-006
+  objetivo: O2
+  tipo: unica
+  dificuldade: 3
+  bloom: avaliar
+  enunciado: |
+    A estimativa do T01 dava 233 dias. Com as cargas medidas, a autonomia projetada caiu para 178 dias, e o requisito é ≥ 183 dias com margem de 30 %. Qual é a conduta correta?
+  alternativas:
+    - "Reduzir a margem para 25 %, porque a medida já é mais confiável que a estimativa"
+    - "Ver no orçamento medido qual evento domina a carga, otimizar uma coisa de cada vez, medir de novo e só então recalcular"
+    - "Voltar a usar os números do T01, porque a diferença de 5 dias está dentro do erro do instrumento"
+    - "Trocar o requisito para 170 dias sem registrar, já que a diferença é pequena"
+  resposta: 1
+  explicacao: |
+    A margem existe para o que não se mede (frio, envelhecimento, RSSI pior); usá-la para fazer o número passar a esvazia. A medida pede ação sobre o que domina, com ganho comprovado. Mudar requisito, se for o caso, exige registro e justificativa.
+  fonte: "Roteiro M1.11.T02 (margem de projeto); roteiro M1.12.T01 (critérios de aceite)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.12.T05-007
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Cargas medidas por dia: 240 vigílias só de medida de 12 mA·s e 0,3 s cada; 48 envios de 220 mA·s e 2 s cada; 1 evento diário de 500 mA·s e 5 s; sono de 16 µA no resto do dia. Bateria de 2600 mAh com fração útil 0,85, fração de vida 0,9, autodescarga de 52 mAh por 30 dias e margem de 30 %. Qual é a autonomia projetada? Responda em dias, arredondado para inteiro.
+  resposta: {valor: 255, unidade: "dias", tolerancia: 0.01}
+  explicacao: |
+    Ativo: 2880 + 10 560 + 500 = 13 940 mA·s em 72 + 96 + 5 = 173 s. Sono: 0,016 × (86 400 − 173) = 1379,6 mA·s. Total 15 319,6 mA·s = 4,255 mAh/dia. Dias = 1989 / [(4,255 + 1,733) × 1,3] ≈ 255 dias.
+  fonte: "Roteiro M1.11.T02 (orçamento por dia e autonomia)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.12.T05-008
+  objetivo: O3
+  tipo: unica
+  dificuldade: 2
+  bloom: analisar
+  enunciado: |
+    No orçamento medido, as frações da carga diária são: envios 76 %, vigílias só de medida 13 %, sono 9 % e evento diário 2 %. Qual otimização deve ser atacada primeiro?
+  alternativas:
+    - "Encurtar o ciclo de envio, com canal e BSSID salvos e IP fixo"
+    - "Trocar o LDO por outro com Iq 1 µA menor"
+    - "Eliminar o evento diário de SNTP"
+    - "Reduzir a resolução do sensor para medir mais rápido"
+  resposta: 0
+  explicacao: |
+    O ganho possível é proporcional à fração: o envio é três quartos da carga. Um µA a menos no sono mexe em menos de 1 % do total; o evento diário é 2 %; a duração da medida pesa dentro dos 13 %.
+  fonte: "Elecia White, Making Embedded Systems (Reducing Power Consumption); roteiro M1.11.T02"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.12.T05-009
+  objetivo: O3
+  tipo: vf
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: aplicar várias otimizações ao mesmo tempo e medir só o resultado final é suficiente para o relatório da etapa.
+  resposta: false
+  explicacao: |
+    Medindo só o conjunto, não se sabe qual mudança rendeu, nem qual piorou outro requisito (latência, taxa de entrega, exatidão). Cada otimização se aplica e se mede sozinha, com antes e depois.
+  fonte: "Roteiro M1.12.T05 (otimizar uma coisa de cada vez)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.12.T05-010
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    A conexão rápida reduziu a carga de cada envio de 374 mA·s para 198 mA·s. A estação faz 50 envios por dia (lotes e alertas). Quanto a carga diária diminuiu? Responda em mAh/dia, com 2 casas decimais.
+  resposta: {valor: 2.44, unidade: "mAh/dia", tolerancia: 0.01}
+  explicacao: |
+    (374 − 198) × 50 = 8800 mA·s/dia = 8800 / 3600 = 2,44 mAh/dia (o tempo acordado também cai, o que aumenta um pouco o tempo de sono, efeito desprezível aqui). É a maior economia do projeto de referência.
+  fonte: "Roteiro M1.12.T05 (tabela das otimizações)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.12.T05-011
+  objetivo: O3
+  tipo: unica
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Para alongar a autonomia, propõe-se trocar a 18650 Li-ion (autodescarga ~2 %/mês, equivalente a ~1,7 mAh/dia) por uma célula primária Li-SOCl2 de mesma capacidade nominal (autodescarga < 2 %/ano). Os envios Wi-Fi puxam pulsos de mais de 300 mA. Qual é a melhor avaliação?
+  alternativas:
+    - "A troca é direta e só traz vantagens, porque as duas químicas têm 3,6 V nominais"
+    - "A troca não altera a autonomia, porque a autodescarga não entra no orçamento"
+    - "A autonomia sobe bastante, já que a autodescarga pesa mais que o sono; mas a resistência interna alta não sustenta os pulsos do Wi-Fi, então é preciso um capacitor de reforço ou supercapacitor e conferir a queda de tensão nos pulsos"
+    - "A troca é impossível, porque células primárias não funcionam com LDO"
+  resposta: 2
+  explicacao: |
+    Tirar ~1,7 mAh/dia de um orçamento de ~4 mAh/dia é ganho grande. Mas a Li-SOCl2 tem resistência interna alta e passivação: o pulso do Wi-Fi derrubaria a tensão e causaria brown-out. A solução passa por armazenamento local para os pulsos, dimensionado como no M1.11.T01.
+  fonte: "Roteiro M1.11.T01 (resistência interna e capacitor de reforço; autodescarga)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.12.T05-012
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    No ensaio de 7 dias, o registrador mediu 30,9 mAh. O orçamento previa 3,979 mAh/dia. De quantos por cento a medida ficou acima da previsão? Responda em %, com 1 casa decimal.
+  resposta: {valor: 10.9, unidade: "%", tolerancia: 0.01}
+  explicacao: |
+    Previsto: 3,979 × 7 = 27,85 mAh. 30,9 / 27,85 − 1 = 10,9 %. Dentro do critério de ±15 %, mas ainda assim a diferença deve ser explicada pelos eventos do período (envios, falhas, alertas, RSSI).
+  fonte: "Roteiro M1.12.T05 (ensaio de longa duração)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.12.T05-013
+  objetivo: O4
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: a queda da tensão da bateria ao longo de 7 dias, vista pela telemetria, basta para validar que a autonomia de uma 18650 de 2600 mAh será maior que 6 meses neste nó.
+  resposta: false
+  explicacao: |
+    Em 7 dias o nó gasta cerca de 28 mAh, ~1 % da capacidade: a tensão de repouso muda poucos mV, menos que o efeito da temperatura e da carga no instante da leitura. A validação de curto prazo é por contagem de carga; a tensão serve como tendência ao longo de meses e para o alerta de bateria baixa.
+  fonte: "Roteiro M1.11.T01 (estado de carga pela tensão); roteiro M1.12.T05"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.12.T05-014
+  objetivo: O4
+  tipo: multipla
+  dificuldade: 3
+  bloom: avaliar
+  enunciado: |
+    No ensaio de 7 dias, a carga medida ficou 20 % acima do orçamento, fora do critério de ±15 %. Quais ações são adequadas?
+  alternativas:
+    - "Reconstruir a carga esperada com os eventos que de fato ocorreram no período (envios, falhas, alertas, varreduras completas) e compará-la com a medida"
+    - "Verificar se o RSSI no local ficou pior que na bancada, aumentando o tempo de conexão"
+    - "Aumentar a margem de projeto para 50 % e declarar o critério atendido"
+    - "Corrigir o orçamento ou o firmware conforme a causa encontrada e repetir o ensaio"
+  resposta: [0, 1, 3]
+  explicacao: |
+    A diferença diz que o orçamento esqueceu um evento ou que uma carga mudou no campo; acha-se a causa com os registros do período, corrige-se e repete-se. Mexer na margem não muda o consumo e esconde o problema.
+  fonte: "Roteiro M1.11.T04 (confronto com o orçamento); roteiro M1.12.T05 (tratar a diferença)"
+  origem: ia
+  revisao: rascunho

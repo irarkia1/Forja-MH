@@ -1,0 +1,240 @@
+- id: Q-M1.12.T06-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Qual deve ser o início do README do repositório da estação?
+  alternativas:
+    - "A lista completa de comandos de instalação do ESP-IDF"
+    - "O histórico de versões do firmware"
+    - "Uma frase dizendo o que o projeto é, seguida de uma foto e do link do vídeo"
+    - "A licença e os créditos das bibliotecas"
+  resposta: 2
+  explicacao: |
+    Quem chega decide em segundos se continua lendo: primeiro precisa saber o que é e ver que funciona. Instalação, histórico e licença vêm depois, na ordem das perguntas de quem lê.
+  fonte: "GitHub Docs, About the repository README file"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.12.T06-002
+  objetivo: O1
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Ao preparar o repositório para ficar público, o gitleaks encontrou a senha MQTT de uma estação num commit de três semanas atrás. Qual é a sequência correta?
+  alternativas:
+    - "Trocar a senha no broker, limpar o histórico, incluir o arquivo no .gitignore com um arquivo de exemplo e rodar o gitleaks de novo"
+    - "Apagar o arquivo num commit novo e publicar, porque o commit antigo fica escondido"
+    - "Limpar o histórico e manter a senha, já que ninguém clonou o repositório privado"
+    - "Tornar o repositório público e trocar a senha só se alguém reclamar"
+  resposta: 0
+  explicacao: |
+    Um segredo que entrou num commit deve ser considerado vazado: a primeira ação é invalidá-lo. Um commit novo não apaga o antigo, que continua no histórico. Depois de trocar, limpa-se o histórico, previne-se a repetição e confere-se de novo.
+  fonte: "Gitleaks (github.com/gitleaks/gitleaks); GitHub Docs, Removing sensitive data from a repository"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.12.T06-003
+  objetivo: O1
+  tipo: multipla
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Quais destes arquivos nunca devem estar no repositório público da estação?
+  alternativas:
+    - "A chave privada da CA que assinou o certificado do broker"
+    - "O segredos.exemplo.h com valores falsos"
+    - "O .env com o token do InfluxDB e a senha do Grafana"
+    - "O certificado público da CA (ca.crt), que a estação usa para verificar o broker"
+  resposta: [0, 2]
+  explicacao: |
+    A chave da CA permite emitir certificados que as estações aceitariam; o .env dá acesso ao banco e ao painel. O arquivo de exemplo existe justamente para ir ao repositório, e o certificado da CA é público por natureza — sem ele, ninguém reproduz o projeto.
+  fonte: "Eclipse Mosquitto, mosquitto-tls(7); roteiro M1.12.T03 (PKI)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.12.T06-004
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    BOM de um protótipo: 1 módulo ESP32 a R$ 32,00; 1 sensor a R$ 28,00; 1 célula a R$ 25,00; 1 caixa a R$ 22,00; 12 resistores a R$ 0,10; 6 capacitores a R$ 0,25; 4 conectores a R$ 1,50. Qual é o custo total por unidade? Responda em R$, com 2 casas decimais.
+  resposta: {valor: 115.70, unidade: "R$", tolerancia: 0.002}
+  explicacao: |
+    32 + 28 + 25 + 22 + 12 × 0,10 + 6 × 0,25 + 4 × 1,50 = 107 + 1,20 + 1,50 + 6,00 = R$ 115,70. Abaixo do limite de R$ 150 do RNF-06; a BOM leva a data da cotação.
+  fonte: "Roteiro M1.12.T06 (BOM com custo)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.12.T06-005
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    A BOM da estação custa R$ 120,00 por unidade comprando para 1 unidade e R$ 78,00 por unidade comprando para 100. De quantos por cento o custo por unidade cai? Responda em %, com 1 casa decimal.
+  resposta: {valor: 35.0, unidade: "%", tolerancia: 0.01}
+  explicacao: |
+    (120 − 78) / 120 = 42 / 120 = 35,0 %. Em volume, os itens que menos caem (caixa, sensor) passam a pesar mais que o MCU: é para eles que se olha ao pensar em produto.
+  fonte: "Roteiro M1.12.T06 (BOM com custo)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.12.T06-006
+  objetivo: O2
+  tipo: multipla
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Quais custos ficam fora da BOM, mas precisam aparecer quando se discute o custo do produto?
+  alternativas:
+    - "Montagem, teste e gabaritos de produção"
+    - "O módulo ESP32 e o sensor"
+    - "Frete, impostos e certificação do rádio"
+    - "Servidor e operação da infraestrutura de nuvem"
+  resposta: [0, 2, 3]
+  explicacao: |
+    A BOM lista os materiais de cada unidade: módulo e sensor estão nela. Montagem, teste, frete, impostos, homologação e o servidor são custos reais do produto que a BOM não mostra e que mudam a conta por unidade.
+  fonte: "Roteiro M1.12.T06 (BOM com custo; portfólio e entrevista)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.12.T06-007
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Para fazer 100 estações: BOM de R$ 87,00 por unidade em volume, montagem e teste de R$ 15,00 por unidade e um custo único (placa própria, gabarito de teste) de R$ 2.500,00 dividido igualmente pelas 100 unidades. Qual é o custo por unidade? Responda em R$, com 2 casas decimais.
+  resposta: {valor: 127.00, unidade: "R$", tolerancia: 0.002}
+  explicacao: |
+    87 + 15 + 2500 / 100 = 87 + 15 + 25 = R$ 127,00. Ainda abaixo de R$ 150, mas 46 % acima da BOM: quem compara só a BOM com o preço-alvo engana a si mesmo. Em 10 unidades, o custo único sozinho seria R$ 250 por unidade.
+  fonte: "Roteiro M1.12.T06 (BOM com custo)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.12.T06-008
+  objetivo: O3
+  tipo: vf
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Verdadeiro ou falso: o vídeo de demonstração deve ter de 3 a 5 minutos e mostrar o projeto funcionando, sem números medidos, porque números cansam quem assiste.
+  resposta: false
+  explicacao: |
+    A duração está certa, mas o vídeo existe para provar os requisitos principais: latência do alerta com relógio visível, entrega, perfil de corrente e autonomia. Sem números, ele vira propaganda.
+  fonte: "Roteiro M1.12.T06 (vídeo de 3 a 5 minutos)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.12.T06-009
+  objetivo: O3
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    No roteiro de referência do vídeo, o que aparece nos primeiros 20 segundos?
+  alternativas:
+    - "O código-fonte do firmware rolando na tela"
+    - "Os créditos e a licença do projeto"
+    - "A tabela completa da FMEA"
+    - "O problema em uma frase e a estação no lugar de uso"
+  resposta: 3
+  explicacao: |
+    O começo prende a atenção dizendo por que o projeto existe e mostrando-o no mundo real. Arquitetura, demonstração e medidas vêm depois; código e FMEA ficam no repositório.
+  fonte: "Roteiro M1.12.T06 (vídeo de 3 a 5 minutos)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.12.T06-010
+  objetivo: O3
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: a demonstração do alerta deve ser gravada numa tomada contínua, do aquecimento do sensor até a notificação no celular, com um relógio visível na tela.
+  resposta: true
+  explicacao: |
+    O requisito é de tempo. Um corte entre o estímulo e a notificação pode esconder qualquer espera; com a tomada contínua e o relógio, quem assiste mede a latência sozinho.
+  fonte: "Roteiro M1.12.T06 (regras de gravação)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.12.T06-011
+  objetivo: O3
+  tipo: multipla
+  dificuldade: 3
+  bloom: avaliar
+  enunciado: |
+    Você tem 4 minutos de vídeo. Quais cenas ajudam a provar os requisitos principais do projeto?
+  alternativas:
+    - "O alerta ao vivo, do aquecimento à notificação, com relógio na tela"
+    - "O perfil de corrente de um envio no medidor e a tabela de autonomia antes e depois das otimizações"
+    - "A leitura comentada de todo o main.c, linha por linha"
+    - "O que deu errado no projeto e a principal limitação"
+  resposta: [0, 1, 3]
+  explicacao: |
+    A demonstração prova o alerta e a latência; o perfil e a tabela provam a autonomia medida; a limitação e a lição mostram maturidade técnica. Ler o código inteiro consome o vídeo sem provar requisito: o código está no repositório.
+  fonte: "Roteiro M1.12.T06 (roteiro do vídeo)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.12.T06-012
+  objetivo: O4
+  tipo: unica
+  dificuldade: 2
+  bloom: avaliar
+  enunciado: |
+    No relatório de aceite, a verificação do RNF-01 (erro ≤ ±0,5 °C) deu erro medido de 0,42 °C, com incerteza de 0,15 °C. Qual situação registrar?
+  alternativas:
+    - "Atende"
+    - "Não atende"
+    - "Inconclusivo"
+    - "Não verificado"
+  resposta: 2
+  explicacao: |
+    O erro somado à incerteza (0,57 °C) passa do limite, e o erro sozinho está dentro: não dá para afirmar nem que atende nem que não atende. Registra-se inconclusivo, com a evidência e o plano para melhorar a verificação.
+  fonte: "Roteiro M1.12.T02 (calibração e incerteza); roteiro M1.12.T06 (relatório de aceite)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.12.T06-013
+  objetivo: O4
+  tipo: unica
+  dificuldade: 3
+  bloom: avaliar
+  enunciado: |
+    Numa entrevista pedem: "conte uma decisão técnica que você mudou depois de medir". Qual resposta segue melhor o método STAR?
+  alternativas:
+    - "Usei ESP32 porque é o melhor microcontrolador para IoT e tem Wi-Fi"
+    - "A autonomia medida dava 178 dias e o requisito era 183. Precisava achar o que dominava. Medi cada vigília, vi que o envio era 76 % da carga e apliquei conexão rápida, uma mudança por vez. Fui para 268 dias, conferindo latência e entrega"
+    - "Mudei muitas coisas no firmware até a bateria durar mais, e no fim deu certo"
+    - "Não mudei nenhuma decisão, porque planejei tudo direito no começo"
+  resposta: 1
+  explicacao: |
+    STAR é Situação (178 contra 183 dias), Tarefa (achar o que dominava), Ação (medir, otimizar uma coisa por vez) e Resultado (268 dias, com os outros requisitos conferidos). As outras respostas não têm número, método ou decisão.
+  fonte: "Roteiro M1.12.T06 (portfólio e entrevista); roteiro M1.12.T05"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M1.12.T06-014
+  objetivo: O4
+  tipo: unica
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Faltam dois dias para publicar o projeto. O ensaio do RNF-03 deu 18 de 20 alertas em até 60 s (o critério é 19 de 20); os dois lentos chegaram 4 min depois, logo após outro alerta da mesma estação. Todos os outros requisitos passaram. O que deve ir para o relatório de aceite e para o README?
+  alternativas:
+    - "RNF-03 como atende, porque 90 % é quase o critério e os casos lentos são raros"
+    - "Retirar o RNF-03 do relatório e do README até haver tempo de investigar"
+    - "RNF-03 como atende, citando só a mediana da latência"
+    - "RNF-03 como não atende, com a evidência, a causa provável (o agrupamento da política de notificação segura alertas repetidos da mesma estação) e o plano de correção; o README mostra o resultado real na tabela e nas limitações"
+  resposta: 3
+  explicacao: |
+    Um "não atende" bem explicado preserva a confiança em todos os outros números. O padrão "logo após outro alerta da mesma estação" aponta para o group interval da política de notificação, o que dá uma causa provável e um plano. Arredondar, omitir ou trocar a estatística é o que um avaliador experiente percebe.
+  fonte: "Roteiro M1.12.T06 (relatório de aceite); Grafana Labs, Grafana Alerting (Notification policies: group interval)"
+  origem: ia
+  revisao: rascunho
