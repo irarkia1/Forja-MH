@@ -1,0 +1,220 @@
+- id: Q-M2.1.T05-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Na família BC546/BC547/BC548 da onsemi, o que indica a letra final, como no **BC547C**?
+  alternativas:
+    - "A tensão máxima coletor-emissor de 45 V"
+    - "O encapsulamento SOT-23"
+    - "A versão PNP do transistor"
+    - "O grupo de ganho h_FE (no C, cerca de 420 a 800 a 2 mA)"
+  resposta: 3
+  explicacao: |
+    As letras A, B e C separam os grupos de h_FE (aproximadamente 110–220, 200–450 e 420–800 a 2 mA e 5 V). A tensão é dada pelo número (BC546, 547, 548); o complementar PNP é o BC557.
+  fonte: "onsemi, BC546/BC547/BC548 (datasheet: Electrical Characteristics)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T05-002
+  objetivo: O1
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: o datasheet do MMBT3904 garante V_CE(sat) ≤ 0,3 V a 50 mA para qualquer corrente de base que deixe o transistor conduzindo.
+  resposta: false
+  explicacao: |
+    O V_CE(sat) é especificado numa condição de teste com I_C/I_B = 10 (50 mA com 5 mA de base). Com corrente de base menor, o transistor pode ficar na região ativa e o datasheet não promete nada sobre a queda.
+  fonte: "onsemi, MMBT3904 (datasheet: Collector-Emitter Saturation Voltage)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T05-003
+  objetivo: O1
+  tipo: multipla
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Ao ler as curvas de h_FE de um BJT pequeno como o MMBT3904, quais conclusões estão corretas?
+  alternativas:
+    - "O h_FE cai bastante em correntes de coletor próximas do máximo, como 100 mA"
+    - "O h_FE diminui em baixa temperatura, então o pior caso de uma chave é o frio"
+    - "O h_FE é o mesmo em todos os exemplares de um lote, e a faixa da tabela é só incerteza de medição"
+    - "O h_FE da tabela é igual ao β forçado que se usa no projeto da chave"
+  resposta: [0, 1]
+  explicacao: |
+    O ganho cai em alta corrente (o datasheet garante só ≥ 30 a 100 mA) e no frio; a faixa de 100 a 300 é a dispersão real entre exemplares. O β forçado (I_C/I_B ≈ 10) é uma escolha de projeto, muito abaixo do h_FE, para garantir saturação.
+  fonte: "onsemi, MMBT3904 (datasheet: DC Current Gain e curvas); Horowitz & Hill, The Art of Electronics, 3ª ed., Bipolar Transistors"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T05-004
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um MMBT3904 saturado conduz 80 mA com V_CE(sat) = 0,2 V, e a base recebe 8 mA com V_BE(sat) = 0,85 V. Qual é a potência total dissipada no transistor? Responda em mW, com 1 casa decimal.
+  resposta: {valor: 22.8, unidade: "mW", tolerancia: 0.01}
+  explicacao: |
+    P ≈ V_CE·I_C + V_BE·I_B = 0,2 × 80 + 0,85 × 8 = 16 + 6,8 = 22,8 mW. Num SOT-23 com R_θJA de centenas de °C/W, isso dá uma elevação de cerca de 10 °C.
+  fonte: "onsemi, MMBT3904 (datasheet); Horowitz & Hill, The Art of Electronics, 3ª ed., Bipolar Transistors (transistor switch)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T05-005
+  objetivo: O2
+  tipo: vf
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: pode-se ligar a base de um NPN diretamente a um GPIO de 3,3 V, sem resistor, porque o próprio transistor limita a corrente de base.
+  resposta: false
+  explicacao: |
+    A junção base-emissor é um diodo: acima de ~0,7 V a corrente cresce exponencialmente e só é limitada pela capacidade do pino e pela resistência interna, podendo danificar o GPIO e o transistor. O resistor de base define I_B.
+  fonte: "Horowitz & Hill, The Art of Electronics, 3ª ed., Bipolar Transistors"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T05-006
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um relé de 5 V com bobina de 100 Ω é acionado por um MMBT3904 a partir de um GPIO de 3,3 V. Com β forçado de 10 e V_BE(sat) = 0,85 V, qual é o resistor de base calculado (antes de escolher o comercial)? Despreze V_CE(sat) na corrente da bobina. Responda em Ω, arredondando para o inteiro mais próximo.
+  resposta: {valor: 490, unidade: "Ω", tolerancia: 0.01}
+  explicacao: |
+    I_C = 5/100 = 50 mA; I_B = 5 mA; R_B = (3,3 − 0,85)/5 mA = 490 Ω → 470 Ω comercial (mais corrente de base, não menos). Diodo de roda livre na bobina.
+  fonte: "onsemi, MMBT3904 (datasheet: V_BE(sat) com I_C/I_B = 10); Horowitz & Hill, The Art of Electronics, 3ª ed., Bipolar Transistors"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T05-007
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Um projetista usou R_B = 4,7 kΩ a partir de um GPIO de 3,3 V (V_BE = 0,75 V). O h_FE mínimo do transistor, no frio e na corrente de trabalho, é 40. Qual é a maior corrente de coletor que se pode esperar desse transistor nessa condição? Responda em mA, com 1 casa decimal.
+  resposta: {valor: 21.7, unidade: "mA", tolerancia: 0.01}
+  explicacao: |
+    I_B = (3,3 − 0,75)/4700 ≈ 0,543 mA; h_FE·I_B ≈ 40 × 0,543 ≈ 21,7 mA. Uma carga de 50 mA não seria saturada: o transistor ficaria na região ativa, com V_CE alto e dissipação grande. Com β forçado de 10, R_B deveria ser ≈ 510 Ω.
+  fonte: "onsemi, MMBT3904 (datasheet: DC Current Gain); Horowitz & Hill, The Art of Electronics, 3ª ed., Bipolar Transistors"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T05-008
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 4
+  bloom: aplicar
+  enunciado: |
+    Um MMBT3904 chaveia 120 mA com β forçado de 10 (I_B = 12 mA), V_CE(sat) = 0,3 V e V_BE(sat) = 0,9 V. A resistência térmica junção-ambiente na placa é de 556 °C/W. Qual é a elevação da temperatura da junção acima do ambiente? Responda em °C, com 1 casa decimal.
+  resposta: {valor: 26.0, unidade: "°C", tolerancia: 0.01}
+  explicacao: |
+    P = 0,3 × 0,12 + 0,9 × 0,012 = 0,036 + 0,0108 = 0,0468 W; ΔT = 0,0468 × 556 ≈ 26,0 °C. Funciona, mas perto do I_C máximo de 200 mA o ganho cai e o GPIO precisa entregar 12 mA: um MOSFET de nível lógico seria mais confortável.
+  fonte: "onsemi, MMBT3904 (datasheet: Thermal Characteristics)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T05-009
+  objetivo: O3
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Na região ativa, à temperatura ambiente, quanto V_BE precisa aumentar para que a corrente de coletor fique dez vezes maior?
+  alternativas:
+    - "Cerca de 6 mV"
+    - "Cerca de 60 mV"
+    - "Cerca de 0,6 V"
+    - "Cerca de 2 mV"
+  resposta: 1
+  explicacao: |
+    Pela lei exponencial I_C = I_S·e^(V_BE/V_T), uma década de corrente pede V_T·ln 10 ≈ 25,9 mV × 2,303 ≈ 60 mV. Os −2 mV/°C são o coeficiente de temperatura de V_BE a corrente constante.
+  fonte: "Horowitz & Hill, The Art of Electronics, 3ª ed., Bipolar Transistors (Ebers–Moll model)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T05-010
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Uma fonte de corrente simples tem a base fixada em 3,0 V e um resistor de emissor de 47 Ω. Com V_BE = 0,65 V, qual é a corrente de coletor? Responda em mA, com 1 casa decimal.
+  resposta: {valor: 50.0, unidade: "mA", tolerancia: 0.01}
+  explicacao: |
+    I_C ≈ I_E = (V_B − V_BE)/R_E = 2,35/47 = 50,0 mA, independente do β e da tensão de coletor enquanto o transistor não satura. A queda de V_BE com a temperatura (−2 mV/°C) muda a corrente pouco, porque há 2,35 V sobre R_E.
+  fonte: "Horowitz & Hill, The Art of Electronics, 3ª ed., Bipolar Transistors (current source)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T05-011
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Com V_T = 25,9 mV, quanto V_BE deve aumentar para que a corrente de coletor de um BJT na região ativa fique 4 vezes maior? Responda em mV, com 1 casa decimal.
+  resposta: {valor: 35.9, unidade: "mV", tolerancia: 0.01}
+  explicacao: |
+    ΔV_BE = V_T·ln(4) = 25,9 × 1,386 ≈ 35,9 mV. Por isso uma base polarizada direto por tensão, sem resistor de emissor, é instável: poucos milivolts (ou poucos graus) mudam muito a corrente.
+  fonte: "Horowitz & Hill, The Art of Electronics, 3ª ed., Bipolar Transistors (Ebers–Moll model)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T05-012
+  objetivo: O4
+  tipo: multipla
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Quais afirmações sobre alternativas ao BJT discreto como chave estão corretas?
+  alternativas:
+    - "O Darlington tem queda de saturação menor que um BJT simples, por ter mais ganho"
+    - "O transistor digital integra os resistores de base e de base-emissor, reduzindo peças na BOM"
+    - "O MOSFET de nível lógico não consome corrente de controle em regime, só a carga do gate nas transições"
+    - "O BJT saturado desliga mais rápido que qualquer MOSFET, por não ter capacitância de gate"
+  resposta: [1, 2]
+  explicacao: |
+    O Darlington tem queda de cerca de 1 V (dois V_BE em série na saturação) e é lento. O transistor digital é um BJT com R1 e R2 internos. O MOSFET consome carga só ao comutar. O BJT saturado tem tempo de armazenamento de centenas de ns.
+  fonte: "Texas Instruments, ULN2003A (datasheet); Nexperia, PDTC114E (datasheet); onsemi, MMBT3904 (datasheet: Switching Characteristics)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T05-013
+  objetivo: O4
+  tipo: unica
+  dificuldade: 3
+  bloom: avaliar
+  enunciado: |
+    Um GPIO de 3,3 V precisa ligar e desligar uma fita de LED de 12 V e 2 A, com PWM de 1 kHz. Qual escolha de transistor é mais adequada?
+  alternativas:
+    - "MMBT3904 com β forçado de 10, porque é o transistor mais barato da lista básica"
+    - "Um canal do ULN2003A, porque suporta corrente alta"
+    - "MOSFET canal N de nível lógico com R_DS(on) especificado em V_GS de 2,5 V, como o AO3400A"
+    - "Transistor digital com resistores integrados, porque economiza peças"
+  resposta: 2
+  explicacao: |
+    2 A estão muito acima do I_C máximo do MMBT3904 (200 mA) e dos canais do ULN2003A (500 mA, com ~1 V de queda); o transistor digital também é de baixa corrente. O MOSFET de nível lógico conduz ampères com perda de dezenas a centenas de mW e sem corrente de base.
+  fonte: "Alpha & Omega, AO3400A (datasheet); onsemi, MMBT3904 (datasheet); Texas Instruments, ULN2003A (datasheet)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T05-014
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Uma carga de 100 mA pode ser chaveada por um BJT com V_CE(sat) = 0,25 V ou por um MOSFET com R_DS(on) = 50 mΩ. Considerando só a dissipação no caminho da carga (coletor-emissor ou dreno-source), quantas vezes a potência no BJT é maior que no MOSFET? Responda com um número inteiro.
+  resposta: {valor: 50, unidade: "vezes", tolerancia: 0.01}
+  explicacao: |
+    BJT: 0,25 × 0,1 = 25 mW. MOSFET: 0,1² × 0,05 = 0,5 mW. Razão = 50. O BJT ainda consome a corrente de base (10 mA com β forçado de 10), o que aumenta a vantagem do MOSFET em correntes de dezenas de mA para cima.
+  fonte: "onsemi, MMBT3904 (datasheet); Alpha & Omega, AO3400A (datasheet)"
+  origem: ia
+  revisao: rascunho

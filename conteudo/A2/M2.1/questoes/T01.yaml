@@ -1,0 +1,220 @@
+- id: Q-M2.1.T01-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Um resistor de chip 0805 de 1 % traz a marcação de quatro dígitos **1002**. Qual é o seu valor?
+  alternativas:
+    - "1002 Ω"
+    - "100 Ω"
+    - "10 kΩ"
+    - "1 kΩ"
+  resposta: 2
+  explicacao: |
+    No código de quatro dígitos, os três primeiros são algarismos significativos e o último é o expoente de 10: 100 × 10² = 10 000 Ω = 10 kΩ. No código de três dígitos (5 %), o mesmo valor seria 103.
+  fonte: "Yageo, General Purpose Chip Resistors RC series (Marking); IEC 60062"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T01-002
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um regulador com V_FB = 0,8 V usa R2 = 10,0 kΩ (do pino FB ao GND) e R1 = 31,6 kΩ (da saída ao FB), ambos da série E96. Desprezando a corrente do pino FB, qual é a tensão de saída nominal? Responda em V, com 3 casas decimais.
+  resposta: {valor: 3.328, unidade: "V", tolerancia: 0.001}
+  explicacao: |
+    V_out = V_FB·(1 + R1/R2) = 0,8 × (1 + 3,16) = 3,328 V. O valor exato para 3,3 V seria 31,25 kΩ, que não existe; na E24, 30 kΩ daria 3,20 V e 33 kΩ, 3,44 V. Por isso se usa a E96 em divisores de realimentação.
+  fonte: "IEC 60063 (séries E); Horowitz & Hill, The Art of Electronics, 3ª ed., Foundations (resistores e divisores)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T01-003
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Um divisor 1:1 usa dois resistores de 10 kΩ, ±1 %, ±200 ppm/K, numa placa que trabalha de 25 °C a 105 °C (TCR referido a 25 °C). No pior caso (um resistor no extremo superior de tolerância e deriva, o outro no inferior), qual é o erro da razão de divisão em relação a 0,5? Responda em %, em módulo, com 1 casa decimal.
+  resposta: {valor: 2.6, unidade: "%", tolerancia: 0.02}
+  explicacao: |
+    Deriva de cada resistor: 200 ppm/K × 80 K = 1,6 %. R1 = 10 k × 1,01 × 1,016 e R2 = 10 k × 0,99 × 0,984: a razão R2/(R1 + R2) ≈ 0,4870, erro ≈ −2,6 %. Num divisor 1:1, o erro da razão é aproximadamente a média dos erros dos dois resistores somados em oposição: 1 % de tolerância + 1,6 % de deriva.
+  fonte: "Vishay, datasheet CRCW (TCR); Horowitz & Hill, The Art of Electronics, 3ª ed., apêndice Resistor Types"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T01-004
+  objetivo: O1
+  tipo: unica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um resistor 0603 de 1 % está marcado com o código EIA-96 **01C**. Sabendo que o índice 01 corresponde a 100 na série E96 e que as letras A, B, C e D multiplicam por 1, 10, 100 e 1000, qual é o valor?
+  alternativas:
+    - "10 kΩ"
+    - "1 kΩ"
+    - "100 Ω"
+    - "1,0 MΩ"
+  resposta: 0
+  explicacao: |
+    O código EIA-96 usa dois dígitos como índice na tabela E96 (01 → 100) e uma letra como multiplicador (C → ×100): 100 × 100 = 10 kΩ. Ele existe porque num 0603 não cabem os quatro dígitos do código de 1 %.
+  fonte: "EIA-96 (código de marcação de resistores de 1 %); Yageo, RC series (Marking)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T01-005
+  objetivo: O2
+  tipo: vf
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: um resistor de chip 0603 especificado em 1/10 W pode dissipar 0,1 W em qualquer temperatura de placa, desde que esteja abaixo de 155 °C.
+  resposta: false
+  explicacao: |
+    A potência nominal vale até a temperatura de joelho da curva de derating (70 °C nas séries RC da Yageo e CRCW da Vishay) e cai linearmente até zero em 155 °C. A 100 °C, por exemplo, o 0603 admite só cerca de 65 mW.
+  fonte: "Yageo, General Purpose Chip Resistors RC series (Power derating curve)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T01-006
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um resistor 0603 de 0,1 W tem derating linear de 100 % a 70 °C até 0 % a 155 °C. Qual é a potência admissível com a placa a 100 °C? Responda em mW, com 1 casa decimal.
+  resposta: {valor: 64.7, unidade: "mW", tolerancia: 0.01}
+  explicacao: |
+    P_adm = P_nom·(155 − T)/(155 − 70) = 100 mW × 55/85 ≈ 64,7 mW. Com a regra de projeto de usar até 50–60 % disso, o resistor deveria dissipar no máximo 32 a 39 mW nessa placa.
+  fonte: "Yageo, General Purpose Chip Resistors RC series (Power derating curve)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T01-007
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    O ramo superior de um divisor que mede um barramento de 400 V DC precisa de 1,5 MΩ no total. Você quer usar resistores 0805 iguais (tensão máxima de trabalho de 150 V, 1/8 W) em série, com a tensão dividida igualmente entre eles. Qual é o número mínimo de resistores no ramo superior, supondo que quase toda a tensão fica sobre ele? Responda com um número inteiro.
+  resposta: {valor: 3, unidade: "resistores", tolerancia: 0}
+  explicacao: |
+    A potência é pequena (400²/1,5 MΩ ≈ 0,11 W no total), mas a tensão manda: 400/150 = 2,67, logo são necessários 3 resistores (≈133 V em cada). A resistência crítica do 0805 é 150²/0,125 = 180 kΩ: acima disso, o limite é a tensão, não a potência.
+  fonte: "Yageo, General Purpose Chip Resistors RC series (Electrical characteristics: maximum working voltage)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T01-008
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Um shunt de 0,05 Ω em 1206 (0,25 W até 70 °C, derating linear até zero em 155 °C) fica numa placa a 95 °C. A regra de projeto é usar no máximo 50 % da potência admissível nessa temperatura. Qual é a maior corrente contínua permitida? Responda em A, com 2 casas decimais.
+  resposta: {valor: 1.33, unidade: "A", tolerancia: 0.01}
+  explicacao: |
+    P_adm(95 °C) = 0,25 × (155 − 95)/85 ≈ 0,1765 W; com 50 %, 0,0882 W. I = √(P/R) = √(0,0882/0,05) ≈ 1,33 A. Para shunts, além da potência, prefira resistores de liga metálica (TCR baixo) com ligação Kelvin.
+  fonte: "Yageo, RC series (Power derating curve); Vishay, WSL Power Metal Strip (datasheet)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T01-009
+  objetivo: O3
+  tipo: unica
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Para medir até 10 A com um shunt de 4 mΩ numa placa, qual escolha de resistor é a adequada?
+  alternativas:
+    - "Resistor de filme de carbono THT de 5 %"
+    - "Resistor de filme espesso de chip comum, ligado por duas trilhas largas"
+    - "Resistor de filme fino de 0,1 % em 0402"
+    - "Resistor de liga metálica (metal strip) com ligação Kelvin de quatro pontos"
+  resposta: 3
+  explicacao: |
+    Shunts de mΩ são feitos de ligas de baixo TCR (manganina, por exemplo) em formato de tira, como a série WSL da Vishay. A ligação Kelvin separa as trilhas de corrente das de medição, para que a resistência da solda e das trilhas não entre na leitura. Filme espesso tem TCR alto em valores baixos; filme fino em 0402 não aguenta a potência.
+  fonte: "Vishay, WSL Power Metal Strip (datasheet); Horowitz & Hill, The Art of Electronics, 3ª ed., apêndice Resistor Types"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T01-010
+  objetivo: O3
+  tipo: multipla
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Comparando resistores de chip de filme fino (NiCr) com os de filme espesso (óxido de rutênio em vidro) do mesmo valor, quais afirmações são verdadeiras?
+  alternativas:
+    - "O filme fino gera menos ruído térmico, porque o seu material é mais puro"
+    - "O filme fino tem TCR muito menor, de ±25 ppm/K ou menos"
+    - "O filme fino aguenta melhor surtos e pulsos de energia, por ter mais massa resistiva"
+    - "O filme fino tem ruído de corrente (excesso, 1/f) muito menor quando há tensão DC sobre ele"
+  resposta: [1, 3]
+  explicacao: |
+    O filme fino tem tolerância e TCR muito melhores e ruído de corrente baixo, porque a corrente não atravessa contatos entre grãos. O ruído térmico √(4kTRB) é o mesmo em qualquer tecnologia. Em pulsos, o filme espesso costuma ser melhor, porque o filme fino é uma camada muito delgada.
+  fonte: "Vishay, datasheets CRCW e TNPW; Vishay, Basics of Linear Fixed Resistors"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T01-011
+  objetivo: O3
+  tipo: unica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Um sensor instalado numa granja de suínos teve vários resistores de chip comuns de filme espesso abrindo depois de 14 meses em campo, sem sobrecarga elétrica. Qual é a causa mais provável e a correção adequada?
+  alternativas:
+    - "Envelhecimento normal do óxido de rutênio; trocar por resistores de 5 %"
+    - "Sulfetação da prata do eletrodo interno; usar resistores antienxofre e verniz de proteção"
+    - "Ruído de corrente excessivo; trocar por filme fino"
+    - "Efeito do coeficiente de tensão; usar resistores de valor menor"
+  resposta: 1
+  explicacao: |
+    Ambientes com gases sulfurosos (granjas, esgoto, borracha vulcanizada, certas indústrias) atacam a prata dos eletrodos dos resistores de filme espesso, formando sulfeto de prata, que não conduz; o resistor abre aos poucos. As séries antienxofre usam eletrodos protegidos, e o verniz de proteção reduz a exposição.
+  fonte: "Panasonic, Anti-Sulfurated Thick Film Chip Resistors ERJ-U (datasheet); Vishay, nota sobre resistência a enxofre de resistores de chip"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T01-012
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Qual é o ruído térmico (tensão eficaz) de um resistor de 10 kΩ a 300 K numa banda de 10 kHz? Use k = 1,38 × 10⁻²³ J/K. Responda em µV, com 2 casas decimais.
+  resposta: {valor: 1.29, unidade: "µV", tolerancia: 0.01}
+  explicacao: |
+    v_n = √(4·k·T·R·B) = √(4 × 1,38 × 10⁻²³ × 300 × 10⁴ × 10⁴) ≈ 1,29 µV. A densidade é ≈ 12,9 nV/√Hz, multiplicada por √10 000 = 100.
+  fonte: "Horowitz & Hill, The Art of Electronics, 3ª ed., Low-Noise Techniques and Transimpedance (Johnson noise)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T01-013
+  objetivo: O4
+  tipo: vf
+  dificuldade: 3
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: dois resistores de 10 kΩ, um de filme fino e outro de filme espesso, à mesma temperatura e sem corrente DC passando, apresentam o mesmo ruído térmico.
+  resposta: true
+  explicacao: |
+    O ruído térmico (Johnson-Nyquist) depende só de R, da temperatura e da banda. A diferença entre tecnologias aparece no ruído de corrente, que só existe quando há corrente DC atravessando o resistor.
+  fonte: "Horowitz & Hill, The Art of Electronics, 3ª ed., Low-Noise Techniques and Transimpedance"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T01-014
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 4
+  bloom: aplicar
+  enunciado: |
+    Um resistor de filme espesso com índice de ruído NI = −10 dB (referido a 1 µV por volt DC por década) tem 3 V DC sobre ele. Estime o ruído de corrente na banda de 0,01 Hz a 10 Hz com v ≈ V_DC·10^(NI/20)·√(log₁₀(f₂/f₁)). Responda em µV, com 2 casas decimais.
+  resposta: {valor: 1.64, unidade: "µV", tolerancia: 0.01}
+  explicacao: |
+    10^(−10/20) ≈ 0,316 µV/V; a banda tem três décadas, √3 ≈ 1,732. v ≈ 3 × 0,316 × 1,732 ≈ 1,64 µV. Num resistor de 10 kΩ, o ruído térmico na mesma banda seria só ≈ 0,04 µV: em medições lentas com tensão DC, o ruído de corrente domina.
+  fonte: "Vishay, Basics of Linear Fixed Resistors (current noise); IEC 60195"
+  origem: ia
+  revisao: rascunho

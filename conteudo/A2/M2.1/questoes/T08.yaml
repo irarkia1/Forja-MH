@@ -1,0 +1,225 @@
+- id: Q-M2.1.T08-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Quais são as dimensões aproximadas do corpo de um componente de chip **0805** (código imperial)?
+  alternativas:
+    - "0,8 × 0,5 mm"
+    - "2,0 × 1,25 mm"
+    - "8,0 × 5,0 mm"
+    - "1,6 × 0,8 mm"
+  resposta: 1
+  explicacao: |
+    O código imperial dá o tamanho em centésimos de polegada (0,08 × 0,05 pol ≈ 2,0 × 1,25 mm); o código métrico equivalente é 2012. O 1,6 × 0,8 mm é o 0603 imperial (1608 métrico).
+  fonte: "Yageo, General Purpose Chip Resistors RC series (Dimensions); IPC-7351 (nomenclatura de chips)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T08-002
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um lado de um QFP tem 24 pinos com passo de 0,5 mm. Qual é a distância entre os centros do primeiro e do último pino desse lado? Responda em mm, com 1 casa decimal.
+  resposta: {valor: 11.5, unidade: "mm", tolerancia: 0.01}
+  explicacao: |
+    Há 23 intervalos de 0,5 mm entre o primeiro e o último centro: 23 × 0,5 = 11,5 mm. Conferir essa cota contra o desenho mecânico é um teste rápido do footprint.
+  fonte: "IPC-7351 (passo e extensão de terminais); STMicroelectronics, STM32F103C8 (datasheet: LQFP48 package information)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T08-003
+  objetivo: O4
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: no nível de densidade C (Least) da IPC-7351, os pads são os maiores dos três níveis, por isso ele é o indicado para solda por onda e retrabalho manual.
+  resposta: false
+  explicacao: |
+    O nível C é o de menor material (pads mínimos, alta densidade). O nível A (Most) tem filetes generosos, indicado para onda, solda manual e produtos robustos; o B (Nominal) é o padrão para refusão.
+  fonte: "IPC-7351B (Generic Requirements for Surface Mount Design and Land Pattern Standard: density levels)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T08-004
+  objetivo: O1
+  tipo: multipla
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Quais descrições de encapsulamento estão corretas?
+  alternativas:
+    - "O QFN não tem terminais salientes: os contatos ficam na borda inferior, em geral com um pad exposto central"
+    - "O SOIC tem terminais em gaivota com passo de 1,27 mm"
+    - "No BGA, o filete de solda de cada esfera é visível pela inspeção óptica automática"
+    - "O TSSOP tem passo de 2,54 mm, como o DIP"
+  resposta: [0, 1]
+  explicacao: |
+    QFN: contatos sob a borda e pad exposto; SOIC: 1,27 mm. As esferas do BGA ficam sob o corpo e exigem raio X para inspeção. O TSSOP tem passo de 0,65 mm; 2,54 mm é o do DIP.
+  fonte: "IPC-7351 (famílias de encapsulamento); Texas Instruments, documentação de encapsulamentos (package outlines)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T08-005
+  objetivo: O2
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Pela J-STD-033, qual é o tempo máximo fora da embalagem seca (floor life, a ≤ 30 °C e 60 % UR) de um componente de MSL 3 antes de precisar ser secado?
+  alternativas:
+    - "Ilimitado"
+    - "1 ano"
+    - "24 horas"
+    - "168 horas"
+  resposta: 3
+  explicacao: |
+    MSL 3 tem 168 h (uma semana) de floor life; MSL 1 é ilimitado, MSL 2 é 1 ano, MSL 5a é 24 h. Muitos QFN e BGA são MSL 3.
+  fonte: "IPC/JEDEC J-STD-033 (Handling, Packing, Shipping and Use of Moisture/Reflow Sensitive Surface Mount Devices); J-STD-020"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T08-006
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Uma bandeja de QFN de MSL 3 (floor life de 168 h) ficou aberta na bancada, em condições dentro do limite da norma, por 3 dias e 5 horas. Quantas horas de floor life ainda restam? Responda em horas, como número inteiro.
+  resposta: {valor: 91, unidade: "h", tolerancia: 0}
+  explicacao: |
+    3 dias e 5 h = 77 h; 168 − 77 = 91 h. Se o prazo vencer antes da refusão, as peças precisam ser secadas conforme a J-STD-033; guardar em saco com dessecante interrompe ou reinicia a contagem conforme as regras da norma.
+  fonte: "IPC/JEDEC J-STD-033 (floor life)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T08-007
+  objetivo: O2
+  tipo: unica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Vários capacitores 0402 de uma placa saíram do forno "em pé" sobre um dos terminais (tombstoning). Em todos, um pad está ligado direto a um plano de terra e o outro a uma trilha fina. Qual é a correção de projeto mais adequada?
+  alternativas:
+    - "Usar alívio térmico no pad ligado ao plano e equilibrar as ligações dos dois pads"
+    - "Aumentar a espessura do estêncil para pôr mais pasta nos dois pads"
+    - "Trocar o dielétrico dos capacitores para C0G"
+    - "Girar os capacitores 45° em relação à direção do forno"
+  resposta: 0
+  explicacao: |
+    O pad ligado ao plano aquece mais devagar; a solda do outro funde primeiro e a tensão superficial levanta a peça. Equilibrar a massa térmica (alívio térmico, trilhas parecidas, pads simétricos) é a correção. Mais pasta tende a piorar.
+  fonte: "IPC-7351 (land patterns); M3.1.T05 (defeitos de refusão)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T08-008
+  objetivo: O2
+  tipo: multipla
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Um protótipo de 5 placas será montado à mão, com ferro de solda e uma estação de ar quente simples, sem microscópio. Quais escolhas de encapsulamento são razoáveis?
+  alternativas:
+    - "Resistores e capacitores em 0603 imperial"
+    - "Acelerômetro em WLCSP de passo 0,4 mm"
+    - "Memória em BGA de passo 0,5 mm"
+    - "Transistores e MOSFETs em SOT-23"
+  resposta: [0, 3]
+  explicacao: |
+    0603 e SOT-23 se soldam com ferro, fluxo e pinça. WLCSP e BGA têm as conexões sob o corpo, exigem refusão controlada, inspeção por raio X e, em passo de 0,4–0,5 mm, uma placa com regras finas; sem microscópio, não há como conferir.
+  fonte: "IPC-7351 (famílias de encapsulamento); JLCPCB, regras de montagem SMT"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T08-009
+  objetivo: O3
+  tipo: vf
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: o R_θJA do datasheet é uma propriedade fixa do encapsulamento e vale para qualquer placa em que o componente for montado.
+  resposta: false
+  explicacao: |
+    O R_θJA é medido numa placa de teste padronizada (JESD51, low-K ou high-K) ou com uma área de cobre informada na nota de rodapé. Na sua placa, com outro cobre, camadas e vias, o valor real pode ser bem diferente.
+  fonte: "Texas Instruments, SPRA953 Semiconductor and IC Package Thermal Metrics; JEDEC JESD51"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T08-010
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um componente em SOT-23 dissipa 0,4 W numa placa cujo R_θJA efetivo é 180 °C/W, com ambiente de 45 °C. Qual é a temperatura de junção? Responda em °C, como número inteiro.
+  resposta: {valor: 117, unidade: "°C", tolerancia: 0.01}
+  explicacao: |
+    T_J = 45 + 0,4 × 180 = 117 °C, acima do limite de derating usual (cerca de 100–110 °C). Mais cobre, outro encapsulamento (SOT-223, DFN com pad exposto) ou menos perda.
+  fonte: "Texas Instruments, SPRA953 Semiconductor and IC Package Thermal Metrics"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T08-011
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um termopar colado no topo de um CI em QFN lê 78 °C enquanto ele dissipa 1,4 W. O datasheet informa Ψ_JT = 2,5 °C/W. Estime a temperatura de junção. Responda em °C, com 1 casa decimal.
+  resposta: {valor: 81.5, unidade: "°C", tolerancia: 0.01}
+  explicacao: |
+    T_J ≈ T_topo + Ψ_JT·P = 78 + 2,5 × 1,4 = 81,5 °C. Ψ_JT é um parâmetro de caracterização para estimar T_J a partir do topo medido; usar R_θJC nessa conta superestimaria a temperatura, porque a maior parte do calor sai pelo pad exposto para a placa.
+  fonte: "Texas Instruments, SPRA953 Semiconductor and IC Package Thermal Metrics (Ψ_JT)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T08-012
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Um LDO em SOT-223 converte 5,0 V em 3,3 V. Na sua placa, o R_θJA é de 60 °C/W; o ambiente chega a 55 °C e a regra de derating limita T_J a 110 °C. Desprezando a corrente quiescente, qual é a maior corrente de carga admissível? Responda em A, com 2 casas decimais.
+  resposta: {valor: 0.54, unidade: "A", tolerancia: 0.02}
+  explicacao: |
+    P_máx = (110 − 55)/60 ≈ 0,917 W; I = P/(V_in − V_out) = 0,917/1,7 ≈ 0,54 A. Acima disso, mais cobre, DPAK ou um conversor buck.
+  fonte: "Texas Instruments, SPRA953; datasheet AMS1117/LM1117 (Thermal Information)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T08-013
+  objetivo: O4
+  tipo: unica
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Pela convenção de nomes da IPC-7351, o que descreve o land pattern **SOIC127P600X175-8N**?
+  alternativas:
+    - "SOIC de 8 pinos, corpo de 12,7 × 6,0 mm, altura de 1,75 mm, densidade nominal"
+    - "SOIC de 127 pinos com passo de 0,6 mm"
+    - "SOIC de 8 pinos, passo de 1,27 mm, extensão dos terminais de 6,00 mm, altura de 1,75 mm, densidade nominal"
+    - "SOIC de 8 pinos, passo de 0,127 mm, para densidade mínima"
+  resposta: 2
+  explicacao: |
+    127P = passo de 1,27 mm; 600 = extensão de ponta a ponta dos terminais (6,00 mm); X175 = altura máxima de 1,75 mm; -8 = número de pinos; N = nível de densidade nominal.
+  fonte: "IPC-7351B (land pattern naming convention)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T08-014
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    O land pattern **QFN40P500X500X90-41N** descreve um QFN quadrado com pinos nos quatro lados e um pad exposto central. Quantos pinos de sinal há em cada lado? Responda com um número inteiro.
+  resposta: {valor: 10, unidade: "pinos", tolerancia: 0}
+  explicacao: |
+    41 contatos = 40 pinos de borda + 1 pad exposto; 40/4 = 10 por lado, com passo de 0,4 mm (40P) num corpo de 5,0 × 5,0 mm e altura de 0,90 mm. Confira o número de pinos e a posição do pino 1 contra o desenho do datasheet.
+  fonte: "IPC-7351B (land pattern naming convention)"
+  origem: ia
+  revisao: rascunho

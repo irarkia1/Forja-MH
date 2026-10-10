@@ -1,0 +1,220 @@
+- id: Q-M2.1.T07-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Um relógio baseado num cristal com erro de 20 ppm atrasa ou adianta aproximadamente quanto por dia?
+  alternativas:
+    - "0,2 s"
+    - "17 s"
+    - "1,7 s"
+    - "20 ms"
+  resposta: 2
+  explicacao: |
+    1 ppm de 86 400 s é 86,4 ms; 20 ppm dão ≈ 1,73 s por dia, ou cerca de 52 s por mês.
+  fonte: "STMicroelectronics, AN2867 (Guidelines for oscillator design on STM8AF/AL/S and STM32 MCUs/MPUs); Epson, FC-135 (datasheet)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T07-002
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um clock tem erro constante de 50 ppm. Quantos segundos ele acumula de erro em um dia (86 400 s)? Responda em s, com 2 casas decimais.
+  resposta: {valor: 4.32, unidade: "s", tolerancia: 0.01}
+  explicacao: |
+    50 × 10⁻⁶ × 86 400 = 4,32 s por dia, mais de 2 minutos por mês.
+  fonte: "Epson, FC-135 (datasheet: frequency tolerance); conversão de ppm"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T07-003
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Um cristal de 32,768 kHz tem tolerância de ±20 ppm a 25 °C, coeficiente parabólico de −0,034 ppm/°C² em torno de 25 °C e envelhecimento de ±3 ppm no primeiro ano. Somando os três no pior caso, qual é o erro no primeiro ano para o dispositivo funcionando a −5 °C? Responda em segundos por dia, com 2 casas decimais.
+  resposta: {valor: 4.63, unidade: "s/dia", tolerancia: 0.01}
+  explicacao: |
+    Temperatura: 0,034 × (−5 − 25)² = 0,034 × 900 = 30,6 ppm (atrasando). Pior caso: 20 + 30,6 + 3 = 53,6 ppm; × 86,4 ms ≈ 4,63 s por dia. A temperatura pesa mais que a tolerância de fábrica.
+  fonte: "Epson, FC-135 (datasheet: frequency vs. temperature); Abracon, ABS07 (datasheet)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T07-004
+  objetivo: O1
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: a tolerância de ±20 ppm de um cristal de 32,768 kHz já inclui a variação de frequência com a temperatura de −40 °C a +85 °C.
+  resposta: false
+  explicacao: |
+    A tolerância é medida a 25 °C, na carga especificada. A variação com a temperatura é dada à parte: no diapasão de 32 kHz é uma parábola (cerca de −0,034 ppm/°C²), que a −40 °C passa de −140 ppm.
+  fonte: "Epson, FC-135 (datasheet: frequency tolerance e frequency vs. temperature)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T07-005
+  objetivo: O2
+  tipo: unica
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Por que os capacitores de carga de um cristal devem ser de dielétrico C0G (NP0)?
+  alternativas:
+    - "Porque a capacitância classe 1 não varia com a temperatura, a tensão e o tempo, e a frequência do oscilador depende dela"
+    - "Porque o C0G tem capacitância maior por volume que o X7R"
+    - "Porque o C0G é polarizado e define o sentido de oscilação"
+    - "Porque o C0G aumenta a ESR do cristal e facilita a partida"
+  resposta: 0
+  explicacao: |
+    A frequência do cristal em modo paralelo depende da carga (pulling): um X7R mudaria a carga com a temperatura, o DC-bias e o envelhecimento, e a frequência andaria junto. C0G é estável (0 ± 30 ppm/°C) e existe facilmente nos valores de pF usados.
+  fonte: "STMicroelectronics, AN2867; Murata, SimSurfing (característica de temperatura C0G)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T07-006
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um cristal tem C_L = 10 pF. A capacitância parasita dos pinos e trilhas é estimada em 3,5 pF. Com C1 = C2, qual valor de capacitor a conta indica? Responda em pF, com 1 casa decimal.
+  resposta: {valor: 13.0, unidade: "pF", tolerancia: 0.01}
+  explicacao: |
+    C_L = C/2 + C_s → C = 2 × (10 − 3,5) = 13,0 pF; usa-se 13 pF ou 12 pF em C0G, conferindo a frequência na placa.
+  fonte: "STMicroelectronics, AN2867 (load capacitance); Microchip, AN826"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T07-007
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um cristal de 32,768 kHz tem C₁ = 3 fF e C₀ = 1,2 pF e foi especificado para C_L = 7 pF. Na placa, a carga real ficou em 9,5 pF. Estime o deslocamento por Δf/f ≈ (C₁/2)·[1/(C₀ + C_L,real) − 1/(C₀ + C_L,espec)]. Responda em ppm, em módulo, com 1 casa decimal.
+  resposta: {valor: 42.7, unidade: "ppm", tolerancia: 0.01}
+  explicacao: |
+    (1,5 fF) × (1/10,7 − 1/8,2) pF⁻¹ ≈ 1,5 × 10⁻³ × (−0,0285) ≈ −42,7 ppm: a carga maior que a especificada atrasa o relógio cerca de 3,7 s por dia, o dobro da tolerância de fábrica.
+  fonte: "STMicroelectronics, AN2867 (crystal pullability); Microchip, AN826"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T07-008
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Um projetista colocou C1 = C2 = 12,5 pF num cristal de 32,768 kHz especificado para C_L = 12,5 pF (C₁ = 2,5 fF, C₀ = 1 pF). A capacitância parasita é de 3 pF. Estime quanto o relógio adianta por dia por causa da carga errada. Responda em s/dia, com 2 casas decimais.
+  resposta: {valor: 2.54, unidade: "s/dia", tolerancia: 0.02}
+  explicacao: |
+    Carga real = 12,5/2 + 3 = 9,25 pF. Δf/f ≈ 1,25 fF × (1/10,25 − 1/13,5) pF⁻¹ ≈ +29,4 ppm → 29,4 × 86,4 ms ≈ 2,54 s/dia adiantado. O correto seria C = 2 × (12,5 − 3) = 19 pF (18 pF comercial).
+  fonte: "STMicroelectronics, AN2867 (load capacitance e pullability)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T07-009
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Pela AN2867, g_m,crit = 4·ESR·(2πF)²·(C₀ + C_L)². Calcule para um cristal de 32,768 kHz com ESR máxima de 50 kΩ, C₀ = 1,0 pF e C_L = 7 pF. Responda em µA/V, com 2 casas decimais.
+  resposta: {valor: 0.54, unidade: "µA/V", tolerancia: 0.02}
+  explicacao: |
+    (2π × 32 768)² ≈ 4,24 × 10¹⁰; (8 pF)² = 6,4 × 10⁻²³; g_m,crit = 4 × 5 × 10⁴ × 4,24 × 10¹⁰ × 6,4 × 10⁻²³ ≈ 0,54 µA/V. Compare com o Gm_crit_max do LSE no datasheet do MCU.
+  fonte: "STMicroelectronics, AN2867 (gain margin e critical gm)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T07-010
+  objetivo: O3
+  tipo: unica
+  dificuldade: 3
+  bloom: avaliar
+  enunciado: |
+    Um STM32 oferece quatro níveis de acionamento do LSE com Gm_crit_max de 0,5, 0,75, 1,7 e 2,7 µA/V. O cristal escolhido, com ESR máxima e a carga especificada, tem g_m,crit = 1,2 µA/V. Qual é a configuração mínima que atende à condição da AN2867?
+  alternativas:
+    - "O nível de 0,5 µA/V, o de menor consumo"
+    - "O nível de 0,75 µA/V, porque basta ficar perto do valor do cristal"
+    - "Qualquer nível, porque o oscilador ajusta o ganho sozinho"
+    - "O nível de 1,7 µA/V; ou trocar por um cristal de C_L menor para poder usar um nível mais fraco"
+  resposta: 3
+  explicacao: |
+    A condição é g_m,crit(cristal) < Gm_crit_max(MCU). Só 1,7 e 2,7 µA/V atendem; o mínimo é 1,7. Um cristal de C_L menor reduz g_m,crit com (C₀ + C_L)² e permite acionamento mais fraco e de menor consumo.
+  fonte: "STMicroelectronics, AN2867; STMicroelectronics, datasheet STM32L4 (LSE oscillator characteristics)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T07-011
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Pelo método clássico da AN2867, a margem de ganho é g_m(oscilador)/g_m,crit e deve ser ≥ 5. Um oscilador de MHz tem g_m = 5 mA/V. O cristal é de 25 MHz, com ESR máxima de 40 Ω, C₀ = 3 pF e C_L = 8 pF. Qual é a margem de ganho? Responda com 1 casa decimal.
+  resposta: {valor: 10.5, unidade: "adimensional", tolerancia: 0.02}
+  explicacao: |
+    g_m,crit = 4 × 40 × (2π × 25 × 10⁶)² × (11 pF)² ≈ 0,478 mA/V; margem = 5/0,478 ≈ 10,5 — atende (≥ 5). Em frequências mais altas, o termo (2πF)² faz a margem cair rápido.
+  fonte: "STMicroelectronics, AN2867 (gain margin)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T07-012
+  objetivo: O4
+  tipo: vf
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: como o USB Full Speed tolera cerca de ±0,25 % no clock, um STM32 com oscilador interno de 48 MHz sincronizado pelos pacotes SOF (Clock Recovery System) pode funcionar como dispositivo USB FS sem cristal.
+  resposta: true
+  explicacao: |
+    A tolerância do USB FS (2500 ppm) é larga o bastante para um RC ajustado continuamente pelos quadros SOF do host. USB High Speed (±500 ppm) exige cristal.
+  fonte: "STMicroelectronics, manual de referência STM32 (CRS — Clock recovery system); especificação USB 2.0"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T07-013
+  objetivo: O4
+  tipo: multipla
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Sobre fontes de clock, quais afirmações estão corretas?
+  alternativas:
+    - "Um TCXO mantém tipicamente de ±0,5 a ±2,5 ppm em toda a faixa de temperatura, ao custo de alguns mA"
+    - "Um ressonador cerâmico de ±0,5 % é adequado ao clock de um rádio Wi-Fi"
+    - "Um oscilador MEMS pronto dispensa o cálculo de capacitores de carga e é robusto a choque"
+    - "O RC interno de ±1 % é suficiente para um RTC que não pode errar mais de alguns segundos por dia"
+  resposta: [0, 2]
+  explicacao: |
+    O TCXO compensa a temperatura e é usado em rádios de banda estreita e RTCs exatos. O oscilador MEMS entrega o clock pronto. O ressonador (5000 ppm) está muito fora dos ±20 ppm do Wi-Fi, e ±1 % são 864 s por dia.
+  fonte: "Analog Devices (Maxim), DS3231 (datasheet); SiTime, datasheets de osciladores MEMS; Murata, CSTNE (datasheet)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T07-014
+  objetivo: O4
+  tipo: unica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Num nó BLE que fica quase sempre dormindo entre eventos de conexão, por que um cristal de 32,768 kHz de ±20 ppm costuma reduzir o consumo em relação a um RC interno de algumas centenas de ppm?
+  alternativas:
+    - "Porque o cristal consome menos que o RC interno quando o MCU está acordado"
+    - "Porque, com o clock de sono mais exato, o rádio abre janelas de recepção mais curtas a cada evento de conexão"
+    - "Porque o cristal aumenta a potência de transmissão e reduz retransmissões"
+    - "Porque o RC interno impede o uso de modos de sono profundo"
+  resposta: 1
+  explicacao: |
+    A incerteza do clock de sono obriga o rádio a acordar mais cedo e ouvir por mais tempo para não perder o pacote do outro lado; com ±20 ppm a janela encolhe, e a economia no rádio (mA) supera o consumo do oscilador de 32 kHz (fração de µA).
+  fonte: "Especificação Bluetooth Core (sleep clock accuracy); Nordic Semiconductor, documentação do nRF52 (LFCLK)"
+  origem: ia
+  revisao: rascunho

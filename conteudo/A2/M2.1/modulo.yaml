@@ -1,45 +1,128 @@
 id: M2.1
 ato: A2
 nome: "Componentes a fundo"
+missao: "Ao pé da Cordilheira das Placas, os módulos prontos ficam para trás: conheça por dentro cada peça que vai para a sua primeira placa — o resistor que esquenta e chia, o capacitor que encolhe sob tensão, o indutor que satura, o diodo que vaza, o transistor que dissipa e o cristal que atrasa —, aprenda a ler a folha de dados como o ferreiro lê o metal e escolha componentes baratos que aguentem anos de serviço."
 horas: 120
 trilha: hardware
 ordem: 20
 requer: ["M0.5", "M1.1"]
 tags_chefe: []
+# Ordem didática (a da grade, mantida): resistores (o componente mais simples ensina o método do módulo inteiro: série de valores, tolerância, coeficiente de temperatura, potência com curva de derating e ruído, tudo lido no datasheet de uma peça de um centavo) → capacitores (o mesmo método, agora com a capacitância que muda com tensão, temperatura e tempo, a vida útil do eletrolítico e o modo de falha do tântalo; a impedância × frequência prepara os magnéticos) → indutores e ferrites (completam os passivos: Isat × Irms e a curva de impedância do bead, que depende do capacitor ao lado) → diodos, Zener, Schottky e TVS (o primeiro semicondutor de catálogo, sobre a junção PN do M0.3.T08: Vf, recuperação, fuga e proteção contra ESD) → BJT (dois diodos acoplados viram amplificador e chave; o β forçado e a saturação) → MOSFET (a chave de verdade das placas modernas; depois do BJT, a comparação de controle por corrente × por tensão fica natural, e aprofunda o M1.8.T08 em perdas e SOA) → cristais e osciladores (juntam capacitor classe 1, ESR e o inversor como amplificador: o primeiro "circuito de componentes" do módulo) → encapsulamentos (com todas as peças conhecidas, o corpo de cada uma: dimensões, montagem, retrabalho e térmica, ponte para o layout do M2.5) → derating e confiabilidade por último (fecha o módulo aplicando a todas as famílias anteriores as margens de tensão, corrente, potência e temperatura e a conta de FIT e MTBF da placa inteira).
 topicos:
   - id: M2.1.T01
     nome: "Resistores (tipos, tolerância, potência, ruído)"
     tipo: comum
     peso: 1
+    objetivos:
+      - id: O1
+        texto: "Escolher valores nas séries E12, E24 e E96, decodificar as marcações SMD de três e quatro dígitos e o código EIA-96 e calcular o pior caso de um divisor com tolerância e TCR"
+      - id: O2
+        texto: "Calcular a potência dissipada e a potência admissível de um resistor de chip com a curva de derating por temperatura, o limite de tensão de trabalho e a resistência crítica"
+      - id: O3
+        texto: "Comparar resistores de filme espesso, filme fino, filme metálico THT, fio e shunt de liga metálica quanto a tolerância, TCR, ruído de corrente, pulso, tensão e enxofre, e escolher a tecnologia para cada função na placa"
+      - id: O4
+        texto: "Calcular o ruído térmico √(4kTRB) de um resistor e estimar o ruído de corrente pelo índice de ruído, decidindo quando o ruído do resistor importa num circuito de medição"
   - id: M2.1.T02
     nome: "Capacitores (cerâmico, eletrolítico, tântalo, ESR, DC bias)"
     tipo: comum
     peso: 1
+    objetivos:
+      - id: O1
+        texto: "Calcular a capacitância efetiva de um MLCC classe 2 combinando tolerância, temperatura, DC-bias lido em curva real (SimSurfing ou K-SIM) e envelhecimento, e escolher dielétrico, tensão nominal e tamanho"
+      - id: O2
+        texto: "Estimar a vida útil de um capacitor eletrolítico de alumínio pela regra dos 10 °C, incluindo o aquecimento pela corrente de ripple, e calcular a ESR a partir do fator de dissipação"
+      - id: O3
+        texto: "Comparar tântalo de MnO2, tântalo polimérico, alumínio polimérico e MLCC quanto a modo de falha, derating de tensão, ESR e custo, aplicando o derating de 50% ao tântalo de MnO2"
+      - id: O4
+        texto: "Calcular a impedância de um capacitor real em função da frequência a partir de C, ESR e ESL e ler as curvas |Z| × f dos fabricantes para escolher capacitores de desacoplamento e de entrada de fonte"
   - id: M2.1.T03
     nome: "Indutores e ferrites"
     tipo: comum
     peso: 1
+    objetivos:
+      - id: O1
+        texto: "Interpretar as especificações de um indutor de potência (L e tolerância, Isat, Irms, DCR, SRF e blindagem), inclusive as diferentes definições de Isat e Irms entre fabricantes"
+      - id: O2
+        texto: "Dimensionar o indutor de um buck pela ondulação de corrente, verificar a corrente de pico contra a Isat e calcular a perda no cobre pela DCR"
+      - id: O3
+        texto: "Comparar núcleos de ferrite, pó de ferro e compósito metálico quanto a saturação brusca ou suave, perdas e ruído, e indutores blindados e não blindados quanto ao campo de fuga"
+      - id: O4
+        texto: "Ler a curva de impedância de um ferrite bead (R, X e Z), corrigi-la para a corrente DC e evitar a ressonância do bead com os capacitores de desacoplamento"
   - id: M2.1.T04
     nome: "Diodos, Zener, Schottky, TVS"
     tipo: comum
     peso: 1
+    objetivos:
+      - id: O1
+        texto: "Comparar diodos retificadores, de sinal, rápidos e Schottky quanto a Vf, corrente, tensão reversa, tempo de recuperação reversa e fuga, e calcular a perda de condução"
+      - id: O2
+        texto: "Avaliar a fuga reversa de um Schottky em função da temperatura e da tensão e decidir entre Schottky e diodo de silício em circuitos de bateria e de alta temperatura"
+      - id: O3
+        texto: "Dimensionar um regulador simples com Zener (resistor série, corrente mínima, potência) considerando a tolerância, a resistência dinâmica e o coeficiente de temperatura"
+      - id: O4
+        texto: "Escolher um TVS ou um arranjo de proteção ESD pela tensão de trabalho, ruptura, tensão de clamp e corrente de pico, conforme a IEC 61000-4-2 e o pulso 10/1000 µs, incluindo o efeito da indutância da trilha"
   - id: M2.1.T05
     nome: "BJT"
     tipo: comum
     peso: 1
+    objetivos:
+      - id: O1
+        texto: "Interpretar no datasheet de um BJT (BC547, MMBT3904) os limites absolutos, as faixas de hFE, VCE(sat) e VBE(sat) e a variação do ganho com a corrente e a temperatura"
+      - id: O2
+        texto: "Projetar um BJT como chave saturada a partir de um GPIO, calculando a corrente de base com β forçado, o resistor de base e a dissipação para LED, relé e cargas de dezenas de mA"
+      - id: O3
+        texto: "Aplicar a relação exponencial de VBE (cerca de 60 mV por década de corrente e −2 mV/°C) à polarização na região ativa, ao seguidor de emissor e à fonte de corrente simples"
+      - id: O4
+        texto: "Comparar BJT, transistor digital com resistores integrados, Darlington e MOSFET numa função de chaveamento quanto a queda, corrente de controle, velocidade e custo"
   - id: M2.1.T06
     nome: "MOSFET"
     tipo: comum
     peso: 1
+    objetivos:
+      - id: O1
+        texto: "Ler o RDS(on) em função de VGS, de ID e da temperatura nas tabelas e curvas do datasheet e escolher um MOSFET de nível lógico (AO3400A, 2N7002) para acionamento a 3,3 V"
+      - id: O2
+        texto: "Interpretar a carga de gate (Qgs, Qgd, Qg), as capacitâncias Ciss, Coss e Crss e o platô de Miller e estimar os tempos de comutação pela corrente de gate disponível"
+      - id: O3
+        texto: "Calcular as perdas de condução, de comutação, de Coss e de gate de um MOSFET num PWM e a temperatura de junção resultante"
+      - id: O4
+        texto: "Usar a área de operação segura (SOA), a energia de avalanche e o diodo de corpo para avaliar usos além da chave pura, como limitação de inrush, proteção contra inversão e carga indutiva"
   - id: M2.1.T07
     nome: "Cristais e osciladores"
     tipo: comum
     peso: 1
+    objetivos:
+      - id: O1
+        texto: "Ler o datasheet de um cristal (frequência, tolerância, estabilidade, envelhecimento, CL, ESR, C0, drive level) e montar o orçamento de erro em ppm convertido em segundos por dia"
+      - id: O2
+        texto: "Calcular os capacitores de carga a partir de CL e da capacitância parasita e estimar o deslocamento de frequência (pulling) quando a carga real difere da especificada"
+      - id: O3
+        texto: "Verificar a margem de oscilação de um oscilador Pierce pelo método da AN2867 (gm crítico do cristal contra o Gm_crit_max do MCU) e escolher cristais de 32,768 kHz de baixa CL"
+      - id: O4
+        texto: "Comparar cristal, ressonador cerâmico, XO, TCXO, VCXO, OCXO e oscilador MEMS quanto a exatidão, consumo e custo frente aos requisitos de UART, USB, BLE e Wi-Fi"
   - id: M2.1.T08
     nome: "Encapsulamentos THT e SMD"
     tipo: comum
     peso: 1
+    objetivos:
+      - id: O1
+        texto: "Identificar encapsulamentos passivos (0201 a 2512, nos códigos imperial e métrico) e ativos (SOD, SOT, SOIC, TSSOP, QFN, DFN, BGA, WLCSP, DPAK, TO-220, DIP) pelas dimensões e pelo passo"
+      - id: O2
+        texto: "Avaliar o impacto do encapsulamento na montagem manual e automática, na inspeção e no retrabalho, incluindo tombstoning, pad exposto, MSL e as peças basic e extended da JLCPCB"
+      - id: O3
+        texto: "Estimar a temperatura de junção pelo RθJA e pelo ΨJT do encapsulamento, reconhecer a dependência do cobre da placa (JESD51) e escolher entre SOT-23, SOT-223, DPAK e QFN de pad exposto"
+      - id: O4
+        texto: "Ler o desenho mecânico e o land pattern recomendado no datasheet e relacioná-los com a nomenclatura e os níveis de densidade da IPC-7351"
   - id: M2.1.T09
     nome: "Derating e confiabilidade"
     tipo: comum
     peso: 1
+    objetivos:
+      - id: O1
+        texto: "Distinguir taxa de falhas, FIT, MTBF e vida útil, aplicar R(t) = e^(−λt) e somar as taxas de falha dos componentes de uma placa em série"
+      - id: O2
+        texto: "Descrever a curva da banheira e os mecanismos de mortalidade infantil, falha aleatória e desgaste, associando cada fase a componentes reais e às ações de triagem e de projeto"
+      - id: O3
+        texto: "Calcular o fator de aceleração de Arrhenius e a taxa de falhas a partir de um ensaio de vida acelerado com o qui-quadrado, como fazem os relatórios de confiabilidade dos fabricantes"
+      - id: O4
+        texto: "Aplicar regras de derating de tensão, corrente, potência e temperatura a resistores, capacitores, semicondutores e conectores e situar MIL-HDBK-217F, Telcordia SR-332 e IEC 61709 como métodos de predição"

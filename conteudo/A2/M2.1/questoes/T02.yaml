@@ -1,0 +1,220 @@
+- id: Q-M2.1.T02-001
+  objetivo: O1
+  tipo: vf
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Verdadeiro ou falso: num MLCC de 10 µF, ±10 %, X7R, a perda de capacitância provocada pela tensão DC aplicada (DC-bias) já está incluída na tolerância de ±10 % e na faixa de ±15 % do código X7R.
+  resposta: false
+  explicacao: |
+    A tolerância vale na condição de medição (sem DC) e o ±15 % do X7R é só a variação com a temperatura de −55 °C a +125 °C. O DC-bias é um efeito separado, que pode tirar mais da metade da capacitância e precisa ser lido na curva da peça (SimSurfing, K-SIM).
+  fonte: "Murata, SimSurfing (DC Bias characteristics); EIA-198 (códigos de dielétrico classe 2)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T02-002
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um MLCC de 22 µF, ±20 %, X5R, 0805, 6,3 V, retém 40 % da capacitância a 3,3 V segundo a curva de DC-bias do fabricante. Considerando o pior caso da tolerância e da temperatura do código X5R (−15 %), sem envelhecimento, qual é a capacitância efetiva a 3,3 V? Responda em µF, com 2 casas decimais.
+  resposta: {valor: 5.98, unidade: "µF", tolerancia: 0.01}
+  explicacao: |
+    C_ef = 22 × 0,80 × 0,40 × 0,85 ≈ 5,98 µF. Os 22 µF do rótulo viram menos de 6 µF no circuito: é esse número que se compara com o mínimo exigido pelo datasheet do regulador.
+  fonte: "Murata, SimSurfing (DC Bias characteristics); Murata, artigos técnicos sobre DC-bias de cerâmicos de alta constante dielétrica"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T02-003
+  objetivo: O1
+  tipo: unica
+  dificuldade: 3
+  bloom: avaliar
+  enunciado: |
+    Um 10 µF X5R em 0402, 6,3 V, retém só cerca de 30 % a 3,3 V. Qual mudança tende a aumentar mais a capacitância efetiva a 3,3 V, mantendo o valor nominal de 10 µF?
+  alternativas:
+    - "Trocar por um 10 µF Y5V em 0402, que tem constante dielétrica maior"
+    - "Trocar por um 10 µF X5R em 0402 de tolerância ±10 % em vez de ±20 %"
+    - "Trocar por um 10 µF X5R em 0805"
+    - "Trocar por um 10 µF X7R em 0402, que é especificado até 125 °C"
+  resposta: 2
+  explicacao: |
+    O DC-bias depende do campo elétrico nas camadas (E = V/d); um encapsulamento maior permite camadas mais grossas e a curva melhora muito (tipicamente 70–80 % a 3,3 V em 0805). Y5V é pior em DC-bias e temperatura; a tolerância muda poucos por cento; X7R amplia a faixa de temperatura, mas não resolve o DC-bias no mesmo tamanho.
+  fonte: "Murata, SimSurfing (DC Bias characteristics); KEMET, K-SIM"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T02-004
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Um LDO exige no mínimo 2,2 µF efetivos na saída de 3,3 V. Um candidato é um MLCC de 4,7 µF, ±10 %, X5R, 0603, que pela curva retém 60 % a 3,3 V. Considere ainda −15 % de temperatura (X5R) e −6 % de envelhecimento ao longo da vida. Qual é a capacitância efetiva de pior caso de um capacitor? Responda em µF, com 2 casas decimais.
+  resposta: {valor: 2.03, unidade: "µF", tolerancia: 0.01}
+  explicacao: |
+    C_ef = 4,7 × 0,90 × 0,60 × 0,85 × 0,94 ≈ 2,03 µF, abaixo dos 2,2 µF exigidos. Soluções: dois em paralelo, um 10 µF no mesmo tamanho (se a curva ajudar) ou um 4,7 µF em 0805. O produto dos fatores é uma estimativa conservadora.
+  fonte: "Murata, SimSurfing; Murata, artigos técnicos sobre envelhecimento (aging) de MLCC de alta constante dielétrica"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T02-005
+  objetivo: O2
+  tipo: unica
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    O que caracteriza o fim de vida de um capacitor eletrolítico de alumínio de eletrólito líquido?
+  alternativas:
+    - "A capacitância aumenta e a ESR cai, porque o óxido fica mais fino"
+    - "O eletrólito evapora pelo selo: a capacitância cai e a ESR sobe"
+    - "O dielétrico de titanato de bário perde a polarização"
+    - "O capacitor entra em curto de forma súbita e sempre pega fogo"
+  resposta: 1
+  explicacao: |
+    O eletrolítico seca lentamente; os critérios típicos de fim de vida dos fabricantes são queda de capacitância (por exemplo, −20 %) e aumento de tan δ ou ESR (por exemplo, 2× o valor inicial). Curto com chama é o modo de falha característico do tântalo de MnO₂.
+  fonte: "Nichicon, General Description of Aluminum Electrolytic Capacitors"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T02-006
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um capacitor eletrolítico especificado para 2000 h a 105 °C trabalha com o núcleo a 55 °C. Pela regra de que a vida dobra a cada 10 °C abaixo da temperatura máxima, qual é a vida estimada? Responda em horas, como número inteiro.
+  resposta: {valor: 64000, unidade: "h", tolerancia: 0.01}
+  explicacao: |
+    L = 2000 × 2^((105 − 55)/10) = 2000 × 2⁵ = 64 000 h ≈ 7,3 anos. A regra é uma forma simplificada de Arrhenius; os fabricantes costumam limitar a estimativa a cerca de 15 anos por causa do selo.
+  fonte: "Nichicon, General Description of Aluminum Electrolytic Capacitors (estimativa de vida); Panasonic, Aluminum Electrolytic Capacitors — Technical Guide"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T02-007
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    O datasheet de um eletrolítico de 1000 µF informa tan δ = 0,14 a 120 Hz. Qual é a ESR equivalente nessa frequência? Responda em mΩ, arredondando para o inteiro mais próximo.
+  resposta: {valor: 186, unidade: "mΩ", tolerancia: 0.01}
+  explicacao: |
+    ESR = tan δ/(2π·f·C) = 0,14/(2π × 120 × 10⁻³) ≈ 0,186 Ω = 186 mΩ. Em 100 kHz a ESR é menor, mas no frio ela sobe várias vezes.
+  fonte: "Nichicon, General Description of Aluminum Electrolytic Capacitors (tangent of loss angle)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T02-008
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Um eletrolítico de 3000 h a 105 °C fica numa caixa cujo ar interno chega a 50 °C. A corrente de ripple eleva o núcleo 8 °C acima do ambiente. Aplicando a regra dos 10 °C à temperatura do núcleo, qual é a vida estimada? Responda em anos (8760 h por ano), com 1 casa decimal.
+  resposta: {valor: 8.9, unidade: "anos", tolerancia: 0.02}
+  explicacao: |
+    Núcleo a 58 °C: L = 3000 × 2^((105 − 58)/10) = 3000 × 2^4,7 ≈ 77 980 h ≈ 8,9 anos. Sem considerar o ripple (50 °C), a conta daria 3000 × 2^5,5 ≈ 15,5 anos: o aquecimento interno quase corta a vida pela metade.
+  fonte: "Nichicon, General Description of Aluminum Electrolytic Capacitors (ripple current e estimativa de vida)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T02-009
+  objetivo: O3
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Qual é o modo de falha característico de um capacitor de tântalo de MnO₂ submetido a pico de corrente ou a tensão perto da nominal?
+  alternativas:
+    - "Curto-circuito, com risco de aquecimento intenso e combustão"
+    - "Circuito aberto silencioso, por evaporação do eletrólito"
+    - "Perda gradual de capacitância com a tensão DC"
+    - "Ruído acústico por efeito piezoelétrico"
+  resposta: 0
+  explicacao: |
+    Um defeito no óxido conduz, a corrente aquece o ponto e o MnO₂ libera oxigênio, que alimenta a combustão do tântalo. Por isso se usa derating de 50 % da tensão em circuitos de baixa impedância e se prefere o tântalo polimérico, de falha benigna.
+  fonte: "KEMET, Application Notes for Tantalum Capacitors (failure modes, voltage derating)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T02-010
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um capacitor de tântalo de MnO₂ vai num trilho de 12 V ligado direto a uma fonte robusta. Aplicando o derating de 50 % da tensão, qual é a tensão nominal mínima exigida pela conta, antes de arredondar para um valor padrão? Responda em V, como número inteiro.
+  resposta: {valor: 24, unidade: "V", tolerancia: 0}
+  explicacao: |
+    V_nom ≥ 12/0,5 = 24 V; o valor padrão seguinte é 25 V. Com um tântalo polimérico, o derating recomendado é bem menor (10–20 %, conforme o guia do fabricante).
+  fonte: "KEMET, Application Notes for Tantalum Capacitors (voltage derating)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T02-011
+  objetivo: O3
+  tipo: multipla
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Quais afirmações sobre os tipos de capacitor de bulk estão corretas?
+  alternativas:
+    - "O tântalo polimérico tem ESR baixa e modo de falha mais benigno que o tântalo de MnO₂"
+    - "O tântalo de MnO₂ perde capacitância com a tensão DC, como o MLCC X5R"
+    - "O alumínio polimérico tem ESR de poucas dezenas de mΩ e varia pouco com a temperatura"
+    - "O eletrolítico de alumínio comum é o tipo de menor ESR em 1 MHz"
+  resposta: [0, 2]
+  explicacao: |
+    Polímeros condutores (tântalo e alumínio) dão ESR baixa e estável; o tântalo polimérico falha de forma benigna. Os tântalos não têm DC-bias (isso é dos cerâmicos classe 2). O eletrolítico comum tem a maior ESR do grupo.
+  fonte: "KEMET, guia de tântalo polimérico (KO-CAP); Panasonic, OS-CON Technical Guide"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T02-012
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um MLCC de 100 nF tem ESL de 0,5 nH (peça mais montagem). Qual é a sua frequência de autorressonância? Responda em MHz, com 1 casa decimal.
+  resposta: {valor: 22.5, unidade: "MHz", tolerancia: 0.01}
+  explicacao: |
+    f_SRF = 1/(2π√(L·C)) = 1/(2π√(0,5 × 10⁻⁹ × 100 × 10⁻⁹)) ≈ 22,5 MHz. Acima disso o capacitor é indutivo, e a indutância de montagem (vias, trilhas) passa a mandar.
+  fonte: "Murata, SimSurfing (Impedance/ESR characteristics); Horowitz & Hill, The Art of Electronics, 3ª ed., apêndice Capacitor Types"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T02-013
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um eletrolítico de 220 µF tem ESR de 0,15 Ω e ESL de 10 nH. Qual é o módulo da sua impedância em 200 kHz? Responda em mΩ, arredondando para o inteiro mais próximo.
+  resposta: {valor: 150, unidade: "mΩ", tolerancia: 0.01}
+  explicacao: |
+    X_C = 1/(2π × 2 × 10⁵ × 220 × 10⁻⁶) ≈ 3,6 mΩ; X_L = 2π × 2 × 10⁵ × 10⁻⁸ ≈ 12,6 mΩ; X = 9,0 mΩ. |Z| = √(0,15² + 0,009²) ≈ 150 mΩ: na frequência de um conversor, o eletrolítico é praticamente a sua ESR.
+  fonte: "Nichicon, General Description of Aluminum Electrolytic Capacitors (impedance characteristics)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T02-014
+  objetivo: O4
+  tipo: multipla
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Na entrada de um conversor buck de 1 MHz há um eletrolítico de 100 µF (ESR de 0,3 Ω) e um MLCC de 10 µF X5R. Quais afirmações estão corretas?
+  alternativas:
+    - "Em 1 MHz, o eletrolítico se comporta quase como um resistor de 0,3 Ω e quase não filtra a corrente de chaveamento"
+    - "A ESR do eletrolítico ajuda a amortecer o pico de tensão do hot plug com cabo longo"
+    - "O MLCC pode ser removido, porque a capacitância do eletrolítico é dez vezes maior"
+    - "Ao comparar a impedância do MLCC, deve-se usar a curva na tensão DC de trabalho"
+  resposta: [0, 1, 3]
+  explicacao: |
+    Acima de ~10 kHz o eletrolítico é dominado pela ESR; é o MLCC que leva a corrente de alta frequência. O eletrolítico guarda energia e amortece a ressonância do cabo com os cerâmicos. A capacitância nominal maior não importa em 1 MHz, e a curva do MLCC deve ser lida com o DC-bias de trabalho.
+  fonte: "Murata, SimSurfing; Analog Devices (Linear Technology), AN88: Ceramic Input Capacitors Can Cause Overvoltage Transients"
+  origem: ia
+  revisao: rascunho

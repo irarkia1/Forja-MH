@@ -1,0 +1,225 @@
+- id: Q-M2.1.T03-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    No datasheet de um indutor de potência, o que a corrente **Irms** (corrente nominal térmica) representa?
+  alternativas:
+    - "A corrente em que a indutância cai 30 % por saturação do núcleo"
+    - "A corrente de pico máxima que o conversor pode impor no indutor"
+    - "A corrente na frequência de autorressonância"
+    - "A corrente DC que eleva a temperatura da peça num valor especificado, tipicamente 40 K"
+  resposta: 3
+  explicacao: |
+    Irms é um limite térmico, de perda no cobre (I²·DCR); a queda de L é a Isat. Os fabricantes especificam a elevação (20 K ou 40 K) numa nota de rodapé. A Irms não inclui a perda no núcleo causada pela ondulação.
+  fonte: "Coilcraft, Understanding Inductor Specifications; Würth Elektronik, WE-PD (datasheet)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T03-002
+  objetivo: O1
+  tipo: vf
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: dois indutores de fabricantes diferentes, ambos com "Isat = 3 A" na tabela, saturam da mesma forma, porque a corrente de saturação é definida por norma única.
+  resposta: false
+  explicacao: |
+    Cada fabricante (ou série) escolhe o percentual de queda de L que define a Isat: 10, 20 ou 30 %. A Coilcraft publica as três colunas; outros escolhem uma e a indicam em nota de rodapé. Para comparar, use as curvas L × corrente.
+  fonte: "Coilcraft, Understanding Inductor Specifications; Würth Elektronik, Trilogy of Magnetics (fundamentos de saturação)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T03-003
+  objetivo: O1
+  tipo: multipla
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Na tabela de um indutor de potência blindado, quais leituras estão corretas?
+  alternativas:
+    - "A DCR máxima é o valor a usar no cálculo de perda no cobre, corrigido para a temperatura de trabalho"
+    - "A tolerância de ±20 % da indutância é normal em indutores de potência"
+    - "A SRF indica a frequência máxima de chaveamento do buck em que o indutor pode ser usado"
+    - "Uma série com Irms maior que a Isat pode saturar antes de aquecer até o limite térmico"
+  resposta: [0, 1, 3]
+  explicacao: |
+    A perda no cobre usa a DCR máxima a quente; ±20 % é comum em potência; Isat e Irms são limites independentes, e o menor manda conforme o tipo de corrente (pico × eficaz). A SRF costuma estar dezenas de vezes acima da frequência do conversor e não é um limite de chaveamento.
+  fonte: "Würth Elektronik, WE-PD e WE-MAPI (datasheets); Coilcraft, Understanding Inductor Specifications"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T03-004
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um indutor tem DCR máxima de 50 mΩ a 20 °C. Usando o coeficiente de temperatura do cobre de 0,0039 /K, qual é a DCR estimada com o enrolamento a 100 °C? Responda em mΩ, com 1 casa decimal.
+  resposta: {valor: 65.6, unidade: "mΩ", tolerancia: 0.01}
+  explicacao: |
+    DCR(100 °C) = 50 × (1 + 0,0039 × 80) ≈ 65,6 mΩ: 31 % a mais de perda no cobre do que a conta com o valor de catálogo.
+  fonte: "Würth Elektronik, Trilogy of Magnetics (perdas no cobre); coeficiente de temperatura do cobre (M0.3.T02)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T03-005
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um buck converte 12 V em 5 V a 500 kHz com um indutor de 15 µH, em condução contínua e com D ideal. Qual é a ondulação de corrente de pico a pico no indutor? Responda em A, com 2 casas decimais.
+  resposta: {valor: 0.39, unidade: "A", tolerancia: 0.02}
+  explicacao: |
+    D = 5/12 ≈ 0,417; ΔI = (V_in − V_out)·D/(f·L) = 7 × 0,417/(5 × 10⁵ × 15 × 10⁻⁶) ≈ 0,39 A.
+  fonte: "Würth Elektronik, Trilogy of Magnetics (indutores de armazenamento em conversores)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T03-006
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    No buck de 12 V para 5 V, 500 kHz, com 15 µH, a carga consome 1,5 A. Qual é a corrente de pico no indutor, que deve ser comparada com a Isat? Responda em A, com 2 casas decimais.
+  resposta: {valor: 1.69, unidade: "A", tolerancia: 0.01}
+  explicacao: |
+    ΔI ≈ 0,389 A; I_pico = I_out + ΔI/2 ≈ 1,5 + 0,194 ≈ 1,69 A. A Isat (na definição do fabricante e a quente) deve ficar acima disso com margem, inclusive para picos de partida.
+  fonte: "Würth Elektronik, Trilogy of Magnetics; Coilcraft, Understanding Inductor Specifications"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T03-007
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 4
+  bloom: aplicar
+  enunciado: |
+    Projete o indutor de um buck de 5 V para 1,2 V, 1 A, 1,5 MHz, para que a ondulação de pico a pico seja 40 % da corrente de saída (D ideal). Qual é a indutância calculada, antes de escolher o valor padrão? Responda em µH, com 2 casas decimais.
+  resposta: {valor: 1.52, unidade: "µH", tolerancia: 0.01}
+  explicacao: |
+    D = 1,2/5 = 0,24; L = (V_in − V_out)·D/(f·ΔI) = 3,8 × 0,24/(1,5 × 10⁶ × 0,4) ≈ 1,52 µH. O valor padrão próximo seria 1,5 µH (ΔI ≈ 41 %), conferido com a faixa recomendada no datasheet do CI.
+  fonte: "Würth Elektronik, Trilogy of Magnetics (indutores de armazenamento em conversores)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T03-008
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um indutor com DCR de 30 mΩ conduz 2,0 A de corrente média com ondulação triangular de 0,5 A de pico a pico. Usando I_rms = √(I² + ΔI²/12), qual é a perda no cobre? Responda em mW, com 1 casa decimal.
+  resposta: {valor: 120.6, unidade: "mW", tolerancia: 0.01}
+  explicacao: |
+    I_rms² = 4 + 0,25/12 ≈ 4,0208 A²; P = 4,0208 × 0,030 ≈ 120,6 mW. A ondulação mexe pouco na perda no cobre; ela pesa mais na perda no núcleo, que precisa da ferramenta do fabricante.
+  fonte: "Würth Elektronik, REDEXPERT e Trilogy of Magnetics (perdas DC e AC)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T03-009
+  objetivo: O3
+  tipo: unica
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Que tipo de núcleo de indutor de potência tem saturação suave, estável com a temperatura, e é blindado por construção?
+  alternativas:
+    - "Compósito metálico moldado (pó de liga em resina)"
+    - "Ferrite MnZn com entreferro"
+    - "Núcleo de ar"
+    - "Tambor de ferrite não blindado"
+  resposta: 0
+  explicacao: |
+    Nos compósitos moldados (WE-MAPI, TDK SPM, Vishay IHLP), o entreferro está distribuído entre os grãos de liga: L cai devagar acima da Isat, e o corpo moldado contém o campo. A ferrite satura de forma brusca e sua Isat cai com a temperatura.
+  fonte: "Würth Elektronik, Trilogy of Magnetics (materiais de núcleo); Würth Elektronik, WE-MAPI (datasheet)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T03-010
+  objetivo: O3
+  tipo: multipla
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Sobre indutores blindados e não blindados, quais afirmações são corretas?
+  alternativas:
+    - "O indutor de tambor não blindado tem campo de fuga que pode induzir ruído em trilhas e sensores próximos"
+    - "Um indutor blindado elimina a necessidade de cuidar do laço de corrente do conversor no layout"
+    - "Para o mesmo tamanho, o não blindado costuma ser mais barato e ter Isat maior"
+    - "Indutores semiblindados usam resina magnética em volta do enrolamento para reduzir o campo de fuga"
+  resposta: [0, 2, 3]
+  explicacao: |
+    O tambor aberto é barato e generoso em Isat, mas espalha campo; a resina magnética do semiblindado reduz isso. A blindagem do indutor não resolve o laço de comutação do conversor, que é um problema de layout (M2.5 e M2.3.T05).
+  fonte: "Würth Elektronik, Trilogy of Magnetics (blindagem e EMC)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T03-011
+  objetivo: O3
+  tipo: unica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Um buck com indutor de ferrite funciona bem na bancada a 25 °C, mas dentro da caixa, a 85 °C, entra em limitação de corrente com a carga nominal e o indutor esquenta. Qual é a explicação mais provável e a correção?
+  alternativas:
+    - "A DCR caiu com a temperatura; trocar por um indutor de DCR maior"
+    - "A SRF do indutor baixou; escolher um indutor de indutância menor"
+    - "A Isat da ferrite caiu com a temperatura e o pico de corrente passou a saturar o núcleo; usar indutor com Isat a quente suficiente, por exemplo de compósito metálico"
+    - "O indutor não blindado passou a irradiar; trocar por um de ferrite aberto"
+  resposta: 2
+  explicacao: |
+    A densidade de fluxo de saturação das ferrites cai com a temperatura; com ela, a Isat. A quente, o pico passa da Isat, L despenca, a corrente dispara e o CI limita. Compósitos metálicos têm saturação suave e menos dependente da temperatura. A DCR sobe (não cai) com a temperatura.
+  fonte: "Würth Elektronik, Trilogy of Magnetics (saturação e temperatura); Coilcraft, Understanding Inductor Specifications"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T03-012
+  objetivo: O4
+  tipo: vf
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: na faixa de frequência em que a parte resistiva R da impedância de um ferrite bead é maior que a parte reativa X, o bead dissipa a energia do ruído como calor.
+  resposta: true
+  explicacao: |
+    Acima do cruzamento R = X, o bead é predominantemente resistivo: é ali que ele funciona como supressor, convertendo ruído em calor. Abaixo, é predominantemente indutivo e pode ressoar com os capacitores.
+  fonte: "Analog Devices, Chris Burket, Ferrite Beads Demystified (Analog Dialogue)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T03-013
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um ferrite bead tem indutância de baixa frequência de 2,2 µH e alimenta um bloco com 4,7 µF de capacitância efetiva para o terra. Qual é a frequência de ressonância do conjunto? Responda em kHz, com 1 casa decimal.
+  resposta: {valor: 49.5, unidade: "kHz", tolerancia: 0.01}
+  explicacao: |
+    f₀ = 1/(2π√(2,2 × 10⁻⁶ × 4,7 × 10⁻⁶)) ≈ 49,5 kHz. Com a resistência baixa do bead e do MLCC, o Q é alto e o ruído perto dessa frequência é amplificado, não atenuado.
+  fonte: "Analog Devices, Chris Burket, Ferrite Beads Demystified (Analog Dialogue)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T03-014
+  objetivo: O4
+  tipo: unica
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Você precisa de pelo menos 250 Ω em 100 MHz numa linha que conduz 300 mA DC, com corrente nominal de pelo menos 1,5 vez a de trabalho. As curvas com corrente DC dos candidatos dão, em 100 MHz e 300 mA: bead P (1000 Ω nominal, 150 Ω a 300 mA, nominal 500 mA); bead Q (600 Ω nominal, 320 Ω a 300 mA, nominal 1 A); bead R (220 Ω nominal, 200 Ω a 300 mA, nominal 2 A); bead S (1500 Ω nominal, nominal 200 mA). Qual atende?
+  alternativas:
+    - "P, porque tem a maior impedância nominal entre os que suportam 300 mA"
+    - "Q"
+    - "R, porque é o que menos perde impedância com a corrente"
+    - "S, porque a impedância nominal compensa a corrente acima da nominal"
+  resposta: 1
+  explicacao: |
+    Só Q tem mais de 250 Ω com 300 mA e corrente nominal acima de 450 mA. P cai para 150 Ω com a corrente (e a nominal de 500 mA nem dá a folga de 1,5 vez); R é estável, mas fica abaixo de 250 Ω; S nem suporta a corrente. A impedância de catálogo, sem DC, não serve para escolher.
+  fonte: "Murata, SimSurfing (curvas de impedância de beads com corrente DC); Analog Devices, Ferrite Beads Demystified"
+  origem: ia
+  revisao: rascunho

@@ -1,0 +1,220 @@
+- id: Q-M2.1.T04-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Qual tipo de diodo praticamente não tem recuperação reversa, por conduzir com portadores majoritários?
+  alternativas:
+    - "Retificador de silício 1N4007"
+    - "Diodo de sinal 1N4148"
+    - "Schottky, como o SS34"
+    - "Zener de 5,1 V"
+  resposta: 2
+  explicacao: |
+    No Schottky, a condução é por portadores majoritários numa barreira metal-semicondutor: não há carga de minoritários a remover ao inverter a tensão, só a da capacitância de junção. Os diodos de junção PN têm t_rr (4 ns no 1N4148, microssegundos no 1N4007).
+  fonte: "Horowitz & Hill, The Art of Electronics, 3ª ed., Foundations (diodos); onsemi, SS34 e 1N4148 (datasheets)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T04-002
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Num buck assíncrono, o Schottky de roda livre (V_F = 0,5 V na corrente de trabalho) conduz 1,5 A durante 55 % de cada ciclo. Qual é a perda de condução média? Responda em W, com 2 casas decimais.
+  resposta: {valor: 0.41, unidade: "W", tolerancia: 0.02}
+  explicacao: |
+    P ≈ V_F·I·(fração de condução) = 0,5 × 1,5 × 0,55 ≈ 0,41 W. Num encapsulamento SMA, isso já pede atenção à térmica; um buck síncrono troca o diodo por um MOSFET e reduz essa perda.
+  fonte: "onsemi, SS34 (datasheet: Forward Voltage); Horowitz & Hill, The Art of Electronics, 3ª ed., Voltage Regulation and Power Conversion"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T04-003
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um diodo de silício com carga de recuperação reversa Q_rr = 40 nC comuta 24 V num conversor de 100 kHz. Estime a perda associada à recuperação reversa por P ≈ Q_rr·V·f. Responda em mW, arredondando para o inteiro mais próximo.
+  resposta: {valor: 96, unidade: "mW", tolerancia: 0.01}
+  explicacao: |
+    P ≈ 40 × 10⁻⁹ × 24 × 10⁵ = 0,096 W = 96 mW, além do pico de corrente no transistor e do ruído de EMI. Um Schottky ou um diodo ultrarrápido reduz muito esse termo.
+  fonte: "Vishay, notas de aplicação sobre recuperação reversa de retificadores; Horowitz & Hill, The Art of Electronics, 3ª ed., Voltage Regulation and Power Conversion"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T04-004
+  objetivo: O1
+  tipo: multipla
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Sobre a tensão direta V_F dos diodos, quais afirmações estão corretas?
+  alternativas:
+    - "V_F cai cerca de 2 mV por °C de aumento da temperatura da junção"
+    - "O 1N4148 tem tempo de recuperação reversa da ordem de microssegundos"
+    - "Para calcular a perda, deve-se usar o V_F máximo da tabela na corrente de trabalho"
+    - "Na mesma corrente, o Schottky tem V_F maior que o diodo de silício"
+  resposta: [0, 2]
+  explicacao: |
+    V_F tem coeficiente de cerca de −2 mV/°C e cresce com a corrente (≈ 60 mV por década na região exponencial); a conta de perda usa o máximo. O 1N4148 é rápido (4 ns) e o Schottky tem V_F menor que o silício.
+  fonte: "onsemi, 1N4148 (datasheet); Horowitz & Hill, The Art of Electronics, 3ª ed., Foundations (diodos)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T04-005
+  objetivo: O2
+  tipo: vf
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Verdadeiro ou falso: a corrente de fuga reversa de um diodo Schottky diminui quando a temperatura sobe.
+  resposta: false
+  explicacao: |
+    A fuga reversa do Schottky cresce exponencialmente com a temperatura; uma regra prática é dobrar a cada cerca de 10 °C. As curvas I_R × V_R dos datasheets mostram várias décadas entre 25 °C e 125 °C.
+  fonte: "onsemi, BAT54 e SS34 (datasheets: Reverse Current vs. Temperature)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T04-006
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um Schottky tem 0,5 µA de fuga a 25 °C na tensão de trabalho. Usando a regra de que a fuga dobra a cada 10 °C, qual é a fuga estimada a 65 °C? Responda em µA, arredondando para o inteiro mais próximo.
+  resposta: {valor: 8, unidade: "µA", tolerancia: 0.01}
+  explicacao: |
+    40 °C a mais são 4 duplicações: 0,5 × 2⁴ = 8 µA. Num produto que dorme a poucos µA, isso pode dobrar o consumo de sono; confira na curva do datasheet, que é mais confiável que a regra.
+  fonte: "onsemi, BAT54 (datasheet: Reverse Current vs. Reverse Voltage)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T04-007
+  objetivo: O2
+  tipo: unica
+  dificuldade: 4
+  bloom: avaliar
+  enunciado: |
+    Um medidor externo, exposto ao sol, chega a 85 °C. Uma CR2032 mantém o RTC (consumo de 1 µA) quando falta a alimentação principal, e um diodo impede que o 3,3 V principal carregue a pilha. O orçamento admite no máximo 2 µA de perda nesse diodo. As opções têm, a 85 °C e 3 V reversos: Schottky de sinal comum, 15 µA; Schottky de potência, 300 µA; diodo de silício de sinal, 0,05 µA. Qual é a melhor decisão?
+  alternativas:
+    - "O Schottky de potência, porque tem a menor queda direta"
+    - "O Schottky de sinal comum, porque a fuga só importa a 25 °C"
+    - "Qualquer Schottky, desde que se coloque um capacitor de 100 µF em paralelo com a pilha"
+    - "O diodo de silício de sinal (ou uma chave de diodo ideal), aceitando a queda maior em troca de uma fuga desprezível"
+  resposta: 3
+  explicacao: |
+    A 85 °C as fugas dos Schottky superam muito o orçamento e o próprio consumo do RTC; o diodo de silício perde uns 0,3 V a mais, o que o RTC tolera, e vaza nanoampères. Um circuito de diodo ideal com MOSFET é a alternativa quando a queda também importa. Capacitor não reduz fuga.
+  fonte: "onsemi, BAT54 e 1N4148 (datasheets: Reverse Current); M1.11.T02 (orçamento de energia)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T04-008
+  objetivo: O3
+  tipo: unica
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Por que Zeners de cerca de 5,6 V a 6,2 V são preferidos a Zeners de 3,3 V quando se quer uma tensão mais estável?
+  alternativas:
+    - "Porque dissipam menos potência para a mesma corrente"
+    - "Porque têm joelho mais duro, resistência dinâmica menor e coeficiente de temperatura perto de zero"
+    - "Porque têm tolerância de fabricação sempre de ±0,1 %"
+    - "Porque não precisam de resistor série"
+  resposta: 1
+  explicacao: |
+    Perto de 6 V, os mecanismos de ruptura Zener (coeficiente negativo) e avalanche (positivo) se compensam e o joelho fica abrupto. Abaixo de ~5 V, a ruptura é "mole", r_dif é alta e o coeficiente é negativo.
+  fonte: "Nexperia, BZX84 series (datasheet: r_dif e S_Z por tensão); Horowitz & Hill, The Art of Electronics, 3ª ed., Foundations (Zener)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T04-009
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um regulador Zener de 6,2 V alimenta uma carga de 0 a 8 mA, com V_in de 10 a 14 V. O Zener precisa de pelo menos 4 mA. Qual é o valor máximo do resistor série (antes de escolher o valor comercial)? Responda em Ω, arredondando para o inteiro mais próximo.
+  resposta: {valor: 317, unidade: "Ω", tolerancia: 0.01}
+  explicacao: |
+    O pior caso para manter o Zener regulando é V_in mínima com carga máxima: R ≤ (10 − 6,2)/(8 + 4) mA ≈ 316,7 Ω. Escolhe-se o valor comercial abaixo (300 Ω na E24, ou 316 Ω na E96).
+  fonte: "Horowitz & Hill, The Art of Electronics, 3ª ed., Foundations (Zener); Nexperia, BZX84 (datasheet)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T04-010
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    No regulador Zener de 6,2 V com R = 300 Ω e V_in de 10 a 14 V, qual é a potência máxima no Zener (pior caso: V_in máxima e carga desligada)? Responda em mW, arredondando para o inteiro mais próximo.
+  resposta: {valor: 161, unidade: "mW", tolerancia: 0.01}
+  explicacao: |
+    Sem carga, toda a corrente vai para o Zener: I_Z = (14 − 6,2)/300 = 26 mA; P_Z = 6,2 × 0,026 ≈ 161 mW, 64 % dos 250 mW de um SOT-23 — acima do derating de 50–60 % recomendado.
+  fonte: "Nexperia, BZX84 (datasheet: P_tot); Horowitz & Hill, The Art of Electronics, 3ª ed., Foundations (Zener)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T04-011
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Um Zener com resistência dinâmica r_dif = 25 Ω está num regulador cuja carga varia de 0 a 8 mA (a corrente do Zener varia o mesmo tanto, em sentido oposto). Quanto varia a tensão de saída? Responda em mV, arredondando para o inteiro mais próximo.
+  resposta: {valor: 200, unidade: "mV", tolerancia: 0.01}
+  explicacao: |
+    ΔV = r_dif·ΔI_Z = 25 × 0,008 = 0,2 V = 200 mV, sem contar a variação com a temperatura. É por isso que o Zener serve como grampo, e para referência se usa um TL431 (r_dif ≈ 0,2 Ω) ou uma referência série.
+  fonte: "Nexperia, BZX84 (datasheet: differential resistance); Texas Instruments, TL431 (datasheet)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T04-012
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Pela IEC 61000-4-2, o pico de corrente da descarga de contato vale cerca de 3,75 A por kV. Qual é o pico de corrente no ensaio de nível 3 (6 kV de contato)? Responda em A, com 1 casa decimal.
+  resposta: {valor: 22.5, unidade: "A", tolerancia: 0.01}
+  explicacao: |
+    3,75 × 6 = 22,5 A, com subida de 0,7 a 1 ns; a 30 ns a corrente ainda é de 12 A (2 A/kV). O protetor precisa grampear com essa corrente, e não com 1 A.
+  fonte: "IEC 61000-4-2 (Electrostatic discharge immunity test: forma de onda e níveis de ensaio)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T04-013
+  objetivo: O4
+  tipo: unica
+  dificuldade: 3
+  bloom: avaliar
+  enunciado: |
+    A entrada de alimentação de 12 V ±10 % precisa de um TVS da série SMAJ (400 W, 10/1000 µs). Pela tabela: SMAJ12A (V_R 12 V, V_C 19,9 V), SMAJ15A (V_R 15 V, V_C 24,4 V), SMAJ24A (V_R 24 V, V_C 38,9 V), SMAJ5.0A (V_R 5,0 V, V_C 9,2 V). Qual escolher, e o que isso exige do regulador de entrada?
+  alternativas:
+    - "SMAJ15A; o regulador deve suportar pelo menos cerca de 25 V na entrada"
+    - "SMAJ12A, porque a tensão nominal da linha é 12 V; o regulador pode ser de 17 V"
+    - "SMAJ24A, porque quanto maior a V_R, menor o risco; o regulador pode ser de 28 V"
+    - "SMAJ5.0A, porque grampeia mais baixo e protege melhor"
+  resposta: 0
+  explicacao: |
+    A V_R (stand-off) deve ficar acima da tensão máxima normal, 13,2 V: o SMAJ12A vazaria, e o SMAJ5.0A conduziria o tempo todo. O SMAJ15A grampeia em até 24,4 V, e o regulador deve suportar isso. O SMAJ24A deixaria a linha ir a quase 39 V, acima de um regulador de 28 V.
+  fonte: "Littelfuse, SMAJ series (datasheet: Electrical Characteristics); Littelfuse, TVS Diode Overview"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T04-014
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Uma descarga de 8 kV de contato sobe a 30 A em cerca de 0,8 ns. Entre o pino protegido e o terra, o caminho pelo TVS tem 2,5 nH de trilha e via. Estime a tensão induzida nessa indutância, somada ao clamp do TVS, por V = L·di/dt. Responda em V, arredondando para o inteiro mais próximo.
+  resposta: {valor: 94, unidade: "V", tolerancia: 0.02}
+  explicacao: |
+    di/dt ≈ 30/0,8 × 10⁻⁹ = 37,5 A/ns; V = 2,5 × 10⁻⁹ × 3,75 × 10¹⁰ ≈ 94 V. Por isso o TVS vai colado ao conector, a linha passa pelo pad dele e a via de terra é curta e direta.
+  fonte: "IEC 61000-4-2 (forma de onda); Littelfuse e Nexperia, notas de aplicação sobre layout de proteção ESD"
+  origem: ia
+  revisao: rascunho

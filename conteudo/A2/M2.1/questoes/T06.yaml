@@ -1,0 +1,220 @@
+- id: Q-M2.1.T06-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    No datasheet de um MOSFET, o que significa V_GS(th) = 1,05 V típico, medido com V_DS = V_GS e I_D = 250 µA?
+  alternativas:
+    - "A tensão de gate em que o MOSFET começa a conduzir uma corrente pequena, de 250 µA"
+    - "A tensão de gate em que o R_DS(on) atinge o valor mínimo da tabela"
+    - "A tensão máxima que se pode aplicar entre gate e source"
+    - "A tensão de gate abaixo da qual o MOSFET aguenta avalanche"
+  resposta: 0
+  explicacao: |
+    O limiar é a tensão em que a corrente de dreno atinge um valor pequeno de teste. A chave está de fato ligada na V_GS em que o R_DS(on) é especificado (10 V, 4,5 V, 2,5 V...). O máximo entre gate e source é o V_GS máx. (±12 V no AO3400A).
+  fonte: "Alpha & Omega, AO3400A (datasheet: Electrical Characteristics); Nexperia, AN11158 Understanding power MOSFET data sheet parameters"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T06-002
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um MOSFET tem R_DS(on) máximo de 32 mΩ a 25 °C (V_GS = 4,5 V) e a curva normalizada indica 1,4 vez esse valor na temperatura de junção de trabalho. Qual é a perda de condução com 2,5 A contínuos? Responda em W, com 2 casas decimais.
+  resposta: {valor: 0.28, unidade: "W", tolerancia: 0.02}
+  explicacao: |
+    R a quente = 32 × 1,4 = 44,8 mΩ; P = 2,5² × 0,0448 ≈ 0,28 W. Com o valor a 25 °C, a conta daria 0,20 W, subestimando 40 %.
+  fonte: "Alpha & Omega, AO3400A (datasheet: Normalized On-Resistance vs. Junction Temperature)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T06-003
+  objetivo: O1
+  tipo: unica
+  dificuldade: 3
+  bloom: avaliar
+  enunciado: |
+    Um GPIO de 3,3 V deve chavear 2 A no lado baixo de uma carga de 12 V. Qual dos MOSFETs canal N é a escolha adequada sem gate driver?
+  alternativas:
+    - "Um MOSFET de 15 mΩ com R_DS(on) especificado só em V_GS = 10 V e V_GS(th) de 2 a 4 V"
+    - "O 2N7002, com V_GS(th) de 1 a 2,5 V e R_DS(on) de alguns ohms especificado em 4,5 V e 10 V"
+    - "Um MOSFET de 30 V com R_DS(on) máximo especificado também em V_GS = 2,5 V, como o AO3400A"
+    - "Qualquer MOSFET cujo V_GS(th) típico seja menor que 3,3 V"
+  resposta: 2
+  explicacao: |
+    O critério é o R_DS(on) garantido numa V_GS abaixo da que o GPIO entrega no pior caso. O de 15 mΩ a 10 V pode mal conduzir com 3,3 V; o 2N7002 é de sinal (ohms, centenas de mA); o limiar típico abaixo de 3,3 V não garante nada sobre a resistência.
+  fonte: "Alpha & Omega, AO3400A (datasheet); Nexperia, 2N7002 (datasheet)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T06-004
+  objetivo: O1
+  tipo: vf
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: o R_DS(on) de um MOSFET de potência diminui quando a temperatura de junção aumenta, o que ajuda a dividir a corrente entre MOSFETs em paralelo.
+  resposta: false
+  explicacao: |
+    Na chave totalmente ligada, o R_DS(on) aumenta com a temperatura (1,3 a 1,5 vez a 100–125 °C); é justamente esse coeficiente positivo que ajuda a dividir a corrente entre MOSFETs em paralelo. Quem cai com a temperatura é o V_GS(th).
+  fonte: "Nexperia, AN11158 Understanding power MOSFET data sheet parameters; Alpha & Omega, AO3400A (datasheet)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T06-005
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um MOSFET tem Q_gd = 3 nC e platô de Miller em 3 V. O driver fornece 5 V através de uma resistência total de gate de 22 Ω. Estime o tempo da transição de tensão do dreno na ligação, por t ≈ Q_gd/I_G. Responda em ns, arredondando para o inteiro mais próximo.
+  resposta: {valor: 33, unidade: "ns", tolerancia: 0.02}
+  explicacao: |
+    I_G durante o platô = (5 − 3)/22 ≈ 91 mA; t ≈ 3 nC/91 mA ≈ 33 ns. No desligamento, I_G = 3/22 ≈ 136 mA e t ≈ 22 ns.
+  fonte: "Vishay, AN608A Power MOSFET Basics: Understanding Gate Charge and Using it to Assess Switching Performance"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T06-006
+  objetivo: O2
+  tipo: multipla
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Sobre a carga de gate e as capacitâncias de um MOSFET, quais afirmações estão corretas?
+  alternativas:
+    - "A carga Q_gd é entregue durante o platô de Miller, enquanto a tensão de dreno muda"
+    - "Multiplicar C_iss pela tensão de gate dá o tempo de transição com boa precisão, porque as capacitâncias são constantes"
+    - "C_rss acopla variações rápidas da tensão de dreno ao gate e pode religar um MOSFET desligado"
+    - "A energia de gate por ciclo é aproximadamente Q_g·V_drive"
+  resposta: [0, 2, 3]
+  explicacao: |
+    As capacitâncias variam muito com V_DS (sobretudo C_gd), por isso o datasheet dá cargas. Q_gd domina a transição de tensão; C_rss = C_gd causa o religamento por dV/dt; a energia do driver por ciclo é Q_g·V.
+  fonte: "Vishay, AN608A; Nexperia, AN11158 Understanding power MOSFET data sheet parameters"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T06-007
+  objetivo: O2
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Um GPIO com resistência de saída de 30 Ω desliga um MOSFET através de um resistor de 47 Ω; a resistência interna de gate é 3 Ω. O platô de Miller está em 2,0 V e Q_gd = 2 nC. Estime o tempo da transição de tensão no desligamento. Responda em ns, arredondando para o inteiro mais próximo.
+  resposta: {valor: 80, unidade: "ns", tolerancia: 0.02}
+  explicacao: |
+    No desligamento, a corrente de gate é V_plat/R_total = 2,0/(30 + 47 + 3) = 25 mA; t ≈ 2 nC/25 mA = 80 ns. Esquecer a resistência de saída do pino subestima o tempo em mais de um terço.
+  fonte: "Vishay, AN608A Power MOSFET Basics: Understanding Gate Charge and Using it to Assess Switching Performance"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T06-008
+  objetivo: O3
+  tipo: unica
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Onde é dissipada a potência de gate Q_g·V_drive·f de um MOSFET chaveado?
+  alternativas:
+    - "Inteiramente no canal do MOSFET, somando-se à perda de condução"
+    - "No diodo de corpo"
+    - "Na carga ligada ao dreno"
+    - "No driver (ou pino do MCU) e nas resistências do caminho de gate"
+  resposta: 3
+  explicacao: |
+    A carga do gate é fornecida e retirada pelo driver a cada ciclo; a energia se dissipa nas resistências do driver, no resistor de gate e na resistência interna de gate. Ela entra no orçamento térmico do driver, não no do canal.
+  fonte: "Vishay, AN608A; Texas Instruments, Understanding MOSFET data sheets"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T06-009
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Um MOSFET chaveia 24 V e 4 A a 200 kHz, com 50 ns de transição na ligação e 50 ns no desligamento. Estime a perda de comutação por ½·V·I·(t_on + t_off)·f. Responda em W, com 2 casas decimais.
+  resposta: {valor: 0.96, unidade: "W", tolerancia: 0.01}
+  explicacao: |
+    P = 0,5 × 24 × 4 × 100 ns × 200 kHz = 0,96 W. Em frequências altas, a comutação costuma superar a condução, e a escolha passa a ser pelo produto R_DS(on) × Q_gd.
+  fonte: "Vishay, AN608A; Horowitz & Hill, The Art of Electronics, 3ª ed., Field-Effect Transistors (power MOSFETs)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T06-010
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Num conversor com comutação dura, um MOSFET tem C_oss = 120 pF e chaveia 36 V a 400 kHz. Estime a perda associada à energia de C_oss, ½·C_oss·V²·f. Responda em mW, com 1 casa decimal.
+  resposta: {valor: 31.1, unidade: "mW", tolerancia: 0.01}
+  explicacao: |
+    P = 0,5 × 120 × 10⁻¹² × 36² × 4 × 10⁵ ≈ 31,1 mW. Cresce com o quadrado da tensão: em 12 V seria nove vezes menor.
+  fonte: "Nexperia, AN11158 Understanding power MOSFET data sheet parameters"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T06-011
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Um MOSFET em PWM de 50 kHz conduz 3 A com duty de 60 %, com R_DS(on) a quente de 30 mΩ. Ele chaveia 12 V com 80 ns de transições somadas (t_on + t_off). A resistência térmica junção-ambiente é 120 °C/W e o ambiente está a 55 °C. Desprezando C_oss e gate, qual é a temperatura de junção? Responda em °C, com 1 casa decimal.
+  resposta: {valor: 83.1, unidade: "°C", tolerancia: 0.01}
+  explicacao: |
+    Condução: 3² × 0,030 × 0,6 = 0,162 W. Comutação: 0,5 × 12 × 3 × 80 ns × 50 kHz = 0,072 W. Total 0,234 W; T_J = 55 + 0,234 × 120 ≈ 83,1 °C.
+  fonte: "Vishay, AN608A; Texas Instruments, Understanding MOSFET data sheets (impedância térmica)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T06-012
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Uma chave de carga com MOSFET liga, por uma rampa lenta de gate, um módulo com 470 µF de entrada em 12 V. Qual é a energia dissipada no MOSFET durante a carga do capacitor, igual a ½·C·V²? Responda em mJ, com 1 casa decimal.
+  resposta: {valor: 33.8, unidade: "mJ", tolerancia: 0.01}
+  explicacao: |
+    E = 0,5 × 470 × 10⁻⁶ × 12² ≈ 33,8 mJ, dissipados no MOSFET em regime linear, independentemente da duração da rampa. Com a rampa de 10 ms, a corrente é ≈ 0,56 A: o ponto (12 V; 0,56 A; 10 ms) deve ficar dentro da SOA.
+  fonte: "Texas Instruments, Understanding MOSFET data sheets (SOA); Nexperia, AN11158"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T06-013
+  objetivo: O4
+  tipo: unica
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Na proteção contra inversão de polaridade com um MOSFET canal P no lado positivo, como ele é ligado e por que funciona?
+  alternativas:
+    - "Source na entrada, dreno na carga e gate na entrada: o canal só conduz com V_GS positivo"
+    - "Dreno na entrada, source na carga e gate ao GND por resistor: o diodo de corpo conduz primeiro e a V_GS negativa resultante fecha o canal; invertida, o diodo fica reverso e o canal não liga"
+    - "Dreno na carga e source no GND: é a mesma ligação de uma chave de lado baixo"
+    - "Qualquer orientação funciona, porque o MOSFET é simétrico"
+  resposta: 1
+  explicacao: |
+    Com o dreno na entrada, o diodo de corpo (dreno → source no canal P) conduz na polaridade correta, a carga sobe e o gate a 0 V dá V_GS negativo, ligando o canal; a perda cai para I²·R_DS(on). Com a polaridade invertida, o diodo fica reverso e V_GS não liga o canal. Se a entrada passa do V_GS máx., é preciso um Zener entre gate e source.
+  fonte: "Alpha & Omega, AO3401A (datasheet); Horowitz & Hill, The Art of Electronics, 3ª ed., Field-Effect Transistors"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T06-014
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um MOSFET desliga uma bobina de 2 mH com 0,8 A, sem diodo de roda livre, numa alimentação de 24 V. A ruptura é de 40 V. Estime a energia de avalanche por E ≈ ½·L·I²·V_BR/(V_BR − V_DD). Responda em mJ, com 2 casas decimais.
+  resposta: {valor: 1.60, unidade: "mJ", tolerancia: 0.01}
+  explicacao: |
+    ½ × 2 mH × 0,8² = 0,64 mJ; fator 40/(40 − 24) = 2,5; E ≈ 1,60 mJ. Compare com o E_AS do datasheet; se não houver E_AS especificado, use roda livre, TVS ou grampo Zener.
+  fonte: "Texas Instruments, Understanding MOSFET data sheets (avalanche/UIS); Nexperia, AN11158"
+  origem: ia
+  revisao: rascunho

@@ -1,0 +1,215 @@
+- id: Q-M2.1.T09-001
+  objetivo: O1
+  tipo: unica
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    O que significa uma taxa de falhas de 1 FIT?
+  alternativas:
+    - "Uma falha por milhão de horas de dispositivo"
+    - "Uma falha por ano em cada 1000 unidades"
+    - "Uma falha por 10⁹ horas de dispositivo"
+    - "Uma falha a cada 1000 horas de ensaio"
+  resposta: 2
+  explicacao: |
+    FIT (Failures In Time) conta falhas por bilhão (10⁹) de horas-dispositivo; λ = FIT × 10⁻⁹ por hora e, com λ constante, MTBF = 10⁹/FIT horas.
+  fonte: "JEDEC JESD85 (Methods for Calculating Failure Rates in Units of FITs)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T09-002
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Uma placa tem taxa de falhas de 250 FIT na fase de vida útil. Qual é o MTBF? Responda em milhões de horas, com 1 casa decimal.
+  resposta: {valor: 4.0, unidade: "milhões de horas", tolerancia: 0.01}
+  explicacao: |
+    MTBF = 10⁹/250 = 4,0 × 10⁶ h (cerca de 457 anos), o que não significa que uma unidade dure isso: é o inverso da taxa de falhas aleatórias de uma população.
+  fonte: "JEDEC JESD85; MIL-HDBK-217F (Notice 2), introdução"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T09-003
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um produto tem 800 FIT, constante. Usando R(t) = e^(−λt), que fração das unidades falha em 3 anos de operação contínua (8760 h por ano)? Responda em %, com 2 casas decimais.
+  resposta: {valor: 2.08, unidade: "%", tolerancia: 0.01}
+  explicacao: |
+    λt = 800 × 10⁻⁹ × 26 280 ≈ 0,0210; 1 − e^(−0,0210) ≈ 2,08 %. Numa frota de 10 000 unidades, cerca de 208 falhas aleatórias em 3 anos — o número que dimensiona garantia e reposição.
+  fonte: "MIL-HDBK-217F (Notice 2); Telcordia SR-332"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T09-004
+  objetivo: O1
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Pelo método de contagem, some a taxa de falhas de uma placa com: 1 MCU de 40 FIT, 2 reguladores de 8 FIT cada, 25 MLCC de 0,4 FIT cada, 30 resistores de 0,3 FIT cada e 500 juntas de solda de 0,05 FIT cada. Responda em FIT, como número inteiro.
+  resposta: {valor: 100, unidade: "FIT", tolerancia: 0.01}
+  explicacao: |
+    40 + 16 + 10 + 9 + 25 = 100 FIT (MTBF de 10⁷ h). Com todos os itens em série, as taxas se somam; repare que as juntas de solda pesam mais que os reguladores.
+  fonte: "MIL-HDBK-217F (Notice 2): parts count method"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T09-005
+  objetivo: O2
+  tipo: vf
+  dificuldade: 1
+  bloom: entender
+  enunciado: |
+    Verdadeiro ou falso: o burn-in (operar as placas por algumas horas ou dias em temperatura elevada antes do embarque) serve para eliminar as falhas por desgaste, como a secagem de eletrolíticos.
+  resposta: false
+  explicacao: |
+    O burn-in e a triagem por estresse ambiental atacam a mortalidade infantil: revelam defeitos de fabricação antes do cliente. Ele consome um pouco da vida dos itens de desgaste, em vez de eliminar essas falhas.
+  fonte: "MIL-HDBK-217F (Notice 2), introdução; JEDEC JESD47"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T09-006
+  objetivo: O2
+  tipo: multipla
+  dificuldade: 2
+  bloom: entender
+  enunciado: |
+    Quais destas falhas pertencem à fase de desgaste da curva da banheira?
+  alternativas:
+    - "Capacitor eletrolítico que perde capacitância e aumenta a ESR após anos em temperatura alta"
+    - "Contatos de relé que deixam de comutar após centenas de milhares de manobras"
+    - "Placa queimada por um surto de raio na rede elétrica"
+    - "Junta de solda fria, detectada no teste final da linha"
+  resposta: [0, 1]
+  explicacao: |
+    Secagem do eletrolítico e erosão de contatos são mecanismos de desgaste (taxa crescente com o tempo). O surto é um evento aleatório da vida útil; a solda fria é mortalidade infantil (defeito de fabricação).
+  fonte: "MIL-HDBK-217F (Notice 2); Nichicon, General Description of Aluminum Electrolytic Capacitors"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T09-007
+  objetivo: O2
+  tipo: unica
+  dificuldade: 3
+  bloom: analisar
+  enunciado: |
+    Um produto com MTBF previsto de 2 milhões de horas começou a ter taxa de retorno crescente a partir do quinto ano em campo, sempre na fonte interna. Qual é a interpretação mais provável?
+  alternativas:
+    - "Um item de desgaste da fonte, como um eletrolítico quente, chegou ao fim da vida; o MTBF só descreve a fase de taxa constante"
+    - "A predição está correta, e o aumento é flutuação estatística da fase de vida útil"
+    - "É mortalidade infantil atrasada, que se resolveria com burn-in"
+    - "O MTBF de 2 milhões de horas garante que nenhuma unidade falhe antes de 228 anos"
+  resposta: 0
+  explicacao: |
+    Taxa crescente depois de anos é o sinal da fase de desgaste. A predição por FIT/MTBF supõe λ constante e não modela desgaste; por isso é preciso calcular a vida de cada item que se desgasta (eletrolítico pela regra dos 10 °C, por exemplo).
+  fonte: "MIL-HDBK-217F (Notice 2), introdução; Nichicon, General Description of Aluminum Electrolytic Capacitors (vida útil)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T09-008
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 2
+  bloom: aplicar
+  enunciado: |
+    Calcule o fator de aceleração de Arrhenius entre um ensaio a 125 °C e o uso a 40 °C, com E_a = 0,7 eV e k = 8,617 × 10⁻⁵ eV/K (converta para kelvin somando 273,15). Responda com o fator adimensional, arredondando para o inteiro mais próximo.
+  resposta: {valor: 254, unidade: "adimensional", tolerancia: 0.01}
+  explicacao: |
+    1/313,15 − 1/398,15 ≈ 6,818 × 10⁻⁴ K⁻¹; (0,7/8,617 × 10⁻⁵) × 6,818 × 10⁻⁴ ≈ 5,538; AF = e^5,538 ≈ 254. Cada hora de ensaio vale cerca de 254 horas de uso a 40 °C, se o mecanismo tiver mesmo 0,7 eV.
+  fonte: "JEDEC JESD85 (Arrhenius acceleration factor)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T09-009
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Um ensaio HTOL de 231 peças por 1000 h a 125 °C terminou com zero falhas. Para uso a 45 °C, o fator de aceleração (E_a = 0,7 eV) é 169,1. Com χ²(60 %; 2) = 1,833 e λ = χ²/(2·N·t·AF), qual é o FIT a 60 % de confiança? Responda em FIT, com 1 casa decimal.
+  resposta: {valor: 23.5, unidade: "FIT", tolerancia: 0.01}
+  explicacao: |
+    λ = 1,833/(2 × 231 × 1000 × 169,1) ≈ 2,35 × 10⁻⁸ /h = 23,5 FIT. Zero falhas não é FIT zero: o resultado é um limite superior que depende do nível de confiança e das horas acumuladas.
+  fonte: "JEDEC JESD85 (Methods for Calculating Failure Rates in Units of FITs); JEDEC JESD47 (HTOL)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T09-010
+  objetivo: O3
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Um ensaio HTOL de 231 peças por 1000 h teve **uma** falha. O fator de aceleração para a condição de uso é 77,6. Usando χ²(90 %; 2r + 2) = 7,779 para r = 1, qual é o FIT a 90 % de confiança? Responda em FIT, arredondando para o inteiro mais próximo.
+  resposta: {valor: 217, unidade: "FIT", tolerancia: 0.01}
+  explicacao: |
+    λ = 7,779/(2 × 231 × 1000 × 77,6) ≈ 2,17 × 10⁻⁷ /h = 217 FIT. A 60 % (χ² = 4,045) seriam 113 FIT: ao comparar relatórios, confira o nível de confiança.
+  fonte: "JEDEC JESD85 (Methods for Calculating Failure Rates in Units of FITs)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T09-011
+  objetivo: O3
+  tipo: vf
+  dificuldade: 1
+  bloom: lembrar
+  enunciado: |
+    Verdadeiro ou falso: na fórmula de Arrhenius, AF = exp[(E_a/k)·(1/T_uso − 1/T_ensaio)], as temperaturas devem estar em kelvin.
+  resposta: true
+  explicacao: |
+    A lei de Arrhenius usa a temperatura absoluta. Com graus Celsius, o resultado sai completamente errado (e pode até mudar de sinal perto de 0 °C).
+  fonte: "JEDEC JESD85 (Arrhenius acceleration factor)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T09-012
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 3
+  bloom: aplicar
+  enunciado: |
+    Numa entrada de 48 V, o TVS grampeia os surtos em até 60 V, que aparecem sobre o MOSFET de proteção. A política de derating limita V_DS a 75 % do máximo. Qual é a V_DS nominal mínima do MOSFET? Responda em V, como número inteiro.
+  resposta: {valor: 80, unidade: "V", tolerancia: 0.01}
+  explicacao: |
+    O derating se aplica ao pior caso real: 60/0,75 = 80 V. Escolhe-se um MOSFET de 80 V ou 100 V; usar os 48 V nominais (48/0,75 = 64 V) deixaria o MOSFET em avalanche nos surtos.
+  fonte: "NASA EEE-INST-002 (derating de transistores); Littelfuse, SMAJ series (datasheet: V_C)"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T09-013
+  objetivo: O4
+  tipo: unica
+  dificuldade: 2
+  bloom: avaliar
+  enunciado: |
+    Para que uma predição de confiabilidade pela MIL-HDBK-217F é mais adequada num produto IoT comercial?
+  alternativas:
+    - "Para garantir ao cliente a vida útil do produto em anos"
+    - "Para comparar arquiteturas, identificar os itens que dominam a taxa de falhas e planejar reposição, declarando método, ambiente e temperatura"
+    - "Para substituir os ensaios de vida acelerada e o retorno de campo"
+    - "Para calcular a vida de eletrolíticos, relés e memória Flash"
+  resposta: 1
+  explicacao: |
+    O 217F (sem atualização desde 1995) estima taxas de falhas aleatórias com fatores de estresse e ambiente; é útil para comparação e planejamento. Não modela desgaste nem substitui ensaios, e os números absolutos tendem a ser pessimistas para componentes modernos.
+  fonte: "MIL-HDBK-217F (Notice 2); Telcordia SR-332; IEC 61709"
+  origem: ia
+  revisao: rascunho
+
+- id: Q-M2.1.T09-014
+  objetivo: O4
+  tipo: numerica
+  dificuldade: 4
+  bloom: analisar
+  enunciado: |
+    Um resistor 0805 de 0,125 W (derating linear de 70 °C a 155 °C) fica numa placa a 90 °C, e a política de derating permite usar 55 % da potência admissível nessa temperatura. Qual é a maior corrente contínua num resistor de 47 Ω? Responda em mA, com 1 casa decimal.
+  resposta: {valor: 33.4, unidade: "mA", tolerancia: 0.01}
+  explicacao: |
+    P_adm(90 °C) = 0,125 × 65/85 ≈ 95,6 mW; com 55 %, ≈ 52,6 mW. I = √(0,0526/47) ≈ 33,4 mA. São dois deratings em cascata: o da curva do fabricante (temperatura) e o da política de projeto (margem).
+  fonte: "Yageo, RC series (Power derating curve); NASA EEE-INST-002 (derating de resistores)"
+  origem: ia
+  revisao: rascunho
